@@ -14,6 +14,13 @@ function initSprites() {
     SPRITES.iconSanctions = createIconSprite('sanctions');
     SPRITES.iconDiplomacy = createIconSprite('diplomacy');
     SPRITES.iconBlockade = createIconSprite('blockade');
+
+    // Character portraits
+    SPRITES.portrait_trump = createPortraitSprite('trump');
+    SPRITES.portrait_asmongold = createPortraitSprite('asmongold');
+    SPRITES.portrait_fuentes = createPortraitSprite('fuentes');
+    SPRITES.portrait_hegseth = createPortraitSprite('hegseth');
+    SPRITES.portrait_kushner = createPortraitSprite('kushner');
 }
 
 function makeCanvas(w, h) {
@@ -304,6 +311,196 @@ function createIconSprite(type) {
         ];
         for (let y = 0; y < rows.length; y++) drawPixelRow(ctx, y, rows[y], s);
     }
+
+    return c;
+}
+
+// ── Character Portraits (24x24 logical, 2x scale = 48x48 canvas) ──
+function createPortraitSprite(type) {
+    const s = 2;
+    const c = makeCanvas(24 * s, 24 * s);
+    const ctx = c.getContext('2d');
+    const _ = null;
+
+    if (type === 'trump') {
+        const H = '#ddaa33'; const h = '#bb8822';
+        const S = '#e8b878'; const s2= '#d4a068';
+        const E = '#446688'; const M = '#cc7766';
+        const T = '#cc2222'; const J = '#2a2a3a'; const j = '#3a3a4a';
+        const W = '#dddddd'; const B = '#1a1a2a';
+        const rows = [
+            [_,_,_,_,_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,H,H,H,H,H,H,H,H,H,H,H,H,_,_,_,_,_,_],
+            [_,_,_,_,_,H,H,H,H,H,H,H,H,H,H,H,H,H,H,_,_,_,_,_],
+            [_,_,_,_,_,H,h,h,H,H,H,H,H,H,H,H,h,h,H,_,_,_,_,_],
+            [_,_,_,_,_,h,S,S,S,S,S,S,S,S,S,S,S,S,h,_,_,_,_,_],
+            [_,_,_,_,_,_,S,S,S,S,S,S,S,S,S,S,S,S,_,_,_,_,_,_],
+            [_,_,_,_,_,_,S,S,E,S,S,S,S,S,S,E,S,S,_,_,_,_,_,_],
+            [_,_,_,_,_,_,S,S,E,S,S,S,S,S,S,E,S,S,_,_,_,_,_,_],
+            [_,_,_,_,_,_,s2,S,S,S,S,S,S,S,S,S,S,s2,_,_,_,_,_,_],
+            [_,_,_,_,_,_,s2,S,S,S,S,s2,s2,S,S,S,S,s2,_,_,_,_,_,_],
+            [_,_,_,_,_,_,s2,S,S,S,S,S,S,S,S,S,S,s2,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,M,M,M,M,S,S,s2,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,M,M,S,S,S,s2,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,s2,S,S,S,S,s2,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,s2,s2,s2,s2,s2,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,W,W,T,T,T,W,W,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,J,W,W,T,T,T,W,W,J,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,J,J,j,W,T,T,T,W,j,J,J,_,_,_,_,_,_,_],
+            [_,_,_,_,_,J,J,J,j,j,T,T,T,j,j,J,J,J,_,_,_,_,_,_],
+            [_,_,_,_,J,J,J,J,j,j,j,T,j,j,j,J,J,J,J,_,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,B,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,B,_,_,_,_],
+            [_,_,_,B,B,J,J,J,J,j,j,j,j,j,J,J,J,J,B,B,_,_,_,_],
+        ];
+        for (let y = 0; y < rows.length; y++) drawPixelRow(ctx, y, rows[y], s);
+    }
+
+    if (type === 'asmongold') {
+        const H = '#6a4422'; const h = '#8a5533';
+        const R = '#cc3333'; const r = '#aa2222';
+        const S = '#d4a878'; const s2= '#bb9068';
+        const E = '#334455'; const Br = '#5a3a22'; const b = '#4a2a18';
+        const T = '#444444'; const t = '#555555';
+        const rows = [
+            [_,_,_,_,_,_,_,H,H,H,H,H,H,H,H,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,H,H,h,h,H,H,H,h,h,H,H,_,_,_,_,_,_,_],
+            [_,_,_,_,_,H,H,h,h,h,h,H,h,h,h,h,H,H,_,_,_,_,_,_],
+            [_,_,_,_,_,H,h,h,h,h,h,h,h,h,h,h,h,H,_,_,_,_,_,_],
+            [_,_,_,_,_,r,R,R,R,R,R,R,R,R,R,R,R,r,_,_,_,_,_,_],
+            [_,_,_,_,_,r,R,R,R,R,R,R,R,R,R,R,R,r,_,_,_,_,_,_],
+            [_,_,_,_,H,h,S,S,S,S,S,S,S,S,S,S,S,h,H,_,_,_,_,_],
+            [_,_,_,_,H,_,S,S,E,S,S,S,S,S,E,S,S,_,H,_,_,_,_,_],
+            [_,_,_,_,H,_,S,S,E,S,S,S,S,S,E,S,S,_,H,_,_,_,_,_],
+            [_,_,_,_,H,_,s2,S,S,S,S,S,S,S,S,S,s2,_,H,_,_,_,_,_],
+            [_,_,_,_,h,_,s2,S,S,S,S,s2,s2,S,S,S,s2,_,h,_,_,_,_,_],
+            [_,_,_,_,h,_,Br,Br,S,S,S,S,S,S,S,Br,Br,_,h,_,_,_,_,_],
+            [_,_,_,_,_,_,Br,Br,Br,Br,s2,s2,s2,Br,Br,Br,Br,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,b,Br,Br,Br,Br,Br,Br,Br,Br,Br,b,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,b,Br,Br,Br,Br,Br,Br,Br,b,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,b,b,b,b,b,b,b,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,T,t,t,t,t,t,T,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,T,T,t,t,t,t,t,T,T,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,T,T,t,t,t,t,t,t,t,T,T,_,_,_,_,_,_,_],
+            [_,_,_,_,_,T,T,T,t,t,t,t,t,t,t,T,T,T,_,_,_,_,_,_],
+            [_,_,_,_,T,T,T,T,t,t,t,t,t,t,t,T,T,T,T,_,_,_,_,_],
+            [_,_,_,T,T,T,T,T,t,t,t,t,t,t,t,T,T,T,T,T,_,_,_,_],
+            [_,_,_,T,T,T,T,T,t,t,t,t,t,t,t,T,T,T,T,T,_,_,_,_],
+            [_,_,_,T,T,T,T,T,T,t,t,t,t,t,T,T,T,T,T,T,_,_,_,_],
+        ];
+        for (let y = 0; y < rows.length; y++) drawPixelRow(ctx, y, rows[y], s);
+    }
+
+    if (type === 'fuentes') {
+        const H = '#1a1a22'; const h = '#2a2a33';
+        const S = '#ddb088'; const s2= '#cc9a78';
+        const E = '#223344'; const M = '#cc8877';
+        const T = '#2244aa'; const J = '#1a1a2a'; const j = '#2a2a3a';
+        const W = '#dddddd';
+        const rows = [
+            [_,_,_,_,_,_,_,_,H,H,H,H,H,H,H,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,H,H,H,H,H,H,H,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,H,H,H,h,H,H,H,h,H,H,H,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,H,H,h,h,H,H,H,h,h,H,H,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,H,h,h,h,H,H,H,h,h,h,H,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,S,S,S,S,S,S,S,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,S,S,S,S,S,S,S,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,E,S,S,S,S,S,E,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,E,S,S,S,S,S,E,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,S,S,S,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,s2,s2,S,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,S,S,S,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,M,M,M,M,M,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,S,M,M,M,S,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,s2,s2,s2,s2,s2,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,s2,S,S,S,s2,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,W,W,T,T,T,W,W,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,J,W,W,T,T,T,W,W,J,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,J,J,j,W,T,T,T,W,j,J,J,_,_,_,_,_,_,_],
+            [_,_,_,_,_,J,J,J,j,j,T,T,T,j,j,J,J,J,_,_,_,_,_,_],
+            [_,_,_,_,J,J,J,J,j,j,j,T,j,j,j,J,J,J,J,_,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,J,J,J,J,J,J,j,j,j,j,j,J,J,J,J,J,J,_,_,_,_],
+        ];
+        for (let y = 0; y < rows.length; y++) drawPixelRow(ctx, y, rows[y], s);
+    }
+
+    if (type === 'hegseth') {
+        const H = '#5a4a33'; const h = '#4a3a28';
+        const S = '#ddb088'; const s2= '#cc9a78';
+        const E = '#334455'; const M = '#cc8877';
+        const T = '#882222'; const J = '#2a2a3a'; const j = '#3a3a4a';
+        const W = '#dddddd';
+        const rows = [
+            [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,H,H,H,H,H,H,H,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,H,h,H,H,H,h,H,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,h,h,H,H,H,h,h,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,h,h,h,h,h,h,h,h,h,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,S,S,S,S,S,S,S,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,S,S,S,S,S,S,S,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,E,S,S,S,S,S,E,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,S,E,S,S,S,S,S,E,S,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,S,S,S,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,s2,s2,S,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,S,S,S,S,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,s2,S,S,M,M,M,M,S,s2,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,s2,S,S,S,s2,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,s2,s2,s2,s2,s2,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,s2,S,S,S,s2,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,W,W,T,T,T,W,W,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,J,W,W,T,T,T,W,W,J,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,J,J,j,W,T,T,T,W,j,J,J,_,_,_,_,_,_,_],
+            [_,_,_,_,_,J,J,J,j,j,T,T,T,j,j,J,J,J,_,_,_,_,_,_],
+            [_,_,_,_,J,J,J,J,j,j,j,T,j,j,j,J,J,J,J,_,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,J,J,J,J,J,J,j,j,j,j,j,J,J,J,J,J,J,_,_,_,_],
+        ];
+        for (let y = 0; y < rows.length; y++) drawPixelRow(ctx, y, rows[y], s);
+    }
+
+    if (type === 'kushner') {
+        const H = '#2a2233'; const h = '#3a3344';
+        const S = '#e0b890'; const s2= '#d0a880';
+        const E = '#334455'; const M = '#cc9988';
+        const T = '#333355'; const J = '#1a1a28'; const j = '#2a2a38';
+        const W = '#eeeeff';
+        const rows = [
+            [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,H,H,H,H,H,H,H,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,H,h,h,H,h,h,H,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,h,h,h,H,h,h,h,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,H,h,h,h,h,h,h,h,H,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,S,S,S,S,S,S,S,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,S,S,S,S,S,S,S,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,S,E,S,S,S,E,S,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,S,E,S,S,S,E,S,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,S,S,S,S,S,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,S,S,s2,s2,S,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,s2,S,S,S,S,S,s2,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,s2,M,M,M,s2,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,s2,S,S,S,s2,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,_,s2,s2,s2,_,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,_,_,s2,s2,s2,_,_,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,_,W,W,T,T,T,W,W,_,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,_,J,W,W,T,T,T,W,W,J,_,_,_,_,_,_,_,_],
+            [_,_,_,_,_,_,J,J,j,W,T,T,T,W,j,J,J,_,_,_,_,_,_,_],
+            [_,_,_,_,_,J,J,J,j,j,T,T,T,j,j,J,J,J,_,_,_,_,_,_],
+            [_,_,_,_,J,J,J,J,j,j,j,T,j,j,j,J,J,J,J,_,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,J,J,J,J,J,j,j,j,j,j,j,j,J,J,J,J,J,_,_,_,_],
+            [_,_,_,J,J,J,J,J,J,j,j,j,j,j,J,J,J,J,J,J,_,_,_,_],
+        ];
+        for (let y = 0; y < rows.length; y++) drawPixelRow(ctx, y, rows[y], s);
+    }
+
+    // SC1 green phosphor border
+    ctx.strokeStyle = '#1a3a2a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, c.width, c.height);
 
     return c;
 }

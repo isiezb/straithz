@@ -30,9 +30,10 @@ body {
     width: 100%;
     height: 100%;
     image-rendering: pixelated;
+    cursor: crosshair;
 }
 
-/* ── HUD — SC1 top bar ── */
+/* -- HUD -- SC1 top bar -- */
 #hud {
     position: absolute;
     top: 0;
@@ -49,8 +50,9 @@ body {
 .hud-item {
     flex: 1;
     text-align: center;
-    padding: 6px 4px;
+    padding: 5px 2px;
     border-right: 1px solid #1a3a2a;
+    min-width: 0;
 }
 
 .hud-item:last-child {
@@ -59,26 +61,29 @@ body {
 
 .hud-label {
     display: block;
-    font-size: 9px;
+    font-size: 8px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     color: #2a6a4a;
     margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .hud-value {
     display: block;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
     color: #44dd88;
     text-shadow: 0 0 6px rgba(68, 221, 136, 0.4);
+    white-space: nowrap;
 }
 
 .hud-value.danger { color: #dd4444; text-shadow: 0 0 6px rgba(221, 68, 68, 0.4); }
 .hud-value.warning { color: #ddaa44; text-shadow: 0 0 6px rgba(221, 170, 68, 0.4); }
 .hud-value.good { color: #44dd88; text-shadow: 0 0 6px rgba(68, 221, 136, 0.4); }
 
-/* ── Policy Panel — SC1 command card ── */
+/* -- Policy Panel -- SC1 command card -- */
 #policy-panel {
     position: absolute;
     top: 0;
@@ -173,7 +178,7 @@ body {
     margin-top: 4px;
 }
 
-/* Policy slider — SC1 style */
+/* Policy slider -- SC1 style */
 .policy-slider-row {
     display: flex;
     align-items: center;
@@ -217,6 +222,18 @@ body {
     border-radius: 0;
 }
 
+.policy-slider-row input[type="range"]:disabled::-webkit-slider-thumb {
+    background: #2a4a3a;
+    border-color: #1a3a2a;
+    cursor: not-allowed;
+}
+
+.policy-slider-row input[type="range"]:disabled::-moz-range-thumb {
+    background: #2a4a3a;
+    border-color: #1a3a2a;
+    cursor: not-allowed;
+}
+
 .policy-slider-row .slider-val {
     font-size: 10px;
     color: #44dd88;
@@ -224,7 +241,7 @@ body {
     text-align: right;
 }
 
-/* ── Event Log — SC1 console ── */
+/* -- Event Log -- SC1 console -- */
 #event-log {
     position: absolute;
     bottom: 0;
@@ -255,13 +272,22 @@ body {
     color: #2a8a5a;
     font-weight: bold;
     margin-right: 6px;
+    font-size: 9px;
 }
 
-.event-entry.event-critical { color: #dd4444; text-shadow: 0 0 4px rgba(221, 68, 68, 0.3); }
+.event-entry.event-critical {
+    color: #dd4444;
+    text-shadow: 0 0 4px rgba(221, 68, 68, 0.3);
+}
+
+.event-entry.event-critical .event-day {
+    color: #dd4444;
+}
+
 .event-entry.event-warning { color: #ddaa44; }
 .event-entry.event-good { color: #44dd88; }
 
-/* ── Speed Controls — SC1 buttons ── */
+/* -- Speed Controls -- SC1 buttons -- */
 #speed-controls {
     position: absolute;
     bottom: 98px;
@@ -295,7 +321,258 @@ body {
     text-shadow: 0 0 4px rgba(68, 221, 136, 0.3);
 }
 
-/* Scrollbar — SC1 style */
+/* -- Keyboard hints -- */
+#kb-hints {
+    position: absolute;
+    bottom: 98px;
+    left: 180px;
+    font-size: 8px;
+    color: #1a3a2a;
+    letter-spacing: 1px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* -- Game Over Overlay -- */
+#game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.game-over-box {
+    background: #0a0a0a;
+    border: 2px solid #1a3a2a;
+    padding: 30px 40px;
+    text-align: center;
+    max-width: 420px;
+    width: 90%;
+}
+
+.game-over-box.victory {
+    border-color: #44dd88;
+    box-shadow: 0 0 30px rgba(68, 221, 136, 0.2);
+}
+
+.game-over-box.defeat {
+    border-color: #dd4444;
+    box-shadow: 0 0 30px rgba(221, 68, 68, 0.2);
+}
+
+.game-over-box h1 {
+    font-size: 20px;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    font-family: 'Courier New', monospace;
+}
+
+.victory h1 {
+    color: #44dd88;
+    text-shadow: 0 0 10px rgba(68, 221, 136, 0.5);
+}
+
+.defeat h1 {
+    color: #dd4444;
+    text-shadow: 0 0 10px rgba(221, 68, 68, 0.5);
+}
+
+.game-over-reason {
+    font-size: 12px;
+    color: #88aa99;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.game-over-stats {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 4px 0;
+    border-bottom: 1px solid #1a2a1a;
+}
+
+.stat-row span:first-child {
+    color: #2a6a4a;
+}
+
+.stat-row span:last-child {
+    color: #44dd88;
+    font-weight: bold;
+}
+
+.restart-btn {
+    background: #0d2a15;
+    border: 2px solid #44dd88;
+    color: #44dd88;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 0;
+}
+
+.restart-btn:hover {
+    background: #1a3a2a;
+    box-shadow: 0 0 12px rgba(68, 221, 136, 0.3);
+}
+
+/* -- Character Select -- */
+#char-select {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.char-select-box {
+    text-align: center;
+    max-width: 700px;
+    width: 95%;
+}
+
+.char-select-box h1 {
+    font-size: 18px;
+    letter-spacing: 6px;
+    color: #44dd88;
+    text-shadow: 0 0 12px rgba(68, 221, 136, 0.4);
+    margin-bottom: 6px;
+    font-family: 'Courier New', monospace;
+}
+
+.char-subtitle {
+    font-size: 10px;
+    color: #2a6a4a;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+}
+
+.char-grid {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.char-card {
+    background: #0a0a0a;
+    border: 2px solid #1a3a2a;
+    padding: 12px 10px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    width: 110px;
+    text-align: center;
+}
+
+.char-card:hover {
+    border-color: #2a5a3a;
+    background: #0d1a10;
+}
+
+.char-card.selected {
+    border-color: #44dd88;
+    background: #0d2a15;
+    box-shadow: 0 0 16px rgba(68, 221, 136, 0.2);
+}
+
+.char-portrait {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    margin-bottom: 8px;
+}
+
+.char-info .char-name {
+    font-size: 10px;
+    font-weight: bold;
+    color: #44dd88;
+    margin-bottom: 2px;
+    letter-spacing: 1px;
+}
+
+.char-info .char-title {
+    font-size: 8px;
+    color: #2a6a4a;
+    letter-spacing: 1px;
+}
+
+.begin-btn {
+    background: #0a0a0a;
+    border: 2px solid #1a3a2a;
+    color: #2a6a4a;
+    padding: 12px 36px;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    cursor: default;
+    border-radius: 0;
+    transition: all 0.15s ease;
+}
+
+.begin-btn.ready {
+    border-color: #44dd88;
+    color: #44dd88;
+    cursor: pointer;
+    text-shadow: 0 0 6px rgba(68, 221, 136, 0.4);
+}
+
+.begin-btn.ready:hover {
+    background: #0d2a15;
+    box-shadow: 0 0 16px rgba(68, 221, 136, 0.3);
+}
+
+/* -- HUD portrait -- */
+.hud-portrait {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-right: 1px solid #1a3a2a;
+}
+
+.hud-portrait canvas {
+    width: 28px;
+    height: 28px;
+    image-rendering: pixelated;
+}
+
+.hud-portrait .hud-char-name {
+    font-size: 9px;
+    color: #44dd88;
+    letter-spacing: 1px;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Scrollbar -- SC1 style */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #0a0a0a; }
 ::-webkit-scrollbar-thumb { background: #1a3a2a; border-radius: 0; }

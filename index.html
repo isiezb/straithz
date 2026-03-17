@@ -10,11 +10,15 @@
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
 
+        <!-- Character Select Overlay -->
+        <div id="char-select"></div>
+
         <!-- Top HUD -->
         <div id="hud">
+            <div class="hud-portrait" id="hud-portrait"></div>
             <div class="hud-item">
                 <span class="hud-label">Day</span>
-                <span id="hud-day" class="hud-value">1</span>
+                <span id="hud-day" class="hud-value">1/90</span>
             </div>
             <div class="hud-item">
                 <span class="hud-label">Oil Flow</span>
@@ -29,8 +33,20 @@
                 <span id="hud-tension" class="hud-value">Low</span>
             </div>
             <div class="hud-item">
-                <span class="hud-label">Global Approval</span>
+                <span class="hud-label">Approval</span>
                 <span id="hud-approval" class="hud-value">72%</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Conflict Risk</span>
+                <span id="hud-conflict-risk" class="hud-value good">0%</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Budget</span>
+                <span id="hud-budget" class="hud-value good">$1000M</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Crisis</span>
+                <span id="hud-crisis" class="hud-value good">None</span>
             </div>
         </div>
 
@@ -47,10 +63,15 @@
 
         <!-- Speed Controls -->
         <div id="speed-controls">
-            <button id="btn-pause" class="speed-btn active" title="Pause">⏸</button>
-            <button id="btn-1x" class="speed-btn" title="1x Speed">▶</button>
-            <button id="btn-2x" class="speed-btn" title="2x Speed">▶▶</button>
-            <button id="btn-4x" class="speed-btn" title="4x Speed">▶▶▶</button>
+            <button id="btn-pause" class="speed-btn active" title="Pause [0]">||</button>
+            <button id="btn-1x" class="speed-btn" title="1x Speed [1]">1x</button>
+            <button id="btn-2x" class="speed-btn" title="2x Speed [2]">2x</button>
+            <button id="btn-4x" class="speed-btn" title="4x Speed [3]">4x</button>
+        </div>
+
+        <!-- Keyboard hints -->
+        <div id="kb-hints">
+            SPACE: play/pause | 1-3: speed | ESC: deselect | Click: inspect
         </div>
     </div>
 
@@ -58,6 +79,7 @@
     <script src="js/simulation.js"></script>
     <script src="js/sprites.js"></script>
     <script src="js/map.js"></script>
+    <script src="js/characters.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/game.js"></script>
 </body>

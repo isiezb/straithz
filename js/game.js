@@ -2,35 +2,57 @@
  * Game — main loop, initialization
  */
 
-(function () {
+(async function () {
     try {
-        // Init
+        // Init sprites first (needed for character select)
         initSprites();
+
+        // Show character select
+        const character = await showCharacterSelect();
+
+        // Store selected character
+        SIM.character = character;
+
+        // Render portrait in HUD
+        const hudPortrait = document.getElementById('hud-portrait');
+        if (hudPortrait && SPRITES[character.spriteKey]) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 48;
+            canvas.height = 48;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 48, 48);
+            hudPortrait.innerHTML = '';
+            hudPortrait.appendChild(canvas);
+            const nameEl = document.createElement('span');
+            nameEl.className = 'hud-char-name';
+            nameEl.textContent = character.name.split(' ').pop(); // last name
+            hudPortrait.appendChild(nameEl);
+        }
+
+        // Init game
         initMap();
         initSimulation();
         initUI();
 
         // Log starting event
-        logEvent('Simulation initialized. Set policies and press Play to begin.', 'good');
+        logEvent('Advisor ' + character.name + ' selected. Set policies and press Play.', 'good');
 
         // Main loop
         let lastTick = 0;
-        const tickInterval = 100; // ms per simulation tick at 1x
+        const tickInterval = 100;
 
         function gameLoop(timestamp) {
             try {
-                // Tick simulation
                 if (timestamp - lastTick >= tickInterval / Math.max(SIM.speed, 1)) {
                     tickSimulation();
                     lastTick = timestamp;
                 }
 
-                // Render every frame
                 renderMap();
                 updateHUD();
                 updateEventLog();
 
-                // Re-render policy cards every 2 seconds (for cooldown updates)
                 if (Math.floor(timestamp / 2000) !== Math.floor((timestamp - 16) / 2000)) {
                     renderPolicyCards();
                 }
