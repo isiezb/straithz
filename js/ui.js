@@ -10,57 +10,105 @@ const TERMINAL = document.getElementById('terminal-overlay');
 // ======================== ACTION POINT SYSTEM ========================
 
 const INTERRUPTS = [
-    { text: "IRGC boat approaching tanker — intercept?", choices: [
-        { label: "INTERCEPT", effects: { tension: 3, interceptCount: 1, domesticApproval: 2 } },
-        { label: "MONITOR", effects: { tension: -1 } }
+    { text: "IRGC Heydar-class fast boat closing on tanker at 110 knots — intercept?", choices: [
+        { label: "INTERCEPT", effects: { tension: 4, interceptCount: 1, domesticApproval: 3 } },
+        { label: "MONITOR", effects: { tension: -1, oilFlow: -2 } }
     ]},
-    { text: "Reporter asks: 'Is war imminent?'", choices: [
-        { label: "DENY", effects: { domesticApproval: 2, tension: -2 } },
-        { label: "NO COMMENT", effects: {} }
+    { text: "Reporter asks: 'Is the US at war with Iran?'", choices: [
+        { label: "DENY FIRMLY", effects: { domesticApproval: 3, tension: -2 } },
+        { label: "NO COMMENT", effects: { polarization: 1 } }
     ]},
-    { text: "Ally requests emergency meeting", choices: [
-        { label: "ACCEPT", effects: { internationalStanding: 3, diplomaticCapital: 3 } },
-        { label: "DECLINE", effects: { internationalStanding: -2 } }
+    { text: "Japanese ambassador requests emergency meeting on oil supply", choices: [
+        { label: "MEET NOW", effects: { internationalStanding: 4, diplomaticCapital: 3 } },
+        { label: "SCHEDULE FOR TOMORROW", effects: { internationalStanding: -1 } }
     ]},
-    { text: "Intel flash: suspicious vessel detected", choices: [
-        { label: "INVESTIGATE ($10M)", effects: { budget: -10, fogOfWar: -5 } },
-        { label: "LOG IT", effects: { fogOfWar: -1 } }
+    { text: "NSA intercept: IRGC Quds Force planning proxy attack", choices: [
+        { label: "ALERT ALL BASES ($10M)", effects: { budget: -10, proxyThreat: -5, fogOfWar: -3 } },
+        { label: "CLASSIFIED BRIEF ONLY", effects: { fogOfWar: -2 } }
     ]},
-    { text: "Congress member leaks classified info", choices: [
-        { label: "DAMAGE CONTROL", effects: { domesticApproval: -2, fogOfWar: 5 } },
-        { label: "IGNORE", effects: { polarization: 2 } }
+    { text: "Congress member leaks classified satellite imagery to media", choices: [
+        { label: "DAMAGE CONTROL", effects: { domesticApproval: -2, fogOfWar: 8 } },
+        { label: "USE IT — SHOW THE WORLD", effects: { internationalStanding: 3, fogOfWar: 5, iranAggression: -2 } }
     ]},
-    { text: "Iranian fisherman rescued by Navy", choices: [
-        { label: "PUBLICIZE", effects: { internationalStanding: 3, domesticApproval: 2 } },
+    { text: "Navy rescue swimmers save Iranian fishermen from sinking vessel", choices: [
+        { label: "PUBLICIZE WIDELY", effects: { internationalStanding: 4, domesticApproval: 3, tension: -2 } },
         { label: "KEEP QUIET", effects: {} }
     ]},
-    { text: "Oil company threatens to reroute permanently", choices: [
-        { label: "PROMISE PROTECTION", effects: { oilFlow: 3, tension: 2 } },
-        { label: "LET THEM", effects: { oilFlow: -3, oilPrice: 3 } }
+    { text: "Maersk announces permanent rerouting around Cape of Good Hope", choices: [
+        { label: "PROMISE SAFE PASSAGE", effects: { oilFlow: 3, tension: 2, budget: -5 } },
+        { label: "ACKNOWLEDGE REALITY", effects: { oilFlow: -3, oilPrice: 4 } }
     ]},
-    { text: "Satellite shows new IRGC deployment", choices: [
-        { label: "ALERT ALLIES", effects: { internationalStanding: 2, fogOfWar: -3 } },
-        { label: "CLASSIFY", effects: { fogOfWar: -5 } }
+    { text: "SIGINT picks up Iranian submarine leaving Bandar Abbas", choices: [
+        { label: "ALERT THE FLEET", effects: { tension: 3, fogOfWar: -5, internationalStanding: 2 } },
+        { label: "TRACK SILENTLY", effects: { fogOfWar: -8 } }
     ]},
-    { text: "Protest at embassy — 'No War With Iran'", choices: [
-        { label: "ACKNOWLEDGE", effects: { domesticApproval: 2, polarization: -1 } },
-        { label: "IGNORE", effects: { polarization: 2 } }
+    { text: "Anti-war protest outside White House — 50,000 people", choices: [
+        { label: "ACKNOWLEDGE THEIR RIGHT", effects: { domesticApproval: 3, polarization: -2 } },
+        { label: "IGNORE", effects: { polarization: 3 } }
     ]},
-    { text: "Iranian state TV mocks your leadership", choices: [
-        { label: "FIRE BACK", effects: { domesticApproval: 3, tension: 3, iranAggression: 2 } },
-        { label: "STAY SILENT", effects: { domesticApproval: -1 } }
+    { text: "Iranian state TV airs footage of captured tanker crew", choices: [
+        { label: "DEMAND RELEASE — FORMAL STATEMENT", effects: { domesticApproval: 5, tension: 5, iranAggression: 2 } },
+        { label: "QUIET DIPLOMACY", effects: { tension: -2, diplomaticCapital: 3 } }
+    ]},
+    { text: "Saudi Crown Prince MBS offers $5B for strait operations", choices: [
+        { label: "ACCEPT WITH CONDITIONS", effects: { budget: 50, internationalStanding: 3, domesticApproval: -2 } },
+        { label: "DECLINE — STRINGS ATTACHED", effects: { domesticApproval: 3, internationalStanding: -2 } }
+    ]},
+    { text: "Chinese tanker ignoring sanctions — loading Iranian crude at Kharg Island", choices: [
+        { label: "INTERDICT", effects: { chinaRelations: -8, iranEconomy: -3, tension: 5 } },
+        { label: "PHOTOGRAPH AND FILE", effects: { chinaRelations: -2, fogOfWar: -2 } }
+    ]},
+    { text: "Pentagon requests $3B emergency supplemental for strait operations", choices: [
+        { label: "APPROVE", effects: { budget: -30, domesticApproval: -2 } },
+        { label: "CUT TO $1.5B", effects: { budget: -15 } }
+    ]},
+    { text: "Iranian deepfake video of US attack on civilians goes viral on Telegram", choices: [
+        { label: "RAPID DEBUNK — RELEASE REAL FOOTAGE", effects: { domesticApproval: 3, internationalStanding: 3, fogOfWar: 3 } },
+        { label: "IGNORE — DON'T AMPLIFY", effects: { internationalStanding: -3 } }
+    ]},
+    { text: "Oil futures traders driving speculative price spike", choices: [
+        { label: "JAWBONE MARKETS — PUBLIC STATEMENT", effects: { oilPrice: -3, domesticApproval: 2 } },
+        { label: "LET MARKETS WORK", effects: { oilPrice: 2 } }
+    ]},
+    { text: "IRGC-affiliated APT35 probing US military network perimeters", choices: [
+        { label: "COUNTER-HACK ($15M)", effects: { budget: -15, fogOfWar: -5, iranAggression: -3 } },
+        { label: "HARDEN DEFENSES", effects: { budget: -5 } }
+    ]},
+    { text: "Indian PM calls — demands guaranteed oil supply or 'will explore alternatives'", choices: [
+        { label: "PROMISE PRIORITY ACCESS", effects: { internationalStanding: 3, oilFlow: 2 } },
+        { label: "LEVERAGE FOR COALITION SUPPORT", effects: { internationalStanding: -2, diplomaticCapital: 5 } }
+    ]},
+    { text: "Houthi drone detected heading toward Red Sea shipping", choices: [
+        { label: "SHOOT IT DOWN", effects: { proxyThreat: -2, tension: 2, budget: -2 } },
+        { label: "TRACK TO SOURCE", effects: { fogOfWar: -3, proxyThreat: 1 } }
+    ]},
+    { text: "Wall Street banks warning of global recession if strait stays closed 60 days", choices: [
+        { label: "REASSURE MARKETS — PRESS CONFERENCE", effects: { domesticApproval: 2, oilPrice: -2 } },
+        { label: "USE URGENCY TO PRESSURE IRAN", effects: { tension: 3, diplomaticCapital: 3 } }
+    ]},
+    { text: "USS McFaul reports Iranian drone circling at 500 feet — requesting weapons free", choices: [
+        { label: "WEAPONS FREE", effects: { tension: 5, iranAggression: -3, domesticApproval: 3, warPath: 1 } },
+        { label: "ELECTRONIC WARFARE ONLY", effects: { tension: 2, fogOfWar: -2 } }
     ]},
 ];
 
 const _intelSnippets = [
-    'SIGINT intercept: IRGC naval base showing increased activity.',
-    'Satellite imagery: new missile battery deployed near Bandar Abbas.',
-    'HUMINT report: Iranian commander expressing doubts about escalation.',
-    'Intercepted comms: supply convoy scheduled for next 48 hours.',
-    'Drone recon: mine-laying vessel spotted near shipping lane.',
-    'Signal analysis: Iranian C2 network traffic spike detected.',
-    'Asset report: internal regime debate over strait strategy.',
-    'NSA intercept: Chinese tanker negotiating alternate route.',
+    'SIGINT intercept: IRGC naval base at Bandar Abbas showing surge activity.',
+    'Satellite imagery: Heydar-110 fast boats deployed to forward position near Larak Island.',
+    'HUMINT report: Iranian commander expressing doubts about escalation — moderates gaining.',
+    'Intercepted comms: IRGC supply convoy scheduled for next 48 hours via Kish Island.',
+    'MQ-9 Reaper footage: mine-laying vessel spotted in western shipping lane.',
+    'Signal analysis: Iranian C2 network traffic spike — possible operation imminent.',
+    'Asset report: IRGC and Foreign Ministry in open disagreement over strategy.',
+    'NSA intercept: Chinese tankers negotiating alternate route via Pakistani port.',
+    'Satellite: IRIS Shahid Bagheri drone carrier has left port — heading southeast.',
+    'HUMINT: Iran stockpiling enriched uranium at underground Fordow facility.',
+    'Intercepted call: Iraqi militia commander receiving targeting data from Tehran.',
+    'Imagery: New anti-ship missile battery activated at Qeshm Island — 30km from shipping lane.',
+    'SIGINT: Houthi leadership in contact with IRGC Quds Force — coordinating Red Sea ops.',
+    'Asset report: Iranian regime concerned about public unrest over economic collapse.',
+    'Satellite: Russia-flagged cargo vessel entered Bandar Abbas with military containers.',
+    'NSA: APT33 staging infrastructure for cyberattack on Gulf state port systems.',
 ];
 
 // Floating number stack counter for positioning
@@ -718,6 +766,12 @@ function showActionPanel() {
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 25 ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span></button>
                 </div>
 
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#dd4444">CRISIS</div>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="issue-ultimatum">ISSUE ULTIMATUM</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 20 ? 'disabled' : ''}" data-action="emergency-coalition">EMERGENCY COALITION <span class="ap-cost">$20M</span></button>
+                </div>
+
                 ${specialHtml}
             </div>
 
@@ -915,6 +969,35 @@ function _executeAction(actionId, rerenderFn) {
             toastMsg = 'Strategic reserve released \u2014 oil prices down';
             toastLevel = 'good';
             addHeadline('Strategic petroleum reserve release authorized.', 'normal');
+            break;
+
+        case 'issue-ultimatum':
+            SIM.tension = Math.min(100, SIM.tension + 8);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 5);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 5);
+            SIM.warPath = Math.min(5, SIM.warPath + 1);
+            showFloatingNumber('tension', 8);
+            showFloatingNumber('iranAggression', -5);
+            showFloatingNumber('domesticApproval', 5);
+            showFloatingNumber('warPath', 1);
+            toastMsg = 'Ultimatum issued: "Cease all hostile actions within 72 hours"';
+            toastLevel = 'warning';
+            addHeadline('US issues formal ultimatum to Iran on strait freedom of navigation.', 'critical');
+            break;
+
+        case 'emergency-coalition':
+            if (SIM.budget < 20) return;
+            SIM.budget -= 20;
+            SIM.internationalStanding = Math.min(100, SIM.internationalStanding + 5);
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 3);
+            SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 5);
+            showFloatingNumber('internationalStanding', 5);
+            showFloatingNumber('oilFlow', 3);
+            showFloatingNumber('diplomaticCapital', 5);
+            showFloatingNumber('budget', -20);
+            toastMsg = 'Emergency coalition call — allies responding';
+            toastLevel = 'good';
+            addHeadline('Emergency coalition meeting convened on strait crisis.', 'normal');
             break;
 
         case 'special':
