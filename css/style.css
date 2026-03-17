@@ -1,0 +1,253 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0e17;
+    color: #e0e6ed;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ── HUD ── */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 300px;
+    display: flex;
+    gap: 2px;
+    padding: 8px 12px;
+    background: linear-gradient(180deg, rgba(10, 14, 23, 0.95) 0%, rgba(10, 14, 23, 0.7) 100%);
+    border-bottom: 1px solid rgba(100, 180, 255, 0.15);
+    z-index: 10;
+}
+
+.hud-item {
+    flex: 1;
+    text-align: center;
+    padding: 4px 8px;
+}
+
+.hud-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b7a8d;
+    margin-bottom: 2px;
+}
+
+.hud-value {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: #64b4ff;
+}
+
+.hud-value.danger { color: #ff4d4d; }
+.hud-value.warning { color: #ffaa33; }
+.hud-value.good { color: #44dd88; }
+
+/* ── Policy Panel ── */
+#policy-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background: rgba(10, 14, 23, 0.92);
+    border-left: 1px solid rgba(100, 180, 255, 0.15);
+    padding: 16px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+#policy-panel h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64b4ff;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(100, 180, 255, 0.2);
+}
+
+.policy-card {
+    background: rgba(30, 40, 60, 0.6);
+    border: 1px solid rgba(100, 180, 255, 0.1);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.policy-card:hover {
+    border-color: rgba(100, 180, 255, 0.4);
+    background: rgba(30, 40, 60, 0.9);
+}
+
+.policy-card.active {
+    border-color: #64b4ff;
+    background: rgba(40, 60, 100, 0.5);
+    box-shadow: 0 0 12px rgba(100, 180, 255, 0.15);
+}
+
+.policy-card.active .policy-status {
+    color: #44dd88;
+}
+
+.policy-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.policy-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.policy-desc {
+    font-size: 11px;
+    color: #6b7a8d;
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+
+.policy-effects {
+    font-size: 10px;
+    color: #8899aa;
+}
+
+.policy-effects span.positive { color: #44dd88; }
+.policy-effects span.negative { color: #ff4d4d; }
+
+.policy-status {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6b7a8d;
+    margin-top: 4px;
+}
+
+/* Policy slider controls */
+.policy-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.policy-slider-row label {
+    font-size: 10px;
+    color: #6b7a8d;
+    min-width: 40px;
+}
+
+.policy-slider-row input[type="range"] {
+    flex: 1;
+    accent-color: #64b4ff;
+    height: 4px;
+}
+
+.policy-slider-row .slider-val {
+    font-size: 11px;
+    color: #64b4ff;
+    min-width: 30px;
+    text-align: right;
+}
+
+/* ── Event Log ── */
+#event-log {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 300px;
+    height: 100px;
+    background: linear-gradient(0deg, rgba(10, 14, 23, 0.95) 0%, rgba(10, 14, 23, 0.6) 100%);
+    border-top: 1px solid rgba(100, 180, 255, 0.1);
+    padding: 8px 12px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+#event-log-inner {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.event-entry {
+    font-size: 11px;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.4;
+}
+
+.event-entry .event-day {
+    color: #64b4ff;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.event-entry.event-critical { color: #ff4d4d; }
+.event-entry.event-warning { color: #ffaa33; }
+.event-entry.event-good { color: #44dd88; }
+
+/* ── Speed Controls ── */
+#speed-controls {
+    position: absolute;
+    bottom: 110px;
+    left: 12px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+}
+
+.speed-btn {
+    background: rgba(30, 40, 60, 0.8);
+    border: 1px solid rgba(100, 180, 255, 0.2);
+    color: #6b7a8d;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.15s ease;
+}
+
+.speed-btn:hover {
+    border-color: rgba(100, 180, 255, 0.5);
+    color: #e0e6ed;
+}
+
+.speed-btn.active {
+    border-color: #64b4ff;
+    color: #64b4ff;
+    background: rgba(40, 60, 100, 0.5);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(100, 180, 255, 0.2); border-radius: 2px; }
