@@ -614,6 +614,10 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.92);
+    background-image: url('../assets/situation-room.png');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
 }
 
 .terminal-box {
@@ -1245,6 +1249,130 @@ body {
 
 .tip-box.tip-critical { border-left-color: #dd4444; }
 .tip-box.tip-warning { border-left-color: #ddaa44; }
+
+/* ======================== FIRST MORNING FLAGS/PORTRAIT ======================== */
+
+.fm-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.fm-top-center {
+    text-align: center;
+}
+
+.fm-flag {
+    width: 48px;
+    height: 32px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    opacity: 0.7;
+}
+
+.fm-advisor-portrait {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    margin: 8px auto;
+    border: 2px solid #1a3a2a;
+}
+
+/* ======================== GAME OVER ART ======================== */
+
+.gameover-art {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    image-rendering: pixelated;
+    border-bottom: 2px solid #1a2a1a;
+    margin-bottom: 16px;
+}
+
+.gameover-reaction {
+    display: block;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    margin: 0 auto 8px auto;
+    border: 2px solid #1a2a1a;
+}
+
+/* ======================== EVENT CATEGORY ART ======================== */
+
+.event-category-art {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    margin: 0 auto 12px auto;
+    opacity: 0.85;
+    mix-blend-mode: screen;
+    filter: brightness(0.9);
+}
+
+/* ======================== BRIEFING PORTRAIT ======================== */
+
+.briefing-header-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.briefing-portrait {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    border: 2px solid #1a3a2a;
+    flex-shrink: 0;
+}
+
+.briefing-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ======================== GAME OVER GAUGE BREAKDOWN ======================== */
+
+.gameover-gauge-breakdown {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 8px 0 12px 0;
+}
+
+.gameover-gauge-col {
+    text-align: center;
+    min-width: 55px;
+}
+
+.go-gauge-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #2a6a4a;
+    margin-bottom: 2px;
+}
+
+.go-gauge-val {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.gameover-sublabel {
+    text-align: center;
+    font-size: 10px;
+    color: #2a6a4a;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
 
 /* ======================== CHARACTER SELECT ======================== */
 

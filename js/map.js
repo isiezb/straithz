@@ -22,7 +22,7 @@ function initMap() {
     const mapImg = new Image();
     mapImg.onload = () => { MAP.assets.mapBg = mapImg; };
     mapImg.onerror = () => {};
-    mapImg.src = 'assets/map-bg.png';
+    mapImg.src = 'assets/strait-map.png';
 }
 
 function resizeCanvas() {
@@ -57,9 +57,12 @@ function renderMap() {
         drawProceduralMap(ctx, w, h);
     }
 
-    // --- Minimal overlays (text-based game, map is ambient) ---
+    // --- Overlays ---
     drawShippingLaneFlow(ctx, w, h);
+    drawPlatforms(ctx, w, h);
+    drawEntities(ctx, w, h);
     drawIncidentMarkers(ctx, w, h);
+    drawHazardMarkers(ctx, w, h);
 
     // Day counter
     drawDayCounter(ctx, w, h);

@@ -503,9 +503,18 @@ function showFirstMorning() {
     const charName = SIM.character ? SIM.character.name : 'ADVISOR';
     const charTitle = SIM.character ? SIM.character.title : '';
 
+    const advisorImg = SIM.character ? SIM.character.portraitImage : null;
+
     openTerminal(`
-        <div class="term-header" style="color:#dd4444">FEB 28, 2026 \u2014 0547 HOURS</div>
-        <div class="term-title" style="color:#dd4444">SITUATION ROOM</div>
+        <div class="fm-top-row">
+            <img src="assets/us-flag.png" class="fm-flag" alt="US">
+            <div class="fm-top-center">
+                <div class="term-header" style="color:#dd4444">FEB 28, 2026 \u2014 0547 HOURS</div>
+                <div class="term-title" style="color:#dd4444">SITUATION ROOM</div>
+            </div>
+            <img src="assets/iran-flag.png" class="fm-flag" alt="Iran">
+        </div>
+        ${advisorImg ? `<img src="${advisorImg}" class="fm-advisor-portrait" alt="${charName}">` : ''}
         <div class="term-line dim" style="margin-bottom:12px">EYES ONLY \u2014 ${charName.toUpperCase()}, ${charTitle.toUpperCase()}</div>
 
         <div class="term-section">
@@ -802,10 +811,17 @@ function showDailyReport() {
         specialActionHtml = `<button class="term-btn" id="btn-special-action">[ ${SIM.character.specialAction.name.toUpperCase()} ]</button>`;
     }
 
+    const advisorImg = SIM.character.portraitImage || null;
+
     openTerminal(`
-        <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
-        <div class="term-title">${_getBriefingTitle()}</div>
-        <div class="term-line dim">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
+        <div class="briefing-header-row">
+            ${advisorImg ? `<img src="${advisorImg}" class="briefing-portrait" alt="${SIM.character.name}">` : ''}
+            <div class="briefing-header-text">
+                <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
+                <div class="term-title">${_getBriefingTitle()}</div>
+                <div class="term-line dim">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
+            </div>
+        </div>
         <div class="term-line" style="color:#ddaa44;margin:4px 0 8px 0">\u25B6 ${recommendation}</div>
 
         <div class="term-section">
@@ -2105,9 +2121,11 @@ function showDecisionEvent(event) {
         const crisisHeader = isCrisis ? '<div class="crisis-header">\u2588 CRISIS TELEPHONE \u2588</div>' : '';
         const headerStyle = isCrisis ? 'color:#dd4444' : '';
         const titleStyle = isCrisis ? 'color:#dd4444;text-shadow:0 0 10px rgba(221,68,68,0.4)' : '';
+        const eventImg = _getEventCategoryImage(event);
 
         openTerminal(`
             ${crisisHeader}
+            ${eventImg ? `<img src="${eventImg}" class="event-category-art" alt="Event">` : ''}
             ${countdown > 0 ? `<div class="decision-timer">${countdown}s</div>` : ''}
             <div class="term-header" style="${headerStyle}">DAY ${SIM.day} \u2014 ${isCrisis ? 'CRISIS' : 'DECISION REQUIRED'}</div>
             <div class="term-title" style="${titleStyle}">${event.title}</div>
@@ -2386,10 +2404,19 @@ function showGameOverScreen() {
         </div>`;
     }).join('');
 
+    const outcomeImg = SIM.gameWon ? 'assets/victory.png' : 'assets/defeat.png';
+    const reactionImg = SIM.gameWon
+        ? _getReactionImage('victory')
+        : _getReactionImage('defeat');
+
     openTerminal(`
+        <img src="${outcomeImg}" class="gameover-art" alt="${SIM.gameWon ? 'Victory' : 'Defeat'}">
+
         <div class="gameover-title ${SIM.gameWon ? 'victory' : 'defeat'}">
             ${SIM.gameWon ? 'MISSION COMPLETE' : 'MISSION FAILED'}
         </div>
+
+        ${reactionImg ? `<img src="${reactionImg}" class="gameover-reaction" alt="Advisor reaction">` : ''}
 
         <div class="gameover-grade ${gradeClass}">${rating.grade}</div>
         <div class="gameover-sublabel">${rating.label.toUpperCase()} \u2014 SCORE ${rating.score}/100</div>
@@ -2609,6 +2636,47 @@ function formatEffectName(key) {
         oilFlow: 'Oil Flow', budget: 'Budget', interceptCount: 'Intercepts',
     };
     return names[key] || key;
+}
+
+// ======================== REACTION PORTRAITS ========================
+
+const REACTION_IMAGES = {
+    trump:     { angry: 'assets/trump-angry.png',    positive: 'assets/trump-smug.png' },
+    hegseth:   { angry: 'assets/pete-angry.png',     positive: 'assets/pete.png' },
+    kushner:   { angry: 'assets/kushner.png',         positive: 'assets/kushner-scheming.png' },
+    asmongold: { angry: 'assets/asmongold.png',       positive: 'assets/asmongold-hype.png' },
+    fuentes:   { angry: 'assets/nick.png',            positive: 'assets/nick.png' },
+};
+
+function _getReactionImage(context) {
+    if (!SIM.character) return null;
+    const reactions = REACTION_IMAGES[SIM.character.id];
+    if (!reactions) return null;
+
+    if (context === 'victory') return reactions.positive;
+    if (context === 'defeat') return reactions.angry;
+    if (context === 'crisis') return reactions.angry;
+    if (context === 'good') return reactions.positive;
+    return null;
+}
+
+function _getEventCategoryImage(event) {
+    if (!event) return '';
+    // Determine category from event content
+    const title = (event.title || '').toLowerCase();
+    const desc = (event.description || '').toLowerCase();
+    const text = title + ' ' + desc;
+
+    if (event.crisis) return 'assets/event-military.png';
+    if (text.match(/strike|carrier|navy|military|missile|bomb|war|attack|drone|mine|boat|ship|escort|convoy|swarm|submarine/))
+        return 'assets/event-military.png';
+    if (text.match(/diplomat|talk|negotiate|un |resolution|mediati|ceasefire|summit|back.?channel|treaty|muscat/))
+        return 'assets/event-diplomatic.png';
+    if (text.match(/oil|sanction|econom|price|gas|trade|insur|budget|barrel|reserve|bank|fund/))
+        return 'assets/event-economic.png';
+    if (text.match(/intel|spy|cyber|drone|surveil|sigint|humint|leak|defect|source|classified/))
+        return 'assets/event-intel.png';
+    return 'assets/event-military.png'; // default
 }
 
 // ======================== ACTION PANEL CSS ========================
