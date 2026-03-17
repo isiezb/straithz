@@ -65,6 +65,7 @@
                 renderMap();
                 updateGauges();
                 updateNewsTicker();
+                updateEventLog();
                 updateAdvisorConsole();
             } catch (e) {
                 console.error('Game loop error:', e);

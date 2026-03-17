@@ -149,6 +149,24 @@ function updateSpecialAction() {
     // Actually handled in tickSimulation
 }
 
+// ======================== EVENT LOG ========================
+
+let _lastEventLogLen = 0;
+
+function updateEventLog() {
+    if (SIM.headlines.length === _lastEventLogLen) return;
+    _lastEventLogLen = SIM.headlines.length;
+
+    const log = document.getElementById('event-log');
+    if (!log) return;
+
+    const recent = SIM.headlines.slice(-30).reverse();
+    log.innerHTML = '<div class="event-log-header">SITUATION LOG</div>' +
+        recent.map(h =>
+            `<div class="event-log-entry elog-${h.level}"><span class="elog-day">D${h.day}</span>${h.text}</div>`
+        ).join('');
+}
+
 // ======================== NEWS TICKER ========================
 
 let _lastTickerLen = 0;
@@ -856,6 +874,7 @@ function restartGame() {
 
     _lastAdvisorText = '';
     _lastTickerLen = 0;
+    _lastEventLogLen = 0;
 
     initSimulation();
     updateGauges();

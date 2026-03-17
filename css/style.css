@@ -23,14 +23,60 @@ body {
 #game-canvas {
     display: block;
     position: absolute;
-    top: 46px;
+    top: 58px;
     left: 0;
-    right: 240px;
-    bottom: 36px;
-    width: calc(100% - 240px);
-    height: calc(100% - 82px);
+    right: 340px;
+    width: calc(100% - 340px);
+    height: 45%;
     image-rendering: pixelated;
 }
+
+/* ======================== EVENT LOG (below canvas) ======================== */
+
+#event-log {
+    position: absolute;
+    top: calc(58px + 45%);
+    left: 0;
+    right: 340px;
+    bottom: 48px;
+    background: #060a08;
+    border-top: 2px solid #1a3a2a;
+    overflow-y: auto;
+    z-index: 10;
+    padding: 8px 0;
+}
+
+.event-log-header {
+    font-size: 10px;
+    color: #2a6a4a;
+    letter-spacing: 3px;
+    padding: 4px 14px 6px;
+    border-bottom: 1px solid #0d1a10;
+    text-transform: uppercase;
+}
+
+.event-log-entry {
+    font-size: 13px;
+    padding: 5px 14px;
+    line-height: 1.5;
+    border-bottom: 1px solid #0a1410;
+    color: #6a9a7a;
+}
+
+.event-log-entry:first-of-type {
+    color: #88ccaa;
+}
+
+.event-log-entry .elog-day {
+    color: #2a6a4a;
+    font-size: 11px;
+    margin-right: 6px;
+}
+
+.event-log-entry.elog-critical { color: #dd4444; }
+.event-log-entry.elog-warning { color: #ddaa44; }
+.event-log-entry.elog-good { color: #44dd88; }
+.event-log-entry.elog-normal { color: #88aa99; }
 
 /* ======================== GAUGE BAR (top) ======================== */
 
@@ -38,22 +84,22 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    right: 240px;
-    height: 46px;
+    right: 340px;
+    height: 58px;
     display: flex;
     align-items: center;
     gap: 0;
     background: #0a0a0a;
     border-bottom: 2px solid #1a3a2a;
     z-index: 10;
-    padding: 0 8px;
+    padding: 0 10px;
 }
 
 .gauge-week {
-    font-size: 9px;
+    font-size: 12px;
     color: #44dd88;
     letter-spacing: 2px;
-    padding: 0 12px 0 4px;
+    padding: 0 14px 0 4px;
     white-space: nowrap;
     text-shadow: 0 0 6px rgba(68, 221, 136, 0.3);
 }
@@ -61,26 +107,26 @@ body {
 .gauge-item {
     flex: 1;
     text-align: center;
-    padding: 4px 8px;
+    padding: 6px 10px;
     border-left: 1px solid #1a3a2a;
     min-width: 0;
 }
 
 .gauge-label {
     display: block;
-    font-size: 7px;
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: #2a6a4a;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
 .gauge-track {
     width: 100%;
-    height: 6px;
+    height: 8px;
     background: #0d1a10;
     border: 1px solid #1a3a2a;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
 .gauge-fill {
@@ -94,7 +140,7 @@ body {
 
 .gauge-val {
     display: block;
-    font-size: 8px;
+    font-size: 11px;
     font-weight: bold;
     letter-spacing: 1px;
 }
@@ -104,10 +150,10 @@ body {
 .gauge-val.danger { color: #dd4444; }
 
 .strait-counter {
-    font-size: 8px;
+    font-size: 11px;
     color: #2a6a4a;
     letter-spacing: 1px;
-    padding: 0 4px 0 12px;
+    padding: 0 6px 0 14px;
     border-left: 1px solid #1a3a2a;
     white-space: nowrap;
 }
@@ -129,7 +175,7 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    width: 240px;
+    width: 340px;
     height: 100%;
     background: #0a0a0a;
     border-left: 2px solid #1a3a2a;
@@ -142,26 +188,26 @@ body {
 .advisor-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 12px 16px;
     background: #0d1a10;
     border-bottom: 2px solid #1a3a2a;
 }
 
 .advisor-portrait {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
 }
 
 .advisor-portrait canvas {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     image-rendering: pixelated;
 }
 
 .advisor-name {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: bold;
     color: #44dd88;
     letter-spacing: 1px;
@@ -169,18 +215,18 @@ body {
 }
 
 .advisor-title-text {
-    font-size: 8px;
+    font-size: 11px;
     color: #2a6a4a;
     letter-spacing: 1px;
 }
 
 .advisor-speech {
-    padding: 10px 12px;
-    font-size: 11px;
+    padding: 12px 16px;
+    font-size: 14px;
     color: #88aa99;
-    line-height: 1.5;
+    line-height: 1.6;
     border-bottom: 1px solid #1a3a2a;
-    min-height: 50px;
+    min-height: 60px;
     font-style: italic;
 }
 
@@ -190,15 +236,15 @@ body {
 }
 
 .advisor-status {
-    padding: 8px 12px;
+    padding: 10px 16px;
     flex: 1;
 }
 
 .advisor-stat {
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
-    padding: 3px 0;
+    font-size: 12px;
+    padding: 5px 0;
     border-bottom: 1px solid #0d1a10;
 }
 
@@ -217,8 +263,8 @@ body {
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 240px;
-    height: 36px;
+    right: 340px;
+    height: 48px;
     background: #0a0a0a;
     border-top: 2px solid #1a3a2a;
     display: flex;
@@ -227,10 +273,10 @@ body {
 }
 
 .ticker-label {
-    font-size: 8px;
+    font-size: 11px;
     color: #dd4444;
     letter-spacing: 2px;
-    padding: 0 10px;
+    padding: 0 12px;
     font-weight: bold;
     animation: blink 1.5s infinite;
     white-space: nowrap;
@@ -253,8 +299,8 @@ body {
 }
 
 .ticker-item {
-    font-size: 9px;
-    padding: 0 8px;
+    font-size: 12px;
+    padding: 0 10px;
     white-space: nowrap;
     color: #44dd88;
 }
@@ -267,16 +313,16 @@ body {
 .ticker-sep {
     color: #1a3a2a;
     padding: 0 4px;
-    font-size: 9px;
+    font-size: 12px;
 }
 
 /* ======================== TOAST NOTIFICATIONS ======================== */
 
 #toast-container {
     position: absolute;
-    top: 54px;
-    right: 250px;
-    width: 280px;
+    top: 66px;
+    right: 350px;
+    width: 320px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -288,10 +334,10 @@ body {
     background: #0a0a0aee;
     border: 1px solid #1a3a2a;
     border-left: 3px solid #44dd88;
-    padding: 8px 10px;
-    font-size: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
     color: #44dd88;
-    line-height: 1.3;
+    line-height: 1.4;
     animation: toastSlideIn 0.3s ease, toastFadeOut 0.5s ease 3.5s forwards;
 }
 
@@ -340,7 +386,7 @@ body {
 .briefing-box {
     background: #0a0a0a;
     border: 2px solid #44dd88;
-    max-width: 800px;
+    max-width: 900px;
     width: 95%;
     max-height: 90vh;
     overflow-y: auto;
@@ -351,13 +397,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 16px;
+    padding: 12px 20px;
     background: #0d1a10;
     border-bottom: 2px solid #1a3a2a;
 }
 
 .briefing-week {
-    font-size: 13px;
+    font-size: 16px;
     color: #44dd88;
     letter-spacing: 4px;
     font-weight: bold;
@@ -365,40 +411,40 @@ body {
 }
 
 .briefing-label {
-    font-size: 9px;
+    font-size: 12px;
     color: #2a6a4a;
     letter-spacing: 2px;
 }
 
 .briefing-advisor {
-    padding: 10px 16px;
+    padding: 12px 20px;
     border-bottom: 1px solid #1a3a2a;
 }
 
 .advisor-quote {
-    font-size: 11px;
+    font-size: 14px;
     color: #88aa99;
     font-style: italic;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .advisor-attr {
-    font-size: 9px;
+    font-size: 12px;
     color: #2a6a4a;
     margin-left: 8px;
 }
 
 .briefing-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 8px;
-    padding: 12px 16px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+    padding: 14px 20px;
 }
 
 .briefing-card {
     background: #0d1a10;
     border: 2px solid #1a3a2a;
-    padding: 10px;
+    padding: 12px;
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -427,26 +473,26 @@ body {
 }
 
 .bcard-cat {
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 2px;
     margin-bottom: 4px;
     font-weight: bold;
 }
 
 .bcard-name {
-    font-size: 12px;
+    font-size: 15px;
     color: #44dd88;
     font-weight: bold;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     letter-spacing: 1px;
     text-shadow: 0 0 4px rgba(68, 221, 136, 0.2);
 }
 
 .bcard-desc {
-    font-size: 9px;
+    font-size: 12px;
     color: #2a6a4a;
-    line-height: 1.4;
-    margin-bottom: 6px;
+    line-height: 1.5;
+    margin-bottom: 8px;
 }
 
 .bcard-funding {
@@ -460,8 +506,8 @@ body {
     background: #0a0a0a;
     border: 1px solid #1a3a2a;
     color: #2a6a4a;
-    padding: 4px;
-    font-size: 9px;
+    padding: 6px;
+    font-size: 12px;
     font-family: 'Courier New', monospace;
     cursor: pointer;
     letter-spacing: 1px;
@@ -483,17 +529,17 @@ body {
 }
 
 .bcard-hint {
-    font-size: 9px;
+    font-size: 12px;
     color: #448866;
     font-style: italic;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .briefing-summary {
     display: flex;
     justify-content: space-between;
-    padding: 8px 16px;
-    font-size: 10px;
+    padding: 10px 20px;
+    font-size: 13px;
     color: #2a6a4a;
     border-top: 1px solid #1a3a2a;
 }
@@ -504,13 +550,13 @@ body {
 
 .briefing-confirm {
     display: block;
-    width: calc(100% - 32px);
-    margin: 0 16px 16px;
+    width: calc(100% - 40px);
+    margin: 0 20px 20px;
     background: #0a0a0a;
     border: 2px solid #1a3a2a;
     color: #2a6a4a;
-    padding: 12px;
-    font-size: 13px;
+    padding: 14px;
+    font-size: 15px;
     font-family: 'Courier New', monospace;
     letter-spacing: 4px;
     cursor: default;
@@ -536,7 +582,7 @@ body {
 .debrief-box {
     background: #0a0a0a;
     border: 2px solid #4488dd;
-    max-width: 480px;
+    max-width: 540px;
     width: 95%;
     max-height: 90vh;
     overflow-y: auto;
@@ -545,12 +591,12 @@ body {
 
 .debrief-masthead {
     text-align: center;
-    padding: 12px 16px 8px;
+    padding: 14px 20px 10px;
     border-bottom: 3px double #1a2a4a;
 }
 
 .debrief-paper-name {
-    font-size: 14px;
+    font-size: 18px;
     color: #4488dd;
     letter-spacing: 4px;
     font-weight: bold;
@@ -558,17 +604,17 @@ body {
 }
 
 .debrief-date {
-    font-size: 8px;
+    font-size: 11px;
     color: #2a4a6a;
     letter-spacing: 2px;
     margin-top: 4px;
 }
 
 .debrief-headline {
-    font-size: 13px;
+    font-size: 16px;
     color: #ffffff;
     letter-spacing: 2px;
-    padding: 12px 16px;
+    padding: 14px 20px;
     text-align: center;
     line-height: 1.5;
     border-bottom: 1px solid #1a2a4a;
@@ -577,12 +623,12 @@ body {
 
 .debrief-rating {
     text-align: center;
-    padding: 12px 16px;
+    padding: 14px 20px;
     border-bottom: 1px solid #1a2a1a;
 }
 
 .debrief-grade {
-    font-size: 36px;
+    font-size: 42px;
     font-weight: bold;
     letter-spacing: 4px;
     display: block;
@@ -594,33 +640,33 @@ body {
 .debrief-grade.danger { color: #dd4444; text-shadow: 0 0 16px rgba(221, 68, 68, 0.4); }
 
 .debrief-grade-label {
-    font-size: 9px;
+    font-size: 12px;
     color: #2a6a4a;
     letter-spacing: 2px;
 }
 
 .debrief-gauges {
-    padding: 10px 16px;
+    padding: 12px 20px;
 }
 
 .debrief-gauge-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 0;
+    gap: 10px;
+    padding: 5px 0;
     border-bottom: 1px solid #0a1a10;
 }
 
 .dg-label {
-    font-size: 9px;
+    font-size: 12px;
     color: #2a6a4a;
-    width: 60px;
+    width: 75px;
     letter-spacing: 1px;
 }
 
 .dg-bar {
     flex: 1;
-    height: 6px;
+    height: 8px;
     background: #0d1a10;
     border: 1px solid #1a3a2a;
 }
@@ -634,8 +680,8 @@ body {
 .dg-fill.danger { background: #dd4444; }
 
 .dg-trend {
-    font-size: 10px;
-    width: 16px;
+    font-size: 13px;
+    width: 20px;
     text-align: center;
 }
 
@@ -644,42 +690,42 @@ body {
 .stable { color: #2a6a4a; }
 
 .debrief-section {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-top: 1px solid #1a2a1a;
 }
 
 .debrief-section-label {
-    font-size: 8px;
+    font-size: 10px;
     color: #2a6a4a;
     letter-spacing: 3px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .debrief-item {
-    font-size: 10px;
+    font-size: 13px;
     color: #88aa99;
-    padding: 2px 0;
-    line-height: 1.4;
+    padding: 3px 0;
+    line-height: 1.5;
 }
 
 .debrief-advisor-quote {
-    padding: 10px 16px;
-    font-size: 10px;
+    padding: 12px 20px;
+    font-size: 13px;
     color: #448866;
     font-style: italic;
     border-top: 1px solid #1a2a1a;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .debrief-continue {
     display: block;
-    width: calc(100% - 32px);
-    margin: 12px 16px 16px;
+    width: calc(100% - 40px);
+    margin: 14px 20px 20px;
     background: #0a0a1a;
     border: 2px solid #4488dd;
     color: #4488dd;
-    padding: 10px;
-    font-size: 12px;
+    padding: 12px;
+    font-size: 15px;
     font-family: 'Courier New', monospace;
     letter-spacing: 3px;
     cursor: pointer;
@@ -698,7 +744,7 @@ body {
 .decision-box {
     background: #0a0a0a;
     border: 2px solid #ddaa44;
-    max-width: 500px;
+    max-width: 560px;
     width: 90%;
     box-shadow: 0 0 30px rgba(221, 170, 68, 0.15);
 }
@@ -707,19 +753,19 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 14px;
+    padding: 10px 16px;
     background: #1a1500;
     border-bottom: 1px solid #3a2a0a;
 }
 
 .decision-day {
-    font-size: 9px;
+    font-size: 12px;
     color: #ddaa44;
     letter-spacing: 2px;
 }
 
 .decision-label {
-    font-size: 8px;
+    font-size: 11px;
     color: #dd4444;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -727,34 +773,34 @@ body {
 }
 
 .decision-title {
-    font-size: 14px;
+    font-size: 18px;
     color: #ddaa44;
     letter-spacing: 3px;
-    padding: 14px 14px 8px;
+    padding: 16px 16px 10px;
     text-shadow: 0 0 8px rgba(221, 170, 68, 0.3);
     font-family: 'Courier New', monospace;
 }
 
 .decision-desc {
-    font-size: 11px;
+    font-size: 14px;
     color: #88aa99;
-    line-height: 1.6;
-    padding: 0 14px 16px;
+    line-height: 1.7;
+    padding: 0 16px 18px;
 }
 
 .decision-choices {
-    padding: 0 14px 14px;
+    padding: 0 16px 16px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .decision-choice {
     background: #0d1a10;
     border: 1px solid #1a3a2a;
     color: #44dd88;
-    padding: 10px 12px;
-    font-size: 11px;
+    padding: 12px 14px;
+    font-size: 14px;
     font-family: 'Courier New', monospace;
     cursor: pointer;
     text-align: left;
@@ -762,7 +808,7 @@ body {
     border-radius: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
 }
 
 .decision-choice:hover {
@@ -777,10 +823,10 @@ body {
 }
 
 .choice-effects {
-    font-size: 9px;
+    font-size: 11px;
     color: #336644;
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
@@ -788,22 +834,22 @@ body {
 .choice-effects .negative { color: #dd4444; }
 
 .decision-result {
-    padding: 30px 14px;
+    padding: 30px 16px;
     text-align: center;
 }
 
 .decision-result h2 {
-    font-size: 13px;
+    font-size: 16px;
     color: #44dd88;
     letter-spacing: 3px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     font-family: 'Courier New', monospace;
 }
 
 .decision-flavor {
-    font-size: 11px;
+    font-size: 14px;
     color: #88aa99;
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: 20px;
 }
 
@@ -811,8 +857,8 @@ body {
     background: #0d2a15;
     border: 2px solid #44dd88;
     color: #44dd88;
-    padding: 8px 24px;
-    font-size: 12px;
+    padding: 10px 28px;
+    font-size: 14px;
     font-family: 'Courier New', monospace;
     letter-spacing: 3px;
     cursor: pointer;
@@ -846,7 +892,7 @@ body {
     border: 2px solid #1a3a2a;
     padding: 30px 40px;
     text-align: center;
-    max-width: 480px;
+    max-width: 540px;
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
@@ -863,9 +909,9 @@ body {
 }
 
 .game-over-box h1 {
-    font-size: 20px;
+    font-size: 24px;
     letter-spacing: 4px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     font-family: 'Courier New', monospace;
 }
 
@@ -880,18 +926,18 @@ body {
 }
 
 .game-over-reason {
-    font-size: 12px;
+    font-size: 14px;
     color: #88aa99;
-    line-height: 1.5;
+    line-height: 1.6;
     margin-bottom: 20px;
 }
 
 .game-over-rating {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .go-grade {
-    font-size: 36px;
+    font-size: 42px;
     font-weight: bold;
     letter-spacing: 4px;
     display: block;
@@ -903,7 +949,7 @@ body {
 .go-grade.danger { color: #dd4444; text-shadow: 0 0 16px rgba(221, 68, 68, 0.5); }
 
 .go-grade-label {
-    font-size: 10px;
+    font-size: 13px;
     color: #2a6a4a;
     letter-spacing: 2px;
 }
@@ -916,8 +962,8 @@ body {
 .stat-row {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
-    padding: 4px 0;
+    font-size: 13px;
+    padding: 5px 0;
     border-bottom: 1px solid #1a2a1a;
 }
 
@@ -928,8 +974,8 @@ body {
     background: #0d2a15;
     border: 2px solid #44dd88;
     color: #44dd88;
-    padding: 10px 30px;
-    font-size: 14px;
+    padding: 12px 30px;
+    font-size: 16px;
     font-family: 'Courier New', monospace;
     letter-spacing: 3px;
     cursor: pointer;
@@ -946,47 +992,47 @@ body {
 
 .post-mortem {
     text-align: left;
-    margin: 16px 0;
+    margin: 18px 0;
     border-top: 1px solid #1a2a1a;
-    padding-top: 12px;
+    padding-top: 14px;
 }
 
 .pm-section-label {
-    font-size: 8px;
+    font-size: 10px;
     color: #2a6a4a;
     letter-spacing: 3px;
-    margin-bottom: 8px;
-    margin-top: 12px;
+    margin-bottom: 10px;
+    margin-top: 14px;
 }
 
 .pm-section-label:first-child { margin-top: 0; }
 
 .pm-breakdown {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .pm-metric {
     background: #0d1a10;
     border: 1px solid #1a2a1a;
-    padding: 4px 8px;
+    padding: 6px 10px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex: 1;
-    min-width: 80px;
+    min-width: 90px;
 }
 
 .pm-metric-name {
-    font-size: 8px;
+    font-size: 10px;
     color: #2a6a4a;
     letter-spacing: 1px;
 }
 
 .pm-metric-grade {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     margin-left: auto;
 }
@@ -996,30 +1042,30 @@ body {
 .pm-metric-grade.danger { color: #dd4444; }
 
 .pm-insight {
-    font-size: 10px;
+    font-size: 13px;
     color: #88aa99;
-    padding: 3px 0;
-    line-height: 1.4;
+    padding: 4px 0;
+    line-height: 1.5;
 }
 
 .pm-insight .positive { color: #44dd88; font-weight: bold; }
 .pm-insight .negative { color: #dd4444; font-weight: bold; }
 
 .pm-turning {
-    font-size: 10px;
+    font-size: 13px;
     color: #88aa99;
-    padding: 3px 0;
-    line-height: 1.4;
+    padding: 4px 0;
+    line-height: 1.5;
 }
 
 .pm-turning .positive { color: #44dd88; }
 .pm-turning .negative { color: #dd4444; }
 
 .tip-box {
-    font-size: 10px;
-    line-height: 1.5;
-    padding: 8px 10px;
-    margin: 8px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 10px 12px;
+    margin: 10px 0;
     border-left: 3px solid #44dd88;
     background: #0d1a10;
     color: #88aa99;
@@ -1030,24 +1076,24 @@ body {
 .tip-box.tip-good { border-left-color: #44dd88; }
 
 .pm-decisions {
-    margin-top: 10px;
-    padding-top: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
     border-top: 1px solid #1a2a1a;
 }
 
 .pm-decisions-label {
-    font-size: 8px;
+    font-size: 10px;
     color: #2a6a4a;
     letter-spacing: 3px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .pm-decision-item {
-    font-size: 9px;
+    font-size: 12px;
     color: #88aa99;
-    padding: 3px 0;
+    padding: 4px 0;
     border-bottom: 1px solid #0a1a10;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 /* ======================== CHARACTER SELECT ======================== */
@@ -1067,41 +1113,41 @@ body {
 
 .char-select-box {
     text-align: center;
-    max-width: 700px;
+    max-width: 800px;
     width: 95%;
 }
 
 .char-select-box h1 {
-    font-size: 18px;
+    font-size: 22px;
     letter-spacing: 6px;
     color: #44dd88;
     text-shadow: 0 0 12px rgba(68, 221, 136, 0.4);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-family: 'Courier New', monospace;
 }
 
 .char-subtitle {
-    font-size: 10px;
+    font-size: 13px;
     color: #2a6a4a;
     letter-spacing: 2px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .char-grid {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .char-card {
     background: #0a0a0a;
     border: 2px solid #1a3a2a;
-    padding: 12px 10px 10px;
+    padding: 14px 12px 12px;
     cursor: pointer;
     transition: all 0.15s ease;
-    width: 120px;
+    width: 140px;
     text-align: center;
 }
 
@@ -1117,46 +1163,46 @@ body {
 }
 
 .char-portrait {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     image-rendering: pixelated;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .char-info .char-name {
-    font-size: 10px;
+    font-size: 13px;
     font-weight: bold;
     color: #44dd88;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     letter-spacing: 1px;
 }
 
 .char-info .char-title {
-    font-size: 8px;
+    font-size: 10px;
     color: #2a6a4a;
     letter-spacing: 1px;
 }
 
 .char-ability {
-    margin-top: 6px;
-    padding-top: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid #1a3a2a;
 }
 
 .char-ability .ability-name {
     display: block;
-    font-size: 8px;
+    font-size: 10px;
     color: #ddaa44;
     letter-spacing: 1px;
     font-weight: bold;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
 .char-ability .ability-desc {
     display: block;
-    font-size: 7px;
+    font-size: 9px;
     color: #2a6a4a;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .char-card.selected .char-ability .ability-desc { color: #448866; }
@@ -1165,8 +1211,8 @@ body {
     background: #0a0a0a;
     border: 2px solid #1a3a2a;
     color: #2a6a4a;
-    padding: 12px 36px;
-    font-size: 13px;
+    padding: 14px 40px;
+    font-size: 15px;
     font-family: 'Courier New', monospace;
     letter-spacing: 4px;
     cursor: default;
@@ -1205,9 +1251,9 @@ body {
 
 .lore-box {
     text-align: center;
-    max-width: 480px;
+    max-width: 540px;
     width: 90%;
-    padding: 30px 20px;
+    padding: 36px 24px;
     position: relative;
 }
 
@@ -1229,10 +1275,10 @@ body {
 }
 
 .lore-portrait {
-    width: 96px;
-    height: 96px;
+    width: 112px;
+    height: 112px;
     image-rendering: pixelated;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -1241,31 +1287,31 @@ body {
 }
 
 .lore-name {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     color: #44dd88;
     letter-spacing: 4px;
     text-shadow: 0 0 10px rgba(68, 221, 136, 0.4);
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
 .lore-title {
-    font-size: 9px;
+    font-size: 12px;
     color: #2a6a4a;
     letter-spacing: 3px;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 
 .lore-ability {
-    font-size: 9px;
+    font-size: 12px;
     color: #ddaa44;
     letter-spacing: 2px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .lore-text {
-    font-size: 12px;
+    font-size: 15px;
     color: #88aa99;
     line-height: 1.8;
     text-align: left;
@@ -1285,12 +1331,12 @@ body {
 }
 
 .lore-proceed-btn {
-    margin-top: 28px;
+    margin-top: 32px;
     background: transparent;
     border: 2px solid #1a3a2a;
     color: #1a3a2a;
-    padding: 12px 28px;
-    font-size: 11px;
+    padding: 14px 32px;
+    font-size: 14px;
     font-family: 'Courier New', monospace;
     letter-spacing: 3px;
     cursor: pointer;
@@ -1315,21 +1361,21 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-left: 1px solid #1a3a2a;
     white-space: nowrap;
 }
 
 .esc-label {
-    font-size: 7px;
+    font-size: 9px;
     color: #2a6a4a;
     letter-spacing: 2px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
 .esc-pips {
-    font-size: 12px;
-    letter-spacing: 2px;
+    font-size: 14px;
+    letter-spacing: 3px;
     color: #2a6a4a;
 }
 
@@ -1341,13 +1387,13 @@ body {
 
 .special-action-btn {
     position: absolute;
-    bottom: 44px;
-    right: 248px;
+    bottom: 56px;
+    right: 348px;
     background: #0a0a0a;
     border: 2px solid #ddaa44;
     color: #ddaa44;
-    padding: 8px 16px;
-    font-size: 10px;
+    padding: 10px 18px;
+    font-size: 13px;
     font-family: 'Courier New', monospace;
     letter-spacing: 2px;
     cursor: pointer;
@@ -1382,41 +1428,41 @@ body {
 /* ======================== DEBRIEF ENHANCEMENTS ======================== */
 
 .debrief-summary-text {
-    font-size: 11px;
+    font-size: 14px;
     color: #88aa99;
-    padding: 8px 16px;
-    line-height: 1.5;
+    padding: 10px 20px;
+    line-height: 1.6;
     border-bottom: 1px solid #1a2a1a;
     text-align: center;
 }
 
 .debrief-key-stats {
     display: flex;
-    gap: 6px;
-    padding: 8px 16px;
+    gap: 8px;
+    padding: 10px 20px;
     border-bottom: 1px solid #1a2a1a;
     flex-wrap: wrap;
 }
 
 .debrief-stat {
     flex: 1;
-    min-width: 70px;
+    min-width: 80px;
     background: #0d1a10;
     border: 1px solid #1a2a1a;
-    padding: 6px 8px;
+    padding: 8px 10px;
     text-align: center;
 }
 
 .debrief-stat .ds-label {
-    font-size: 7px;
+    font-size: 9px;
     color: #2a6a4a;
     letter-spacing: 1px;
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
 .debrief-stat .ds-value {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     color: #44dd88;
 }
@@ -1439,9 +1485,9 @@ body {
 /* ======================== CONTACT CARDS (Kushner) ======================== */
 
 .contact-status {
-    font-size: 8px;
+    font-size: 11px;
     color: #2a6a4a;
-    padding: 4px 0;
+    padding: 5px 0;
     border-bottom: 1px solid #0d1a10;
 }
 
@@ -1462,7 +1508,7 @@ body {
 /* ======================== STRAIT PROGRESS BAR ======================== */
 
 .strait-counter .strait-label {
-    font-size: 7px;
+    font-size: 9px;
     color: #2a6a4a;
     letter-spacing: 1px;
     display: block;
@@ -1470,12 +1516,12 @@ body {
 }
 
 .strait-counter .strait-bar {
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 1px;
 }
 
 .strait-counter .strait-num {
-    font-size: 8px;
+    font-size: 10px;
     color: #44dd88;
 }
 
