@@ -672,7 +672,7 @@ function drawStatusPanel(ctx, w, h) {
     ctx.fillStyle = SIM.interceptCount > 0 ? '#44dd88' : '#2a6a4a';
     ctx.fillText(`INTERCEPTS: ${SIM.interceptCount}`, px + 6, py + 28);
     ctx.fillStyle = '#2a6a4a';
-    ctx.fillText(`PROVOC: ${SIM.consecutiveProvocations > 0 ? Math.ceil(SIM.consecutiveProvocations) : 0}`, px + 110, py + 28);
+    ctx.fillText(`CRISIS: ${SIM.crisisLevel}`, px + 110, py + 28);
 
     const crisisLabels = ['NONE', 'ELEVATED', 'MAJOR', 'WAR FOOTING'];
     const crisisColors = ['#2a6a4a', '#ddaa44', '#dd8844', '#dd4444'];

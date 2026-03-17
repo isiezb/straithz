@@ -86,7 +86,7 @@ const STRATEGY_CARDS = [
         effects: {
             low:    { internationalStanding: 1, diplomaticCapital: -3, tension: 1 },
             medium: { internationalStanding: 2, diplomaticCapital: -10, tension: 2 },
-            high:   { internationalStanding: 3, diplomaticCapital: -20, tension: 3, russiaRelations: -3 },
+            high:   { internationalStanding: 3, diplomaticCapital: -20, tension: 3, chinaRelations: -3 },
         },
     },
     {

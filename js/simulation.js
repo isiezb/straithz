@@ -40,11 +40,9 @@ const SIM = {
     diplomaticCapital: 35,
     proxyThreat: 25,
     chinaRelations: 50,
-    russiaRelations: 40,
     polarization: 20,
     assassinationRisk: 0,
     warPath: 1,
-    escalationLevel: 1,    // 0=diplomatic, 1=naval standoff, 2=limited strikes, 3=air campaign, 4=ground invasion, 5=total war
 
     // Win/Lose tracking
     straitOpenDays: 0,
@@ -76,7 +74,6 @@ const SIM = {
     // Crisis
     crisisLevel: 0,
     crisisTimer: 0,
-    consecutiveProvocations: 0,
     interceptCount: 0,
     seizureCount: 0,
 
@@ -130,8 +127,8 @@ const SIM_DEFAULTS = {
     internationalStanding: 50, conflictRisk: 35, budget: 900,
     iranAggression: 55, iranEconomy: 35, iranStrategy: 'probing',
     fogOfWar: 70, diplomaticCapital: 35, proxyThreat: 25,
-    chinaRelations: 50, russiaRelations: 40, polarization: 20,
-    assassinationRisk: 0, warPath: 1, escalationLevel: 1,
+    chinaRelations: 50, polarization: 20,
+    assassinationRisk: 0, warPath: 1,
     straitOpenDays: 0, lowApprovalDays: 0, lowStandingDays: 0,
     recentSeizureDays: [],
     tankers: [], navyShips: [], iranBoats: [], platforms: [],
@@ -139,7 +136,7 @@ const SIM_DEFAULTS = {
     eventLog: [], headlines: [], effects: [],
     gameOver: false, gameOverReason: '', gameWon: false,
     activeStances: [], playedExclusives: [],
-    crisisLevel: 0, crisisTimer: 0, consecutiveProvocations: 0,
+    crisisLevel: 0, crisisTimer: 0,
     interceptCount: 0, seizureCount: 0,
     decisionEventActive: false, decisionHistory: [], lastDecisionDay: 0,
     metricHistory: [], incidentMarkers: [], pendingEffects: [],
@@ -559,11 +556,6 @@ function dailyUpdate() {
     const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus + pd.tension));
     SIM.tension += (targetTension - SIM.tension) * 0.12;
     SIM.tension += SIM.crisisLevel * 2;
-    if (SIM.consecutiveProvocations > 0) {
-        SIM.tension += SIM.consecutiveProvocations * 1.5;
-        SIM.consecutiveProvocations = Math.max(0, SIM.consecutiveProvocations - 0.5);
-    }
-
     // Oil flow — derives from tension but playerDelta shifts it
     const baseFlow = 100 - (SIM.tension * 0.5);
     SIM.oilFlow = Math.max(10, Math.min(100, baseFlow + protectionBonus * 0.3 + pd.oilFlow));
@@ -588,6 +580,7 @@ function dailyUpdate() {
     if (SIM.oilFlow < 30) SIM.domesticApproval -= 3;
     if (SIM.oilFlow < 15) SIM.domesticApproval -= 5;
     if (SIM.budget < 0) SIM.domesticApproval -= 1;
+    if (SIM.polarization > 50) SIM.domesticApproval -= (SIM.polarization - 50) * 0.04;
     SIM.domesticApproval = Math.max(0, Math.min(100, SIM.domesticApproval));
 
     // International standing — playerDelta shifts target
@@ -631,15 +624,6 @@ function dailyUpdate() {
         pd[key] *= DECAY;
         if (Math.abs(pd[key]) < 0.1) pd[key] = 0; // snap to zero when negligible
     }
-
-    // --- Escalation Ladder ---
-    // Player escalation based on warPath
-    if (SIM.warPath <= 0) SIM.escalationLevel = 0;
-    else if (SIM.warPath === 1) SIM.escalationLevel = 1;
-    else if (SIM.warPath === 2) SIM.escalationLevel = 2;
-    else if (SIM.warPath === 3) SIM.escalationLevel = 3;
-    else if (SIM.warPath === 4) SIM.escalationLevel = 4;
-    else SIM.escalationLevel = 5;
 
     // --- Entity Management ---
     const navalPresence = getStanceMax('navalPresence');
@@ -699,7 +683,6 @@ function dailyUpdate() {
                 SIM.recentSeizureDays.push(SIM.day);
                 SIM.tension = Math.min(100, SIM.tension + 12);
                 SIM.oilFlow = Math.max(10, SIM.oilFlow - 5);
-                SIM.consecutiveProvocations++;
                 // warPath is incremented by the seizure decision event choice, not here
                 const pos = getLanePosition(tanker.lane, tanker.progress);
                 addHeadline(`BREAKING: IRGC seizes tanker ${tanker.id} (${tanker.flag}-flagged)`, 'critical');
@@ -843,8 +826,8 @@ function updateIranStrategy() {
     // Coalition + diplomacy = Iran pressured to negotiate
     if (hasCoalition && hasDiplomacy) SIM.iranAggression -= 1.5;
 
-    // Low Russia relations = Iran gets weapons
-    if (SIM.russiaRelations < 25) SIM.iranAggression += 0.3;
+    // Low China relations = Iran gets alternative weapons supply
+    if (SIM.chinaRelations < 25) SIM.iranAggression += 0.3;
 
     SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression));
 }
@@ -887,21 +870,19 @@ function updateGreatPowers() {
     const dipCap = getStanceEffect('diplomaticCapital');
     if (dipCap > 5) SIM.chinaRelations += 0.2;
 
-    // Military escalation pushes Russia away
+    // Military escalation pushes China away too
     const navyPres = getStanceMax('navalPresence');
-    if (navyPres >= 3) SIM.russiaRelations -= 0.3;
-    if (getStanceEffect('warPath') > 0) SIM.russiaRelations -= 0.5;
+    if (navyPres >= 3) SIM.chinaRelations -= 0.15;
+    if (getStanceEffect('warPath') > 0) SIM.chinaRelations -= 0.25;
 
     // Coalition reassures somewhat
     const standing = getStanceEffect('internationalStanding');
-    if (standing > 5) SIM.russiaRelations += 0.1;
+    if (standing > 5) SIM.chinaRelations += 0.1;
 
-    // China/Russia relations from card effects
+    // China relations from card effects
     SIM.chinaRelations += (getStanceEffect('chinaRelations') || 0) * 0.1;
-    SIM.russiaRelations += (getStanceEffect('russiaRelations') || 0) * 0.1;
 
     SIM.chinaRelations = Math.max(0, Math.min(100, SIM.chinaRelations));
-    SIM.russiaRelations = Math.max(0, Math.min(100, SIM.russiaRelations));
 }
 
 // ======================== DOMESTIC POLITICS ========================
@@ -1022,14 +1003,7 @@ function checkWinLose() {
         return true;
     }
 
-    // --- Lose 3: Civil War ---
-    if (SIM.polarization >= 90) {
-        endGame(false, 'Domestic unrest has reached a breaking point. The military is split. ' +
-            'The crisis abroad has ignited a crisis at home. America is tearing itself apart.');
-        return true;
-    }
-
-    // --- Lose 4: Global Pariah ---
+    // --- Lose 3: Global Pariah ---
     if (SIM.internationalStanding <= 10) {
         SIM.lowStandingDays++;
         if (SIM.lowStandingDays >= 3) {
@@ -1124,7 +1098,7 @@ const CARD_CONSEQUENCES = {
     ],
     naval_patrol: [
         { text: 'USN patrol intercepts suspicious vessel — clear signal to Iran', effect: () => { SIM.iranAggression -= 2; SIM.interceptCount++; }, level: 'good', funding: 'medium' },
-        { text: 'Patrol encounters IRGC fast boats — tense standoff', effect: () => { SIM.tension += 5; SIM.consecutiveProvocations++; }, level: 'warning', funding: 'any' },
+        { text: 'Patrol encounters IRGC fast boats — tense standoff', effect: () => { SIM.tension += 5; }, level: 'warning', funding: 'any' },
         { text: 'Patrol discovers Iranian explosive drone boats drifting in shipping lane', effect: () => { SIM.fogOfWar -= 8; SIM.tension += 3; }, level: 'warning', funding: 'any' },
         { text: 'USS destroyer escorts tanker through strait — insurance companies take notice', effect: () => { SIM.oilFlow = Math.min(100, SIM.oilFlow + 4); SIM.oilPrice -= 3; }, level: 'good', funding: 'high' },
     ],
@@ -1170,7 +1144,7 @@ const CARD_CONSEQUENCES = {
         { text: 'Secondary sanctions catch a Chinese bank — Beijing protests formally', effect: () => { SIM.chinaRelations -= 8; SIM.iranEconomy -= 5; SIM.internationalStanding -= 3; }, level: 'warning', funding: 'high' },
     ],
     maximum_pressure: [
-        { text: 'Maximum pressure pushes Iran into a corner — provocations spike', effect: () => { SIM.iranAggression += 8; SIM.consecutiveProvocations += 2; }, level: 'critical', funding: 'high' },
+        { text: 'Maximum pressure pushes Iran into a corner — provocations spike', effect: () => { SIM.iranAggression += 8; SIM.tension += 8; }, level: 'critical', funding: 'high' },
         { text: 'Secondary sanctions anger European allies', effect: () => { SIM.internationalStanding -= 5; }, level: 'warning', funding: 'medium' },
         { text: 'Oil prices surge on maximum pressure announcement', effect: () => { SIM.oilPrice += 8; SIM.domesticApproval -= 2; }, level: 'warning', funding: 'any' },
         { text: 'Iran\'s currency collapses 15% — street protests in Tehran and Isfahan', effect: () => { SIM.iranEconomy -= 8; SIM.iranAggression += 5; SIM.tension += 3; }, level: 'warning', funding: 'high' },
@@ -1228,7 +1202,7 @@ const CARD_CONSEQUENCES = {
     ],
     oil_diplomacy: [
         { text: 'Saudi Arabia announces 2M barrel/day production increase — markets rally', effect: () => { SIM.oilPrice -= 8; SIM.domesticApproval += 3; }, level: 'good', funding: 'high' },
-        { text: 'OPEC+ deal falls apart — Russia blocks the increase', effect: () => { SIM.oilPrice += 5; SIM.russiaRelations -= 3; }, level: 'warning', funding: 'medium' },
+        { text: 'OPEC+ deal falls apart — Russia blocks the increase', effect: () => { SIM.oilPrice += 5; SIM.chinaRelations -= 3; }, level: 'warning', funding: 'medium' },
         { text: 'IEA coordinated reserve release calms speculation', effect: () => { SIM.oilPrice -= 4; }, level: 'good', funding: 'any' },
     ],
     insurance_backstop: [
@@ -1288,7 +1262,7 @@ function triggerAmbientEvent() {
         { text: 'South Korea sends intelligence-sharing liaison to CENTCOM', effect: () => { SIM.fogOfWar -= 3; SIM.internationalStanding += 2; }, level: 'good' },
         { text: 'Lloyd\'s of London raises war risk premiums 300% for strait transit', effect: () => { SIM.oilFlow = Math.max(10, SIM.oilFlow - 3); SIM.oilPrice += 5; }, level: 'warning' },
         { text: 'Iranian rial crashes to historic low — street protests erupt', effect: () => { SIM.iranEconomy -= 5; SIM.iranAggression += 3; }, level: 'warning' },
-        { text: 'Russia quietly ships advanced anti-ship missiles to Iran via Caspian route', effect: () => { SIM.iranAggression += 3; SIM.conflictRisk += 3; SIM.russiaRelations -= 3; }, level: 'critical' },
+        { text: 'Russia quietly ships advanced anti-ship missiles to Iran via Caspian route', effect: () => { SIM.iranAggression += 3; SIM.conflictRisk += 3; SIM.chinaRelations -= 3; }, level: 'critical' },
         { text: 'Global shipping companies announce permanent rerouting via Cape of Good Hope', effect: () => { SIM.oilPrice += 3; SIM.oilFlow = Math.max(10, SIM.oilFlow - 2); }, level: 'warning' },
         { text: 'OPEC+ emergency meeting called — Saudi Arabia offers to increase production', effect: () => { SIM.oilPrice -= 4; SIM.internationalStanding += 2; }, level: 'good' },
         { text: 'Iran offers to "down-blend" enriched uranium as diplomatic gesture', effect: () => { SIM.tension -= 3; SIM.diplomaticCapital += 3; }, level: 'good' },
@@ -1338,7 +1312,6 @@ function triggerIranProvocation() {
     ];
     const prov = provocations[Math.floor(Math.random() * provocations.length)];
     SIM.tension = Math.min(100, SIM.tension + prov.tension);
-    SIM.consecutiveProvocations++;
     addHeadline(prov.text, prov.level);
 }
 
@@ -1532,8 +1505,8 @@ const DECISION_EVENTS = [
         minDay: 15, maxDay: 60,
         condition: () => SIM.tension > 20,
         choices: [
-            { text: 'Push strong resolution', effects: { internationalStanding: 8, tension: 5, russiaRelations: -8, diplomaticCapital: -10 }, flavor: 'Russia vetoes. But the debate isolates Iran diplomatically.' },
-            { text: 'Accept watered-down version', effects: { internationalStanding: 3, tension: -3, diplomaticCapital: 5, russiaRelations: 3 }, flavor: 'Passes unanimously. Symbolic but shows unity.' },
+            { text: 'Push strong resolution', effects: { internationalStanding: 8, tension: 5, chinaRelations: -8, diplomaticCapital: -10 }, flavor: 'Russia vetoes. But the debate isolates Iran diplomatically.' },
+            { text: 'Accept watered-down version', effects: { internationalStanding: 3, tension: -3, diplomaticCapital: 5, chinaRelations: 3 }, flavor: 'Passes unanimously. Symbolic but shows unity.' },
             { text: 'Withdraw the resolution', effects: { internationalStanding: -5, diplomaticCapital: -5 }, flavor: 'Allies are confused by the retreat.' },
         ],
     },
@@ -1573,10 +1546,10 @@ const DECISION_EVENTS = [
         id: 'russia_arms_deal', title: 'RUSSIAN ARMS SHIPMENT',
         description: 'Intel shows Russia is shipping advanced anti-ship missiles to Iran. If they\'re deployed, the strait becomes deadlier.',
         minDay: 18, maxDay: 70,
-        condition: () => SIM.russiaRelations < 40,
+        condition: () => SIM.chinaRelations < 40,
         choices: [
-            { text: 'Intercept the shipment', effects: { russiaRelations: -15, tension: 12, iranAggression: -5, warPath: 1 }, flavor: 'The ship is turned back. Russia is furious. Iran doesn\'t get the weapons.' },
-            { text: 'Diplomatic protest', effects: { russiaRelations: -5, internationalStanding: 3 }, flavor: 'A formal protest. The shipment arrives but world opinion shifts.' },
+            { text: 'Intercept the shipment', effects: { chinaRelations: -15, tension: 12, iranAggression: -5, warPath: 1 }, flavor: 'The ship is turned back. Russia is furious. Iran doesn\'t get the weapons.' },
+            { text: 'Diplomatic protest', effects: { chinaRelations: -5, internationalStanding: 3 }, flavor: 'A formal protest. The shipment arrives but world opinion shifts.' },
             { text: 'Ignore it', effects: { iranAggression: 8, conflictRisk: 5 }, flavor: 'The missiles are deployed. Iranian capabilities increase.' },
         ],
     },
@@ -1917,11 +1890,11 @@ const DECISION_EVENTS = [
         id: 'russia_intel_leak', title: 'RUSSIAN INTELLIGENCE LEAK',
         description: 'An FSB defector reveals Russia has been sharing US military intelligence with Iran — satellite passes, carrier positions, submarine locations. Your operational security is compromised.',
         minDay: 12, maxDay: 60,
-        condition: () => SIM.russiaRelations < 35,
+        condition: () => SIM.chinaRelations < 35,
         choices: [
-            { text: 'Expel Russian diplomats', effects: { russiaRelations: -20, fogOfWar: -10, tension: 5, internationalStanding: 5 }, flavor: '15 diplomats expelled. NATO allies follow suit. Russia retaliates but the leak is plugged.' },
-            { text: 'Exploit the defector — feed disinformation', effects: { fogOfWar: -20, iranAggression: -5, russiaRelations: -5 }, flavor: 'You turn the leak into an advantage. False intelligence flows to Tehran through Moscow. Iran chases ghosts.' },
-            { text: 'Quiet protest — preserve the channel', effects: { russiaRelations: -5, fogOfWar: -5 }, flavor: 'A stern demarche. Russia denies everything. But the intelligence sharing slows.' },
+            { text: 'Expel Russian diplomats', effects: { chinaRelations: -20, fogOfWar: -10, tension: 5, internationalStanding: 5 }, flavor: '15 diplomats expelled. NATO allies follow suit. Russia retaliates but the leak is plugged.' },
+            { text: 'Exploit the defector — feed disinformation', effects: { fogOfWar: -20, iranAggression: -5, chinaRelations: -5 }, flavor: 'You turn the leak into an advantage. False intelligence flows to Tehran through Moscow. Iran chases ghosts.' },
+            { text: 'Quiet protest — preserve the channel', effects: { chinaRelations: -5, fogOfWar: -5 }, flavor: 'A stern demarche. Russia denies everything. But the intelligence sharing slows.' },
         ],
     },
     {
@@ -2219,7 +2192,7 @@ const CRISIS_EVENTS = [
         minDay: 25, maxDay: 70,
         condition: () => SIM.iranAggression > 60 && SIM.tension > 55,
         choices: [
-            { text: 'Green-light Israeli strike', effects: { tension: 30, warPath: 2, iranAggression: 15, domesticApproval: -5, internationalStanding: -15, russiaRelations: -15 }, flavor: 'Israeli F-35s hit Fordow and Natanz. Iran vows "devastating retaliation." Russia recalls ambassador. The nuclear clock resets but the war clock accelerates.' },
+            { text: 'Green-light Israeli strike', effects: { tension: 30, warPath: 2, iranAggression: 15, domesticApproval: -5, internationalStanding: -15, chinaRelations: -15 }, flavor: 'Israeli F-35s hit Fordow and Natanz. Iran vows "devastating retaliation." Russia recalls ambassador. The nuclear clock resets but the war clock accelerates.' },
             { text: 'US strike — bunker busters on Fordow', effects: { tension: 25, warPath: 2, iranAggression: -10, domesticApproval: 10, internationalStanding: -12, budget: -60 }, flavor: 'B-2 bombers drop GBU-57 MOPs. The mountain facility is destroyed. You own this escalation now.' },
             { text: 'Emergency UN session — buy time', effects: { tension: 8, diplomaticCapital: 15, internationalStanding: 10, iranAggression: 5 }, flavor: 'The Security Council convenes. Israel fumes. Iran enriches. You bought 72 hours — at most.' },
             { text: 'Call Tehran directly', effects: { tension: -5, domesticApproval: -15, iranAggression: -8, diplomaticCapital: -10 }, flavor: 'A stunning phone call. Iran agrees to freeze enrichment for 30 days. Hawks call it "the worst deal since Munich." But the bombs stay in their bays.' },

@@ -199,7 +199,7 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'total_war_victory',
-                    check: (sim) => sim.escalationLevel >= 4 && sim.domesticApproval >= 55 && sim.iranAggression < 30 && sim.day >= 14,
+                    check: (sim) => sim.warPath >= 4 && sim.domesticApproval >= 55 && sim.iranAggression < 30 && sim.day >= 14,
                     message: 'TOTAL VICTORY. Iran\'s military capability is shattered. The American public stands behind the mission. ' +
                         'Pentagon brass call it "the most decisive military campaign since Desert Storm." Secretary Hegseth\'s war doctrine becomes textbook.',
                 },
@@ -609,7 +609,7 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'america_first_victory',
-                    check: (sim) => sim.escalationLevel <= 1 && sim.internationalStanding >= 40 && sim.uniqueResource >= 60 && sim.day >= 14,
+                    check: (sim) => sim.warPath <= 1 && sim.internationalStanding >= 40 && sim.uniqueResource >= 60 && sim.day >= 14,
                     message: 'AMERICA FIRST WINS. The troops are coming home. Iran backed down without a single American casualty. ' +
                         'Global power intact, base ecstatic. The establishment is speechless. "We did it without their wars, without their deals, without their permission."',
                 },

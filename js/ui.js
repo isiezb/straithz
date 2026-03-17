@@ -239,7 +239,7 @@ function updateSituationPanel() {
 
     const g = calculateGauges();
     const r = calculateRating();
-    const esc = ESCALATION_LADDER[Math.min(SIM.escalationLevel, 5)];
+    const esc = ESCALATION_LADDER[Math.min(SIM.warPath, 5)];
 
     function valClass(v) { return v >= 60 ? 'good' : v >= 35 ? 'warning' : 'danger'; }
 
@@ -526,7 +526,6 @@ function _getKeyDrivers() {
     const drivers = [];
     // Tension drivers
     if (SIM.crisisLevel >= 1) drivers.push({ text: `Crisis Level ${SIM.crisisLevel} adding tension`, cls: 'down-bad' });
-    if (SIM.consecutiveProvocations > 1) drivers.push({ text: `${Math.round(SIM.consecutiveProvocations)} provocations increasing tension`, cls: 'down-bad' });
     if (SIM.diplomaticCapital > 60) drivers.push({ text: 'Strong diplomacy reducing tension', cls: 'up-good' });
     // Oil
     if (SIM.oilFlow < 40) drivers.push({ text: `Oil flow low (${Math.round(SIM.oilFlow)}%) — prices rising`, cls: 'down-bad' });
@@ -539,7 +538,6 @@ function _getKeyDrivers() {
     // Iran
     if (SIM.iranEconomy < 30) drivers.push({ text: 'Iran economy collapsed — aggression rising', cls: 'down-bad' });
     if (SIM.chinaRelations < 30) drivers.push({ text: 'China buying Iranian oil — sanctions less effective', cls: 'down-bad' });
-    if (SIM.russiaRelations < 25) drivers.push({ text: 'Russia arming Iran — provocations more dangerous', cls: 'down-bad' });
     // Positive
     if (SIM.interceptCount > 0) drivers.push({ text: `${SIM.interceptCount} intercepts boosting approval`, cls: 'up-good' });
     if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/14 days toward victory`, cls: 'up-good' });
@@ -1136,7 +1134,6 @@ function _applyEffect(key, val) {
     else if (key === 'diplomaticCapital') SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital + val));
     else if (key === 'proxyThreat') SIM.proxyThreat = Math.max(0, Math.min(100, SIM.proxyThreat + val));
     else if (key === 'chinaRelations') SIM.chinaRelations = Math.max(0, Math.min(100, SIM.chinaRelations + val));
-    else if (key === 'russiaRelations') SIM.russiaRelations = Math.max(0, Math.min(100, SIM.russiaRelations + val));
     else if (key === 'polarization') SIM.polarization = Math.max(0, Math.min(100, SIM.polarization + val));
     else if (key === 'assassinationRisk') SIM.assassinationRisk = Math.max(0, Math.min(100, SIM.assassinationRisk + val));
     else if (key === 'warPath') SIM.warPath = Math.max(0, SIM.warPath + val);
@@ -1224,7 +1221,7 @@ function showActionPanel() {
             `;
         }
 
-        const esc = SIM.escalationLevel || 0;
+        const esc = SIM.warPath || 0;
         const escInfo = ESCALATION_LADDER[Math.min(esc, 5)];
         const escName = escInfo ? escInfo.name : 'UNKNOWN';
         const escColor = escInfo ? escInfo.color : '#888';
@@ -1622,7 +1619,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'escort-tankers':
-            if (SIM.budget < 10 || SIM.escalationLevel < 1) return;
+            if (SIM.budget < 10 || SIM.warPath < 1) return;
             SIM.budget -= 10;
             SIM.oilFlow = Math.min(100, SIM.oilFlow + 5);
             SIM.tension = Math.min(100, SIM.tension + 2);
@@ -1636,7 +1633,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'precision-strike':
-            if (SIM.budget < 30 || SIM.escalationLevel < 2) return;
+            if (SIM.budget < 30 || SIM.warPath < 2) return;
             SIM.budget -= 30;
             SIM.tension = Math.min(100, SIM.tension + 12);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 8);
@@ -1657,7 +1654,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'spec-ops-raid':
-            if (SIM.budget < 25 || SIM.escalationLevel < 2) return;
+            if (SIM.budget < 25 || SIM.warPath < 2) return;
             SIM.budget -= 25;
             SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 12);
             SIM.tension = Math.min(100, SIM.tension + 6);
@@ -1673,7 +1670,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'air-strikes':
-            if (SIM.budget < 50 || SIM.escalationLevel < 3) return;
+            if (SIM.budget < 50 || SIM.warPath < 3) return;
             SIM.budget -= 50;
             SIM.tension = Math.min(100, SIM.tension + 18);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 15);
@@ -1698,7 +1695,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'sead-mission':
-            if (SIM.budget < 40 || SIM.escalationLevel < 3) return;
+            if (SIM.budget < 40 || SIM.warPath < 3) return;
             SIM.budget -= 40;
             SIM.tension = Math.min(100, SIM.tension + 10);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 6);
@@ -1714,7 +1711,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'ground-troops':
-            if (SIM.budget < 80 || SIM.escalationLevel < 4) return;
+            if (SIM.budget < 80 || SIM.warPath < 4) return;
             SIM.budget -= 80;
             SIM.tension = Math.min(100, SIM.tension + 25);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 20);
@@ -1737,7 +1734,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'seize-islands':
-            if (SIM.budget < 60 || SIM.escalationLevel < 4) return;
+            if (SIM.budget < 60 || SIM.warPath < 4) return;
             SIM.budget -= 60;
             SIM.tension = Math.min(100, SIM.tension + 15);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 12);
@@ -1756,7 +1753,7 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'full-mobilization':
-            if (SIM.budget < 100 || SIM.escalationLevel < 5) return;
+            if (SIM.budget < 100 || SIM.warPath < 5) return;
             SIM.budget -= 100;
             SIM.tension = 100;
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 30);
@@ -1793,15 +1790,9 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         case 'escalate': {
-            if (SIM.escalationLevel >= 5) return;
+            if (SIM.warPath >= 5) return;
             SIM.warPath = Math.min(5, SIM.warPath + 1);
-            if (SIM.warPath <= 0) SIM.escalationLevel = 0;
-            else if (SIM.warPath === 1) SIM.escalationLevel = 1;
-            else if (SIM.warPath === 2) SIM.escalationLevel = 2;
-            else if (SIM.warPath === 3) SIM.escalationLevel = 3;
-            else if (SIM.warPath === 4) SIM.escalationLevel = 4;
-            else SIM.escalationLevel = 5;
-            const newEsc = ESCALATION_LADDER[SIM.escalationLevel];
+            const newEsc = ESCALATION_LADDER[SIM.warPath];
             SIM.tension = Math.min(100, SIM.tension + 8);
             SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 3);
             SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 4);
@@ -1820,13 +1811,7 @@ function _executeAction(actionId, rerenderFn) {
         case 'deescalate': {
             if (SIM.warPath <= 0) return;
             SIM.warPath = Math.max(0, SIM.warPath - 1);
-            if (SIM.warPath <= 0) SIM.escalationLevel = 0;
-            else if (SIM.warPath === 1) SIM.escalationLevel = 1;
-            else if (SIM.warPath === 2) SIM.escalationLevel = 2;
-            else if (SIM.warPath === 3) SIM.escalationLevel = 3;
-            else if (SIM.warPath === 4) SIM.escalationLevel = 4;
-            else SIM.escalationLevel = 5;
-            const deEsc = ESCALATION_LADDER[SIM.escalationLevel];
+            const deEsc = ESCALATION_LADDER[SIM.warPath];
             SIM.tension = Math.max(0, SIM.tension - 5);
             SIM.internationalStanding = Math.min(100, SIM.internationalStanding + 5);
             SIM.domesticApproval = Math.max(0, SIM.domesticApproval - 3);
@@ -2672,13 +2657,13 @@ function _getMorningBrief() {
 }
 
 function _getEscalationColor() {
-    const level = SIM.escalationLevel || 0;
+    const level = SIM.warPath || 0;
     const colors = ['#44dd88', '#88aa44', '#ddaa44', '#dd6644', '#dd4444', '#ff0000'];
     return colors[Math.min(level, 5)];
 }
 
 function _getEscalationName() {
-    const level = SIM.escalationLevel || 0;
+    const level = SIM.warPath || 0;
     const names = ['DIPLOMATIC', 'NAVAL STANDOFF', 'LIMITED STRIKES', 'AIR CAMPAIGN', 'GROUND WAR', 'TOTAL WAR'];
     return names[Math.min(level, 5)];
 }
@@ -2690,7 +2675,7 @@ function formatEffectName(key) {
         iranAggression: 'Iran Aggression', iranEconomy: 'Iran Economy',
         cost: 'Cost', conflictRisk: 'Conflict Risk', fogOfWar: 'Fog of War',
         diplomaticCapital: 'Diplomacy', proxyThreat: 'Proxy Threat',
-        chinaRelations: 'China', russiaRelations: 'Russia',
+        chinaRelations: 'China',
         polarization: 'Polarization', assassinationRisk: 'Assassination Risk',
         warPath: 'Escalation', navalPresence: 'Naval Presence',
         blockadeLevel: 'Blockade', intelLevel: 'Intel Level', carrier: 'Carrier',
