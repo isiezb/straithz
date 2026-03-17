@@ -1,6 +1,6 @@
 /**
- * Map Renderer — draws the strait, entities, effects, tooltips on canvas
- * Uses procedural SC1-style sprites from sprites.js
+ * Situation Room Board — strategic overview map with symbolic overlays
+ * Replaces individual entity rendering with zone-based briefing display
  */
 
 const MAP = {
@@ -12,20 +12,25 @@ const MAP = {
     assetsLoaded: false,
 };
 
+// Zone definitions for click interaction
+const ZONES = {
+    navy: { x: 0.50, y: 0.58, w: 0.22, h: 0.16 },
+    irgc: { x: 0.35, y: 0.30, w: 0.25, h: 0.16 },
+    lane: { x: 0.30, y: 0.42, w: 0.40, h: 0.18 },
+};
+
 function initMap() {
     MAP.canvas = document.getElementById('game-canvas');
     MAP.ctx = MAP.canvas.getContext('2d');
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Click handling for entity selection
+    // Zone-based click handling
     MAP.canvas.addEventListener('click', (e) => {
         const rect = MAP.canvas.getBoundingClientRect();
-        const scaleX = MAP.width / rect.width;
-        const scaleY = MAP.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        handleMapClick(x, y, MAP.width, MAP.height);
+        const mx = (e.clientX - rect.left) / rect.width;
+        const my = (e.clientY - rect.top) / rect.height;
+        handleZoneClick(mx, my);
     });
 
     // Try to load map background image
@@ -40,6 +45,28 @@ function resizeCanvas() {
     MAP.height = MAP.canvas.parentElement.clientHeight;
     MAP.canvas.width = MAP.width;
     MAP.canvas.height = MAP.height;
+}
+
+function handleZoneClick(mx, my) {
+    SIM.selectedEntity = null;
+    SIM.selectedType = null;
+
+    for (const [name, z] of Object.entries(ZONES)) {
+        if (mx >= z.x && mx <= z.x + z.w && my >= z.y && my <= z.y + z.h) {
+            SIM.selectedType = name;
+            return;
+        }
+    }
+    // Click on platform
+    for (const p of SIM.platforms) {
+        const dx = p.x - mx;
+        const dy = p.y - my;
+        if (Math.sqrt(dx * dx + dy * dy) < 0.04) {
+            SIM.selectedEntity = p;
+            SIM.selectedType = 'platform';
+            return;
+        }
+    }
 }
 
 function renderMap() {
@@ -58,251 +85,16 @@ function renderMap() {
         drawProceduralMap(ctx, w, h);
     }
 
-    // Shipping lanes
-    ctx.setLineDash([4, 8]);
-    ctx.strokeStyle = 'rgba(100, 180, 255, 0.2)';
-    ctx.lineWidth = 1;
-    for (const lane of SHIPPING_LANES) {
-        ctx.beginPath();
-        for (let i = 0; i < lane.points.length; i++) {
-            const [lx, ly] = lane.points[i];
-            if (i === 0) ctx.moveTo(lx * w, ly * h);
-            else ctx.lineTo(lx * w, ly * h);
-        }
-        ctx.stroke();
-    }
-    ctx.setLineDash([]);
+    // --- Symbolic Overlays ---
 
-    // Oil platforms
-    for (const plat of SIM.platforms) {
-        const px = plat.x * w;
-        const py = plat.y * h;
-        ctx.drawImage(SPRITES.platform, px - 24, py - 24, 48, 48);
+    drawShippingLaneFlow(ctx, w, h);
+    drawNavyPresence(ctx, w, h);
+    drawIRGCThreatZone(ctx, w, h);
+    drawHazardMarkers(ctx, w, h);
+    drawPlatforms(ctx, w, h);
+    drawStatusPanel(ctx, w, h);
 
-        // Selected highlight
-        if (SIM.selectedEntity === plat) {
-            drawSelectionBox(ctx, px, py, 28, '#ffaa44');
-        }
-    }
-
-    // Tankers
-    for (const t of SIM.tankers) {
-        const pos = getLanePosition(t.lane, t.progress);
-        const x = pos.x * w;
-        const y = pos.y * h;
-
-        // Wake effect
-        drawWake(ctx, x, y, pos.angle, t.seized ? 0 : 1);
-
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(pos.angle);
-        const tankerSprite = t.lane.dir === 'out' ? (SPRITES.tankerLoaded || SPRITES.tanker) : SPRITES.tanker;
-        ctx.drawImage(tankerSprite, -36, -14, 72, 28);
-        ctx.restore();
-
-        if (t.damaged && !t.seized) {
-            ctx.fillStyle = '#ddaa44';
-            ctx.font = 'bold 9px monospace';
-            ctx.fillText('DAMAGED', x - 20, y - 16);
-            // Smoke effect
-            ctx.fillStyle = `rgba(100, 100, 100, ${0.2 + Math.sin(Date.now() / 500) * 0.1})`;
-            ctx.beginPath();
-            ctx.arc(x + 5, y - 20 - Math.sin(Date.now() / 400) * 4, 5, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        if (t.seized) {
-            ctx.fillStyle = '#ff4d4d';
-            ctx.font = 'bold 10px monospace';
-            ctx.fillText('SEIZED', x - 16, y - 16);
-
-            // Red pulsing circle
-            const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.5;
-            ctx.strokeStyle = `rgba(255, 60, 60, ${pulse})`;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.ellipse(x, y + 4, 34, 12, 0, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-
-        // Selected highlight
-        if (SIM.selectedEntity === t) {
-            ctx.strokeStyle = '#ffcc44';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.ellipse(x, y + 4, 34, 12, 0, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-    }
-
-    // Navy ships
-    for (const ship of SIM.navyShips) {
-        const x = ship.x * w;
-        const y = ship.y * h;
-
-        // Wake
-        const navAngle = Math.atan2(ship.targetY * h - y, ship.targetX * w - x);
-        drawWake(ctx, x, y, navAngle, 1.2);
-
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(navAngle);
-        ctx.drawImage(SPRITES.navy, -36, -14, 72, 28);
-        ctx.restore();
-
-        // Selection circle (SC1 style)
-        const isSelected = SIM.selectedEntity === ship;
-        ctx.strokeStyle = isSelected ? 'rgba(0, 255, 0, 0.8)' : 'rgba(0, 255, 0, 0.4)';
-        ctx.lineWidth = isSelected ? 2 : 1;
-        ctx.beginPath();
-        ctx.ellipse(x, y + 4, 28, 10, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Label
-        ctx.fillStyle = '#44dd88';
-        ctx.font = '8px monospace';
-        ctx.fillText(ship.id, x - 20, y + 20);
-
-        // Intercept line
-        if (ship.intercepting) {
-            const target = SIM.iranBoats.find(b => b.id === ship.intercepting);
-            if (target) {
-                ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([3, 6]);
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(target.x * w, target.y * h);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-        }
-    }
-
-    // Iran boats
-    for (const boat of SIM.iranBoats) {
-        const x = boat.x * w;
-        const y = boat.y * h;
-
-        const boatAngle = Math.atan2(boat.targetY * h - y, boat.targetX * w - x);
-        drawWake(ctx, x, y, boatAngle, 0.8);
-
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(boatAngle);
-        ctx.drawImage(SPRITES.iranboat, -28, -12, 56, 24);
-        ctx.restore();
-
-        // Red selection circle — brighter if aggressive
-        const isSelected = SIM.selectedEntity === boat;
-        const aggAlpha = boat.aggressive ? 0.7 : 0.4;
-        ctx.strokeStyle = isSelected ? 'rgba(255, 60, 60, 0.9)' : `rgba(255, 60, 60, ${aggAlpha})`;
-        ctx.lineWidth = isSelected ? 2 : 1;
-        ctx.beginPath();
-        ctx.ellipse(x, y + 3, 20, 7, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Targeting line to tanker
-        if (boat.targeting) {
-            const tanker = SIM.tankers.find(t => t.id === boat.targeting);
-            if (tanker) {
-                const tpos = getLanePosition(tanker.lane, tanker.progress);
-                ctx.strokeStyle = 'rgba(255, 40, 40, 0.4)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([2, 4]);
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(tpos.x * w, tpos.y * h);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-        }
-
-        // Label for aggressive boats
-        if (boat.aggressive && !boat.fleeing) {
-            ctx.fillStyle = 'rgba(255, 100, 100, 0.6)';
-            ctx.font = '7px monospace';
-            ctx.fillText(boat.id, x - 18, y + 16);
-        }
-    }
-
-    // Mines (draw before effects)
-    for (const mine of SIM.mines) {
-        const mx = mine.x * w;
-        const my = mine.y * h;
-        if (SPRITES.mine) {
-            ctx.drawImage(SPRITES.mine, mx - 12, my - 12, 24, 24);
-        }
-        // Pulsing danger indicator
-        const pulse = Math.sin(Date.now() / 400) * 0.3 + 0.4;
-        ctx.fillStyle = `rgba(255, 60, 60, ${pulse * 0.3})`;
-        ctx.beginPath();
-        ctx.arc(mx, my, 8, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    // Drones
-    for (const drone of SIM.drones) {
-        const dx = drone.x * w;
-        const dy = drone.y * h;
-        if (SPRITES.drone) {
-            ctx.save();
-            ctx.translate(dx, dy);
-            const droneAngle = drone.angle + Math.PI / 2;
-            ctx.rotate(droneAngle);
-            ctx.globalAlpha = 0.8;
-            ctx.drawImage(SPRITES.drone, -20, -12, 40, 24);
-            ctx.globalAlpha = 1;
-            ctx.restore();
-        }
-        // Scan circle
-        ctx.strokeStyle = 'rgba(68, 170, 221, 0.15)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([2, 4]);
-        ctx.beginPath();
-        ctx.arc(dx, dy, drone.radius * Math.min(w, h), 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        // Label
-        ctx.fillStyle = 'rgba(68, 170, 221, 0.5)';
-        ctx.font = '7px monospace';
-        ctx.fillText(drone.id, dx - 12, dy + 18);
-    }
-
-    // Aircraft carrier
-    if (SIM.carrier) {
-        const cx = SIM.carrier.x * w;
-        const cy = SIM.carrier.y * h;
-        const cAngle = Math.atan2(
-            SIM.carrier.targetY * h - cy,
-            SIM.carrier.targetX * w - cx
-        );
-
-        drawWake(ctx, cx, cy, cAngle, 2.0);
-
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(cAngle);
-        if (SPRITES.carrier) {
-            ctx.drawImage(SPRITES.carrier, -48, -16, 96, 32);
-        }
-        ctx.restore();
-
-        // Green selection circle
-        ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy + 5, 44, 14, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Label
-        ctx.fillStyle = '#44dd88';
-        ctx.font = 'bold 8px monospace';
-        ctx.fillText(SIM.carrier.id, cx - 28, cy + 24);
-    }
-
-    // Visual effects (explosions, intercepts, etc.)
+    // Visual effects (explosions, crisis pulses)
     for (const fx of SIM.effects) {
         drawEffect(ctx, fx, w, h);
     }
@@ -337,58 +129,471 @@ function renderMap() {
         ctx.strokeRect(0, 0, w, h);
     }
 
-    // Entity tooltip
-    if (SIM.selectedEntity) {
-        drawEntityTooltip(ctx, w, h);
+    // Zone tooltip
+    if (SIM.selectedType && !SIM.selectedEntity) {
+        drawZoneTooltip(ctx, w, h);
     }
 }
 
-function drawWake(ctx, x, y, angle, scale) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(angle);
+// --- Shipping Lane Flow Arrow ---
 
-    const wakeLen = 20 * scale;
-    ctx.strokeStyle = 'rgba(150, 200, 255, 0.15)';
+function drawShippingLaneFlow(ctx, w, h) {
+    const flow = SIM.oilFlow;
+    let color, glowColor;
+    if (flow >= 75) { color = '#44dd88'; glowColor = 'rgba(68, 221, 136, 0.15)'; }
+    else if (flow >= 50) { color = '#ddaa44'; glowColor = 'rgba(221, 170, 68, 0.12)'; }
+    else if (flow >= 20) { color = '#dd4444'; glowColor = 'rgba(221, 68, 68, 0.12)'; }
+    else { color = '#551111'; glowColor = 'rgba(85, 17, 17, 0.08)'; }
+
+    const lineWidth = Math.max(1, (flow / 100) * 6);
+    const alpha = Math.max(0.15, flow / 100);
+
+    for (const lane of SHIPPING_LANES) {
+        const pts = lane.points;
+
+        // Glow behind the lane
+        ctx.strokeStyle = glowColor;
+        ctx.lineWidth = lineWidth + 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+            if (i === 0) ctx.moveTo(pts[i][0] * w, pts[i][1] * h);
+            else ctx.lineTo(pts[i][0] * w, pts[i][1] * h);
+        }
+        ctx.stroke();
+
+        // Main lane line
+        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+            if (i === 0) ctx.moveTo(pts[i][0] * w, pts[i][1] * h);
+            else ctx.lineTo(pts[i][0] * w, pts[i][1] * h);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // Animated flowing dots
+        if (flow > 10) {
+            const time = Date.now() / 1500;
+            const dotCount = Math.max(2, Math.floor(flow / 15));
+            for (let d = 0; d < dotCount; d++) {
+                const prog = ((time + d / dotCount) % 1);
+                const actualProg = lane.dir === 'in' ? prog : prog;
+                const pos = getLanePosition(lane, actualProg);
+                const dotAlpha = 0.3 + Math.sin(prog * Math.PI) * 0.4;
+                ctx.fillStyle = color;
+                ctx.globalAlpha = dotAlpha * alpha;
+                ctx.beginPath();
+                ctx.arc(pos.x * w, pos.y * h, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Direction arrow at midpoint
+        const mid = getLanePosition(lane, 0.5);
+        const ahead = getLanePosition(lane, 0.55);
+        const angle = Math.atan2((ahead.y - mid.y) * h, (ahead.x - mid.x) * w);
+        ctx.save();
+        ctx.translate(mid.x * w, mid.y * h);
+        ctx.rotate(angle);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = alpha * 0.7;
+        ctx.beginPath();
+        ctx.moveTo(8, 0);
+        ctx.lineTo(-4, -5);
+        ctx.lineTo(-4, 5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+
+    // Blocked label
+    if (flow < 20) {
+        ctx.save();
+        ctx.font = 'bold 12px monospace';
+        ctx.fillStyle = '#dd4444';
+        ctx.textAlign = 'center';
+        const blink = Math.sin(Date.now() / 400) > 0 ? 1 : 0.3;
+        ctx.globalAlpha = blink;
+        ctx.fillText('BLOCKED', w * 0.48, h * 0.50);
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+
+    // Flow percentage label
+    ctx.save();
+    ctx.font = 'bold 10px monospace';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.fillText(`FLOW: ${Math.round(flow)}%`, w * 0.48, h * 0.55);
+    ctx.restore();
+}
+
+// --- Navy Presence Badge ---
+
+function drawNavyPresence(ctx, w, h) {
+    const ships = SIM.navyShips.length;
+    const hasCarrier = SIM.carrier !== null;
+    const zx = w * 0.55;
+    const zy = h * 0.62;
+
+    if (ships === 0 && !hasCarrier) {
+        ctx.save();
+        ctx.font = '8px monospace';
+        ctx.fillStyle = 'rgba(42, 106, 74, 0.4)';
+        ctx.textAlign = 'center';
+        ctx.fillText('NO NAVAL PRESENCE', zx, zy);
+        ctx.restore();
+        return;
+    }
+
+    // Fleet zone glow
+    const radius = 40 + ships * 4;
+    const grad = ctx.createRadialGradient(zx, zy, 0, zx, zy, radius);
+    grad.addColorStop(0, 'rgba(68, 221, 136, 0.06)');
+    grad.addColorStop(1, 'rgba(68, 221, 136, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(zx - radius, zy - radius, radius * 2, radius * 2);
+
+    // Fleet icon (green diamond)
+    ctx.fillStyle = '#44dd88';
+    ctx.beginPath();
+    ctx.moveTo(zx, zy - 8);
+    ctx.lineTo(zx + 6, zy);
+    ctx.lineTo(zx, zy + 8);
+    ctx.lineTo(zx - 6, zy);
+    ctx.closePath();
+    ctx.fill();
+
+    // Border ring
+    ctx.strokeStyle = 'rgba(68, 221, 136, 0.4)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(-wakeLen, -3 * scale);
-    ctx.lineTo(-wakeLen - 12 * scale, -8 * scale);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-wakeLen, 3 * scale);
-    ctx.lineTo(-wakeLen - 12 * scale, 8 * scale);
+    ctx.arc(zx, zy, 14, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Small foam particles
-    ctx.fillStyle = 'rgba(180, 220, 255, 0.1)';
-    for (let i = 0; i < 3; i++) {
-        const px = -wakeLen - 5 - i * 6;
-        const py = (Math.sin(Date.now() / 300 + i * 2) * 3) * scale;
-        ctx.fillRect(px, py - 1, 2, 2);
+    // Badge text
+    ctx.save();
+    ctx.font = 'bold 9px monospace';
+    ctx.fillStyle = '#44dd88';
+    ctx.textAlign = 'center';
+    ctx.fillText(`USN: ${ships} SHIPS`, zx, zy + 24);
+
+    if (hasCarrier) {
+        ctx.font = 'bold 8px monospace';
+        ctx.fillStyle = '#ddaa44';
+        ctx.fillText('CSG EISENHOWER', zx, zy + 34);
+
+        // Larger carrier glow
+        ctx.strokeStyle = 'rgba(221, 170, 68, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(zx, zy, 22, 0, Math.PI * 2);
+        ctx.stroke();
     }
+    ctx.restore();
+
+    // Selected highlight
+    if (SIM.selectedType === 'navy') {
+        ctx.strokeStyle = 'rgba(68, 221, 136, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.strokeRect(ZONES.navy.x * w, ZONES.navy.y * h, ZONES.navy.w * w, ZONES.navy.h * h);
+        ctx.setLineDash([]);
+    }
+}
+
+// --- IRGC Threat Zone ---
+
+function drawIRGCThreatZone(ctx, w, h) {
+    const boats = SIM.iranBoats.length;
+    const aggression = SIM.iranAggression;
+    const isAggressive = aggression > 50;
+    const hasTargeting = SIM.iranBoats.some(b => b.targeting);
+
+    if (boats === 0) return;
+
+    const zx = ZONES.irgc.x * w;
+    const zy = ZONES.irgc.y * h;
+    const zw = ZONES.irgc.w * w;
+    const zh = ZONES.irgc.h * h;
+
+    // Threat zone overlay
+    const threatAlpha = Math.min(0.15, aggression / 500);
+    ctx.fillStyle = `rgba(221, 68, 68, ${threatAlpha})`;
+    ctx.fillRect(zx, zy, zw, zh);
+
+    // Pulsing border when aggressive
+    if (isAggressive) {
+        const pulse = Math.sin(Date.now() / 600) * 0.3 + 0.5;
+        ctx.strokeStyle = `rgba(221, 68, 68, ${pulse * 0.5})`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(zx, zy, zw, zh);
+    }
+
+    // Threat icon (red triangle)
+    const cx = zx + zw * 0.5;
+    const cy = zy + zh * 0.4;
+    ctx.fillStyle = '#dd4444';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 8);
+    ctx.lineTo(cx + 7, cy + 5);
+    ctx.lineTo(cx - 7, cy + 5);
+    ctx.closePath();
+    ctx.fill();
+
+    // Badge text
+    ctx.save();
+    ctx.font = 'bold 9px monospace';
+    ctx.fillStyle = '#dd4444';
+    ctx.textAlign = 'center';
+    ctx.fillText(`IRGC: ${boats} BOATS`, cx, cy + 18);
+
+    if (hasTargeting) {
+        const blink = Math.sin(Date.now() / 300) > 0 ? 1 : 0.4;
+        ctx.globalAlpha = blink;
+        ctx.font = 'bold 8px monospace';
+        ctx.fillText('ACTIVE THREAT', cx, cy + 28);
+        ctx.globalAlpha = 1;
+    } else if (isAggressive) {
+        ctx.font = '8px monospace';
+        ctx.fillStyle = '#dd8844';
+        ctx.fillText('HOSTILE POSTURE', cx, cy + 28);
+    }
+    ctx.restore();
+
+    // Selected highlight
+    if (SIM.selectedType === 'irgc') {
+        ctx.strokeStyle = 'rgba(221, 68, 68, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.strokeRect(zx, zy, zw, zh);
+        ctx.setLineDash([]);
+    }
+}
+
+// --- Hazard Markers ---
+
+function drawHazardMarkers(ctx, w, h) {
+    // Mines
+    if (SIM.mines.length > 0) {
+        for (const mine of SIM.mines) {
+            const mx = mine.x * w;
+            const my = mine.y * h;
+
+            // Hazard triangle
+            const pulse = Math.sin(Date.now() / 400 + mx) * 0.2 + 0.6;
+            ctx.fillStyle = `rgba(221, 68, 68, ${pulse})`;
+            ctx.beginPath();
+            ctx.moveTo(mx, my - 6);
+            ctx.lineTo(mx + 5, my + 3);
+            ctx.lineTo(mx - 5, my + 3);
+            ctx.closePath();
+            ctx.fill();
+
+            // Danger circle
+            ctx.strokeStyle = `rgba(221, 68, 68, ${pulse * 0.3})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(mx, my, 10, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Mine count badge
+        ctx.save();
+        ctx.font = 'bold 8px monospace';
+        ctx.fillStyle = '#dd4444';
+        ctx.fillText(`MINES: ${SIM.mines.length}`, w * 0.42, h * 0.60);
+        ctx.restore();
+    }
+
+    // Drones
+    if (SIM.drones.length > 0) {
+        for (const drone of SIM.drones) {
+            const dx = drone.x * w;
+            const dy = drone.y * h;
+
+            // Scan zone circle
+            ctx.strokeStyle = 'rgba(68, 136, 221, 0.12)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 4]);
+            ctx.beginPath();
+            ctx.arc(dx, dy, drone.radius * Math.min(w, h), 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Drone dot
+            ctx.fillStyle = 'rgba(68, 136, 221, 0.6)';
+            ctx.beginPath();
+            ctx.arc(dx, dy, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Drone count badge
+        ctx.save();
+        ctx.font = 'bold 8px monospace';
+        ctx.fillStyle = '#4488dd';
+        ctx.fillText(`DRONES: ${SIM.drones.length}`, w * 0.58, h * 0.60);
+        ctx.restore();
+    }
+}
+
+// --- Oil Platforms ---
+
+function drawPlatforms(ctx, w, h) {
+    for (const plat of SIM.platforms) {
+        const px = plat.x * w;
+        const py = plat.y * h;
+
+        if (SPRITES.platform) {
+            ctx.drawImage(SPRITES.platform, px - 16, py - 16, 32, 32);
+        }
+
+        // Status indicator
+        const statusColor = plat.active ? '#44dd88' : '#dd4444';
+        ctx.fillStyle = statusColor;
+        ctx.beginPath();
+        ctx.arc(px + 12, py - 12, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Selected highlight
+        if (SIM.selectedEntity === plat) {
+            ctx.strokeStyle = '#ffaa44';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            ctx.strokeRect(px - 18, py - 18, 36, 36);
+            ctx.setLineDash([]);
+        }
+    }
+}
+
+// --- Status Info Panel (canvas overlay, bottom-left) ---
+
+function drawStatusPanel(ctx, w, h) {
+    const px = 10;
+    const py = h - 108;
+    const pw = 220;
+    const ph = 50;
+
+    // Background
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.75)';
+    ctx.fillRect(px, py, pw, ph);
+    ctx.strokeStyle = 'rgba(26, 58, 42, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(px, py, pw, ph);
+
+    ctx.save();
+    ctx.font = '9px monospace';
+
+    const tankerCount = SIM.tankers.filter(t => !t.seized).length;
+    const seizedCount = SIM.tankers.filter(t => t.seized).length;
+    const damagedCount = SIM.tankers.filter(t => t.damaged).length;
+
+    // Line 1
+    ctx.fillStyle = '#44dd88';
+    ctx.fillText(`TANKERS: ${tankerCount}`, px + 6, py + 14);
+    ctx.fillStyle = seizedCount > 0 ? '#dd4444' : '#2a6a4a';
+    ctx.fillText(`SEIZED: ${seizedCount}`, px + 90, py + 14);
+    ctx.fillStyle = damagedCount > 0 ? '#ddaa44' : '#2a6a4a';
+    ctx.fillText(`DMG: ${damagedCount}`, px + 160, py + 14);
+
+    // Line 2
+    ctx.fillStyle = SIM.interceptCount > 0 ? '#44dd88' : '#2a6a4a';
+    ctx.fillText(`INTERCEPTS: ${SIM.interceptCount}`, px + 6, py + 28);
+    ctx.fillStyle = '#2a6a4a';
+    ctx.fillText(`PROVOC: ${SIM.consecutiveProvocations > 0 ? Math.ceil(SIM.consecutiveProvocations) : 0}`, px + 110, py + 28);
+
+    // Line 3 — crisis
+    const crisisLabels = ['NONE', 'ELEVATED', 'MAJOR', 'WAR FOOTING'];
+    const crisisColors = ['#2a6a4a', '#ddaa44', '#dd8844', '#dd4444'];
+    ctx.fillStyle = crisisColors[SIM.crisisLevel];
+    ctx.fillText(`CRISIS: ${crisisLabels[SIM.crisisLevel]}`, px + 6, py + 42);
 
     ctx.restore();
 }
 
-function drawSelectionBox(ctx, x, y, size, color) {
-    ctx.strokeStyle = color;
+// --- Zone Tooltip ---
+
+function drawZoneTooltip(ctx, w, h) {
+    const zone = SIM.selectedType;
+    let lines = [];
+    let tx, ty;
+
+    if (zone === 'navy') {
+        const z = ZONES.navy;
+        tx = (z.x + z.w) * w + 8;
+        ty = z.y * h;
+        const ships = SIM.navyShips;
+        const intercepting = ships.filter(s => s.intercepting).length;
+        const patrolling = ships.filter(s => s.patrolling).length;
+        lines = [
+            'US NAVAL FORCES',
+            `Ships deployed: ${ships.length}`,
+            `Patrolling: ${patrolling}`,
+            `Intercepting: ${intercepting}`,
+            SIM.carrier ? `Carrier: ${SIM.carrier.id}` : '',
+            `Avg readiness: ${ships.length > 0 ? Math.round(ships.reduce((a, s) => a + s.readiness, 0) / ships.length) : 0}%`,
+        ].filter(Boolean);
+    } else if (zone === 'irgc') {
+        const z = ZONES.irgc;
+        tx = (z.x + z.w) * w + 8;
+        ty = z.y * h;
+        const boats = SIM.iranBoats;
+        const targeting = boats.filter(b => b.targeting).length;
+        const fleeing = boats.filter(b => b.fleeing).length;
+        lines = [
+            'IRGC NAVAL ACTIVITY',
+            `Patrol boats: ${boats.length}`,
+            `Actively targeting: ${targeting}`,
+            `Fleeing: ${fleeing}`,
+            `Iran aggression: ${Math.round(SIM.iranAggression)}%`,
+            `Iran economy: ${Math.round(SIM.iranEconomy)}%`,
+        ];
+    } else if (zone === 'lane') {
+        tx = w * 0.35;
+        ty = h * 0.35;
+        const total = SIM.tankers.length;
+        const seized = SIM.tankers.filter(t => t.seized).length;
+        const damaged = SIM.tankers.filter(t => t.damaged).length;
+        const inbound = SIM.tankers.filter(t => t.lane.dir === 'in').length;
+        const outbound = SIM.tankers.filter(t => t.lane.dir === 'out').length;
+        lines = [
+            'SHIPPING TRAFFIC',
+            `Total tankers: ${total}`,
+            `Inbound: ${inbound} / Outbound: ${outbound}`,
+            `Seized: ${seized} / Damaged: ${damaged}`,
+            `Oil flow: ${Math.round(SIM.oilFlow)}%`,
+            `Oil price: $${Math.round(SIM.oilPrice)}/bbl`,
+        ];
+    }
+
+    if (lines.length === 0) return;
+
+    const boxW = 170;
+    const boxH = lines.length * 14 + 10;
+    if (tx + boxW > w - 280) tx = tx - boxW - 16;
+    if (ty + boxH > h - 100) ty = h - 100 - boxH;
+    if (ty < 40) ty = 40;
+
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.92)';
+    const borderColor = zone === 'navy' ? '#44dd88' : zone === 'irgc' ? '#dd4444' : '#4488dd';
+    ctx.strokeStyle = borderColor;
     ctx.lineWidth = 1;
-    const s = size;
-    const corner = 5;
-    // Top-left
-    ctx.beginPath(); ctx.moveTo(x - s, y - s); ctx.lineTo(x - s + corner, y - s); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x - s, y - s); ctx.lineTo(x - s, y - s + corner); ctx.stroke();
-    // Top-right
-    ctx.beginPath(); ctx.moveTo(x + s, y - s); ctx.lineTo(x + s - corner, y - s); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x + s, y - s); ctx.lineTo(x + s, y - s + corner); ctx.stroke();
-    // Bottom-left
-    ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x - s + corner, y + s); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x - s, y + s); ctx.lineTo(x - s, y + s - corner); ctx.stroke();
-    // Bottom-right
-    ctx.beginPath(); ctx.moveTo(x + s, y + s); ctx.lineTo(x + s - corner, y + s); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x + s, y + s); ctx.lineTo(x + s, y + s - corner); ctx.stroke();
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px monospace';
+    for (let i = 0; i < lines.length; i++) {
+        ctx.fillStyle = i === 0 ? '#ffffff' : '#88aa99';
+        ctx.fillText(lines[i], tx + 6, ty + 14 + i * 14);
+    }
 }
+
+// --- Effects ---
 
 function drawEffect(ctx, fx, w, h) {
     const x = fx.x * w;
@@ -397,15 +602,12 @@ function drawEffect(ctx, fx, w, h) {
     const alpha = 1 - progress;
 
     if (fx.type === 'seizure') {
-        // Red expanding ring
         const radius = 10 + progress * 40;
         ctx.strokeStyle = `rgba(255, 40, 40, ${alpha * 0.8})`;
         ctx.lineWidth = 3 - progress * 2;
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.stroke();
-
-        // Inner flash
         if (progress < 0.3) {
             ctx.fillStyle = `rgba(255, 100, 40, ${(0.3 - progress) * 2})`;
             ctx.beginPath();
@@ -413,7 +615,6 @@ function drawEffect(ctx, fx, w, h) {
             ctx.fill();
         }
     } else if (fx.type === 'intercept') {
-        // Green flash
         const radius = 8 + progress * 30;
         ctx.strokeStyle = `rgba(68, 221, 136, ${alpha * 0.7})`;
         ctx.lineWidth = 2;
@@ -421,15 +622,12 @@ function drawEffect(ctx, fx, w, h) {
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.stroke();
     } else if (fx.type === 'explosion') {
-        // Fiery explosion with particles
         const radius = 8 + progress * 50;
-        // Outer ring
         ctx.strokeStyle = `rgba(255, 100, 20, ${alpha * 0.6})`;
         ctx.lineWidth = 4 - progress * 3;
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.stroke();
-        // Inner fire
         if (progress < 0.4) {
             const innerAlpha = (0.4 - progress) * 2;
             const grad = ctx.createRadialGradient(x, y, 0, x, y, 15);
@@ -439,16 +637,13 @@ function drawEffect(ctx, fx, w, h) {
             ctx.fillStyle = grad;
             ctx.fillRect(x - 20, y - 20, 40, 40);
         }
-        // Smoke
         if (progress > 0.2) {
-            const smokeAlpha = alpha * 0.3;
-            ctx.fillStyle = `rgba(80, 80, 80, ${smokeAlpha})`;
+            ctx.fillStyle = `rgba(80, 80, 80, ${alpha * 0.3})`;
             ctx.beginPath();
             ctx.arc(x + progress * 15, y - progress * 25, 6 + progress * 12, 0, Math.PI * 2);
             ctx.fill();
         }
     } else if (fx.type === 'crisis') {
-        // Large red pulse
         const radius = 20 + progress * 80;
         ctx.strokeStyle = `rgba(255, 30, 30, ${alpha * 0.5})`;
         ctx.lineWidth = 4 - progress * 3;
@@ -458,75 +653,7 @@ function drawEffect(ctx, fx, w, h) {
     }
 }
 
-function drawEntityTooltip(ctx, w, h) {
-    const e = SIM.selectedEntity;
-    const type = SIM.selectedType;
-    let lines = [];
-    let tx, ty;
-
-    if (type === 'navy') {
-        tx = e.x * w + 30;
-        ty = e.y * h - 10;
-        lines = [
-            e.id,
-            `Type: ${e.type === 'DDG' ? 'Destroyer' : e.type === 'CG' ? 'Cruiser' : 'Frigate'}`,
-            `Status: ${e.intercepting ? 'INTERCEPTING' : 'Patrolling'}`,
-            `Readiness: ${e.readiness}%`,
-        ];
-    } else if (type === 'iran') {
-        tx = e.x * w + 24;
-        ty = e.y * h - 10;
-        lines = [
-            e.id,
-            `Status: ${e.fleeing ? 'FLEEING' : e.targeting ? 'TARGETING' : e.aggressive ? 'Aggressive' : 'Patrol'}`,
-            e.targeting ? `Target: ${e.targeting}` : '',
-        ].filter(Boolean);
-    } else if (type === 'tanker') {
-        const pos = getLanePosition(e.lane, e.progress);
-        tx = pos.x * w + 34;
-        ty = pos.y * h - 10;
-        lines = [
-            e.id,
-            `Flag: ${e.flag}`,
-            `Cargo: ${(e.cargo / 1000000).toFixed(1)}M bbl`,
-            `Direction: ${e.lane.dir === 'in' ? 'Inbound' : 'Outbound'}`,
-            e.seized ? 'STATUS: SEIZED' : '',
-        ].filter(Boolean);
-    } else if (type === 'platform') {
-        tx = e.x * w + 28;
-        ty = e.y * h - 10;
-        lines = [
-            'Oil Platform',
-            `Status: ${e.active ? 'Active' : 'Offline'}`,
-            `Health: ${e.health}%`,
-        ];
-    }
-
-    if (lines.length === 0) return;
-
-    // Keep tooltip on screen
-    const boxW = 140;
-    const boxH = lines.length * 14 + 10;
-    if (tx + boxW > w - 280) tx -= boxW + 40;
-    if (ty + boxH > h - 90) ty -= boxH;
-    if (ty < 40) ty = 40;
-
-    // Background
-    ctx.fillStyle = 'rgba(10, 10, 10, 0.92)';
-    ctx.strokeStyle = type === 'navy' ? '#44dd88' : type === 'iran' ? '#dd4444' : '#aabbcc';
-    ctx.lineWidth = 1;
-    ctx.fillRect(tx, ty, boxW, boxH);
-    ctx.strokeRect(tx, ty, boxW, boxH);
-
-    // Text
-    ctx.font = '10px monospace';
-    for (let i = 0; i < lines.length; i++) {
-        const isHeader = i === 0;
-        const isSeized = lines[i].includes('SEIZED') || lines[i].includes('INTERCEPTING') || lines[i].includes('TARGETING');
-        ctx.fillStyle = isSeized ? '#dd4444' : isHeader ? '#ffffff' : '#88aa99';
-        ctx.fillText(lines[i], tx + 6, ty + 14 + i * 14);
-    }
-}
+// --- Procedural Map ---
 
 function drawProceduralMap(ctx, w, h) {
     // Deep water with depth zones
@@ -561,7 +688,7 @@ function drawProceduralMap(ctx, w, h) {
         ctx.stroke();
     }
 
-    // Iran (north) — with terrain gradient
+    // Iran (north)
     const iranGrad = ctx.createLinearGradient(0, 0, 0, h * 0.35);
     iranGrad.addColorStop(0, '#3a4530');
     iranGrad.addColorStop(0.6, '#2a3520');
@@ -577,12 +704,11 @@ function drawProceduralMap(ctx, w, h) {
     ctx.closePath();
     ctx.fill();
 
-    // Coast sand strip
     ctx.strokeStyle = 'rgba(200, 170, 100, 0.25)';
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Mountain texture on Iran
+    // Mountain texture
     ctx.fillStyle = 'rgba(60, 50, 30, 0.15)';
     for (let i = 0; i < 12; i++) {
         const mx = w * (0.1 + i * 0.07);
@@ -595,7 +721,7 @@ function drawProceduralMap(ctx, w, h) {
         ctx.fill();
     }
 
-    // Qeshm Island (in the strait)
+    // Islands
     ctx.fillStyle = '#2a3520';
     ctx.beginPath();
     ctx.ellipse(w * 0.48, h * 0.36, w * 0.06, h * 0.02, -0.2, 0, Math.PI * 2);
@@ -604,13 +730,11 @@ function drawProceduralMap(ctx, w, h) {
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Larak Island
     ctx.fillStyle = '#2a3520';
     ctx.beginPath();
     ctx.ellipse(w * 0.56, h * 0.38, w * 0.015, h * 0.01, 0.3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Hormuz Island
     ctx.fillStyle = '#2a3520';
     ctx.beginPath();
     ctx.ellipse(w * 0.52, h * 0.34, w * 0.012, h * 0.008, 0, 0, Math.PI * 2);
@@ -621,7 +745,7 @@ function drawProceduralMap(ctx, w, h) {
     ctx.font = 'bold 16px monospace';
     ctx.fillText('IRAN', w * 0.42, h * 0.10);
 
-    // Bandar Abbas city marker
+    // Bandar Abbas
     ctx.fillStyle = 'rgba(255, 220, 120, 0.4)';
     ctx.beginPath();
     ctx.arc(w * 0.50, h * 0.29, 3, 0, Math.PI * 2);
@@ -630,7 +754,7 @@ function drawProceduralMap(ctx, w, h) {
     ctx.font = '8px monospace';
     ctx.fillText('Bandar Abbas', w * 0.50 + 6, h * 0.29 + 3);
 
-    // UAE/Oman (south) — with terrain gradient
+    // UAE/Oman (south)
     const uaeGrad = ctx.createLinearGradient(0, h * 0.65, 0, h);
     uaeGrad.addColorStop(0, '#364428');
     uaeGrad.addColorStop(0.4, '#2a3520');
@@ -656,7 +780,7 @@ function drawProceduralMap(ctx, w, h) {
     ctx.fillText('UAE', w * 0.58, h * 0.88);
     ctx.fillText('OMAN', w * 0.22, h * 0.90);
 
-    // Dubai/Fujairah markers
+    // City markers
     ctx.fillStyle = 'rgba(255, 220, 120, 0.35)';
     ctx.beginPath();
     ctx.arc(w * 0.68, h * 0.76, 3, 0, Math.PI * 2);
@@ -665,7 +789,6 @@ function drawProceduralMap(ctx, w, h) {
     ctx.font = '8px monospace';
     ctx.fillText('Fujairah', w * 0.68 + 6, h * 0.76 + 3);
 
-    // Muscat
     ctx.fillStyle = 'rgba(255, 220, 120, 0.35)';
     ctx.beginPath();
     ctx.arc(w * 0.15, h * 0.78, 3, 0, Math.PI * 2);
@@ -679,7 +802,7 @@ function drawProceduralMap(ctx, w, h) {
     ctx.font = '7px monospace';
     ctx.fillText('Qeshm', w * 0.44, h * 0.35 - 6);
 
-    // Water body labels
+    // Water labels
     ctx.fillStyle = 'rgba(100, 180, 255, 0.25)';
     ctx.font = 'bold 11px monospace';
     ctx.fillText('STRAIT OF HORMUZ', w * 0.34, h * 0.50);
@@ -689,7 +812,7 @@ function drawProceduralMap(ctx, w, h) {
     ctx.fillText('PERSIAN GULF', w * 0.72, h * 0.55);
     ctx.fillText('GULF OF OMAN', w * 0.06, h * 0.65);
 
-    // Grid overlay (subtle)
+    // Grid overlay
     ctx.strokeStyle = 'rgba(40, 80, 120, 0.05)';
     ctx.lineWidth = 1;
     for (let gx = 0; gx < w; gx += w / 16) {
@@ -705,6 +828,8 @@ function drawProceduralMap(ctx, w, h) {
         ctx.stroke();
     }
 }
+
+// --- Lane Position (kept for flow animation + simulation) ---
 
 function getLanePosition(lane, progress) {
     const pts = lane.points;
