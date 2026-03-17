@@ -6,7 +6,7 @@
 const CHARACTERS = [
     {
         id: 'trump', name: 'Donald Trump', title: '45th & 47th President',
-        spriteKey: 'portrait_trump',
+        spriteKey: 'portrait_trump', portraitImage: 'assets/trump.png',
         ability: 'The Decider',
         abilityDesc: 'Gets ALL cards. 1.5x effects. Political Capital resource. 4 picks instead of 3.',
         lore: 'February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it.',
@@ -113,7 +113,7 @@ const CHARACTERS = [
     },
     {
         id: 'hegseth', name: 'Pete Hegseth', title: 'Secretary of War',
-        spriteKey: 'portrait_hegseth',
+        spriteKey: 'portrait_hegseth', portraitImage: 'assets/pete.png',
         ability: 'The Warhorse',
         abilityDesc: 'Command Authority resource. Military cards cost authority. Override special action.',
         lore: 'February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran\'s response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You\'ve trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003.',
@@ -247,7 +247,7 @@ const CHARACTERS = [
     },
     {
         id: 'kushner', name: 'Jared Kushner', title: 'Senior Advisor',
-        spriteKey: 'portrait_kushner',
+        spriteKey: 'portrait_kushner', portraitImage: 'assets/kushner.png',
         ability: 'The Operator',
         abilityDesc: 'Contacts & exposure system. Build trust with 5 key contacts. Avoid leaks.',
         lore: 'February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they\'re all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe.',
@@ -371,7 +371,7 @@ const CHARACTERS = [
     },
     {
         id: 'asmongold', name: 'Asmongold', title: 'Streamer & Analyst',
-        spriteKey: 'portrait_asmongold',
+        spriteKey: 'portrait_asmongold', portraitImage: 'assets/asmongold.png',
         ability: 'The Analyst',
         abilityDesc: 'Credibility resource. Intel Feed mini-game. Flag signals from noise each week.',
         lore: 'February 28, 2026. Chat, this is not a drill. The US just killed Iran\'s Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran\'s response. The intel is flooding in faster than anyone can process. Except you.',
@@ -495,7 +495,7 @@ const CHARACTERS = [
     },
     {
         id: 'fuentes', name: 'Nick Fuentes', title: 'Political Commentator',
-        spriteKey: 'portrait_fuentes',
+        spriteKey: 'portrait_fuentes', portraitImage: 'assets/nick.png',
         ability: 'The Outsider',
         abilityDesc: 'Base Enthusiasm drops 12/week without America First cards. Address the Nation special action.',
         lore: 'February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You\'re the youngest national security advisor in history.',
@@ -653,10 +653,14 @@ function showLoreScreen(character) {
         overlay.id = 'lore-overlay';
         overlay.className = 'lore-overlay';
 
+        const portraitHtml = character.portraitImage
+            ? `<img class="lore-portrait" src="${character.portraitImage}" alt="${character.name}" width="128" height="128" style="image-rendering:pixelated">`
+            : `<canvas class="lore-portrait" id="lore-portrait" width="112" height="112"></canvas>`;
+
         overlay.innerHTML = `
             <div class="lore-box">
                 <div class="lore-scanlines"></div>
-                <canvas class="lore-portrait" id="lore-portrait" width="112" height="112"></canvas>
+                ${portraitHtml}
                 <div class="lore-name">${character.name}</div>
                 <div class="lore-title">${character.title}</div>
                 <div class="lore-ability">${character.ability}: ${character.abilityDesc}</div>
@@ -667,11 +671,13 @@ function showLoreScreen(character) {
 
         document.getElementById('game-container').appendChild(overlay);
 
-        const canvas = document.getElementById('lore-portrait');
-        if (canvas && SPRITES[character.spriteKey]) {
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 112, 112);
+        if (!character.portraitImage) {
+            const canvas = document.getElementById('lore-portrait');
+            if (canvas && SPRITES[character.spriteKey]) {
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 112, 112);
+            }
         }
 
         const textEl = document.getElementById('lore-text');
@@ -725,7 +731,10 @@ function showCharacterSelect() {
                     <div class="char-grid">
                         ${CHARACTERS.map((ch, i) => `
                             <div class="char-card ${selectedIdx === i ? 'selected' : ''}" data-idx="${i}">
-                                <canvas class="char-portrait" id="char-portrait-${i}" width="56" height="56"></canvas>
+                                ${ch.portraitImage
+                                    ? `<img class="char-portrait" src="${ch.portraitImage}" alt="${ch.name}" width="80" height="80" style="image-rendering:pixelated">`
+                                    : `<canvas class="char-portrait" id="char-portrait-${i}" width="56" height="56"></canvas>`
+                                }
                                 <div class="char-info">
                                     <div class="char-name">${ch.name}</div>
                                     <div class="char-title">${ch.title}</div>
@@ -747,6 +756,7 @@ function showCharacterSelect() {
             `;
 
             CHARACTERS.forEach((ch, i) => {
+                if (ch.portraitImage) return; // Using <img> tag instead
                 const canvas = document.getElementById('char-portrait-' + i);
                 if (canvas && SPRITES[ch.spriteKey]) {
                     const ctx = canvas.getContext('2d');
