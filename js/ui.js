@@ -509,18 +509,24 @@ function executeSpecialAction() {
 // ======================== ADJUST STRATEGY ========================
 
 function showAdjustStrategy() {
-    // Player can swap ONE card (with credibility cost)
     const hand = dealHand(SIM.character, SIM.week, SIM.playedExclusives);
     const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
     const catColors = { military: '#dd4444', diplomatic: '#4488dd', economic: '#ddaa44', intelligence: '#44dd88', domestic: '#aa88dd' };
+    const maxPicks = (SIM.character.cardPool && SIM.character.cardPool.maxPicks) || 3;
 
     // Current stances
     const currentCards = SIM.activeStances.map(s => {
         return { card: allCards.find(c => c.id === s.cardId), funding: s.funding };
     }).filter(s => s.card);
 
-    let removingIdx = null; // index in currentCards to remove
-    let replacement = null; // {card, funding}
+    // If no active stances, show card selection instead of swap
+    if (currentCards.length === 0) {
+        showInitialPick();
+        return;
+    }
+
+    let removingIdx = null;
+    let replacement = null;
 
     // Available replacements: cards in hand that aren't currently active
     const activeIds = SIM.activeStances.map(s => s.cardId);
@@ -608,16 +614,13 @@ function showAdjustStrategy() {
         const confirmBtn = document.getElementById('btn-confirm-swap');
         if (confirmBtn) {
             confirmBtn.addEventListener('click', () => {
-                // Remove old stance
                 const removed = currentCards[removingIdx];
                 SIM.activeStances = SIM.activeStances.filter(s => s.cardId !== removed.card.id);
                 delete SIM.stanceActivationDay[removed.card.id];
 
-                // Add new stance
                 SIM.activeStances.push({ cardId: replacement.card.id, funding: replacement.funding });
                 SIM.stanceActivationDay[replacement.card.id] = SIM.day;
 
-                // Track exclusives
                 const isBonus = Object.values(CHARACTER_BONUS_CARDS).some(b => b.id === replacement.card.id);
                 if (isBonus || replacement.card.exclusive) {
                     if (!SIM.playedExclusives.includes(replacement.card.id)) SIM.playedExclusives.push(replacement.card.id);
