@@ -19,8 +19,6 @@ function renderPolicyCards() {
         const effectsHtml = Object.entries(policy.effects).map(([key, vals]) => {
             const val = vals[policy.level];
             if (val === 0) return '';
-            const cls = val > 0 ? (key === 'oilFlowProtection' || key === 'approval' ? 'positive' : 'negative') : (key === 'tension' || key === 'iranAggression' ? 'positive' : 'negative');
-            // Flip for "good when negative" effects
             const displayCls = ['tension', 'iranAggression', 'cost', 'conflictRisk', 'fogOfWar'].includes(key)
                 ? (val > 0 ? 'negative' : 'positive')
                 : (val > 0 ? 'positive' : 'negative');
@@ -53,7 +51,7 @@ function renderPolicyCards() {
             policy.cooldown = policy.cooldownMax;
 
             // Log policy change
-            logEvent(`Policy changed: ${policy.name} → ${policy.levelLabels[newLevel]}`, 'normal');
+            logEvent('Policy changed: ' + policy.name + ' -> ' + policy.levelLabels[newLevel], 'normal');
 
             renderPolicyCards(); // re-render to update effects display
         });
