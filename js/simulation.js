@@ -803,6 +803,15 @@ function dailyUpdate() {
         logEvent('Day 80. Just 10 more days to stabilize the situation.', 'warning');
     }
 
+    // Check policy unlocks
+    for (const p of POLICIES) {
+        if (p.locked && p.unlockCondition && p.unlockCondition()) {
+            p.locked = false;
+            logEvent('NEW POLICY UNLOCKED: ' + p.name, 'good');
+            markPolicyDirty();
+        }
+    }
+
     // Push metric snapshot for weekly reports
     SIM.metricHistory.push({
         day: SIM.day,

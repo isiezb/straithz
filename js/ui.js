@@ -18,6 +18,10 @@ const POLICY_ICON_MAP = {
     blockade_response: 'iconBlockade',
     coalition_building: 'iconCoalition',
     intel_ops: 'iconIntel',
+    cyber_warfare: 'iconIntel',
+    media_campaign: 'iconDiplomacy',
+    humanitarian_aid: 'iconCoalition',
+    strategic_reserves: 'iconBlockade',
 };
 
 let _policyDirty = true;
@@ -27,7 +31,7 @@ function markPolicyDirty() { _policyDirty = true; }
 
 function renderPolicyCards() {
     // Build a state fingerprint to avoid unnecessary DOM rebuilds
-    const state = POLICIES.map(p => `${p.id}:${p.level}:${p.cooldown}`).join('|');
+    const state = POLICIES.map(p => `${p.id}:${p.level}:${p.cooldown}:${p.locked ? 'L' : 'U'}`).join('|');
     if (state === _policyLastState && !_policyDirty) return;
     _policyLastState = state;
     _policyDirty = false;
@@ -37,8 +41,21 @@ function renderPolicyCards() {
 
     for (const policy of POLICIES) {
         const card = document.createElement('div');
-        card.className = `policy-card ${policy.level > 0 ? 'active' : ''}`;
+        const isLocked = policy.locked === true;
+        card.className = `policy-card ${isLocked ? 'locked' : ''} ${!isLocked && policy.level > 0 ? 'active' : ''}`;
         card.id = `policy-${policy.id}`;
+
+        if (isLocked) {
+            card.innerHTML = `
+                <div class="policy-name">
+                    <span class="lock-icon">[?]</span>
+                    ${policy.name}
+                </div>
+                <div class="policy-desc locked-hint">${policy.unlockHint || 'Locked'}</div>
+            `;
+            list.appendChild(card);
+            continue;
+        }
 
         const effectsHtml = Object.entries(policy.effects).map(([key, vals]) => {
             const val = vals[policy.level];
@@ -71,7 +88,7 @@ function renderPolicyCards() {
         const slider = card.querySelector('input[type="range"]');
         slider.addEventListener('input', (e) => {
             const newLevel = parseInt(e.target.value);
-            if (policy.cooldown > 0) return;
+            if (policy.locked || policy.cooldown > 0) return;
             if (newLevel === policy.level) return;
 
             policy.level = newLevel;
@@ -400,6 +417,116 @@ function showWeeklyReport() {
     });
 }
 
+// -- Post-Mortem Analysis --
+
+function generatePostMortem() {
+    const h = SIM.metricHistory;
+
+    // Individual metric grades
+    function metricGrade(val, thresholds) {
+        if (val >= thresholds[0]) return { grade: 'S', cls: 'good' };
+        if (val >= thresholds[1]) return { grade: 'A', cls: 'good' };
+        if (val >= thresholds[2]) return { grade: 'B', cls: 'good' };
+        if (val >= thresholds[3]) return { grade: 'C', cls: 'warning' };
+        if (val >= thresholds[4]) return { grade: 'D', cls: 'danger' };
+        return { grade: 'F', cls: 'danger' };
+    }
+
+    const grades = {
+        oilFlow: metricGrade(SIM.oilFlow, [90, 80, 65, 50, 30]),
+        approval: metricGrade(SIM.approval, [80, 65, 55, 40, 25]),
+        tension: metricGrade(100 - SIM.tension, [85, 70, 55, 40, 20]),
+        conflictRisk: metricGrade(100 - SIM.conflictRisk, [90, 75, 60, 40, 20]),
+        budget: metricGrade(Math.min(100, Math.max(0, SIM.budget / 10)), [80, 60, 40, 20, 5]),
+    };
+
+    const gradeLabels = { oilFlow: 'Oil Flow', approval: 'Approval', tension: 'Tension', conflictRisk: 'Conflict Risk', budget: 'Budget' };
+
+    // Breakdown HTML
+    let breakdownHtml = '<div class="pm-breakdown">';
+    for (const [key, g] of Object.entries(grades)) {
+        breakdownHtml += `<div class="pm-metric"><span class="pm-metric-name">${gradeLabels[key]}</span><span class="pm-metric-grade ${g.cls}">${g.grade}</span></div>`;
+    }
+    breakdownHtml += '</div>';
+
+    // Find best and worst metrics
+    const gradeOrder = { S: 6, A: 5, B: 4, C: 3, D: 2, F: 1 };
+    const sorted = Object.entries(grades).sort((a, b) => gradeOrder[a[1].grade] - gradeOrder[b[1].grade]);
+    const worst = sorted[0];
+    const best = sorted[sorted.length - 1];
+
+    // Turning points — biggest single-day swings
+    let turningPoints = '';
+    if (h.length > 1) {
+        let maxDrop = { metric: '', day: 0, delta: 0 };
+        let maxSpike = { metric: '', day: 0, delta: 0 };
+        const trackMetrics = ['tension', 'oilFlow', 'approval', 'conflictRisk'];
+        for (let i = 1; i < h.length; i++) {
+            for (const m of trackMetrics) {
+                const delta = h[i][m] - h[i - 1][m];
+                const isNeg = ['tension', 'conflictRisk'].includes(m) ? delta > 0 : delta < 0;
+                if (isNeg && Math.abs(delta) > Math.abs(maxDrop.delta)) {
+                    maxDrop = { metric: gradeLabels[m] || m, day: h[i].day, delta };
+                }
+                const isPos = ['tension', 'conflictRisk'].includes(m) ? delta < 0 : delta > 0;
+                if (isPos && Math.abs(delta) > Math.abs(maxSpike.delta)) {
+                    maxSpike = { metric: gradeLabels[m] || m, day: h[i].day, delta };
+                }
+            }
+        }
+        if (maxDrop.day > 0) {
+            turningPoints += `<div class="pm-turning"><span class="negative">Worst day:</span> ${maxDrop.metric} shifted ${maxDrop.delta > 0 ? '+' : ''}${Math.round(maxDrop.delta)} on Day ${maxDrop.day}</div>`;
+        }
+        if (maxSpike.day > 0) {
+            turningPoints += `<div class="pm-turning"><span class="positive">Best day:</span> ${maxSpike.metric} shifted ${maxSpike.delta > 0 ? '+' : ''}${Math.round(maxSpike.delta)} on Day ${maxSpike.day}</div>`;
+        }
+    }
+
+    // Analysis text
+    let analysisHtml = '';
+    if (!SIM.gameWon) {
+        analysisHtml += `<div class="pm-insight"><span class="negative">What went wrong:</span> ${gradeLabels[worst[0]]} was your weakest area (${worst[1].grade})</div>`;
+    }
+    analysisHtml += `<div class="pm-insight"><span class="positive">Strongest area:</span> ${gradeLabels[best[0]]} (${best[1].grade})</div>`;
+    if (turningPoints) analysisHtml += turningPoints;
+
+    // Context-aware tip
+    let tipHtml = '';
+    if (SIM.gameWon) {
+        tipHtml = '<div class="tip-box tip-good">Strong performance. Try a harder opening next time — start with higher tension or pick a character that challenges your playstyle.</div>';
+    } else if (SIM.conflictRisk >= 95) {
+        tipHtml = '<div class="tip-box tip-critical">Try balancing naval deployment with diplomacy to keep conflict risk manageable. Avoid stacking high-tension policies simultaneously.</div>';
+    } else if (SIM.oilFlow <= 15) {
+        tipHtml = '<div class="tip-box tip-warning">Coalition building and blockade response help protect oil flow without spiking tension as much as unilateral action.</div>';
+    } else if (SIM.approval <= 10) {
+        tipHtml = '<div class="tip-box tip-warning">Humanitarian decisions and coalition support boost approval. Avoid relying solely on military action — the media campaign policy can help too.</div>';
+    } else if (SIM.budget <= -500) {
+        tipHtml = '<div class="tip-box tip-warning">Watch your daily costs in the policy panel. Gulf state funding offers and Trump\'s sanctions cost reduction can ease the budget pressure.</div>';
+    }
+
+    // Decision recap
+    let decisionHtml = '';
+    if (SIM.decisionHistory.length > 0) {
+        const recentDecisions = SIM.decisionHistory.slice(-5);
+        decisionHtml = '<div class="pm-decisions"><div class="pm-decisions-label">KEY DECISIONS</div>';
+        for (const d of recentDecisions) {
+            decisionHtml += `<div class="pm-decision-item">Day ${d.day}: ${d.title} — ${d.choiceText}</div>`;
+        }
+        decisionHtml += '</div>';
+    }
+
+    return `
+        <div class="post-mortem">
+            <div class="pm-section-label">PERFORMANCE BREAKDOWN</div>
+            ${breakdownHtml}
+            <div class="pm-section-label">ANALYSIS</div>
+            ${analysisHtml}
+            ${tipHtml}
+            ${decisionHtml}
+        </div>
+    `;
+}
+
 // -- Game Over --
 
 function showGameOverScreen() {
@@ -407,6 +534,7 @@ function showGameOverScreen() {
     if (existing) existing.remove();
 
     const rating = calculateRating();
+    const postMortem = generatePostMortem();
 
     const overlay = document.createElement('div');
     overlay.id = 'game-over-overlay';
@@ -429,6 +557,7 @@ function showGameOverScreen() {
                 <div class="stat-row"><span>Budget Remaining</span><span>$${Math.round(SIM.budget)}M</span></div>
                 <div class="stat-row"><span>Decisions Made</span><span>${SIM.decisionHistory.length}</span></div>
             </div>
+            ${postMortem}
             <button id="btn-restart" class="restart-btn">RESTART [R]</button>
         </div>
     `;
@@ -488,11 +617,12 @@ function restartGame() {
     SIM.metricHistory = [];
     SIM.weeklyReportActive = false;
 
-    // Reset policies
+    // Reset policies (re-lock unlockable ones)
     for (const p of POLICIES) {
         p.level = 0;
         p.active = false;
         p.cooldown = 0;
+        if (p.unlockCondition) p.locked = true;
     }
 
     // Re-init
