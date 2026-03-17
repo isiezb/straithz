@@ -8,76 +8,37 @@
 </head>
 <body>
     <div id="game-container">
+        <div class="scanlines-global"></div>
         <canvas id="game-canvas"></canvas>
 
-        <!-- Character Select Overlay -->
-        <div id="char-select"></div>
-
-        <!-- Top Gauges -->
         <div id="gauge-bar">
-            <div id="hud-week" class="gauge-week">WEEK 1 — DAY 1/7</div>
+            <div id="hud-day" class="hud-day">DAY 1</div>
             <div class="gauge-item" id="gauge-stability">
                 <span class="gauge-label">STABILITY</span>
-                <div class="gauge-track"><div class="gauge-fill good" style="width:60%"></div></div>
-                <span class="gauge-val good">Stable</span>
+                <span class="gauge-value">72</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:72%"></div></div>
             </div>
             <div class="gauge-item" id="gauge-economy">
                 <span class="gauge-label">ECONOMY</span>
-                <div class="gauge-track"><div class="gauge-fill good" style="width:60%"></div></div>
-                <span class="gauge-val good">Stable</span>
+                <span class="gauge-value">68</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:68%"></div></div>
             </div>
             <div class="gauge-item" id="gauge-support">
                 <span class="gauge-label">SUPPORT</span>
-                <div class="gauge-track"><div class="gauge-fill good" style="width:60%"></div></div>
-                <span class="gauge-val good">Stable</span>
+                <span class="gauge-value">65</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:65%"></div></div>
             </div>
             <div class="gauge-item" id="gauge-intel">
                 <span class="gauge-label">INTEL</span>
-                <div class="gauge-track"><div class="gauge-fill warning" style="width:25%"></div></div>
-                <span class="gauge-val warning">Weak</span>
+                <span class="gauge-value">25</span>
+                <div class="gauge-track"><div class="gauge-fill danger" style="width:25%"></div></div>
             </div>
-            <div class="gauge-item" id="gauge-unique" style="display:none">
-                <span class="gauge-label">RESOURCE</span>
-                <div class="gauge-track"><div class="gauge-fill good" style="width:50%"></div></div>
-                <span class="gauge-val good">50</span>
-            </div>
-            <div id="hud-escalation" class="esc-track" style="display:none">
-                <span class="esc-label">ESCALATION</span>
-                <span class="esc-pips"></span>
-            </div>
+            <div id="hud-rating" class="hud-rating">C</div>
             <div id="hud-strait" class="strait-counter">STRAIT: CONTESTED</div>
         </div>
 
-        <!-- Advisor Console (right side) -->
-        <div id="advisor-console">
-            <div class="advisor-header">
-                <div id="advisor-portrait" class="advisor-portrait"></div>
-                <div class="advisor-info">
-                    <div id="advisor-name" class="advisor-name">Advisor</div>
-                    <div id="advisor-title" class="advisor-title-text">Title</div>
-                </div>
-            </div>
-            <div id="advisor-text" class="advisor-speech"></div>
-            <div id="advisor-status" class="advisor-status"></div>
-        </div>
-
-        <!-- Event Log (below canvas) -->
-        <div id="event-log">
-            <div class="event-log-header">SITUATION LOG</div>
-        </div>
-
-        <!-- Special Action Button -->
-        <button id="special-action-btn" class="special-action-btn" style="display:none"></button>
-
-        <!-- News Ticker (bottom) -->
-        <div id="news-ticker">
-            <span class="ticker-label">BREAKING</span>
-            <div id="news-ticker-scroll">
-                <div id="news-ticker-inner"></div>
-            </div>
-        </div>
-
-        <!-- Toast Notifications -->
+        <div id="char-select"></div>
+        <div id="terminal-overlay"></div>
         <div id="toast-container"></div>
     </div>
 

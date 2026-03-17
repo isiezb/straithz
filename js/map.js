@@ -26,10 +26,10 @@ function initMap() {
 }
 
 function resizeCanvas() {
-    const container = MAP.canvas.parentElement;
-    // Canvas fills space left of advisor console
-    MAP.width = container.clientWidth;
-    MAP.height = container.clientHeight;
+    // Use the canvas element's CSS-computed size (not parent, which is full viewport)
+    const rect = MAP.canvas.getBoundingClientRect();
+    MAP.width = Math.round(rect.width);
+    MAP.height = Math.round(rect.height);
     MAP.canvas.width = MAP.width;
     MAP.canvas.height = MAP.height;
 }
@@ -58,6 +58,12 @@ function renderMap() {
     drawPlatforms(ctx, w, h);
     drawIncidentMarkers(ctx, w, h);
     drawStatusPanel(ctx, w, h);
+
+    // Day counter (large, center-top of canvas)
+    drawDayCounter(ctx, w, h);
+
+    // Event flash card
+    drawEventFlash(ctx, w, h);
 
     // Visual effects
     for (const fx of SIM.effects) {
@@ -689,6 +695,89 @@ function drawProceduralMap(ctx, w, h) {
         ctx.lineTo(w, gy);
         ctx.stroke();
     }
+}
+
+// --- Day Counter (large centered text during dayplay) ---
+
+function drawDayCounter(ctx, w, h) {
+    if (SIM.phase !== 'dayplay') return;
+
+    const dayText = 'DAY ' + SIM.day;
+
+    ctx.save();
+    ctx.font = 'bold 28px monospace';
+    ctx.fillStyle = 'rgba(68, 221, 136, 0.25)';
+    ctx.textAlign = 'center';
+    ctx.fillText(dayText, w * 0.5, 40);
+
+    // Hour progress bar
+    const barW = 120;
+    const barH = 3;
+    const barX = w * 0.5 - barW / 2;
+    const barY = 48;
+    const progress = SIM.dayPlayTimer ? Math.min(SIM.dayPlayTimer / 6000, 1) : 0;
+
+    ctx.fillStyle = 'rgba(26, 58, 42, 0.3)';
+    ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = 'rgba(68, 221, 136, 0.3)';
+    ctx.fillRect(barX, barY, barW * progress, barH);
+
+    ctx.restore();
+}
+
+// --- Event Flash Card ---
+
+let _eventFlash = null;
+
+function triggerEventFlash(text, level) {
+    _eventFlash = { text, level, timer: 180 }; // ~3 seconds at 60fps
+}
+
+function drawEventFlash(ctx, w, h) {
+    if (!_eventFlash || _eventFlash.timer <= 0) {
+        _eventFlash = null;
+        return;
+    }
+
+    _eventFlash.timer--;
+    const alpha = Math.min(1, _eventFlash.timer / 30); // fade out last 0.5s
+    const slideIn = Math.min(1, (180 - _eventFlash.timer) / 15); // slide in first 0.25s
+
+    const flashW = Math.min(400, w * 0.6);
+    const flashH = 36;
+    const flashX = w * 0.5 - flashW / 2;
+    const flashY = h * 0.12 + (1 - slideIn) * -20;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Background
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.85)';
+    ctx.fillRect(flashX, flashY, flashW, flashH);
+
+    // Border
+    const colors = { critical: '#dd4444', warning: '#ddaa44', good: '#44dd88', normal: '#2a6a4a' };
+    const color = colors[_eventFlash.level] || colors.normal;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(flashX, flashY, flashW, flashH);
+
+    // Left accent bar
+    ctx.fillStyle = color;
+    ctx.fillRect(flashX, flashY, 3, flashH);
+
+    // Text
+    ctx.font = '11px monospace';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'left';
+
+    // Truncate text if too long
+    let text = _eventFlash.text;
+    if (text.length > 50) text = text.substring(0, 47) + '...';
+    ctx.fillText(text, flashX + 12, flashY + flashH / 2 + 4);
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
 }
 
 // --- Lane Position ---

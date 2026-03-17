@@ -8,8 +8,15 @@ const SIM = {
     hour: 0,
     week: 1,
     weekDay: 1,        // 1-7 within current week
-    speed: 0,          // 0=paused, 2=auto during play phase
-    phase: 'briefing', // briefing | playing | debrief | gameover
+    speed: 2,          // entity movement speed during dayplay
+    phase: 'charselect', // charselect|lore|initial_pick|morning|dayplay|event|overnight|weekly_checkin|gameover
+
+    // Daily desk tracking
+    dayPlayTimer: 0,
+    stanceActivationDay: {},  // {cardId: day} — when each stance was activated
+    firedConsequences: [],    // consequence IDs already fired this game
+    pendingNews: [],          // news items accumulated during a day
+    prevGauges: null,         // gauge snapshot from start of day
 
     // Core metrics (underlying — player sees 4 gauges)
     oilFlow: 85,
@@ -164,31 +171,17 @@ function spawnIranBoat(x, y) {
 }
 
 function tickSimulation() {
-    if (SIM.speed === 0 || SIM.gameOver || SIM.phase !== 'playing') return;
+    // Entity movement runs during dayplay only (game.js drives day advancement)
+    if (SIM.gameOver || SIM.phase !== 'dayplay') return;
     if (SIM.decisionEventActive) return;
 
-    SIM.hour++;
-    if (SIM.hour >= 24) {
-        SIM.hour = 0;
-        SIM.day++;
-        SIM.weekDay++;
-        dailyUpdate();
-        checkWinLose();
-
-        // End of week (7 days played)
-        if (SIM.weekDay > 7 && !SIM.gameOver) {
-            SIM.phase = 'debrief';
-            SIM.speed = 0;
-            showWeeklyDebrief();
-            return;
-        }
-    }
+    const spd = SIM.speed || 2;
 
     // Move tankers
     for (let i = SIM.tankers.length - 1; i >= 0; i--) {
         const t = SIM.tankers[i];
         if (t.seized) continue;
-        t.progress += t.speed * SIM.speed;
+        t.progress += t.speed * spd;
         if (t.progress >= 1) {
             SIM.tankers.splice(i, 1);
             spawnTanker();
@@ -200,53 +193,132 @@ function tickSimulation() {
 
     // Move navy ships
     for (const ship of SIM.navyShips) {
-        ship.x += (ship.targetX - ship.x) * 0.02 * SIM.speed;
-        ship.y += (ship.targetY - ship.y) * 0.02 * SIM.speed;
+        ship.x += (ship.targetX - ship.x) * 0.02 * spd;
+        ship.y += (ship.targetY - ship.y) * 0.02 * spd;
     }
 
     // Move Iran boats
     for (const boat of SIM.iranBoats) {
         const moveSpeed = boat.fleeing ? 0.04 : 0.025;
-        boat.x += (boat.targetX - boat.x) * moveSpeed * SIM.speed;
-        boat.y += (boat.targetY - boat.y) * moveSpeed * SIM.speed;
+        boat.x += (boat.targetX - boat.x) * moveSpeed * spd;
+        boat.y += (boat.targetY - boat.y) * moveSpeed * spd;
     }
-
-    // Effects
-    SIM.effects = SIM.effects.filter(e => { e.life -= SIM.speed; return e.life > 0; });
-
-    // Card consequence events (80%) or ambient events (20%)
-    if (Math.random() < 0.004 * SIM.speed) {
-        if (Math.random() < 0.8) triggerCardConsequence();
-        else triggerAmbientEvent();
-    }
-
-    // Iran provocations
-    const provRate = SIM.iranStrategy === 'confrontational' ? 0.008 :
-                     SIM.iranStrategy === 'escalatory' ? 0.005 :
-                     SIM.iranStrategy === 'probing' ? 0.002 : 0.0005;
-    if (Math.random() < provRate * SIM.speed) triggerIranProvocation();
-
-    // Crisis escalation
-    if (SIM.tension > 80 && Math.random() < 0.001 * SIM.speed) escalateCrisis();
-
-    updateMineHazards();
 
     // Move drones
     for (const drone of SIM.drones) {
-        drone.angle += 0.002 * SIM.speed;
+        drone.angle += 0.002 * spd;
         drone.x = drone.cx + Math.cos(drone.angle) * drone.radius;
         drone.y = drone.cy + Math.sin(drone.angle) * drone.radius;
     }
 
     // Move carrier
     if (SIM.carrier) {
-        SIM.carrier.x += (SIM.carrier.targetX - SIM.carrier.x) * 0.005 * SIM.speed;
-        SIM.carrier.y += (SIM.carrier.targetY - SIM.carrier.y) * 0.005 * SIM.speed;
+        SIM.carrier.x += (SIM.carrier.targetX - SIM.carrier.x) * 0.005 * spd;
+        SIM.carrier.y += (SIM.carrier.targetY - SIM.carrier.y) * 0.005 * spd;
         if (Math.random() < 0.01) {
             SIM.carrier.targetX = 0.65 + Math.random() * 0.15;
             SIM.carrier.targetY = 0.60 + Math.random() * 0.10;
         }
     }
+
+    updateMineHazards();
+}
+
+/**
+ * Check for consequence events based on active stances and their duration.
+ * Returns an event object or null. Called from game.js advanceDay().
+ */
+function checkConsequenceEvents() {
+    if (!SIM.activeStances || SIM.activeStances.length === 0) return null;
+
+    // Three-act pacing: event frequency varies by day
+    let eventChance;
+    if (SIM.day <= 20) eventChance = 0.65;       // Crisis: events most days
+    else if (SIM.day <= 55) eventChance = 0.40;   // Grind: every 2-3 days
+    else eventChance = 0.60;                       // Endgame: ramp back up
+
+    if (Math.random() > eventChance) return null;
+
+    // Fire card consequence inline (headline + effect), then check for decision events
+    if (Math.random() < 0.6) {
+        triggerCardConsequence();
+    } else {
+        triggerAmbientEvent();
+    }
+
+    // Iran provocations during day
+    const provRate = SIM.iranStrategy === 'confrontational' ? 0.35 :
+                     SIM.iranStrategy === 'escalatory' ? 0.20 :
+                     SIM.iranStrategy === 'probing' ? 0.08 : 0.02;
+    if (Math.random() < provRate) triggerIranProvocation();
+
+    // Crisis escalation
+    if (SIM.tension > 80 && Math.random() < 0.15) escalateCrisis();
+
+    // Check for structured decision events
+    const usedIds = SIM.decisionHistory.map(d => d.id);
+    let allEvents = [...DECISION_EVENTS];
+    if (SIM.character && SIM.character.uniqueEvents) {
+        allEvents = allEvents.concat(SIM.character.uniqueEvents);
+    }
+
+    // Stance-duration bonus: cards active longer are more likely to trigger related events
+    const eligible = allEvents.filter(e =>
+        !usedIds.includes(e.id) &&
+        SIM.day >= (e.minDay || 1) && SIM.day <= (e.maxDay || 999) &&
+        (!e.condition || e.condition())
+    );
+
+    if (eligible.length === 0) return null;
+    return eligible[Math.floor(Math.random() * eligible.length)];
+}
+
+/**
+ * Generate overnight news summary based on the day's events
+ */
+function generateOvernightNews() {
+    const news = [];
+    const g = calculateGauges();
+    const prev = SIM.prevGauges || g;
+
+    // Gauge changes
+    const dStab = g.stability - prev.stability;
+    const dEcon = g.economy - prev.economy;
+    const dSupp = g.support - prev.support;
+    const dIntel = g.intel - prev.intel;
+
+    if (dStab < -8) news.push({ text: 'Stability deteriorated sharply today.', level: 'critical' });
+    else if (dStab > 8) news.push({ text: 'Significant stability improvements.', level: 'good' });
+
+    if (dEcon < -8) news.push({ text: 'Economic indicators fell today.', level: 'warning' });
+    else if (dEcon > 8) news.push({ text: 'Markets rallied on improved conditions.', level: 'good' });
+
+    if (dSupp < -8) news.push({ text: 'Public support dropped significantly.', level: 'warning' });
+    if (dIntel > 10) news.push({ text: 'Intelligence picture improved.', level: 'good' });
+
+    // Recent headlines from today
+    const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day);
+    const criticals = todayHeadlines.filter(h => h.level === 'critical');
+    if (criticals.length > 0) {
+        news.push({ text: criticals[criticals.length - 1].text, level: 'critical' });
+    }
+    const goods = todayHeadlines.filter(h => h.level === 'good');
+    if (goods.length > 0) {
+        news.push({ text: goods[goods.length - 1].text, level: 'good' });
+    }
+
+    // Ambient filler if nothing happened
+    if (news.length === 0) {
+        const fillers = [
+            'A quiet day in the strait. Tankers transit normally.',
+            'Diplomatic channels remain open. No major incidents.',
+            'Markets hold steady. The situation is unchanged.',
+            'Intelligence gathering continues. No surprises.',
+        ];
+        news.push({ text: fillers[Math.floor(Math.random() * fillers.length)], level: 'normal' });
+    }
+
+    return news;
 }
 
 function updateMineHazards() {
@@ -586,29 +658,6 @@ function dailyUpdate() {
     // --- Trump: apply effect multiplier to stance effects ---
     // (Handled in getStanceEffect via effectMultiplier)
 
-    // --- Decision Events (2-4 per week) ---
-    if (!SIM.decisionEventActive && SIM.day - SIM.lastDecisionDay >= 1 && Math.random() < 0.45) {
-        const usedIds = SIM.decisionHistory.map(d => d.id);
-
-        // Combine global events with character-specific events
-        let allEvents = [...DECISION_EVENTS];
-        if (SIM.character && SIM.character.uniqueEvents) {
-            allEvents = allEvents.concat(SIM.character.uniqueEvents);
-        }
-
-        const eligible = allEvents.filter(e =>
-            !usedIds.includes(e.id) &&
-            SIM.day >= (e.minDay || 1) && SIM.day <= (e.maxDay || 999) &&
-            (!e.condition || e.condition())
-        );
-        if (eligible.length > 0) {
-            const event = eligible[Math.floor(Math.random() * eligible.length)];
-            SIM.decisionEventActive = true;
-            SIM.lastDecisionDay = SIM.day;
-            SIM.speed = 0;
-            showDecisionEvent(event);
-        }
-    }
 }
 
 // ======================== IRAN STRATEGY AI ========================
@@ -743,7 +792,7 @@ function updateDomesticPolitics() {
 // ======================== WIN / LOSE ========================
 
 function checkWinLose() {
-    if (SIM.gameOver) return;
+    if (SIM.gameOver) return true;
 
     // --- Win: Strait open 14 consecutive days ---
     const recentSeizures = SIM.recentSeizureDays.filter(d => SIM.day - d <= 7).length;
@@ -754,7 +803,7 @@ function checkWinLose() {
         if (SIM.straitOpenDays >= 14) {
             endGame(true, 'The Strait of Hormuz has been open and stable for 14 consecutive days. Crisis resolved through ' +
                 (SIM.diplomaticCapital > 60 ? 'masterful diplomacy.' : SIM.domesticApproval > 70 ? 'strong leadership.' : 'persistent strategy.'));
-            return;
+            return true;
         }
     } else {
         if (SIM.straitOpenDays > 3) {
@@ -769,7 +818,7 @@ function checkWinLose() {
         if (SIM.lowApprovalDays >= 5) {
             endGame(false, 'Congress has initiated removal proceedings. Your approval collapsed to ' +
                 Math.round(SIM.domesticApproval) + '% and stayed there. Your time in the Situation Room is over.');
-            return;
+            return true;
         }
     } else { SIM.lowApprovalDays = 0; }
 
@@ -777,14 +826,14 @@ function checkWinLose() {
     if (SIM.assassinationRisk > 85 && Math.random() < (SIM.assassinationRisk - 80) / 400) {
         endGame(false, 'A sophisticated attack targets your motorcade. The crisis claims its highest-profile casualty. ' +
             (SIM.iranAggression > 80 ? 'Iranian intelligence is suspected.' : 'Domestic extremists are suspected.'));
-        return;
+        return true;
     }
 
     // --- Lose 3: Civil War ---
     if (SIM.polarization >= 90) {
         endGame(false, 'Domestic unrest has reached a breaking point. The military is split. ' +
             'The crisis abroad has ignited a crisis at home. America is tearing itself apart.');
-        return;
+        return true;
     }
 
     // --- Lose 4: Global Pariah ---
@@ -793,7 +842,7 @@ function checkWinLose() {
         if (SIM.lowStandingDays >= 3) {
             endGame(false, 'The international community has turned against you. Allies recall ambassadors. ' +
                 'Sanctions against the United States are being discussed. You are a global pariah.');
-            return;
+            return true;
         }
     } else { SIM.lowStandingDays = 0; }
 
@@ -801,7 +850,7 @@ function checkWinLose() {
     if (SIM.warPath >= 5) {
         endGame(false, 'Too many unresolved military incidents. The escalation spiral is irreversible. ' +
             'Armed conflict erupts in the Strait of Hormuz. A regional war has begun.');
-        return;
+        return true;
     }
 
     // --- Lose 6+: Character-specific lose conditions ---
@@ -812,11 +861,11 @@ function checkWinLose() {
                     lc._days = (lc._days || 0) + 1;
                     if (lc._days >= lc.checkDays) {
                         endGame(false, lc.message);
-                        return;
+                        return true;
                     }
                 } else {
                     endGame(false, lc.message);
-                    return;
+                    return true;
                 }
             } else if (lc.checkDays) {
                 lc._days = 0;
@@ -832,7 +881,10 @@ function checkWinLose() {
         } else {
             endGame(true, 'After 13 weeks of crisis management, the situation has stabilized enough for a diplomatic resolution.');
         }
+        return true;
     }
+
+    return false;
 }
 
 function endGame(won, reason) {
@@ -842,12 +894,6 @@ function endGame(won, reason) {
     SIM.speed = 0;
     SIM.phase = 'gameover';
     SIM.decisionEventActive = false;
-
-    // Clean up overlays
-    ['decision-overlay', 'weekly-briefing-overlay', 'weekly-debrief-overlay'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-    });
 
     addHeadline(reason, won ? 'good' : 'critical');
     showGameOverScreen();
@@ -1022,7 +1068,8 @@ function triggerSeizureDecision(tanker) {
             { text: 'Open emergency back-channel', effects: { tension: -3, diplomaticCapital: -5, domesticApproval: -3, iranAggression: -3 }, flavor: 'Quiet negotiations begin. Critics call it weak.' },
         ],
     };
-    SIM.speed = 0;
+    SIM.phase = 'event';
+    SIM.decisionEventActive = true;
     showDecisionEvent(event);
 }
 
@@ -1284,19 +1331,7 @@ const DECISION_EVENTS = [
 
 // ======================== HELPERS ========================
 
-function getLanePosition(lane, progress) {
-    const pts = lane.points;
-    const totalSegments = pts.length - 1;
-    const clampedProgress = Math.max(0, Math.min(progress, 0.9999));
-    const rawIdx = clampedProgress * totalSegments;
-    const idx = Math.floor(rawIdx);
-    const t = rawIdx - idx;
-    const i = Math.min(idx, totalSegments - 1);
-    const x = pts[i][0] + (pts[i + 1][0] - pts[i][0]) * t;
-    const y = pts[i][1] + (pts[i + 1][1] - pts[i][1]) * t;
-    const angle = Math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0]);
-    return { x, y, angle };
-}
+// getLanePosition defined in map.js
 
 function logEvent(text, level) {
     addHeadline(text, level || 'normal');

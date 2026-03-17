@@ -81,12 +81,12 @@ const STRATEGY_CARDS = [
     },
     {
         id: 'un_resolution', name: 'UN Resolution', category: 'diplomatic',
-        description: 'Push for Security Council resolution condemning Iran.',
-        hint: { low: 'Statement of concern', medium: 'Binding resolution — Russia may veto', high: 'Chapter VII enforcement' },
+        description: 'Push for Security Council resolution condemning Iran. Mostly symbolic — political cover at best.',
+        hint: { low: 'Statement of concern — nobody reads it', medium: 'Binding resolution — Russia vetoes anyway', high: 'Chapter VII — dead on arrival, but you tried' },
         effects: {
-            low:    { internationalStanding: 5, diplomaticCapital: -3, tension: 1 },
-            medium: { internationalStanding: 10, diplomaticCapital: -10, tension: 3, domesticApproval: 3 },
-            high:   { internationalStanding: 15, diplomaticCapital: -20, tension: 5, domesticApproval: 5, russiaRelations: -5 },
+            low:    { internationalStanding: 1, diplomaticCapital: -3, tension: 1 },
+            medium: { internationalStanding: 2, diplomaticCapital: -10, tension: 2 },
+            high:   { internationalStanding: 3, diplomaticCapital: -20, tension: 3, russiaRelations: -3 },
         },
     },
     {

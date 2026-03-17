@@ -1,72 +1,61 @@
 /**
- * Game — phase-driven main loop
- * Phases: briefing → playing → debrief → repeat (13 weeks)
+ * Game — entry point, main loop, phase transitions
  */
 
 (async function () {
     try {
-        // Init sprites first
         initSprites();
 
-        // Character select
         const character = await showCharacterSelect();
         await showLoreScreen(character);
 
         SIM.character = character;
-
-        // Init unique resource from character
-        if (character.uniqueResource) {
-            SIM.uniqueResource = character.uniqueResource.value;
-        }
-
-        // Render advisor portrait in console
-        const portrait = document.getElementById('advisor-portrait');
-        if (portrait && SPRITES[character.spriteKey]) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 64;
-            canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 64, 64);
-            portrait.innerHTML = '';
-            portrait.appendChild(canvas);
-            portrait._drawn = true;
-        }
-        const nameEl = document.getElementById('advisor-name');
-        if (nameEl) nameEl.textContent = character.name;
-        const titleEl = document.getElementById('advisor-title');
-        if (titleEl) titleEl.textContent = character.title;
-
-        // Init game systems
         initMap();
         initSimulation();
         initUI();
 
-        addHeadline('Crisis begins. Advisor ' + character.name + ' reporting for duty.', 'good');
-
-        // Show first weekly briefing
-        showWeeklyBriefing();
+        // Show initial card pick (Day 1 — pick your first 3 cards)
+        SIM.phase = 'initial_pick';
+        showInitialPick();
 
         // Main loop
-        let lastTick = 0;
-        const tickInterval = 100;
+        let lastFrame = 0;
+        const DAY_DURATION_MS = 6000; // 6 seconds per day of real time
 
         function gameLoop(timestamp) {
             try {
-                // Only tick during playing phase
-                if (SIM.phase === 'playing' && !SIM.gameOver) {
-                    if (timestamp - lastTick >= tickInterval / Math.max(SIM.speed, 1)) {
+                const dt = timestamp - lastFrame;
+                lastFrame = timestamp;
+
+                // Always render the map
+                renderMap();
+
+                // Update gauges
+                updateGauges();
+
+                // Dayplay phase — advance simulation
+                if (SIM.phase === 'dayplay' && !SIM.gameOver) {
+                    SIM.dayPlayTimer += dt;
+
+                    // Tick simulation sub-steps (entity movement, etc.)
+                    const ticksPerFrame = 2;
+                    for (let i = 0; i < ticksPerFrame; i++) {
                         tickSimulation();
-                        lastTick = timestamp;
+                    }
+
+                    // Check if day is complete
+                    if (SIM.dayPlayTimer >= DAY_DURATION_MS) {
+                        SIM.dayPlayTimer = 0;
+                        advanceDay();
                     }
                 }
 
-                // Always render
-                renderMap();
-                updateGauges();
-                updateNewsTicker();
-                updateEventLog();
-                updateAdvisorConsole();
+                // Expire effects
+                SIM.effects = SIM.effects.filter(fx => {
+                    fx.life--;
+                    return fx.life > 0;
+                });
+
             } catch (e) {
                 console.error('Game loop error:', e);
             }
@@ -80,3 +69,61 @@
         document.body.innerHTML = '<div style="color:red;padding:20px;font-family:monospace">Init Error: ' + e.message + '</div>';
     }
 })();
+
+/**
+ * Called when a day completes during dayplay
+ */
+function advanceDay() {
+    // Run daily update (metrics, entities, Iran AI)
+    dailyUpdate();
+
+    // Check win/lose
+    if (checkWinLose()) return;
+
+    // If dailyUpdate triggered a seizure decision, don't stack another event
+    if (SIM.decisionEventActive) return;
+
+    // Check for consequence events
+    const event = checkConsequenceEvents();
+    if (event) {
+        SIM.phase = 'event';
+        SIM.decisionEventActive = true;
+        showDecisionEvent(event);
+        return;
+    }
+
+    // Advance to overnight
+    SIM.phase = 'overnight';
+    showOvernightSummary();
+}
+
+/**
+ * Called after overnight summary dismissed or auto-advance
+ */
+function advanceToMorning() {
+    SIM.day++;
+    SIM.hour = 0;
+
+    // Update week tracking
+    SIM.weekDay = ((SIM.day - 1) % 7) + 1;
+    SIM.week = Math.floor((SIM.day - 1) / 7) + 1;
+
+    // Check if weekly check-in (every 7 days)
+    if (SIM.day > 1 && (SIM.day - 1) % 7 === 0) {
+        SIM.phase = 'weekly_checkin';
+        showWeeklyCheckIn();
+        return;
+    }
+
+    // Normal morning brief
+    SIM.phase = 'morning';
+    showMorningBrief();
+}
+
+/**
+ * Called after morning brief — start playing the day
+ */
+function startDayPlay() {
+    SIM.phase = 'dayplay';
+    SIM.dayPlayTimer = 0;
+}
