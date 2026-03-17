@@ -13,73 +13,67 @@
         <!-- Character Select Overlay -->
         <div id="char-select"></div>
 
-        <!-- Top HUD -->
-        <div id="hud">
-            <div class="hud-portrait" id="hud-portrait"></div>
-            <div class="hud-item">
-                <span class="hud-label">Day</span>
-                <span id="hud-day" class="hud-value">1/90</span>
+        <!-- Top Gauges -->
+        <div id="gauge-bar">
+            <div id="hud-week" class="gauge-week">WEEK 1 — DAY 1/7</div>
+            <div class="gauge-item" id="gauge-stability">
+                <span class="gauge-label">STABILITY</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:60%"></div></div>
+                <span class="gauge-val good">Stable</span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">Oil Flow</span>
-                <span id="hud-oil-flow" class="hud-value">100%</span>
+            <div class="gauge-item" id="gauge-economy">
+                <span class="gauge-label">ECONOMY</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:60%"></div></div>
+                <span class="gauge-val good">Stable</span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">Oil Price</span>
-                <span id="hud-oil-price" class="hud-value">$80</span>
+            <div class="gauge-item" id="gauge-support">
+                <span class="gauge-label">SUPPORT</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:60%"></div></div>
+                <span class="gauge-val good">Stable</span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">Tension</span>
-                <span id="hud-tension" class="hud-value">Low</span>
+            <div class="gauge-item" id="gauge-intel">
+                <span class="gauge-label">INTEL</span>
+                <div class="gauge-track"><div class="gauge-fill warning" style="width:25%"></div></div>
+                <span class="gauge-val warning">Weak</span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">Approval</span>
-                <span id="hud-approval" class="hud-value">72%</span>
+            <div class="gauge-item" id="gauge-unique" style="display:none">
+                <span class="gauge-label">RESOURCE</span>
+                <div class="gauge-track"><div class="gauge-fill good" style="width:50%"></div></div>
+                <span class="gauge-val good">50</span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">Conflict Risk</span>
-                <span id="hud-conflict-risk" class="hud-value good">0%</span>
+            <div id="hud-escalation" class="esc-track" style="display:none">
+                <span class="esc-label">ESCALATION</span>
+                <span class="esc-pips"></span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">Budget</span>
-                <span id="hud-budget" class="hud-value good">$1000M</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-label">Crisis</span>
-                <span id="hud-crisis" class="hud-value good">None</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-label">Rating</span>
-                <span id="hud-rating" class="hud-value good">S</span>
-            </div>
+            <div id="hud-strait" class="strait-counter">STRAIT: CONTESTED</div>
         </div>
 
-        <!-- Policy Panel (right side) -->
-        <div id="policy-panel">
-            <h2>US Policies <span id="daily-cost" class="daily-cost-display"></span></h2>
-            <div id="policy-list"></div>
+        <!-- Advisor Console (right side) -->
+        <div id="advisor-console">
+            <div class="advisor-header">
+                <div id="advisor-portrait" class="advisor-portrait"></div>
+                <div class="advisor-info">
+                    <div id="advisor-name" class="advisor-name">Advisor</div>
+                    <div id="advisor-title" class="advisor-title-text">Title</div>
+                </div>
+            </div>
+            <div id="advisor-text" class="advisor-speech"></div>
+            <div id="advisor-status" class="advisor-status"></div>
         </div>
 
-        <!-- Event Log (bottom) -->
-        <div id="event-log">
-            <div id="event-log-inner"></div>
-        </div>
+        <!-- Special Action Button -->
+        <button id="special-action-btn" class="special-action-btn" style="display:none"></button>
 
-        <!-- Speed Controls -->
-        <div id="speed-controls">
-            <button id="btn-pause" class="speed-btn active" title="Pause [0]">||</button>
-            <button id="btn-1x" class="speed-btn" title="1x Speed [1]">1x</button>
-            <button id="btn-2x" class="speed-btn" title="2x Speed [2]">2x</button>
-            <button id="btn-4x" class="speed-btn" title="4x Speed [3]">4x</button>
+        <!-- News Ticker (bottom) -->
+        <div id="news-ticker">
+            <span class="ticker-label">BREAKING</span>
+            <div id="news-ticker-scroll">
+                <div id="news-ticker-inner"></div>
+            </div>
         </div>
 
         <!-- Toast Notifications -->
         <div id="toast-container"></div>
-
-        <!-- Keyboard hints -->
-        <div id="kb-hints">
-            SPACE: play/pause | 1-3: speed | ESC: deselect | Click: inspect
-        </div>
     </div>
 
     <script src="js/policies.js"></script>

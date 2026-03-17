@@ -1,6 +1,7 @@
 /**
  * Situation Room Board — strategic overview map with symbolic overlays
- * Replaces individual entity rendering with zone-based briefing display
+ * Auto-narrating watch screen — no zone clicking
+ * Incident markers accumulate, CNN ticker at bottom
  */
 
 const MAP = {
@@ -9,14 +10,6 @@ const MAP = {
     width: 0,
     height: 0,
     assets: {},
-    assetsLoaded: false,
-};
-
-// Zone definitions for click interaction
-const ZONES = {
-    navy: { x: 0.50, y: 0.58, w: 0.22, h: 0.16 },
-    irgc: { x: 0.35, y: 0.30, w: 0.25, h: 0.16 },
-    lane: { x: 0.30, y: 0.42, w: 0.40, h: 0.18 },
 };
 
 function initMap() {
@@ -24,14 +17,6 @@ function initMap() {
     MAP.ctx = MAP.canvas.getContext('2d');
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-
-    // Zone-based click handling
-    MAP.canvas.addEventListener('click', (e) => {
-        const rect = MAP.canvas.getBoundingClientRect();
-        const mx = (e.clientX - rect.left) / rect.width;
-        const my = (e.clientY - rect.top) / rect.height;
-        handleZoneClick(mx, my);
-    });
 
     // Try to load map background image
     const mapImg = new Image();
@@ -41,32 +26,12 @@ function initMap() {
 }
 
 function resizeCanvas() {
-    MAP.width = MAP.canvas.parentElement.clientWidth;
-    MAP.height = MAP.canvas.parentElement.clientHeight;
+    const container = MAP.canvas.parentElement;
+    // Canvas fills space left of advisor console
+    MAP.width = container.clientWidth;
+    MAP.height = container.clientHeight;
     MAP.canvas.width = MAP.width;
     MAP.canvas.height = MAP.height;
-}
-
-function handleZoneClick(mx, my) {
-    SIM.selectedEntity = null;
-    SIM.selectedType = null;
-
-    for (const [name, z] of Object.entries(ZONES)) {
-        if (mx >= z.x && mx <= z.x + z.w && my >= z.y && my <= z.y + z.h) {
-            SIM.selectedType = name;
-            return;
-        }
-    }
-    // Click on platform
-    for (const p of SIM.platforms) {
-        const dx = p.x - mx;
-        const dy = p.y - my;
-        if (Math.sqrt(dx * dx + dy * dy) < 0.04) {
-            SIM.selectedEntity = p;
-            SIM.selectedType = 'platform';
-            return;
-        }
-    }
 }
 
 function renderMap() {
@@ -86,15 +51,15 @@ function renderMap() {
     }
 
     // --- Symbolic Overlays ---
-
     drawShippingLaneFlow(ctx, w, h);
     drawNavyPresence(ctx, w, h);
     drawIRGCThreatZone(ctx, w, h);
     drawHazardMarkers(ctx, w, h);
     drawPlatforms(ctx, w, h);
+    drawIncidentMarkers(ctx, w, h);
     drawStatusPanel(ctx, w, h);
 
-    // Visual effects (explosions, crisis pulses)
+    // Visual effects
     for (const fx of SIM.effects) {
         drawEffect(ctx, fx, w, h);
     }
@@ -129,9 +94,42 @@ function renderMap() {
         ctx.strokeRect(0, 0, w, h);
     }
 
-    // Zone tooltip
-    if (SIM.selectedType && !SIM.selectedEntity) {
-        drawZoneTooltip(ctx, w, h);
+    // Time-of-day tint based on week
+    const weekTint = (SIM.week % 4) / 4;
+    if (weekTint > 0.5) {
+        ctx.fillStyle = `rgba(20, 10, 40, ${(weekTint - 0.5) * 0.15})`;
+        ctx.fillRect(0, 0, w, h);
+    }
+}
+
+// --- Incident Markers (accumulate over time) ---
+
+function drawIncidentMarkers(ctx, w, h) {
+    if (!SIM.incidentMarkers || SIM.incidentMarkers.length === 0) return;
+
+    for (const marker of SIM.incidentMarkers) {
+        const mx = marker.x * w;
+        const my = marker.y * h;
+        const age = SIM.day - marker.day;
+        const fadeAlpha = Math.max(0.15, 1 - age / 30);
+
+        ctx.globalAlpha = fadeAlpha;
+
+        if (marker.type === 'seizure') {
+            ctx.fillStyle = '#dd4444';
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText('✕', mx - 4, my + 4);
+        } else if (marker.type === 'intercept') {
+            ctx.fillStyle = '#44dd88';
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText('✓', mx - 4, my + 4);
+        } else if (marker.type === 'mine') {
+            ctx.fillStyle = '#ddaa44';
+            ctx.font = 'bold 9px monospace';
+            ctx.fillText('⚠', mx - 5, my + 4);
+        }
+
+        ctx.globalAlpha = 1;
     }
 }
 
@@ -151,7 +149,7 @@ function drawShippingLaneFlow(ctx, w, h) {
     for (const lane of SHIPPING_LANES) {
         const pts = lane.points;
 
-        // Glow behind the lane
+        // Glow
         ctx.strokeStyle = glowColor;
         ctx.lineWidth = lineWidth + 8;
         ctx.lineCap = 'round';
@@ -180,8 +178,7 @@ function drawShippingLaneFlow(ctx, w, h) {
             const dotCount = Math.max(2, Math.floor(flow / 15));
             for (let d = 0; d < dotCount; d++) {
                 const prog = ((time + d / dotCount) % 1);
-                const actualProg = lane.dir === 'in' ? prog : prog;
-                const pos = getLanePosition(lane, actualProg);
+                const pos = getLanePosition(lane, prog);
                 const dotAlpha = 0.3 + Math.sin(prog * Math.PI) * 0.4;
                 ctx.fillStyle = color;
                 ctx.globalAlpha = dotAlpha * alpha;
@@ -192,7 +189,7 @@ function drawShippingLaneFlow(ctx, w, h) {
             }
         }
 
-        // Direction arrow at midpoint
+        // Direction arrow
         const mid = getLanePosition(lane, 0.5);
         const ahead = getLanePosition(lane, 0.55);
         const angle = Math.atan2((ahead.y - mid.y) * h, (ahead.x - mid.x) * w);
@@ -224,7 +221,7 @@ function drawShippingLaneFlow(ctx, w, h) {
         ctx.restore();
     }
 
-    // Flow percentage label
+    // Flow label
     ctx.save();
     ctx.font = 'bold 10px monospace';
     ctx.fillStyle = color;
@@ -251,7 +248,6 @@ function drawNavyPresence(ctx, w, h) {
         return;
     }
 
-    // Fleet zone glow
     const radius = 40 + ships * 4;
     const grad = ctx.createRadialGradient(zx, zy, 0, zx, zy, radius);
     grad.addColorStop(0, 'rgba(68, 221, 136, 0.06)');
@@ -259,7 +255,6 @@ function drawNavyPresence(ctx, w, h) {
     ctx.fillStyle = grad;
     ctx.fillRect(zx - radius, zy - radius, radius * 2, radius * 2);
 
-    // Fleet icon (green diamond)
     ctx.fillStyle = '#44dd88';
     ctx.beginPath();
     ctx.moveTo(zx, zy - 8);
@@ -269,14 +264,12 @@ function drawNavyPresence(ctx, w, h) {
     ctx.closePath();
     ctx.fill();
 
-    // Border ring
     ctx.strokeStyle = 'rgba(68, 221, 136, 0.4)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.arc(zx, zy, 14, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Badge text
     ctx.save();
     ctx.font = 'bold 9px monospace';
     ctx.fillStyle = '#44dd88';
@@ -287,8 +280,6 @@ function drawNavyPresence(ctx, w, h) {
         ctx.font = 'bold 8px monospace';
         ctx.fillStyle = '#ddaa44';
         ctx.fillText('CSG EISENHOWER', zx, zy + 34);
-
-        // Larger carrier glow
         ctx.strokeStyle = 'rgba(221, 170, 68, 0.2)';
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -296,15 +287,6 @@ function drawNavyPresence(ctx, w, h) {
         ctx.stroke();
     }
     ctx.restore();
-
-    // Selected highlight
-    if (SIM.selectedType === 'navy') {
-        ctx.strokeStyle = 'rgba(68, 221, 136, 0.6)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 3]);
-        ctx.strokeRect(ZONES.navy.x * w, ZONES.navy.y * h, ZONES.navy.w * w, ZONES.navy.h * h);
-        ctx.setLineDash([]);
-    }
 }
 
 // --- IRGC Threat Zone ---
@@ -317,17 +299,15 @@ function drawIRGCThreatZone(ctx, w, h) {
 
     if (boats === 0) return;
 
-    const zx = ZONES.irgc.x * w;
-    const zy = ZONES.irgc.y * h;
-    const zw = ZONES.irgc.w * w;
-    const zh = ZONES.irgc.h * h;
+    const zx = w * 0.35;
+    const zy = h * 0.30;
+    const zw = w * 0.25;
+    const zh = h * 0.16;
 
-    // Threat zone overlay
     const threatAlpha = Math.min(0.15, aggression / 500);
     ctx.fillStyle = `rgba(221, 68, 68, ${threatAlpha})`;
     ctx.fillRect(zx, zy, zw, zh);
 
-    // Pulsing border when aggressive
     if (isAggressive) {
         const pulse = Math.sin(Date.now() / 600) * 0.3 + 0.5;
         ctx.strokeStyle = `rgba(221, 68, 68, ${pulse * 0.5})`;
@@ -335,7 +315,6 @@ function drawIRGCThreatZone(ctx, w, h) {
         ctx.strokeRect(zx, zy, zw, zh);
     }
 
-    // Threat icon (red triangle)
     const cx = zx + zw * 0.5;
     const cy = zy + zh * 0.4;
     ctx.fillStyle = '#dd4444';
@@ -346,7 +325,6 @@ function drawIRGCThreatZone(ctx, w, h) {
     ctx.closePath();
     ctx.fill();
 
-    // Badge text
     ctx.save();
     ctx.font = 'bold 9px monospace';
     ctx.fillStyle = '#dd4444';
@@ -365,15 +343,6 @@ function drawIRGCThreatZone(ctx, w, h) {
         ctx.fillText('HOSTILE POSTURE', cx, cy + 28);
     }
     ctx.restore();
-
-    // Selected highlight
-    if (SIM.selectedType === 'irgc') {
-        ctx.strokeStyle = 'rgba(221, 68, 68, 0.6)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 3]);
-        ctx.strokeRect(zx, zy, zw, zh);
-        ctx.setLineDash([]);
-    }
 }
 
 // --- Hazard Markers ---
@@ -384,8 +353,6 @@ function drawHazardMarkers(ctx, w, h) {
         for (const mine of SIM.mines) {
             const mx = mine.x * w;
             const my = mine.y * h;
-
-            // Hazard triangle
             const pulse = Math.sin(Date.now() / 400 + mx) * 0.2 + 0.6;
             ctx.fillStyle = `rgba(221, 68, 68, ${pulse})`;
             ctx.beginPath();
@@ -395,7 +362,6 @@ function drawHazardMarkers(ctx, w, h) {
             ctx.closePath();
             ctx.fill();
 
-            // Danger circle
             ctx.strokeStyle = `rgba(221, 68, 68, ${pulse * 0.3})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -403,7 +369,6 @@ function drawHazardMarkers(ctx, w, h) {
             ctx.stroke();
         }
 
-        // Mine count badge
         ctx.save();
         ctx.font = 'bold 8px monospace';
         ctx.fillStyle = '#dd4444';
@@ -416,8 +381,6 @@ function drawHazardMarkers(ctx, w, h) {
         for (const drone of SIM.drones) {
             const dx = drone.x * w;
             const dy = drone.y * h;
-
-            // Scan zone circle
             ctx.strokeStyle = 'rgba(68, 136, 221, 0.12)';
             ctx.lineWidth = 1;
             ctx.setLineDash([2, 4]);
@@ -426,14 +389,12 @@ function drawHazardMarkers(ctx, w, h) {
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Drone dot
             ctx.fillStyle = 'rgba(68, 136, 221, 0.6)';
             ctx.beginPath();
             ctx.arc(dx, dy, 3, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // Drone count badge
         ctx.save();
         ctx.font = 'bold 8px monospace';
         ctx.fillStyle = '#4488dd';
@@ -453,25 +414,15 @@ function drawPlatforms(ctx, w, h) {
             ctx.drawImage(SPRITES.platform, px - 16, py - 16, 32, 32);
         }
 
-        // Status indicator
         const statusColor = plat.active ? '#44dd88' : '#dd4444';
         ctx.fillStyle = statusColor;
         ctx.beginPath();
         ctx.arc(px + 12, py - 12, 3, 0, Math.PI * 2);
         ctx.fill();
-
-        // Selected highlight
-        if (SIM.selectedEntity === plat) {
-            ctx.strokeStyle = '#ffaa44';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([2, 2]);
-            ctx.strokeRect(px - 18, py - 18, 36, 36);
-            ctx.setLineDash([]);
-        }
     }
 }
 
-// --- Status Info Panel (canvas overlay, bottom-left) ---
+// --- Status Info Panel (canvas overlay) ---
 
 function drawStatusPanel(ctx, w, h) {
     const px = 10;
@@ -479,7 +430,6 @@ function drawStatusPanel(ctx, w, h) {
     const pw = 220;
     const ph = 50;
 
-    // Background
     ctx.fillStyle = 'rgba(10, 10, 10, 0.75)';
     ctx.fillRect(px, py, pw, ph);
     ctx.strokeStyle = 'rgba(26, 58, 42, 0.6)';
@@ -493,7 +443,6 @@ function drawStatusPanel(ctx, w, h) {
     const seizedCount = SIM.tankers.filter(t => t.seized).length;
     const damagedCount = SIM.tankers.filter(t => t.damaged).length;
 
-    // Line 1
     ctx.fillStyle = '#44dd88';
     ctx.fillText(`TANKERS: ${tankerCount}`, px + 6, py + 14);
     ctx.fillStyle = seizedCount > 0 ? '#dd4444' : '#2a6a4a';
@@ -501,96 +450,17 @@ function drawStatusPanel(ctx, w, h) {
     ctx.fillStyle = damagedCount > 0 ? '#ddaa44' : '#2a6a4a';
     ctx.fillText(`DMG: ${damagedCount}`, px + 160, py + 14);
 
-    // Line 2
     ctx.fillStyle = SIM.interceptCount > 0 ? '#44dd88' : '#2a6a4a';
     ctx.fillText(`INTERCEPTS: ${SIM.interceptCount}`, px + 6, py + 28);
     ctx.fillStyle = '#2a6a4a';
     ctx.fillText(`PROVOC: ${SIM.consecutiveProvocations > 0 ? Math.ceil(SIM.consecutiveProvocations) : 0}`, px + 110, py + 28);
 
-    // Line 3 — crisis
     const crisisLabels = ['NONE', 'ELEVATED', 'MAJOR', 'WAR FOOTING'];
     const crisisColors = ['#2a6a4a', '#ddaa44', '#dd8844', '#dd4444'];
     ctx.fillStyle = crisisColors[SIM.crisisLevel];
     ctx.fillText(`CRISIS: ${crisisLabels[SIM.crisisLevel]}`, px + 6, py + 42);
 
     ctx.restore();
-}
-
-// --- Zone Tooltip ---
-
-function drawZoneTooltip(ctx, w, h) {
-    const zone = SIM.selectedType;
-    let lines = [];
-    let tx, ty;
-
-    if (zone === 'navy') {
-        const z = ZONES.navy;
-        tx = (z.x + z.w) * w + 8;
-        ty = z.y * h;
-        const ships = SIM.navyShips;
-        const intercepting = ships.filter(s => s.intercepting).length;
-        const patrolling = ships.filter(s => s.patrolling).length;
-        lines = [
-            'US NAVAL FORCES',
-            `Ships deployed: ${ships.length}`,
-            `Patrolling: ${patrolling}`,
-            `Intercepting: ${intercepting}`,
-            SIM.carrier ? `Carrier: ${SIM.carrier.id}` : '',
-            `Avg readiness: ${ships.length > 0 ? Math.round(ships.reduce((a, s) => a + s.readiness, 0) / ships.length) : 0}%`,
-        ].filter(Boolean);
-    } else if (zone === 'irgc') {
-        const z = ZONES.irgc;
-        tx = (z.x + z.w) * w + 8;
-        ty = z.y * h;
-        const boats = SIM.iranBoats;
-        const targeting = boats.filter(b => b.targeting).length;
-        const fleeing = boats.filter(b => b.fleeing).length;
-        lines = [
-            'IRGC NAVAL ACTIVITY',
-            `Patrol boats: ${boats.length}`,
-            `Actively targeting: ${targeting}`,
-            `Fleeing: ${fleeing}`,
-            `Iran aggression: ${Math.round(SIM.iranAggression)}%`,
-            `Iran economy: ${Math.round(SIM.iranEconomy)}%`,
-        ];
-    } else if (zone === 'lane') {
-        tx = w * 0.35;
-        ty = h * 0.35;
-        const total = SIM.tankers.length;
-        const seized = SIM.tankers.filter(t => t.seized).length;
-        const damaged = SIM.tankers.filter(t => t.damaged).length;
-        const inbound = SIM.tankers.filter(t => t.lane.dir === 'in').length;
-        const outbound = SIM.tankers.filter(t => t.lane.dir === 'out').length;
-        lines = [
-            'SHIPPING TRAFFIC',
-            `Total tankers: ${total}`,
-            `Inbound: ${inbound} / Outbound: ${outbound}`,
-            `Seized: ${seized} / Damaged: ${damaged}`,
-            `Oil flow: ${Math.round(SIM.oilFlow)}%`,
-            `Oil price: $${Math.round(SIM.oilPrice)}/bbl`,
-        ];
-    }
-
-    if (lines.length === 0) return;
-
-    const boxW = 170;
-    const boxH = lines.length * 14 + 10;
-    if (tx + boxW > w - 280) tx = tx - boxW - 16;
-    if (ty + boxH > h - 100) ty = h - 100 - boxH;
-    if (ty < 40) ty = 40;
-
-    ctx.fillStyle = 'rgba(10, 10, 10, 0.92)';
-    const borderColor = zone === 'navy' ? '#44dd88' : zone === 'irgc' ? '#dd4444' : '#4488dd';
-    ctx.strokeStyle = borderColor;
-    ctx.lineWidth = 1;
-    ctx.fillRect(tx, ty, boxW, boxH);
-    ctx.strokeRect(tx, ty, boxW, boxH);
-
-    ctx.font = '10px monospace';
-    for (let i = 0; i < lines.length; i++) {
-        ctx.fillStyle = i === 0 ? '#ffffff' : '#88aa99';
-        ctx.fillText(lines[i], tx + 6, ty + 14 + i * 14);
-    }
 }
 
 // --- Effects ---
@@ -656,7 +526,6 @@ function drawEffect(ctx, fx, w, h) {
 // --- Procedural Map ---
 
 function drawProceduralMap(ctx, w, h) {
-    // Deep water with depth zones
     const waterGrad = ctx.createRadialGradient(w * 0.5, h * 0.5, 0, w * 0.5, h * 0.5, w * 0.6);
     waterGrad.addColorStop(0, '#102844');
     waterGrad.addColorStop(0.4, '#0e2440');
@@ -664,7 +533,7 @@ function drawProceduralMap(ctx, w, h) {
     ctx.fillStyle = waterGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // Shallow water zones near coasts
+    // Shallow water
     ctx.fillStyle = 'rgba(20, 60, 100, 0.15)';
     ctx.beginPath();
     ctx.moveTo(0, h * 0.20);
@@ -703,12 +572,11 @@ function drawProceduralMap(ctx, w, h) {
     ctx.bezierCurveTo(w * 0.08, h * 0.22, 0, h * 0.20, 0, h * 0.15);
     ctx.closePath();
     ctx.fill();
-
     ctx.strokeStyle = 'rgba(200, 170, 100, 0.25)';
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Mountain texture
+    // Mountains
     ctx.fillStyle = 'rgba(60, 50, 30, 0.15)';
     for (let i = 0; i < 12; i++) {
         const mx = w * (0.1 + i * 0.07);
@@ -740,12 +608,11 @@ function drawProceduralMap(ctx, w, h) {
     ctx.ellipse(w * 0.52, h * 0.34, w * 0.012, h * 0.008, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Iran label
+    // Labels
     ctx.fillStyle = 'rgba(220, 180, 140, 0.5)';
     ctx.font = 'bold 16px monospace';
     ctx.fillText('IRAN', w * 0.42, h * 0.10);
 
-    // Bandar Abbas
     ctx.fillStyle = 'rgba(255, 220, 120, 0.4)';
     ctx.beginPath();
     ctx.arc(w * 0.50, h * 0.29, 3, 0, Math.PI * 2);
@@ -769,18 +636,15 @@ function drawProceduralMap(ctx, w, h) {
     ctx.bezierCurveTo(w * 0.1, h * 0.83, 0, h * 0.85, 0, h);
     ctx.closePath();
     ctx.fill();
-
     ctx.strokeStyle = 'rgba(200, 170, 100, 0.25)';
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Labels
     ctx.fillStyle = 'rgba(220, 180, 140, 0.5)';
     ctx.font = 'bold 14px monospace';
     ctx.fillText('UAE', w * 0.58, h * 0.88);
     ctx.fillText('OMAN', w * 0.22, h * 0.90);
 
-    // City markers
     ctx.fillStyle = 'rgba(255, 220, 120, 0.35)';
     ctx.beginPath();
     ctx.arc(w * 0.68, h * 0.76, 3, 0, Math.PI * 2);
@@ -797,7 +661,6 @@ function drawProceduralMap(ctx, w, h) {
     ctx.font = '8px monospace';
     ctx.fillText('Muscat', w * 0.15 + 6, h * 0.78 + 3);
 
-    // Island labels
     ctx.fillStyle = 'rgba(200, 170, 100, 0.25)';
     ctx.font = '7px monospace';
     ctx.fillText('Qeshm', w * 0.44, h * 0.35 - 6);
@@ -806,13 +669,12 @@ function drawProceduralMap(ctx, w, h) {
     ctx.fillStyle = 'rgba(100, 180, 255, 0.25)';
     ctx.font = 'bold 11px monospace';
     ctx.fillText('STRAIT OF HORMUZ', w * 0.34, h * 0.50);
-
     ctx.fillStyle = 'rgba(100, 180, 255, 0.15)';
     ctx.font = '10px monospace';
     ctx.fillText('PERSIAN GULF', w * 0.72, h * 0.55);
     ctx.fillText('GULF OF OMAN', w * 0.06, h * 0.65);
 
-    // Grid overlay
+    // Grid
     ctx.strokeStyle = 'rgba(40, 80, 120, 0.05)';
     ctx.lineWidth = 1;
     for (let gx = 0; gx < w; gx += w / 16) {
@@ -829,7 +691,7 @@ function drawProceduralMap(ctx, w, h) {
     }
 }
 
-// --- Lane Position (kept for flow animation + simulation) ---
+// --- Lane Position ---
 
 function getLanePosition(lane, progress) {
     const pts = lane.points;
@@ -842,7 +704,6 @@ function getLanePosition(lane, progress) {
     const i = Math.min(idx, totalSegments - 1);
     const x = pts[i][0] + (pts[i + 1][0] - pts[i][0]) * t;
     const y = pts[i][1] + (pts[i + 1][1] - pts[i][1]) * t;
-    const angle = Math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0]);
 
-    return { x, y, angle };
+    return { x, y };
 }

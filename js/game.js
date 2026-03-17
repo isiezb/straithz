@@ -1,67 +1,71 @@
 /**
- * Game — main loop, initialization
+ * Game — phase-driven main loop
+ * Phases: briefing → playing → debrief → repeat (13 weeks)
  */
 
 (async function () {
     try {
-        // Init sprites first (needed for character select)
+        // Init sprites first
         initSprites();
 
-        // Show character select
+        // Character select
         const character = await showCharacterSelect();
-
-        // Show lore intro
         await showLoreScreen(character);
 
-        // Store selected character
         SIM.character = character;
 
-        // Render portrait in HUD
-        const hudPortrait = document.getElementById('hud-portrait');
-        if (hudPortrait && SPRITES[character.spriteKey]) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 48;
-            canvas.height = 48;
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 48, 48);
-            hudPortrait.innerHTML = '';
-            hudPortrait.appendChild(canvas);
-            const nameEl = document.createElement('span');
-            nameEl.className = 'hud-char-name';
-            nameEl.textContent = character.name.split(' ').pop(); // last name
-            hudPortrait.appendChild(nameEl);
+        // Init unique resource from character
+        if (character.uniqueResource) {
+            SIM.uniqueResource = character.uniqueResource.value;
         }
 
-        // Init game
+        // Render advisor portrait in console
+        const portrait = document.getElementById('advisor-portrait');
+        if (portrait && SPRITES[character.spriteKey]) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 64, 64);
+            portrait.innerHTML = '';
+            portrait.appendChild(canvas);
+            portrait._drawn = true;
+        }
+        const nameEl = document.getElementById('advisor-name');
+        if (nameEl) nameEl.textContent = character.name;
+        const titleEl = document.getElementById('advisor-title');
+        if (titleEl) titleEl.textContent = character.title;
+
+        // Init game systems
         initMap();
         initSimulation();
-        if (character.applyBonus) character.applyBonus(SIM);
         initUI();
 
-        // Log starting event
-        logEvent('Advisor ' + character.name + ' selected. Set policies and press Play.', 'good');
+        addHeadline('Crisis begins. Advisor ' + character.name + ' reporting for duty.', 'good');
+
+        // Show first weekly briefing
+        showWeeklyBriefing();
 
         // Main loop
         let lastTick = 0;
-        let lastPolicyRender = 0;
         const tickInterval = 100;
 
         function gameLoop(timestamp) {
             try {
-                if (timestamp - lastTick >= tickInterval / Math.max(SIM.speed, 1)) {
-                    tickSimulation();
-                    lastTick = timestamp;
+                // Only tick during playing phase
+                if (SIM.phase === 'playing' && !SIM.gameOver) {
+                    if (timestamp - lastTick >= tickInterval / Math.max(SIM.speed, 1)) {
+                        tickSimulation();
+                        lastTick = timestamp;
+                    }
                 }
 
+                // Always render
                 renderMap();
-                updateHUD();
-                updateEventLog();
-
-                if (timestamp - lastPolicyRender >= 2000) {
-                    lastPolicyRender = timestamp;
-                    renderPolicyCards();
-                }
+                updateGauges();
+                updateNewsTicker();
+                updateAdvisorConsole();
             } catch (e) {
                 console.error('Game loop error:', e);
             }
