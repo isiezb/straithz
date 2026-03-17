@@ -19,28 +19,28 @@ const SIM = {
     prevGauges: null,         // gauge snapshot from start of day
 
     // Core metrics (underlying — player sees 4 gauges)
-    oilFlow: 85,
-    oilPrice: 90,
-    tension: 20,
-    domesticApproval: 65,
-    internationalStanding: 70,
-    conflictRisk: 5,
-    budget: 1200,
+    oilFlow: 25,
+    oilPrice: 145,
+    tension: 72,
+    domesticApproval: 55,
+    internationalStanding: 50,
+    conflictRisk: 35,
+    budget: 900,
 
     // Iran state
-    iranAggression: 25,
-    iranEconomy: 55,
-    iranStrategy: 'probing', // restrained/probing/escalatory/confrontational
+    iranAggression: 65,
+    iranEconomy: 40,
+    iranStrategy: 'escalatory', // restrained/probing/escalatory/confrontational
 
     // Geopolitics
-    fogOfWar: 75,
-    diplomaticCapital: 40,
-    proxyThreat: 15,
+    fogOfWar: 82,
+    diplomaticCapital: 25,
+    proxyThreat: 40,
     chinaRelations: 50,
     russiaRelations: 40,
     polarization: 25,
     assassinationRisk: 0,
-    warPath: 0,
+    warPath: 1,
 
     // Win/Lose tracking
     straitOpenDays: 0,
@@ -70,9 +70,9 @@ const SIM = {
     playedExclusives: [],
 
     // Crisis
-    crisisLevel: 0,
-    crisisTimer: 0,
-    consecutiveProvocations: 0,
+    crisisLevel: 1,
+    crisisTimer: 5,
+    consecutiveProvocations: 3,
     interceptCount: 0,
     seizureCount: 0,
 
@@ -130,11 +130,36 @@ const SHIPPING_LANES = [
 ];
 
 function initSimulation() {
-    for (let i = 0; i < 10; i++) spawnTanker();
+    // Crisis start: fewer tankers, one already seized
+    for (let i = 0; i < 5; i++) spawnTanker();
+    SIM.tankers[0].seized = true;
+    SIM.tankers[0].id = 'TKR-SEIZED';
+    SIM.seizureCount = 1;
+
+    // IRGC boats already deployed in the strait
+    spawnIranBoat(0.52, 0.50);
+    spawnIranBoat(0.48, 0.55);
+    spawnIranBoat(0.55, 0.48);
+
+    // Mines laid in shipping lanes
+    SIM.mines.push({ x: 0.45, y: 0.49, active: true, id: 'MINE-001' });
+    SIM.mines.push({ x: 0.50, y: 0.53, active: true, id: 'MINE-002' });
+
+    // Navy ships responding to crisis (USS already present via game setup)
+    spawnNavyShip(0.60, 0.58);
+    spawnNavyShip(0.62, 0.62);
+    spawnNavyShip(0.58, 0.55);
+
     const platformPositions = [[0.08, 0.38], [0.15, 0.45], [0.22, 0.42], [0.10, 0.50]];
     for (const [x, y] of platformPositions) {
         SIM.platforms.push({ x, y, active: true, health: 100 });
     }
+
+    // Initial crisis headlines
+    addHeadline('BREAKING: Iran seizes oil tanker in Strait of Hormuz — crisis escalates', 'critical');
+    addHeadline('IRGC naval forces deployed across strait — shipping lanes under threat', 'warning');
+    addHeadline('Pentagon confirms mines detected in shipping corridor', 'warning');
+    addHeadline('Oil prices surge past $140 as strait transit grinds to a halt', 'warning');
 }
 
 function spawnTanker() {
@@ -796,7 +821,7 @@ function checkWinLose() {
 
     // --- Win: Strait open 14 consecutive days ---
     const recentSeizures = SIM.recentSeizureDays.filter(d => SIM.day - d <= 7).length;
-    const straitOpen = SIM.oilFlow > 75 && SIM.tension < 40 && recentSeizures === 0 && SIM.crisisLevel === 0;
+    const straitOpen = SIM.oilFlow > 65 && SIM.tension < 45 && recentSeizures === 0 && SIM.crisisLevel === 0;
 
     if (straitOpen) {
         SIM.straitOpenDays++;

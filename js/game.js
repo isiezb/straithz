@@ -92,9 +92,8 @@ function advanceDay() {
         return;
     }
 
-    // Advance to overnight
-    SIM.phase = 'overnight';
-    showOvernightSummary();
+    // Go directly to next day's report
+    advanceToMorning();
 }
 
 /**
@@ -103,21 +102,10 @@ function advanceDay() {
 function advanceToMorning() {
     SIM.day++;
     SIM.hour = 0;
-
-    // Update week tracking
     SIM.weekDay = ((SIM.day - 1) % 7) + 1;
     SIM.week = Math.floor((SIM.day - 1) / 7) + 1;
-
-    // Check if weekly check-in (every 7 days)
-    if (SIM.day > 1 && (SIM.day - 1) % 7 === 0) {
-        SIM.phase = 'weekly_checkin';
-        showWeeklyCheckIn();
-        return;
-    }
-
-    // Normal morning brief
     SIM.phase = 'morning';
-    showMorningBrief();
+    showDailyReport();
 }
 
 /**
@@ -126,4 +114,6 @@ function advanceToMorning() {
 function startDayPlay() {
     SIM.phase = 'dayplay';
     SIM.dayPlayTimer = 0;
+    SIM.prevGauges = calculateGauges();
+    if (typeof showQuickActions === 'function') showQuickActions();
 }
