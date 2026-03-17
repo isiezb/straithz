@@ -699,6 +699,8 @@ function showActionPanel() {
     const canvas = document.getElementById('game-canvas');
     if (canvas) {
         canvas.style.width = 'calc(100% - 280px)';
+        canvas.style.left = '0';
+        canvas.style.transform = 'none';
     }
 
     const panel = document.createElement('div');
@@ -1104,7 +1106,9 @@ function hideActionPanel() {
     // Restore canvas width
     const canvas = document.getElementById('game-canvas');
     if (canvas) {
-        canvas.style.width = '100%';
+        canvas.style.width = '';
+        canvas.style.left = '';
+        canvas.style.transform = '';
     }
 }
 
