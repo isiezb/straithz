@@ -1,11 +1,13 @@
 /**
- * UI Controller — policy panel, HUD updates, event log, game over screen
+ * UI Controller — policy panel, HUD updates, event log, game over screen,
+ * toast notifications, decision events, weekly reports
  */
 
 function initUI() {
     renderPolicyCards();
     setupSpeedControls();
     setupKeyboardShortcuts();
+    updateDailyCost();
 }
 
 // Map policy IDs to sprite keys
@@ -79,9 +81,24 @@ function renderPolicyCards() {
             logEvent('Policy changed: ' + policy.name + ' -> ' + policy.levelLabels[newLevel], 'normal');
             markPolicyDirty();
             renderPolicyCards();
+            updateDailyCost();
         });
 
         list.appendChild(card);
+    }
+
+    updateDailyCost();
+}
+
+function updateDailyCost() {
+    const costEl = document.getElementById('daily-cost');
+    if (!costEl) return;
+    const cost = getAggregateEffect('cost');
+    if (cost > 0) {
+        costEl.textContent = `$${cost}M/day`;
+        costEl.className = 'daily-cost-display ' + (cost > 300 ? 'danger' : cost > 100 ? 'warning' : 'good');
+    } else {
+        costEl.textContent = '';
     }
 }
 
@@ -122,6 +139,15 @@ function updateHUD() {
         crisisEl.textContent = crisisLabels[SIM.crisisLevel];
         crisisEl.className = `hud-value ${SIM.crisisLevel >= 3 ? 'danger' : SIM.crisisLevel >= 2 ? 'warning' : SIM.crisisLevel >= 1 ? 'warning' : 'good'}`;
     }
+
+    // Rating
+    const ratingEl = document.getElementById('hud-rating');
+    if (ratingEl) {
+        const rating = calculateRating();
+        ratingEl.textContent = rating.grade;
+        const ratingCls = rating.score >= 80 ? 'good' : rating.score >= 50 ? 'warning' : 'danger';
+        ratingEl.className = `hud-value rating-badge ${ratingCls}`;
+    }
 }
 
 function updateEventLog() {
@@ -149,13 +175,16 @@ function setupSpeedControls() {
 
     for (const [id, speed] of Object.entries(speeds)) {
         document.getElementById(id).addEventListener('click', () => {
-            if (SIM.gameOver) return;
+            if (SIM.gameOver || SIM.decisionEventActive || SIM.weeklyReportActive) return;
             setSpeed(speed);
         });
     }
 }
 
 function setSpeed(speed) {
+    if (SIM.decisionEventActive || SIM.weeklyReportActive) {
+        speed = 0;
+    }
     SIM.speed = speed;
     document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
     const btnMap = { 0: 'btn-pause', 1: 'btn-1x', 2: 'btn-2x', 4: 'btn-4x' };
@@ -166,6 +195,7 @@ function setSpeed(speed) {
 function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         if (SIM.gameOver && e.key !== 'r') return;
+        if (SIM.decisionEventActive || SIM.weeklyReportActive) return;
 
         switch (e.key) {
             case ' ':
@@ -187,16 +217,206 @@ function setupKeyboardShortcuts() {
     });
 }
 
+// -- Toast Notifications --
+
+function showToast(text, level) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    // Limit visible toasts
+    while (container.children.length >= 4) {
+        container.removeChild(container.firstChild);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${level}`;
+    toast.textContent = text;
+
+    toast.addEventListener('animationend', (e) => {
+        if (e.animationName === 'toastFadeOut') {
+            toast.remove();
+        }
+    });
+
+    container.appendChild(toast);
+}
+
+// -- Decision Events --
+
+function showDecisionEvent(event) {
+    const existing = document.getElementById('decision-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'decision-overlay';
+
+    const choicesHtml = event.choices.map((choice, i) => {
+        const effectsHtml = Object.entries(choice.effects).map(([key, val]) => {
+            if (val === 0) return '';
+            const isNeg = ['tension', 'iranAggression', 'conflictRisk', 'fogOfWar'].includes(key)
+                ? val > 0 : val < 0;
+            return `<span class="${isNeg ? 'negative' : 'positive'}">${formatEffectName(key)}: ${val > 0 ? '+' : ''}${val}</span>`;
+        }).filter(Boolean).join(' ');
+
+        return `
+            <button class="decision-choice" data-idx="${i}">
+                <span class="choice-text">${choice.text}</span>
+                <span class="choice-effects">${effectsHtml || 'No immediate effects'}</span>
+            </button>
+        `;
+    }).join('');
+
+    overlay.innerHTML = `
+        <div class="decision-box">
+            <div class="decision-header">
+                <span class="decision-day">DAY ${SIM.day}</span>
+                <span class="decision-label">DECISION REQUIRED</span>
+            </div>
+            <h2 class="decision-title">${event.title}</h2>
+            <p class="decision-desc">${event.description}</p>
+            <div class="decision-choices">${choicesHtml}</div>
+        </div>
+    `;
+
+    document.getElementById('game-container').appendChild(overlay);
+
+    overlay.querySelectorAll('.decision-choice').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx);
+            const choice = event.choices[idx];
+
+            // Apply effects
+            for (const [key, val] of Object.entries(choice.effects)) {
+                if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
+                else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
+                else if (key === 'tension') SIM.tension = Math.max(0, Math.min(100, SIM.tension + val));
+                else if (key === 'approval') SIM.approval = Math.max(0, Math.min(100, SIM.approval + val));
+                else if (key === 'iranAggression') SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + val));
+                else if (key === 'budget') SIM.budget += val;
+                else if (key === 'conflictRisk') SIM.conflictRisk = Math.max(0, Math.min(100, SIM.conflictRisk + val));
+                else if (key === 'fogOfWar') SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + val));
+                else if (key === 'diplomaticCapital') SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital + val));
+            }
+
+            // Log result
+            logEvent(`Decision: ${event.title} — ${choice.text}`, 'normal');
+            logEvent(choice.flavor, 'good');
+
+            // Record in history
+            SIM.decisionHistory.push({
+                id: event.id,
+                title: event.title,
+                choiceText: choice.text,
+                day: SIM.day,
+            });
+
+            // Show flavor text briefly then dismiss
+            const box = overlay.querySelector('.decision-box');
+            box.innerHTML = `
+                <div class="decision-result">
+                    <h2>${choice.text.toUpperCase()}</h2>
+                    <p class="decision-flavor">${choice.flavor}</p>
+                    <button class="decision-continue-btn">CONTINUE</button>
+                </div>
+            `;
+            box.querySelector('.decision-continue-btn').addEventListener('click', () => {
+                overlay.remove();
+                SIM.decisionEventActive = false;
+            });
+        });
+    });
+}
+
+// -- Weekly Report --
+
+function showWeeklyReport() {
+    const existing = document.getElementById('weekly-report-overlay');
+    if (existing) existing.remove();
+
+    const week = Math.floor(SIM.day / 7);
+    const history = SIM.metricHistory;
+    const weekAgo = history.filter(m => m.day >= SIM.day - 7);
+    const prevWeek = history.filter(m => m.day >= SIM.day - 14 && m.day < SIM.day - 7);
+
+    function trend(current, prev, invert) {
+        if (!prev || prev.length === 0) return { arrow: '-', cls: '' };
+        const avg = prev.reduce((a, b) => a + b, 0) / prev.length;
+        const diff = current - avg;
+        if (Math.abs(diff) < 1) return { arrow: '-', cls: 'stable' };
+        const up = diff > 0;
+        const good = invert ? !up : up;
+        return { arrow: up ? '+' : '-', cls: good ? 'trend-good' : 'trend-bad' };
+    }
+
+    const metrics = [
+        { label: 'Oil Flow', value: `${Math.round(SIM.oilFlow)}%`, trend: trend(SIM.oilFlow, prevWeek.map(m => m.oilFlow), false) },
+        { label: 'Oil Price', value: `$${Math.round(SIM.oilPrice)}`, trend: trend(SIM.oilPrice, prevWeek.map(m => m.oilPrice), true) },
+        { label: 'Tension', value: `${Math.round(SIM.tension)}`, trend: trend(SIM.tension, prevWeek.map(m => m.tension), true) },
+        { label: 'Approval', value: `${Math.round(SIM.approval)}%`, trend: trend(SIM.approval, prevWeek.map(m => m.approval), false) },
+        { label: 'Conflict Risk', value: `${Math.round(SIM.conflictRisk)}%`, trend: trend(SIM.conflictRisk, prevWeek.map(m => m.conflictRisk), true) },
+        { label: 'Budget', value: `$${Math.round(SIM.budget)}M`, trend: trend(SIM.budget, prevWeek.map(m => m.budget), false) },
+    ];
+
+    const rating = calculateRating();
+    const weekDecisions = SIM.decisionHistory.filter(d => d.day > SIM.day - 7 && d.day <= SIM.day);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'weekly-report-overlay';
+
+    overlay.innerHTML = `
+        <div class="weekly-report-box">
+            <div class="report-header">
+                <span class="report-week">WEEK ${week} REPORT</span>
+                <span class="report-day">Day ${SIM.day}/${SIM.victoryDay}</span>
+            </div>
+            <div class="report-rating">
+                <span class="report-grade ${rating.score >= 80 ? 'good' : rating.score >= 50 ? 'warning' : 'danger'}">${rating.grade}</span>
+                <span class="report-label">${rating.label} (${rating.score}/100)</span>
+            </div>
+            <div class="report-metrics">
+                ${metrics.map(m => `
+                    <div class="report-metric-row">
+                        <span class="report-metric-label">${m.label}</span>
+                        <span class="report-metric-value">${m.value}</span>
+                        <span class="report-metric-trend ${m.trend.cls}">${m.trend.arrow === '+' ? '&#9650;' : m.trend.arrow === '-' ? (m.trend.cls ? '&#9654;' : '&#8212;') : '&#9660;'}</span>
+                    </div>
+                `).join('')}
+            </div>
+            ${weekDecisions.length > 0 ? `
+                <div class="report-decisions">
+                    <div class="report-decisions-label">DECISIONS THIS WEEK</div>
+                    ${weekDecisions.map(d => `<div class="report-decision-item">${d.title}: ${d.choiceText}</div>`).join('')}
+                </div>
+            ` : ''}
+            <button class="report-continue-btn">CONTINUE</button>
+        </div>
+    `;
+
+    document.getElementById('game-container').appendChild(overlay);
+
+    overlay.querySelector('.report-continue-btn').addEventListener('click', () => {
+        overlay.remove();
+        SIM.weeklyReportActive = false;
+    });
+}
+
+// -- Game Over --
+
 function showGameOverScreen() {
-    // Remove existing overlay
     const existing = document.getElementById('game-over-overlay');
     if (existing) existing.remove();
+
+    const rating = calculateRating();
 
     const overlay = document.createElement('div');
     overlay.id = 'game-over-overlay';
     overlay.innerHTML = `
         <div class="game-over-box ${SIM.gameWon ? 'victory' : 'defeat'}">
             <h1>${SIM.gameWon ? 'MISSION COMPLETE' : 'MISSION FAILED'}</h1>
+            <div class="game-over-rating">
+                <span class="go-grade ${rating.score >= 80 ? 'good' : rating.score >= 50 ? 'warning' : 'danger'}">${rating.grade}</span>
+                <span class="go-grade-label">${rating.label} (${rating.score}/100)</span>
+            </div>
             <p class="game-over-reason">${SIM.gameOverReason}</p>
             <div class="game-over-stats">
                 <div class="stat-row"><span>Days Survived</span><span>${SIM.day}</span></div>
@@ -207,6 +427,7 @@ function showGameOverScreen() {
                 <div class="stat-row"><span>Tankers Seized</span><span>${SIM.seizureCount}</span></div>
                 <div class="stat-row"><span>Intercepts</span><span>${SIM.interceptCount}</span></div>
                 <div class="stat-row"><span>Budget Remaining</span><span>$${Math.round(SIM.budget)}M</span></div>
+                <div class="stat-row"><span>Decisions Made</span><span>${SIM.decisionHistory.length}</span></div>
             </div>
             <button id="btn-restart" class="restart-btn">RESTART [R]</button>
         </div>
@@ -217,9 +438,15 @@ function showGameOverScreen() {
 }
 
 function restartGame() {
-    // Remove overlay
-    const overlay = document.getElementById('game-over-overlay');
-    if (overlay) overlay.remove();
+    // Remove all overlays
+    ['game-over-overlay', 'decision-overlay', 'weekly-report-overlay'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    });
+
+    // Clear toasts
+    const toastContainer = document.getElementById('toast-container');
+    if (toastContainer) toastContainer.innerHTML = '';
 
     // Reset SIM state
     SIM.day = 1;
@@ -255,6 +482,11 @@ function restartGame() {
     SIM.mines = [];
     SIM.drones = [];
     SIM.carrier = null;
+    SIM.decisionEventActive = false;
+    SIM.decisionHistory = [];
+    SIM.lastDecisionDay = 0;
+    SIM.metricHistory = [];
+    SIM.weeklyReportActive = false;
 
     // Reset policies
     for (const p of POLICIES) {

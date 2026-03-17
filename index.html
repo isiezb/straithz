@@ -48,11 +48,15 @@
                 <span class="hud-label">Crisis</span>
                 <span id="hud-crisis" class="hud-value good">None</span>
             </div>
+            <div class="hud-item">
+                <span class="hud-label">Rating</span>
+                <span id="hud-rating" class="hud-value good">S</span>
+            </div>
         </div>
 
         <!-- Policy Panel (right side) -->
         <div id="policy-panel">
-            <h2>US Policies</h2>
+            <h2>US Policies <span id="daily-cost" class="daily-cost-display"></span></h2>
             <div id="policy-list"></div>
         </div>
 
@@ -68,6 +72,9 @@
             <button id="btn-2x" class="speed-btn" title="2x Speed [2]">2x</button>
             <button id="btn-4x" class="speed-btn" title="4x Speed [3]">4x</button>
         </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container"></div>
 
         <!-- Keyboard hints -->
         <div id="kb-hints">

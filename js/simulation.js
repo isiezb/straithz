@@ -60,6 +60,13 @@ const SIM = {
     selectedEntity: null,
     selectedType: null,
 
+    // Tycoon management layer
+    decisionEventActive: false,
+    decisionHistory: [],
+    lastDecisionDay: 0,
+    metricHistory: [],
+    weeklyReportActive: false,
+
     // Strait geometry (relative to canvas)
     straitBounds: {
         x: 0.35, y: 0.35, w: 0.3, h: 0.3
@@ -410,6 +417,194 @@ function spawnEffect(x, y, type) {
     });
 }
 
+function calculateRating() {
+    const oilScore = Math.min(100, SIM.oilFlow);
+    const approvalScore = Math.min(100, SIM.approval);
+    const tensionScore = 100 - Math.min(100, SIM.tension);
+    const riskScore = 100 - Math.min(100, SIM.conflictRisk);
+    const budgetScore = Math.min(100, Math.max(0, SIM.budget / 10));
+
+    const score = Math.round(
+        oilScore * 0.25 + approvalScore * 0.20 + tensionScore * 0.25 + riskScore * 0.20 + budgetScore * 0.10
+    );
+
+    let grade, label;
+    if (score >= 90) { grade = 'S'; label = 'Outstanding'; }
+    else if (score >= 80) { grade = 'A'; label = 'Excellent'; }
+    else if (score >= 65) { grade = 'B'; label = 'Good'; }
+    else if (score >= 50) { grade = 'C'; label = 'Adequate'; }
+    else if (score >= 35) { grade = 'D'; label = 'Poor'; }
+    else { grade = 'F'; label = 'Failing'; }
+
+    return { grade, label, score };
+}
+
+const DECISION_EVENTS = [
+    {
+        id: 'secret_talks', title: 'SECRET BACK-CHANNEL',
+        description: 'Iranian moderates have reached out through Omani intermediaries. They propose secret talks in Muscat to de-escalate — but if leaked, hawks on both sides will be furious.',
+        minDay: 5, maxDay: 40,
+        condition: () => SIM.tension > 25 && SIM.diplomaticCapital > 20,
+        choices: [
+            { text: 'Accept the talks', effects: { tension: -12, approval: -5, diplomaticCapital: 15, iranAggression: -8 }, flavor: 'The back-channel opens quietly. Both sides agree to a cooling-off period.' },
+            { text: 'Reject — too risky', effects: { tension: 3, iranAggression: 5 }, flavor: 'The opportunity passes. Iranian hardliners use the rejection as propaganda.' },
+            { text: 'Leak it to the press', effects: { approval: 8, tension: 6, diplomaticCapital: -15 }, flavor: 'The story breaks worldwide. You gain public credit but burn the diplomatic bridge.' },
+        ]
+    },
+    {
+        id: 'congress_pressure', title: 'CONGRESSIONAL HEARING',
+        description: 'The Senate Armed Services Committee demands testimony on spending in the strait. They threaten to cut your budget if you can\'t justify the costs.',
+        minDay: 10, maxDay: 60,
+        condition: () => getAggregateEffect('cost') > 100,
+        choices: [
+            { text: 'Justify with intelligence', effects: { approval: 5, budget: -20, fogOfWar: -10 }, flavor: 'You declassify key intel briefings. Congress is satisfied — for now.' },
+            { text: 'Promise to cut spending', effects: { budget: 50, approval: 3 }, flavor: 'You pledge reductions. Congress relents, but expects follow-through.' },
+            { text: 'Stonewall the committee', effects: { approval: -10, budget: 0 }, flavor: 'Refusing to cooperate backfires. Media coverage turns hostile.' },
+        ]
+    },
+    {
+        id: 'allied_request', title: 'ALLIED NAVAL REQUEST',
+        description: 'Japan requests a dedicated US Navy escort for their tanker fleet through the strait. It would cost resources but strengthen the alliance.',
+        minDay: 8, maxDay: 50,
+        condition: () => SIM.navyShips.length > 0,
+        choices: [
+            { text: 'Assign escorts', effects: { approval: 10, oilFlow: 5, budget: -40, tension: 3 }, flavor: 'Japanese tankers now sail with USN escorts. Tokyo publicly thanks Washington.' },
+            { text: 'Decline politely', effects: { approval: -3 }, flavor: 'Japan is disappointed but understanding. They increase their own naval presence.' },
+        ]
+    },
+    {
+        id: 'humanitarian', title: 'HUMANITARIAN CRISIS',
+        description: 'An Iranian fishing vessel has capsized near the strait. 40 fishermen are in the water. Iranian rescue is 2 hours away; your destroyer is 15 minutes away.',
+        minDay: 6, maxDay: 70,
+        condition: () => SIM.navyShips.length > 0,
+        choices: [
+            { text: 'Rescue immediately', effects: { approval: 12, tension: -8, iranAggression: -5, diplomaticCapital: 10 }, flavor: 'Your sailors pull 38 survivors from the water. The footage goes viral worldwide.' },
+            { text: 'Coordinate with Iran', effects: { approval: 3, tension: -3, diplomaticCapital: 5 }, flavor: 'You relay coordinates to Iranian coast guard. Joint effort saves most of the crew.' },
+            { text: 'Stay on mission', effects: { approval: -8, tension: 2 }, flavor: 'Iranian state media reports US ships watched fishermen drown. International outrage follows.' },
+        ]
+    },
+    {
+        id: 'media_crisis', title: 'MEDIA FIRESTORM',
+        description: 'Footage emerges of a US Navy vessel in a near-collision with an Iranian patrol boat. Cable news is running it 24/7. The Pentagon wants your response.',
+        minDay: 12, maxDay: 80,
+        condition: () => SIM.navyShips.length > 0 && SIM.iranBoats.length > 0,
+        choices: [
+            { text: 'Release full video', effects: { approval: 5, tension: -2 }, flavor: 'The unedited footage shows the Iranian boat\'s provocative approach. Narrative shifts in your favor.' },
+            { text: 'Downplay the incident', effects: { approval: -3, tension: -5 }, flavor: 'The story fades from the news cycle. Both sides quietly move on.' },
+            { text: 'Blame Iran publicly', effects: { approval: 3, tension: 8, iranAggression: 5 }, flavor: 'A forceful condemnation rallies domestic support but inflames Iran.' },
+        ]
+    },
+    {
+        id: 'intel_reveal', title: 'INTELLIGENCE BREAKTHROUGH',
+        description: 'Your agents have identified the location of Iran\'s mine-laying operations. You can act on this intelligence — but doing so would burn the source.',
+        minDay: 15, maxDay: 75,
+        condition: () => SIM.fogOfWar < 60 && SIM.crisisLevel >= 1,
+        choices: [
+            { text: 'Strike the mine depot', effects: { tension: 15, iranAggression: 10, conflictRisk: 8 }, flavor: 'Cruise missiles destroy the depot. Iran is furious but mine threat is neutralized.' },
+            { text: 'Share with allies quietly', effects: { approval: 5, fogOfWar: -15, diplomaticCapital: 8 }, flavor: 'Coalition partners quietly mine-sweep the identified areas. Source stays safe.' },
+            { text: 'Hold the intelligence', effects: { fogOfWar: -8 }, flavor: 'You file it away for future use. The source continues to provide valuable intel.' },
+        ]
+    },
+    {
+        id: 'trade_deal', title: 'TRADE PROPOSAL',
+        description: 'China proposes a backroom deal: they\'ll pressure Iran to stop provocations if you ease restrictions on Chinese tech firms. Commerce is interested.',
+        minDay: 20, maxDay: 70,
+        condition: () => SIM.tension > 30,
+        choices: [
+            { text: 'Accept the deal', effects: { tension: -10, iranAggression: -10, approval: -8 }, flavor: 'China delivers. Iran pulls back patrol boats. But the tech concessions draw domestic criticism.' },
+            { text: 'Counter-propose', effects: { tension: -4, diplomaticCapital: -5 }, flavor: 'Negotiations drag on. Modest gains for both sides, nothing transformative.' },
+            { text: 'Reject outright', effects: { approval: 5, tension: 3 }, flavor: 'Hawks applaud your firmness. China is annoyed but unsurprised.' },
+        ]
+    },
+    {
+        id: 'un_vote', title: 'UN RESOLUTION VOTE',
+        description: 'A resolution condemning Iran\'s strait activities is up for vote. Russia will veto unless you water it down. The UK wants you to push the strong version.',
+        minDay: 15, maxDay: 60,
+        condition: () => SIM.tension > 20,
+        choices: [
+            { text: 'Push strong resolution', effects: { approval: 8, tension: 5, iranAggression: 3, diplomaticCapital: -10 }, flavor: 'Russia vetoes as expected. But the debate isolates Iran diplomatically.' },
+            { text: 'Accept watered-down version', effects: { approval: 3, tension: -3, diplomaticCapital: 5 }, flavor: 'The resolution passes unanimously. Symbolic but it shows unity.' },
+            { text: 'Withdraw the resolution', effects: { approval: -5, diplomaticCapital: -5 }, flavor: 'Allies are confused by the retreat. A missed opportunity.' },
+        ]
+    },
+    {
+        id: 'cyber_attack', title: 'CYBER OPERATION PROPOSAL',
+        description: 'NSA presents a plan to disable Iran\'s naval command network for 48 hours. It would cripple their coordination — but if attributed, it\'s an act of war.',
+        minDay: 25, maxDay: 80,
+        condition: () => SIM.iranAggression > 40,
+        choices: [
+            { text: 'Approve the operation', effects: { iranAggression: -15, fogOfWar: -20, tension: 10, conflictRisk: 12 }, flavor: 'Iran\'s boats go silent for two days. They suspect sabotage but can\'t prove it.' },
+            { text: 'Too dangerous — deny', effects: {}, flavor: 'You shelve the plan. Better to keep that card for a real emergency.' },
+        ]
+    },
+    {
+        id: 'hostage', title: 'HOSTAGE SITUATION',
+        description: 'Iran is holding 12 crew members from a seized tanker. They want sanctions relief in exchange. The families are on every news channel.',
+        minDay: 10, maxDay: 75,
+        condition: () => SIM.seizureCount > 0,
+        choices: [
+            { text: 'Negotiate their release', effects: { approval: 8, tension: -5, diplomaticCapital: -10, budget: -30 }, flavor: 'After tense negotiations, the crew is released at Muscat airport. Emotional reunions follow.' },
+            { text: 'Demand unconditional release', effects: { tension: 8, approval: 3, iranAggression: 5 }, flavor: 'You increase pressure. Iran doubles down but international opinion turns against them.' },
+            { text: 'Offer quiet concession', effects: { tension: -8, approval: -5, iranAggression: -3 }, flavor: 'A minor sanctions waiver is quietly approved. The crew comes home. Nobody talks about the price.' },
+        ]
+    },
+    {
+        id: 'oil_spike', title: 'OIL MARKET PANIC',
+        description: 'Oil futures just jumped $15/barrel on rumors of an imminent Iranian blockade. Energy Secretary is on the phone — should you release strategic reserves?',
+        minDay: 8, maxDay: 80,
+        condition: () => SIM.oilPrice > 100,
+        choices: [
+            { text: 'Release reserves', effects: { oilPrice: -12, budget: -50, approval: 5 }, flavor: 'The SPR release calms markets. Prices stabilize but your budget takes a hit.' },
+            { text: 'Verbal intervention only', effects: { oilPrice: -4, approval: -2 }, flavor: 'Your press conference helps a little. Markets remain jittery.' },
+            { text: 'Let markets correct', effects: { approval: -5 }, flavor: 'Critics call you out of touch as gas prices soar at home.' },
+        ]
+    },
+    {
+        id: 'gulf_coalition', title: 'GULF STATE OFFER',
+        description: 'Saudi Arabia and UAE offer to fund 60% of your naval operations in the strait — but they want a say in targeting decisions and rules of engagement.',
+        minDay: 12, maxDay: 55,
+        condition: () => getAggregateEffect('cost') > 50,
+        choices: [
+            { text: 'Accept with conditions', effects: { budget: 80, approval: 5, tension: 3 }, flavor: 'The deal is struck. Gulf funding flows in. You retain operational control with a coordination cell.' },
+            { text: 'Accept fully', effects: { budget: 120, approval: -3, tension: 5 }, flavor: 'The generous funding helps, but critics question who\'s really calling the shots.' },
+            { text: 'Decline', effects: { approval: 3, diplomaticCapital: -5 }, flavor: 'You maintain independence but miss a chance to share the burden.' },
+        ]
+    },
+    {
+        id: 'drone_incident', title: 'DRONE SHOOT-DOWN',
+        description: 'Iran just shot down one of your surveillance drones over international waters. Pentagon is furious. Joint Chiefs want a proportional response.',
+        minDay: 15, maxDay: 80,
+        condition: () => SIM.drones.length > 0,
+        choices: [
+            { text: 'Strike the missile battery', effects: { tension: 20, conflictRisk: 15, iranAggression: -10, approval: 5 }, flavor: 'Precision strike destroys the SAM site. Iran goes quiet. The world holds its breath.' },
+            { text: 'Respond with more drones', effects: { tension: 5, fogOfWar: -15, approval: 2 }, flavor: 'You flood the area with drones, daring Iran to escalate further. They don\'t.' },
+            { text: 'Stand down — it was unmanned', effects: { tension: -3, approval: -5, iranAggression: 5 }, flavor: 'You absorb the loss. Some call it wise restraint, others call it weakness.' },
+        ]
+    },
+    {
+        id: 'election_pressure', title: 'ELECTION YEAR PRESSURE',
+        description: 'Your party is down in the polls. Campaign advisors want a dramatic move in the strait — something that looks strong on TV before midterms.',
+        minDay: 30, maxDay: 75,
+        condition: () => true,
+        choices: [
+            { text: 'Stage a naval exercise', effects: { tension: 8, approval: 10, iranAggression: 5, budget: -30 }, flavor: 'The carriers look great on camera. Polls bump 3 points. Iran calls it provocation.' },
+            { text: 'Focus on diplomacy instead', effects: { tension: -5, approval: -3, diplomaticCapital: 8 }, flavor: 'Not flashy, but it\'s the right call. Pundits debate whether it\'s leadership or weakness.' },
+            { text: 'Ignore the advisors', effects: {}, flavor: 'You stay the course. The polls are what they are.' },
+        ]
+    },
+    {
+        id: 'pipeline_sabotage', title: 'PIPELINE SABOTAGE',
+        description: 'An underwater pipeline feeding a major export terminal has been damaged. Could be Iran, could be an accident. Repairs will take weeks.',
+        minDay: 20, maxDay: 70,
+        condition: () => SIM.crisisLevel >= 1,
+        choices: [
+            { text: 'Blame Iran, escalate', effects: { tension: 12, oilFlow: -8, approval: 3, iranAggression: 5 }, flavor: 'You attribute it to Iranian sabotage. The accusation rallies allies but stokes the fire.' },
+            { text: 'Investigate first', effects: { oilFlow: -5, fogOfWar: -8 }, flavor: 'A measured response. The investigation will take time but you keep options open.' },
+            { text: 'Offer joint investigation', effects: { tension: -5, oilFlow: -5, diplomaticCapital: 8 }, flavor: 'Surprisingly, Iran agrees. The process is slow but builds a thread of trust.' },
+        ]
+    },
+];
+
 function dailyUpdate() {
     const tensionDelta = getAggregateEffect('tension');
     const protectionBonus = getAggregateEffect('oilFlowProtection');
@@ -490,10 +685,11 @@ function dailyUpdate() {
         SIM.tension * 0.4 + SIM.iranAggression * 0.3 + getAggregateEffect('conflictRisk') + SIM.crisisLevel * 10
     ));
 
-    // Fog of war slowly increases without intel
+    // Fog of war slowly increases without intel (Asmongold bonus reduces both passive growth and policy fog)
     const fogDelta = getAggregateEffect('fogOfWar');
-    const fogMult = typeof getCharacterBonus === 'function' ? (getCharacterBonus('fogReduction') || 1) : 1;
-    SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + 1 + fogDelta * 0.05 * fogMult));
+    const fogMult = getCharacterBonus('fogReduction') || 1;
+    const passiveFogGrowth = 1 / fogMult; // Asmongold: 1/1.25 = 0.8 instead of 1
+    SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + passiveFogGrowth + fogDelta * 0.05 * fogMult));
 
     // Manage navy ships based on deployment policy
     const navyPolicy = POLICIES.find(p => p.id === 'naval_deployment');
@@ -606,6 +802,42 @@ function dailyUpdate() {
     } else if (SIM.day === 80) {
         logEvent('Day 80. Just 10 more days to stabilize the situation.', 'warning');
     }
+
+    // Push metric snapshot for weekly reports
+    SIM.metricHistory.push({
+        day: SIM.day,
+        oilFlow: SIM.oilFlow,
+        oilPrice: SIM.oilPrice,
+        tension: SIM.tension,
+        approval: SIM.approval,
+        conflictRisk: SIM.conflictRisk,
+        budget: SIM.budget,
+        rating: calculateRating(),
+    });
+
+    // Decision events — probability-based, min 4-day spacing
+    if (!SIM.decisionEventActive && !SIM.weeklyReportActive && SIM.day - SIM.lastDecisionDay >= 4 && Math.random() < 0.25) {
+        const usedIds = SIM.decisionHistory.map(d => d.id);
+        const eligible = DECISION_EVENTS.filter(e =>
+            !usedIds.includes(e.id) &&
+            SIM.day >= e.minDay && SIM.day <= e.maxDay &&
+            e.condition()
+        );
+        if (eligible.length > 0) {
+            const event = eligible[Math.floor(Math.random() * eligible.length)];
+            SIM.decisionEventActive = true;
+            SIM.lastDecisionDay = SIM.day;
+            setSpeed(0);
+            showDecisionEvent(event);
+        }
+    }
+
+    // Weekly report — every 7 days
+    if (SIM.day % 7 === 0 && SIM.day > 1 && !SIM.decisionEventActive && !SIM.weeklyReportActive) {
+        SIM.weeklyReportActive = true;
+        setSpeed(0);
+        showWeeklyReport();
+    }
 }
 
 function checkWinLose() {
@@ -651,6 +883,13 @@ function endGame(won, reason) {
     SIM.gameWon = won;
     SIM.gameOverReason = reason;
     SIM.speed = 0;
+    // Dismiss any active popups
+    SIM.decisionEventActive = false;
+    SIM.weeklyReportActive = false;
+    const decOverlay = document.getElementById('decision-overlay');
+    if (decOverlay) decOverlay.remove();
+    const weekOverlay = document.getElementById('weekly-report-overlay');
+    if (weekOverlay) weekOverlay.remove();
     logEvent(reason, won ? 'good' : 'critical');
     showGameOverScreen();
 }
@@ -722,6 +961,9 @@ function logEvent(text, level = 'normal') {
     const entry = { day: SIM.day, hour: SIM.hour, text, level };
     SIM.eventLog.push(entry);
     if (SIM.eventLog.length > 100) SIM.eventLog.shift();
+    if (typeof showToast === 'function' && (level === 'critical' || level === 'warning' || level === 'good')) {
+        showToast(text, level);
+    }
     return entry;
 }
 
