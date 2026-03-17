@@ -693,11 +693,13 @@ function _getROEColor() {
 function showActionPanel() {
     hideActionPanel();
 
-    // Adjust canvas width to make room for action panel
+    // Shrink all layout elements to make room for action panel
     const canvas = document.getElementById('game-canvas');
-    if (canvas) {
-        canvas.style.width = 'calc(100% - 280px)';
-    }
+    const gaugeBar = document.getElementById('gauge-bar');
+    const tickers = document.getElementById('news-tickers');
+    if (canvas) canvas.style.width = 'calc(100% - 280px)';
+    if (gaugeBar) gaugeBar.style.right = '280px';
+    if (tickers) tickers.style.right = '280px';
 
     const panel = document.createElement('div');
     panel.id = 'action-panel';
@@ -1099,11 +1101,13 @@ function hideActionPanel() {
     const existing = document.getElementById('action-panel');
     if (existing) existing.remove();
 
-    // Restore canvas width
+    // Restore layout widths
     const canvas = document.getElementById('game-canvas');
-    if (canvas) {
-        canvas.style.width = '';
-    }
+    const gaugeBar = document.getElementById('gauge-bar');
+    const tickers = document.getElementById('news-tickers');
+    if (canvas) canvas.style.width = '';
+    if (gaugeBar) gaugeBar.style.right = '';
+    if (tickers) tickers.style.right = '';
 }
 
 
