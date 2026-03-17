@@ -10,6 +10,9 @@
         // Show character select
         const character = await showCharacterSelect();
 
+        // Show lore intro
+        await showLoreScreen(character);
+
         // Store selected character
         SIM.character = character;
 
