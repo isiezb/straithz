@@ -724,33 +724,64 @@ function showCharacterSelect() {
         let selectedIdx = null;
 
         function render() {
+            const trump = CHARACTERS[0];
+            const advisors = CHARACTERS.slice(1);
+
+            function renderCard(ch, i) {
+                return `
+                    <div class="char-card ${selectedIdx === i ? 'selected' : ''}" data-idx="${i}">
+                        ${ch.portraitImage
+                            ? `<img class="char-portrait" src="${ch.portraitImage}" alt="${ch.name}" style="image-rendering:pixelated">`
+                            : `<canvas class="char-portrait" id="char-portrait-${i}" width="56" height="56"></canvas>`
+                        }
+                        <div class="char-info">
+                            <div class="char-name">${ch.name}</div>
+                            <div class="char-title">${ch.title}</div>
+                        </div>
+                        ${selectedIdx === i ? `
+                            <div class="char-ability">
+                                <span class="ability-name">${ch.ability}</span>
+                                <span class="ability-desc">${ch.abilityDesc}</span>
+                                ${ch.uniqueResource ? `<span class="ability-resource" style="color:${ch.uniqueResource.color}">${ch.uniqueResource.name}: ${ch.uniqueResource.value}</span>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
             overlay.innerHTML = `
                 <div class="char-select-box">
-                    <h1>SELECT ADVISOR</h1>
-                    <p class="char-subtitle">Each advisor is a completely different game mode</p>
-                    <div class="char-grid">
-                        ${CHARACTERS.map((ch, i) => `
-                            <div class="char-card ${selectedIdx === i ? 'selected' : ''}" data-idx="${i}">
-                                ${ch.portraitImage
-                                    ? `<img class="char-portrait" src="${ch.portraitImage}" alt="${ch.name}" width="80" height="80" style="image-rendering:pixelated">`
-                                    : `<canvas class="char-portrait" id="char-portrait-${i}" width="56" height="56"></canvas>`
-                                }
-                                <div class="char-info">
-                                    <div class="char-name">${ch.name}</div>
-                                    <div class="char-title">${ch.title}</div>
-                                </div>
-                                ${selectedIdx === i ? `
-                                    <div class="char-ability">
-                                        <span class="ability-name">${ch.ability}</span>
-                                        <span class="ability-desc">${ch.abilityDesc}</span>
-                                        ${ch.uniqueResource ? `<span class="ability-resource" style="color:${ch.uniqueResource.color}">${ch.uniqueResource.name}: ${ch.uniqueResource.value}</span>` : ''}
-                                    </div>
-                                ` : ''}
+                    <h1>STRAIT OF HORMUZ</h1>
+                    <p class="char-subtitle">Select your role</p>
+
+                    <div class="char-president-row">
+                        <div class="char-card char-card-president ${selectedIdx === 0 ? 'selected' : ''}" data-idx="0">
+                            ${trump.portraitImage
+                                ? `<img class="char-portrait char-portrait-lg" src="${trump.portraitImage}" alt="${trump.name}" style="image-rendering:pixelated">`
+                                : `<canvas class="char-portrait" id="char-portrait-0" width="56" height="56"></canvas>`
+                            }
+                            <div class="char-info">
+                                <div class="char-name">${trump.name}</div>
+                                <div class="char-title">${trump.title}</div>
                             </div>
-                        `).join('')}
+                            ${selectedIdx === 0 ? `
+                                <div class="char-ability">
+                                    <span class="ability-name">${trump.ability}</span>
+                                    <span class="ability-desc">${trump.abilityDesc}</span>
+                                    ${trump.uniqueResource ? `<span class="ability-resource" style="color:${trump.uniqueResource.color}">${trump.uniqueResource.name}: ${trump.uniqueResource.value}</span>` : ''}
+                                </div>
+                            ` : ''}
+                        </div>
                     </div>
+
+                    <div class="char-divider"><span>OR CHOOSE AN ADVISOR</span></div>
+
+                    <div class="char-grid">
+                        ${advisors.map((ch, i) => renderCard(ch, i + 1)).join('')}
+                    </div>
+
                     <button class="begin-btn ${selectedIdx !== null ? 'ready' : ''}" id="begin-btn">
-                        ${selectedIdx !== null ? '[ BEGIN SIMULATION ]' : '[ SELECT AN ADVISOR ]'}
+                        ${selectedIdx !== null ? '[ BEGIN SIMULATION ]' : '[ SELECT A CHARACTER ]'}
                     </button>
                 </div>
             `;

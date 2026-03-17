@@ -1080,6 +1080,43 @@ body {
     margin-bottom: 36px;
 }
 
+/* President featured row */
+.char-president-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.char-card-president {
+    width: 240px !important;
+}
+.char-portrait-lg {
+    width: 160px !important;
+    height: 160px !important;
+}
+.char-divider {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+.char-divider::before,
+.char-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: #1a3a2a;
+}
+.char-divider::before { left: 5%; }
+.char-divider::after { right: 5%; }
+.char-divider span {
+    font-size: 11px;
+    color: #2a6a4a;
+    letter-spacing: 3px;
+    padding: 0 16px;
+    background: transparent;
+}
+
 .char-grid {
     display: flex;
     gap: 16px;
