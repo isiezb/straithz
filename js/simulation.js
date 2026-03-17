@@ -22,29 +22,29 @@ const SIM = {
     prevGauges: null,         // gauge snapshot from start of day
 
     // Core metrics (underlying — player sees 4 gauges)
-    oilFlow: 25,
-    oilPrice: 110,
-    tension: 85,
+    oilFlow: 40,
+    oilPrice: 95,
+    tension: 65,
     domesticApproval: 60,
-    internationalStanding: 45,
-    conflictRisk: 45,
+    internationalStanding: 50,
+    conflictRisk: 35,
     budget: 900,
 
     // Iran state
-    iranAggression: 70,
-    iranEconomy: 30,
-    iranStrategy: 'escalatory', // restrained/probing/escalatory/confrontational
+    iranAggression: 55,
+    iranEconomy: 35,
+    iranStrategy: 'probing', // restrained/probing/escalatory/confrontational
 
     // Geopolitics
-    fogOfWar: 82,
-    diplomaticCapital: 25,
-    proxyThreat: 40,
+    fogOfWar: 70,
+    diplomaticCapital: 35,
+    proxyThreat: 25,
     chinaRelations: 50,
     russiaRelations: 40,
-    polarization: 25,
+    polarization: 20,
     assassinationRisk: 0,
-    warPath: 3,
-    escalationLevel: 3,    // 0=diplomatic, 1=naval standoff, 2=limited strikes, 3=air campaign, 4=ground invasion, 5=total war
+    warPath: 1,
+    escalationLevel: 1,    // 0=diplomatic, 1=naval standoff, 2=limited strikes, 3=air campaign, 4=ground invasion, 5=total war
 
     // Win/Lose tracking
     straitOpenDays: 0,
@@ -74,9 +74,9 @@ const SIM = {
     playedExclusives: [],
 
     // Crisis
-    crisisLevel: 1,
-    crisisTimer: 5,
-    consecutiveProvocations: 3,
+    crisisLevel: 0,
+    crisisTimer: 0,
+    consecutiveProvocations: 0,
     interceptCount: 0,
     seizureCount: 0,
 
@@ -95,6 +95,20 @@ const SIM = {
 
     // Decision log for situation panel
     decisionLog: [],  // [{title, choice, effects, gaugesBefore, gaugesAfter, day, type:'decision'|'interrupt'}]
+
+    // Player delta accumulators — direct effects from AP actions, decisions, interrupts
+    // These persist across daily updates and decay slowly, so player actions feel impactful
+    playerDeltas: {
+        tension: 0,
+        oilFlow: 0,
+        domesticApproval: 0,
+        internationalStanding: 0,
+        iranAggression: 0,
+        iranEconomy: 0,
+        fogOfWar: 0,
+        diplomaticCapital: 0,
+        conflictRisk: 0,
+    },
 
     // Implementation delay queue
     pendingEffects: [],  // [{cardId, cardName, category, funding, effects, activateOnDay}]
@@ -117,12 +131,12 @@ const SIM_DEFAULTS = {
     day: 1, hour: 0, week: 1, weekDay: 1, speed: 2,
     phase: 'morning', actionPoints: 3,
     stanceActivationDay: {}, firedConsequences: [], pendingNews: [], prevGauges: null,
-    oilFlow: 25, oilPrice: 110, tension: 85, domesticApproval: 60,
-    internationalStanding: 45, conflictRisk: 45, budget: 900,
-    iranAggression: 70, iranEconomy: 30, iranStrategy: 'escalatory',
-    fogOfWar: 82, diplomaticCapital: 25, proxyThreat: 40,
-    chinaRelations: 50, russiaRelations: 40, polarization: 25,
-    assassinationRisk: 0, warPath: 3, escalationLevel: 3,
+    oilFlow: 40, oilPrice: 95, tension: 65, domesticApproval: 60,
+    internationalStanding: 50, conflictRisk: 35, budget: 900,
+    iranAggression: 55, iranEconomy: 35, iranStrategy: 'probing',
+    fogOfWar: 70, diplomaticCapital: 35, proxyThreat: 25,
+    chinaRelations: 50, russiaRelations: 40, polarization: 20,
+    assassinationRisk: 0, warPath: 1, escalationLevel: 1,
     straitOpenDays: 0, lowApprovalDays: 0, lowStandingDays: 0,
     recentSeizureDays: [],
     tankers: [], navyShips: [], iranBoats: [], platforms: [],
@@ -130,13 +144,14 @@ const SIM_DEFAULTS = {
     eventLog: [], headlines: [], effects: [],
     gameOver: false, gameOverReason: '', gameWon: false,
     activeStances: [], playedExclusives: [],
-    crisisLevel: 1, crisisTimer: 5, consecutiveProvocations: 3,
+    crisisLevel: 0, crisisTimer: 0, consecutiveProvocations: 0,
     interceptCount: 0, seizureCount: 0,
     decisionEventActive: false, decisionHistory: [], lastDecisionDay: 0,
     metricHistory: [], incidentMarkers: [], pendingEffects: [],
     intelBriefings: [], hawkDove: 50, unilateralMultilateral: 50, escalationRestraint: 50,
     uniqueResource: 0, _leakCount: 0,
     decisionLog: [], weeklyReportActive: false, selectedEntity: null, selectedType: null,
+    playerDeltas: { tension: 0, oilFlow: 0, domesticApproval: 0, internationalStanding: 0, iranAggression: 0, iranEconomy: 0, fogOfWar: 0, diplomaticCapital: 0, conflictRisk: 0 },
 };
 
 const ESCALATION_LADDER = [
@@ -508,7 +523,12 @@ function dailyUpdate() {
     // --- Domestic Politics ---
     updateDomesticPolitics();
 
-    // --- Core Metrics ---
+    // --- Core Metrics (with playerDelta preservation) ---
+    // playerDeltas accumulate from AP actions, decisions, and interrupts.
+    // They decay 15% per day so effects last ~6 days at meaningful strength.
+    const pd = SIM.playerDeltas;
+    const DECAY = 0.85; // retain 85% per day
+
     const tensionDelta = getStanceEffect('tension');
     const protectionBonus = getStanceEffect('oilFlowProtection');
     const priceDelta = getStanceEffect('oilPrice');
@@ -517,7 +537,6 @@ function dailyUpdate() {
     // Apply character cost multiplier
     let adjustedCost = costDelta;
     if (SIM.character && SIM.character.costMult) {
-        // Only reduce cost for economic cards
         for (const stance of SIM.activeStances) {
             const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS)];
             const card = allCards.find(c => c.id === stance.cardId);
@@ -531,35 +550,35 @@ function dailyUpdate() {
     // Weekly cost divided by 7 for daily
     SIM.budget -= adjustedCost / 7;
 
-    // Tension
+    // Tension — card stances set baseline drift, playerDeltas shift the target
     const dipBonus = (SIM.diplomaticCapital - 50) * 0.05;
-    const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus));
-    SIM.tension += (targetTension - SIM.tension) * 0.08;
+    const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus + pd.tension));
+    SIM.tension += (targetTension - SIM.tension) * 0.12;
     SIM.tension += SIM.crisisLevel * 2;
     if (SIM.consecutiveProvocations > 0) {
         SIM.tension += SIM.consecutiveProvocations * 1.5;
         SIM.consecutiveProvocations = Math.max(0, SIM.consecutiveProvocations - 0.5);
     }
 
-    // Oil flow
+    // Oil flow — derives from tension but playerDelta shifts it
     const baseFlow = 100 - (SIM.tension * 0.5);
-    SIM.oilFlow = Math.max(10, Math.min(100, baseFlow + protectionBonus * 0.3));
+    SIM.oilFlow = Math.max(10, Math.min(100, baseFlow + protectionBonus * 0.3 + pd.oilFlow));
     const seizedCount = SIM.tankers.filter(t => t.seized).length;
     SIM.oilFlow = Math.max(10, SIM.oilFlow - seizedCount * 3);
-    SIM.oilFlow -= SIM.proxyThreat * 0.08; // Proxy attacks reduce flow
+    SIM.oilFlow -= SIM.proxyThreat * 0.08;
     SIM.oilFlow = Math.max(10, SIM.oilFlow);
 
     // Oil price
     const targetPrice = 80 + (100 - SIM.oilFlow) * 1.5 + priceDelta;
     SIM.oilPrice += (targetPrice - SIM.oilPrice) * 0.15;
 
-    // Domestic approval
+    // Domestic approval — playerDelta shifts target
     let approvalDelta = getStanceEffect('domesticApproval');
     if (SIM.character && SIM.character.approvalMult && approvalDelta < 0) {
         approvalDelta *= SIM.character.approvalMult;
     }
-    const targetApproval = Math.max(0, Math.min(100, 65 + approvalDelta));
-    SIM.domesticApproval += (targetApproval - SIM.domesticApproval) * 0.06;
+    const targetApproval = Math.max(0, Math.min(100, 65 + approvalDelta + pd.domesticApproval));
+    SIM.domesticApproval += (targetApproval - SIM.domesticApproval) * 0.10;
     if (seizedCount > 0) SIM.domesticApproval -= seizedCount * 0.5;
     if (SIM.interceptCount > 0) SIM.domesticApproval += Math.min(SIM.interceptCount * 0.3, 2);
     if (SIM.oilFlow < 30) SIM.domesticApproval -= 3;
@@ -567,40 +586,47 @@ function dailyUpdate() {
     if (SIM.budget < 0) SIM.domesticApproval -= 1;
     SIM.domesticApproval = Math.max(0, Math.min(100, SIM.domesticApproval));
 
-    // International standing
+    // International standing — playerDelta shifts target
     let standingDelta = getStanceEffect('internationalStanding');
-    const targetStanding = Math.max(0, Math.min(100, 70 + standingDelta));
-    SIM.internationalStanding += (targetStanding - SIM.internationalStanding) * 0.06;
+    const targetStanding = Math.max(0, Math.min(100, 70 + standingDelta + pd.internationalStanding));
+    SIM.internationalStanding += (targetStanding - SIM.internationalStanding) * 0.10;
     SIM.internationalStanding = Math.max(0, Math.min(100, SIM.internationalStanding));
 
-    // Iran aggression
+    // Iran aggression — card effects now 0.3x (was 0.05x), plus playerDelta
     const aggrDelta = getStanceEffect('iranAggression');
-    SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + aggrDelta * 0.05));
+    SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + aggrDelta * 0.3 + pd.iranAggression * 0.15));
     if (SIM.iranEconomy < 30) SIM.iranAggression += 0.5;
 
-    // Iran economy
+    // Iran economy — card effects now 0.15x (was 0.02x), plus playerDelta
     const econDelta = getStanceEffect('iranEconomy');
-    SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + econDelta * 0.02));
-    if (SIM.chinaRelations < 30) SIM.iranEconomy += 0.5; // China buys oil anyway
+    SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + econDelta * 0.15 + pd.iranEconomy * 0.15));
+    if (SIM.chinaRelations < 30) SIM.iranEconomy += 0.5;
 
-    // Fog of war
+    // Fog of war — card effects now 0.3x (was 0.05x), plus playerDelta
     let fogDelta = getStanceEffect('fogOfWar');
-    SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + 0.8 + fogDelta * 0.05));
+    SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + 0.8 + fogDelta * 0.3 + pd.fogOfWar * 0.15));
 
-    // Conflict risk
+    // Conflict risk — derived, playerDelta shifts it
     const crDelta = getStanceEffect('conflictRisk');
     SIM.conflictRisk = Math.max(0, Math.min(100,
-        SIM.tension * 0.4 + SIM.iranAggression * 0.3 + crDelta + SIM.crisisLevel * 10 + SIM.warPath * 8
+        SIM.tension * 0.4 + SIM.iranAggression * 0.3 + crDelta + SIM.crisisLevel * 10 + SIM.warPath * 8 + pd.conflictRisk
     ));
 
-    // Diplomatic capital
-    const dipDelta = getStanceEffect('diplomaticCapital');
-    if (SIM.character && SIM.character.diplomacyMult && dipDelta > 0) {
-        SIM.diplomaticCapital += dipDelta * SIM.character.diplomacyMult * 0.1;
+    // Diplomatic capital — card effects now 0.4x (was 0.1x), plus playerDelta
+    const dipDelta2 = getStanceEffect('diplomaticCapital');
+    if (SIM.character && SIM.character.diplomacyMult && dipDelta2 > 0) {
+        SIM.diplomaticCapital += dipDelta2 * SIM.character.diplomacyMult * 0.4;
     } else {
-        SIM.diplomaticCapital += dipDelta * 0.1;
+        SIM.diplomaticCapital += dipDelta2 * 0.4;
     }
+    SIM.diplomaticCapital += pd.diplomaticCapital * 0.15;
     SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital));
+
+    // Decay all player deltas (retain 85% per day)
+    for (const key of Object.keys(pd)) {
+        pd[key] *= DECAY;
+        if (Math.abs(pd[key]) < 0.1) pd[key] = 0; // snap to zero when negligible
+    }
 
     // --- Escalation Ladder ---
     // Player escalation based on warPath
@@ -1218,7 +1244,11 @@ function triggerCardConsequence() {
 
     const pick = eligible[Math.floor(Math.random() * eligible.length)];
     pick.effect();
-    addHeadline(pick.text, pick.level);
+    // Attribute consequence to the card that caused it
+    const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
+    const card = allCards.find(c => c.id === stance.cardId);
+    const cardName = card ? card.name : stance.cardId;
+    addHeadline(`[${cardName.toUpperCase()}] ${pick.text}`, pick.level);
 }
 
 // Fallback ambient events (fewer, for when no card consequences fire)

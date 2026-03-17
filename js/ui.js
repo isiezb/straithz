@@ -445,6 +445,35 @@ function updateGauges() {
             straitEl.className = 'strait-counter';
         }
     }
+
+    // --- Secondary metrics bar ---
+    const setMetric = (id, text, level) => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = text; el.className = 'hud-metric ' + level; }
+    };
+    const tLvl = SIM.tension > 70 ? 'danger' : SIM.tension > 45 ? 'warning' : 'good';
+    setMetric('hud-tension', `TENSION: ${Math.round(SIM.tension)}`, tLvl);
+    const oLvl = SIM.oilFlow < 30 ? 'danger' : SIM.oilFlow < 50 ? 'warning' : 'good';
+    setMetric('hud-oilflow', `OIL: ${Math.round(SIM.oilFlow)}%`, oLvl);
+    const wLvl = SIM.warPath >= 4 ? 'danger' : SIM.warPath >= 3 ? 'warning' : 'good';
+    setMetric('hud-warpath', `WARPATH: ${SIM.warPath}/5`, wLvl);
+    const aLvl = SIM.domesticApproval < 25 ? 'danger' : SIM.domesticApproval < 45 ? 'warning' : 'good';
+    setMetric('hud-approval', `APPROVAL: ${Math.round(SIM.domesticApproval)}`, aLvl);
+    const bLvl = SIM.budget < 200 ? 'danger' : SIM.budget < 500 ? 'warning' : 'good';
+    setMetric('hud-budget', `BUDGET: $${Math.round(SIM.budget)}M`, bLvl);
+
+    // --- Lose-condition warnings ---
+    const warnEl = document.getElementById('hud-warning');
+    if (warnEl) {
+        let warn = '';
+        if (SIM.warPath >= 4) warn = '\u26A0 WAR IMMINENT — ONE MORE INCIDENT';
+        else if (SIM.domesticApproval <= 20) warn = '\u26A0 REMOVAL PROCEEDINGS LIKELY';
+        else if (SIM.internationalStanding <= 15) warn = '\u26A0 GLOBAL ISOLATION';
+        else if (SIM.polarization >= 75) warn = '\u26A0 CIVIL UNREST ESCALATING';
+        else if (SIM.budget < 100) warn = '\u26A0 BUDGET CRISIS';
+        warnEl.textContent = warn;
+        warnEl.style.display = warn ? '' : 'none';
+    }
 }
 
 function setGauge(id, value, delta) {
@@ -495,6 +524,44 @@ function getAdvisorRecommendation() {
         return 'Budget critical. Cut costs or negotiate burden-sharing.';
     }
     return 'Stay the course. Monitor the situation.';
+}
+
+// ======================== KEY DRIVERS (why gauges changed) ========================
+
+function _getKeyDrivers() {
+    const drivers = [];
+    // Tension drivers
+    if (SIM.crisisLevel >= 1) drivers.push({ text: `Crisis Level ${SIM.crisisLevel} adding tension`, cls: 'down-bad' });
+    if (SIM.consecutiveProvocations > 1) drivers.push({ text: `${Math.round(SIM.consecutiveProvocations)} provocations increasing tension`, cls: 'down-bad' });
+    if (SIM.diplomaticCapital > 60) drivers.push({ text: 'Strong diplomacy reducing tension', cls: 'up-good' });
+    // Oil
+    if (SIM.oilFlow < 40) drivers.push({ text: `Oil flow low (${Math.round(SIM.oilFlow)}%) — prices rising`, cls: 'down-bad' });
+    if (SIM.proxyThreat > 30) drivers.push({ text: `Proxy attacks disrupting shipping (threat: ${Math.round(SIM.proxyThreat)})`, cls: 'down-bad' });
+    const seized = SIM.tankers.filter(t => t.seized).length;
+    if (seized > 0) drivers.push({ text: `${seized} tanker${seized > 1 ? 's' : ''} seized — flow and approval hit`, cls: 'down-bad' });
+    // Approval
+    if (SIM.budget < 200) drivers.push({ text: 'Budget crisis hurting approval', cls: 'down-bad' });
+    if (SIM.oilFlow < 30) drivers.push({ text: 'Gas prices crushing domestic support', cls: 'down-bad' });
+    // Iran
+    if (SIM.iranEconomy < 30) drivers.push({ text: 'Iran economy collapsed — aggression rising', cls: 'down-bad' });
+    if (SIM.chinaRelations < 30) drivers.push({ text: 'China buying Iranian oil — sanctions less effective', cls: 'down-bad' });
+    if (SIM.russiaRelations < 25) drivers.push({ text: 'Russia arming Iran — provocations more dangerous', cls: 'down-bad' });
+    // Positive
+    if (SIM.interceptCount > 0) drivers.push({ text: `${SIM.interceptCount} intercepts boosting approval`, cls: 'up-good' });
+    if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/14 days toward victory`, cls: 'up-good' });
+    // Player deltas
+    const pd = SIM.playerDeltas;
+    if (pd.tension < -3) drivers.push({ text: 'Your actions are reducing tension', cls: 'up-good' });
+    if (pd.tension > 3) drivers.push({ text: 'Your actions are increasing tension', cls: 'down-bad' });
+    if (pd.oilFlow > 3) drivers.push({ text: 'Your actions are improving oil flow', cls: 'up-good' });
+    if (pd.domesticApproval > 3) drivers.push({ text: 'Your actions are boosting approval', cls: 'up-good' });
+    if (pd.domesticApproval < -3) drivers.push({ text: 'Your actions are hurting approval', cls: 'down-bad' });
+
+    if (drivers.length === 0) drivers.push({ text: 'Situation holding steady', cls: 'stable' });
+
+    return drivers.slice(0, 5).map(d =>
+        `<div class="morning-news-item" style="font-size:11px"><span class="og-delta ${d.cls}">\u25CF</span> ${d.text}</div>`
+    ).join('');
 }
 
 // ======================== FIRST MORNING (Immersive Day 1 Intro) ========================
@@ -590,21 +657,9 @@ function showFirstMorning() {
             btn.addEventListener('click', () => {
                 clearInterval(waitForButton);
                 closeTerminal();
-                // Day 1: drop straight into dayplay with a crisis event
-                SIM.phase = 'dayplay';
-                SIM.actionPoints = 3;
-                SIM.prevGauges = calculateGauges();
-                showActionPanel();
-                // Force an immediate interrupt to make it feel reactive
-                setTimeout(() => {
-                    showInterrupt(() => {
-                        const panel = document.getElementById('action-panel');
-                        if (panel) {
-                            const renderFn = panel._renderFn;
-                            if (renderFn) renderFn();
-                        }
-                    });
-                }, 1500);
+                // Day 1: go to initial card pick first, THEN dayplay
+                SIM.phase = 'initial_pick';
+                showInitialPick();
             });
             clearInterval(waitForButton);
         }
@@ -841,6 +896,11 @@ function showDailyReport() {
         </div>
 
         <div class="term-section">
+            <div class="term-section-label">KEY DRIVERS</div>
+            ${_getKeyDrivers()}
+        </div>
+
+        <div class="term-section">
             <div class="term-section-label">ACTIVE STRATEGY</div>
             ${stanceHtml || '<div class="term-line dim">No active strategies.</div>'}
         </div>
@@ -1069,6 +1129,7 @@ function resetActionPoints() {
 }
 
 function _applyEffect(key, val) {
+    // Apply the immediate effect
     if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
     else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
     else if (key === 'tension') SIM.tension = Math.max(0, Math.min(100, SIM.tension + val));
@@ -1088,6 +1149,11 @@ function _applyEffect(key, val) {
     else if (key === 'iranEconomy') SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + val));
     else if (key === 'interceptCount') SIM.interceptCount = (SIM.interceptCount || 0) + val;
     else if (key === 'oilFlowProtection') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
+
+    // Also accumulate into playerDeltas so dailyUpdate() doesn't wipe the effect
+    if (SIM.playerDeltas && key in SIM.playerDeltas) {
+        SIM.playerDeltas[key] += val;
+    }
 }
 
 function _applyEffects(effects) {
