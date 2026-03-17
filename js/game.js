@@ -5,6 +5,7 @@
 (function () {
     try {
         // Init
+        initSprites();
         initMap();
         initSimulation();
         initUI();

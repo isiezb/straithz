@@ -7,6 +7,16 @@ function initUI() {
     setupSpeedControls();
 }
 
+// Map policy IDs to sprite keys
+const POLICY_ICON_MAP = {
+    naval_deployment: 'iconNaval',
+    sanctions: 'iconSanctions',
+    diplomacy: 'iconDiplomacy',
+    blockade_response: 'iconBlockade',
+    coalition_building: 'iconNaval',
+    intel_ops: 'iconSanctions',
+};
+
 function renderPolicyCards() {
     const list = document.getElementById('policy-list');
     list.innerHTML = '';
@@ -25,9 +35,12 @@ function renderPolicyCards() {
             return `<span class="${displayCls}">${formatEffectName(key)}: ${val > 0 ? '+' : ''}${val}</span>`;
         }).filter(Boolean).join(' · ');
 
+        const spriteKey = POLICY_ICON_MAP[policy.id] || 'iconNaval';
+        const iconSrc = SPRITES[spriteKey] ? SPRITES[spriteKey].toDataURL() : '';
+
         card.innerHTML = `
             <div class="policy-name">
-                <img class="policy-icon" src="${policy.icon}" onerror="this.style.display='none'" alt="">
+                <img class="policy-icon" src="${iconSrc}" alt="">
                 ${policy.name}
             </div>
             <div class="policy-desc">${policy.description}</div>
