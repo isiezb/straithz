@@ -983,7 +983,7 @@ function executeSpecialAction() {
     }
 
     // Set cooldown
-    action.cooldown = action.cooldownDuration || 3;
+    action.cooldown = action.cooldownMax || action.cooldownDuration || 3;
 
     addHeadline(`Special action: ${action.name}`, 'good');
     showToast(`${action.name} activated!`, 'good');
@@ -1149,6 +1149,11 @@ function _applyEffect(key, val) {
     else if (key === 'iranEconomy') SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + val));
     else if (key === 'interceptCount') SIM.interceptCount = (SIM.interceptCount || 0) + val;
     else if (key === 'oilFlowProtection') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
+    // Character unique resource keys
+    else if (key === 'politicalCapital' || key === 'commandAuthority' || key === 'credibility'
+          || key === 'baseEnthusiasm' || key === 'exposure') {
+        SIM.uniqueResource = Math.max(0, Math.min(100, SIM.uniqueResource + val));
+    }
 
     // Also accumulate into playerDeltas so dailyUpdate() doesn't wipe the effect
     if (SIM.playerDeltas && key in SIM.playerDeltas) {
@@ -1316,6 +1321,10 @@ function showActionPanel() {
                 </div>
 
                 ${specialHtml}
+            </div>
+
+            <div class="ap-win-hint">
+                ${typeof _getWinProgress === 'function' ? _getWinProgress() : ''}
             </div>
 
             <div class="ap-footer">
@@ -1884,11 +1893,10 @@ function _executeAction(actionId, rerenderFn) {
     if (toastMsg) showToast(toastMsg, toastLevel);
     updateGauges();
 
-    // Check if AP exhausted
+    // If AP exhausted, re-render panel (all buttons disabled, END DAY remains)
     if (SIM.actionPoints <= 0) {
-        setTimeout(() => {
-            _endDay();
-        }, 600);
+        rerenderFn();
+        showToast('Action points spent — END DAY when ready', 'warning');
         return;
     }
 
@@ -2008,7 +2016,7 @@ function _getWinProgress() {
     const labels = {
         trump: 'WIN BIG: High approval + oil flowing + low tension',
         hegseth: 'TOTAL VICTORY: Escalation 4+ + approval 55+ + Iran crushed',
-        kushner: 'THE DEAL: Trust 70+ + diplomacy 55+ + budget 400+',
+        kushner: 'THE DEAL: Exposure 55+ + diplomacy 50+ + budget 400+',
         asmongold: 'CALLED IT: Credibility 70+ + approval 60+ + fog low',
         fuentes: 'AMERICA FIRST: Escalation 1- + standing 40+ + base 60+',
     };

@@ -2042,6 +2042,16 @@ body {
     margin-top: 1px;
 }
 
+.ap-win-hint {
+    padding: 6px 14px;
+    border-top: 1px solid #1a3a2a;
+    flex-shrink: 0;
+}
+.ap-win-hint .win-progress { margin: 0; }
+.ap-win-hint .win-progress-label { font-size: 8px; letter-spacing: 1px; color: #44dd88; }
+.ap-win-hint .win-progress-bar { height: 3px; margin: 3px 0; }
+.ap-win-hint .win-progress-text { font-size: 8px; }
+
 .ap-footer {
     padding: 10px 14px;
     border-top: 1px solid #1a3a2a;

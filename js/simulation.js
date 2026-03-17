@@ -116,11 +116,6 @@ const SIM = {
     // Intel confidence system
     intelBriefings: [],  // [{text, confidence, accurate, day}]
 
-    // Hidden alignment (Suzerain-style — player never sees these)
-    hawkDove: 50,           // 0=dove, 100=hawk
-    unilateralMultilateral: 50,  // 0=multilateral, 100=unilateral
-    escalationRestraint: 50,     // 0=restraint, 100=escalation
-
     // Character unique resource (copied from character on init)
     uniqueResource: 0,
     _leakCount: 0, // Kushner leak tracking
@@ -148,10 +143,11 @@ const SIM_DEFAULTS = {
     interceptCount: 0, seizureCount: 0,
     decisionEventActive: false, decisionHistory: [], lastDecisionDay: 0,
     metricHistory: [], incidentMarkers: [], pendingEffects: [],
-    intelBriefings: [], hawkDove: 50, unilateralMultilateral: 50, escalationRestraint: 50,
+    intelBriefings: [],
     uniqueResource: 0, _leakCount: 0,
     decisionLog: [], weeklyReportActive: false, selectedEntity: null, selectedType: null,
     playerDeltas: { tension: 0, oilFlow: 0, domesticApproval: 0, internationalStanding: 0, iranAggression: 0, iranEconomy: 0, fogOfWar: 0, diplomaticCapital: 0, conflictRisk: 0 },
+    _assassinationEventFired: false,
 };
 
 const ESCALATION_LADDER = [
@@ -370,16 +366,24 @@ function checkConsequenceEvents() {
     // Check for structured decision events
     const usedIds = SIM.decisionHistory.map(d => d.id);
     let allEvents = [...DECISION_EVENTS];
-    if (SIM.character && SIM.character.uniqueEvents) {
-        allEvents = allEvents.concat(SIM.character.uniqueEvents);
-    }
+    // Character unique events can replay (only 3-4 per character)
+    const charEvents = (SIM.character && SIM.character.uniqueEvents) ? SIM.character.uniqueEvents : [];
 
-    // Stance-duration bonus: cards active longer are more likely to trigger related events
+    // Base events: no replay. Character events: allow replay after 10 days
     const eligible = allEvents.filter(e =>
         !usedIds.includes(e.id) &&
         SIM.day >= (e.minDay || 1) && SIM.day <= (e.maxDay || 999) &&
         (!e.condition || e.condition())
     );
+    // Add character events — replay allowed if last use was 10+ days ago
+    for (const ce of charEvents) {
+        const lastUse = SIM.decisionHistory.filter(d => d.id === ce.id).pop();
+        if ((!lastUse || SIM.day - lastUse.day >= 10) &&
+            SIM.day >= (ce.minDay || 1) && SIM.day <= (ce.maxDay || 999) &&
+            (!ce.condition || ce.condition())) {
+            eligible.push(ce);
+        }
+    }
 
     if (eligible.length === 0) return null;
     return eligible[Math.floor(Math.random() * eligible.length)];
@@ -696,7 +700,7 @@ function dailyUpdate() {
                 SIM.tension = Math.min(100, SIM.tension + 12);
                 SIM.oilFlow = Math.max(10, SIM.oilFlow - 5);
                 SIM.consecutiveProvocations++;
-                SIM.warPath++;
+                // warPath is incremented by the seizure decision event choice, not here
                 const pos = getLanePosition(tanker.lane, tanker.progress);
                 addHeadline(`BREAKING: IRGC seizes tanker ${tanker.id} (${tanker.flag}-flagged)`, 'critical');
                 spawnEffect(pos.x, pos.y, 'seizure');
@@ -992,10 +996,29 @@ function checkWinLose() {
         }
     } else { SIM.lowApprovalDays = 0; }
 
-    // --- Lose 2: Assassination ---
-    if (SIM.assassinationRisk > 85 && Math.random() < (SIM.assassinationRisk - 80) / 400) {
-        endGame(false, 'A sophisticated attack targets your motorcade. The crisis claims its highest-profile casualty. ' +
-            (SIM.iranAggression > 80 ? 'Iranian intelligence is suspected.' : 'Domestic extremists are suspected.'));
+    // --- Lose 2: Assassination (now fires as forced decision event at risk > 80) ---
+    if (SIM.assassinationRisk > 80 && !SIM._assassinationEventFired) {
+        SIM._assassinationEventFired = true;
+        SIM.decisionEventActive = true;
+        SIM.phase = 'event';
+        showDecisionEvent({
+            id: 'assassination_crisis', title: '[ IMMINENT THREAT ]',
+            description: 'Multiple intelligence agencies confirm a credible, imminent assassination plot. ' +
+                (SIM.iranAggression > 70 ? 'IRGC Quds Force fingerprints detected.' : 'Domestic extremist cell identified.') +
+                ' You have minutes to decide.',
+            countdown: 15, crisis: true,
+            choices: [
+                { text: 'Full lockdown — cancel all public appearances', effects: { assassinationRisk: -40, domesticApproval: -5, budget: -30 }, flavor: 'You go underground. The threat is neutralized but you look weak.' },
+                { text: 'Counter-strike on the plotters', effects: { assassinationRisk: -30, tension: 10, warPath: 1, domesticApproval: 5 }, flavor: 'Special forces neutralize the cell. The message is clear.' },
+                { text: 'Ignore it — show strength', effects: { assassinationRisk: 15, domesticApproval: 8 }, flavor: 'You appear in public defiantly. The risk remains.' },
+            ],
+        });
+        return false; // Don't end game — let the event play out
+    }
+    // Only lose to assassination if risk stays extreme after the event
+    if (SIM._assassinationEventFired && SIM.assassinationRisk > 95) {
+        endGame(false, 'Despite warnings, the threat was not contained. A sophisticated attack succeeds. ' +
+            'The crisis claims its highest-profile casualty.');
         return true;
     }
 
@@ -1956,6 +1979,95 @@ const DECISION_EVENTS = [
             { text: 'Use it as leverage against Iran', effects: { internationalStanding: 5, iranAggression: -5, diplomaticCapital: 5 }, flavor: 'You frame it as mutual accountability. Iran\'s crimes are documented alongside yours. A diplomatic tool emerges.' },
         ],
     },
+    // === NEW EVENTS: Post-strikes escalation scenarios ===
+    {
+        id: 'mojtaba_consolidation', title: 'MOJTABA KHAMENEI POWER GRAB',
+        description: 'Intelligence confirms Mojtaba Khamenei — the dead Supreme Leader\'s son — has consolidated IRGC support. He\'s demanding revenge strikes and threatening to close the strait permanently.',
+        minDay: 5, maxDay: 30,
+        condition: () => SIM.iranAggression > 40,
+        choices: [
+            { text: 'Offer to recognize new leadership in exchange for de-escalation', effects: { tension: -10, iranAggression: -8, domesticApproval: -10, diplomaticCapital: 10 }, flavor: 'A bitter pill. Recognizing Khamenei\'s son feels like losing. But the back-channel opens.' },
+            { text: 'Target Mojtaba with a kill order', effects: { tension: 20, iranAggression: 15, warPath: 2, domesticApproval: 5 }, flavor: 'Decapitation strike 2.0. If you miss, it\'s war. If you hit, there\'s nobody left to negotiate with.' },
+            { text: 'Ignore him — focus on the military threat', effects: { iranAggression: 5, fogOfWar: 5 }, flavor: 'You treat the political question as irrelevant. The IRGC reads this as weakness.' },
+        ],
+    },
+    {
+        id: 'iris_dena_aftermath', title: 'IRIS DENA WRECKAGE',
+        description: 'The Iranian frigate IRIS Dena was sunk on Day 1. Now bodies and wreckage are washing up on Omani beaches. Al Jazeera is broadcasting it live. International pressure mounts.',
+        minDay: 3, maxDay: 15,
+        condition: () => SIM.internationalStanding < 60,
+        choices: [
+            { text: 'Express regret — offer humanitarian assistance', effects: { internationalStanding: 10, domesticApproval: -5, iranAggression: -3 }, flavor: 'A rare gesture of humanity in wartime. Some call it weakness. Others call it leadership.' },
+            { text: 'Blame Iran for putting sailors in harm\'s way', effects: { internationalStanding: -5, domesticApproval: 5, tension: 3 }, flavor: 'The messaging works at home. Internationally, it falls flat.' },
+            { text: 'No comment — focus on operations', effects: { internationalStanding: -3 }, flavor: 'The silence speaks volumes. The story dominates for 48 hours.' },
+        ],
+    },
+    {
+        id: 'al_udeid_attack', title: 'AL UDEID BASE UNDER FIRE',
+        description: 'Iranian ballistic missiles hit Al Udeid Air Base in Qatar — the forward HQ of CENTCOM. 3 US personnel killed, 22 wounded. Qatar is demanding you relocate operations.',
+        minDay: 4, maxDay: 25,
+        condition: () => SIM.tension > 50,
+        choices: [
+            { text: 'Retaliatory strike on launch site', effects: { tension: 15, iranAggression: -10, warPath: 1, domesticApproval: 8 }, flavor: 'Tomahawks fly within 20 minutes. The base is avenged. But the escalation ladder climbs.' },
+            { text: 'Relocate to Al Dhafra (UAE)', effects: { budget: -50, tension: -3, internationalStanding: 3 }, flavor: 'Expensive but pragmatic. UAE welcomes the business. Qatar is relieved.' },
+            { text: 'Harden defenses and stay', effects: { budget: -30, domesticApproval: -3 }, flavor: 'THAAD batteries deployed. The troops feel exposed. Morale drops.' },
+        ],
+    },
+    {
+        id: 'indian_energy_crisis', title: 'INDIA ENERGY EMERGENCY',
+        description: 'India declares a national energy emergency. They import 80% of their oil through the Strait. PM Modi is calling — demanding action or they will negotiate directly with Iran.',
+        minDay: 10, maxDay: 50,
+        condition: () => SIM.oilFlow < 50,
+        choices: [
+            { text: 'Promise priority escort for Indian tankers', effects: { oilFlow: 5, internationalStanding: 8, budget: -15 }, flavor: 'Indian-flagged tankers get USN escorts. Modi is grateful. Other nations want the same deal.' },
+            { text: 'Support India-Iran bilateral talks', effects: { tension: -5, domesticApproval: -5, iranAggression: -3, internationalStanding: 5 }, flavor: 'India opens a line to Tehran. Hawks accuse you of outsourcing diplomacy.' },
+            { text: 'Tell India to wait', effects: { internationalStanding: -8, oilFlow: -3 }, flavor: 'Modi goes public with his frustration. India begins rationing. Blame falls on you.' },
+        ],
+    },
+    {
+        id: 'carrier_near_miss', title: 'USS EISENHOWER NEAR MISS',
+        description: 'An Iranian anti-ship ballistic missile splashes 200 meters from the USS Eisenhower. The closest a hostile weapon has come to a US carrier since WWII. The crew is shaken.',
+        minDay: 8, maxDay: 40,
+        condition: () => SIM.tension > 55 && SIM.iranAggression > 45,
+        choices: [
+            { text: 'Destroy Iran\'s coastal missile batteries', effects: { tension: 20, iranAggression: -15, warPath: 2, domesticApproval: 10, budget: -40 }, flavor: 'Operation Burning Light. 48 cruise missiles eliminate Iran\'s anti-ship capability. The carrier group is safe. For now.' },
+            { text: 'Pull the carrier back to the Gulf of Oman', effects: { tension: -8, domesticApproval: -8, iranAggression: 8 }, flavor: 'Retreat. The IRGC celebrates. Your Navy commanders are furious.' },
+            { text: 'Stay on station — increase air defense posture', effects: { budget: -20, tension: 5 }, flavor: 'Aegis systems go to maximum alert. The next shot might not miss.' },
+        ],
+    },
+    {
+        id: 'iran_moderate_coup', title: 'MODERATE FACTION REACHES OUT',
+        description: 'An encrypted message through Swiss channels: Iran\'s moderate faction is planning to sideline the IRGC hardliners. They need 72 hours — and a gesture of good faith.',
+        minDay: 18, maxDay: 60,
+        condition: () => SIM.diplomaticCapital > 30 && SIM.iranAggression > 35,
+        choices: [
+            { text: 'Pause operations for 72 hours', effects: { tension: -15, iranAggression: -12, domesticApproval: -8, diplomaticCapital: 10 }, flavor: 'Radio silence. The moderate faction moves. Three IRGC commanders are placed under house arrest. A breakthrough.' },
+            { text: 'Give them intel on hardliner positions', effects: { tension: -8, iranAggression: -8, fogOfWar: -10, warPath: 1 }, flavor: 'Sharing intelligence with a foreign faction. If this leaks, it\'s an international scandal. But it works.' },
+            { text: 'This is a trap — intensify operations', effects: { tension: 10, iranAggression: 10, domesticApproval: 3 }, flavor: 'You don\'t trust it. Operations continue. The moderate window closes.' },
+        ],
+    },
+    {
+        id: 'kc135_crew_rescue', title: 'DOWNED KC-135 CREW',
+        description: 'The KC-135 tanker shot down on Day 1 — search teams have located 2 surviving crew members on an Iranian island. IRGC is closing in.',
+        minDay: 3, maxDay: 12,
+        condition: () => true,
+        choices: [
+            { text: 'SEAL team rescue — extract at all costs', effects: { tension: 12, domesticApproval: 15, warPath: 1, budget: -20 }, flavor: 'Spec ops infiltrate under cover of darkness. Both Americans rescued alive. The nation rallies.' },
+            { text: 'Negotiate through Oman', effects: { tension: -3, domesticApproval: -5, diplomaticCapital: -5 }, flavor: 'Slow, agonizing negotiations. The crew becomes a bargaining chip. Families go on CNN.' },
+            { text: 'Deny the crew exists — classify everything', effects: { domesticApproval: -10, fogOfWar: -5, polarization: 5 }, flavor: 'The cover-up doesn\'t hold. When the truth emerges, the fallout is devastating.' },
+        ],
+    },
+    {
+        id: 'european_split', title: 'NATO FRACTURES',
+        description: 'France breaks with the US — Macron calls the Iran strikes "disproportionate" and blocks NATO solidarity statement. Germany is wavering. The UK stands with you — for now.',
+        minDay: 7, maxDay: 35,
+        condition: () => SIM.internationalStanding < 55,
+        choices: [
+            { text: 'Bilateral with the UK — bypass NATO', effects: { internationalStanding: -8, domesticApproval: 5, diplomaticCapital: -5 }, flavor: 'The "special relationship" holds. But NATO is weaker than it\'s been since Suez.' },
+            { text: 'Offer Europe a seat at the negotiating table', effects: { internationalStanding: 10, tension: -5, domesticApproval: -3 }, flavor: 'Macron gets his summit. NATO cohesion is preserved. The diplomatic path opens wider.' },
+            { text: 'Publicly shame France', effects: { domesticApproval: 8, internationalStanding: -12, polarization: 3 }, flavor: '"Freedom fries" is trending. The base loves it. Diplomats are horrified.' },
+        ],
+    },
 ];
 
 // ======================== IMPLEMENTATION DELAY SYSTEM ========================
@@ -2097,24 +2209,6 @@ function _formatDTG() {
     return `${dd}${hh}${mm}Z${months[gameDate.getMonth()]}26`;
 }
 
-// ======================== HIDDEN ALIGNMENT TRACKING ========================
-
-/** Shift alignment axes based on a decision choice's nature */
-function shiftAlignment(effects) {
-    if (!effects) return;
-    // Military actions push hawk + escalation
-    if (effects.warPath > 0) { SIM.hawkDove = Math.min(100, SIM.hawkDove + effects.warPath * 5); SIM.escalationRestraint = Math.min(100, SIM.escalationRestraint + effects.warPath * 5); }
-    if (effects.tension > 10) { SIM.hawkDove = Math.min(100, SIM.hawkDove + 3); SIM.escalationRestraint = Math.min(100, SIM.escalationRestraint + 3); }
-    // Diplomatic actions push dove + multilateral
-    if (effects.diplomaticCapital > 5) { SIM.hawkDove = Math.max(0, SIM.hawkDove - 4); SIM.unilateralMultilateral = Math.max(0, SIM.unilateralMultilateral - 4); }
-    if (effects.internationalStanding > 5) { SIM.unilateralMultilateral = Math.max(0, SIM.unilateralMultilateral - 3); }
-    // De-escalation pushes restraint
-    if (effects.tension < -5) { SIM.escalationRestraint = Math.max(0, SIM.escalationRestraint - 4); SIM.hawkDove = Math.max(0, SIM.hawkDove - 2); }
-    // Iran aggression reduction via military = hawk, via diplomacy = dove (handled by warPath/diplomaticCapital above)
-    // Unilateral indicators
-    if (effects.internationalStanding < -5) SIM.unilateralMultilateral = Math.min(100, SIM.unilateralMultilateral + 3);
-}
-
 // ======================== CRISIS TELEPHONE EVENTS ========================
 
 const CRISIS_EVENTS = [
@@ -2195,8 +2289,8 @@ function checkCrisisEvents() {
         (!e.condition || e.condition())
     );
     if (eligible.length === 0) return null;
-    // Crisis events are rarer — 8% chance per eligible day
-    if (Math.random() > 0.08) return null;
+    // Crisis events — 20% chance per eligible day
+    if (Math.random() > 0.20) return null;
     return eligible[Math.floor(Math.random() * eligible.length)];
 }
 

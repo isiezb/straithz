@@ -330,7 +330,7 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'kushner_enrichment',
-                    check: (sim) => sim.uniqueResource >= 70 && sim.diplomaticCapital >= 55 && sim.budget >= 400 && sim.day >= 14,
+                    check: (sim) => sim.uniqueResource >= 55 && sim.diplomaticCapital >= 50 && sim.budget >= 400 && sim.day >= 14,
                     message: 'THE ART OF THE DEAL (FAMILY EDITION). Your back-channel relationships delivered a ceasefire — and a portfolio of Gulf state investments. ' +
                         'Kushner Industries quietly signs a $2B development deal with Saudi Arabia. "It was never about the money," you tell reporters. It was always about the money.',
                 },
