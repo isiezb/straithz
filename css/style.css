@@ -1699,6 +1699,153 @@ body {
     box-shadow: 0 0 12px rgba(221, 170, 68, 0.2);
 }
 
+/* ======================== ACTION TOOLTIPS ======================== */
+
+.ap-btn .ap-tooltip {
+    display: none;
+    position: absolute;
+    left: -220px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    background: #0a0a0a;
+    border: 1px solid #2a6a4a;
+    padding: 6px 8px;
+    font-size: 9px;
+    color: #88aa99;
+    line-height: 1.4;
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(0,0,0,0.5);
+}
+.ap-btn .ap-tooltip .tt-effect {
+    color: #ddaa44;
+    font-size: 8px;
+    margin-top: 3px;
+}
+.ap-btn:hover .ap-tooltip {
+    display: block;
+}
+.ap-btn.disabled .ap-tooltip,
+.ap-btn.locked .ap-tooltip {
+    display: none;
+}
+
+/* ======================== COLLAPSIBLE SITUATION SECTIONS ======================== */
+
+.sit-label.collapsible {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.sit-label.collapsible:hover {
+    color: #44dd88;
+}
+.sit-label .sit-toggle {
+    font-size: 7px;
+    transition: transform 0.2s;
+    display: inline-block;
+}
+.sit-label.collapsed .sit-toggle {
+    transform: rotate(-90deg);
+}
+.sit-section-body {
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+    max-height: 500px;
+    opacity: 1;
+}
+.sit-section-body.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* ======================== DAY 1 ADVISOR GUIDE ======================== */
+
+.advisor-guide {
+    position: fixed;
+    z-index: 200;
+    background: #0a0a0a;
+    border: 2px solid #ddaa44;
+    padding: 14px 18px;
+    max-width: 320px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #ddaa44;
+    line-height: 1.5;
+    box-shadow: 0 0 30px rgba(221, 170, 68, 0.15);
+    animation: guide-pulse 2s ease-in-out infinite;
+}
+.advisor-guide .guide-title {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #2a6a4a;
+    margin-bottom: 6px;
+}
+.advisor-guide .guide-text {
+    color: #88aa99;
+    margin-bottom: 10px;
+}
+.advisor-guide .guide-text em {
+    color: #44dd88;
+    font-style: normal;
+    font-weight: bold;
+}
+.advisor-guide .guide-dismiss {
+    background: transparent;
+    border: 1px solid #ddaa44;
+    color: #ddaa44;
+    padding: 4px 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+.advisor-guide .guide-dismiss:hover {
+    background: #1a1500;
+}
+.advisor-guide .guide-step {
+    font-size: 8px;
+    color: #5a6e80;
+    margin-top: 8px;
+    letter-spacing: 1px;
+}
+.advisor-guide-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+.advisor-guide-arrow.left {
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 10px solid #ddaa44;
+}
+.advisor-guide-arrow.right {
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 10px solid #ddaa44;
+}
+.advisor-guide-arrow.down {
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid #ddaa44;
+}
+@keyframes guide-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(221, 170, 68, 0.1); }
+    50% { box-shadow: 0 0 30px rgba(221, 170, 68, 0.25); }
+}
+
 /* ======================== INTERRUPT OVERLAY ======================== */
 
 .ap-interrupt {

@@ -174,6 +174,45 @@ const _intelSnippets = [
 // Floating number stack counter for positioning
 let _floatingNumberStack = 0;
 
+// ======================== ACTION TOOLTIPS ========================
+
+const ACTION_TIPS = {
+    'gather-intel':     { desc: 'Deploy CIA assets to reduce fog of war. Better intel means better decisions.', effect: 'Fog -8' },
+    'analyze-threats':  { desc: 'Review current intelligence for actionable patterns and forecasts.', effect: 'Fog -3 (if fog low)' },
+    'phone-call':       { desc: 'Call a foreign leader. Builds diplomatic capital and can shift alliances.', effect: 'Diplomacy +4, Tension -2' },
+    'draft-proposal':   { desc: 'Draft a formal diplomatic proposal. Slow but powerful for international standing.', effect: 'Standing +5' },
+    'demand-un-session':{ desc: 'Demand emergency UN Security Council session on the strait crisis.', effect: 'Standing +3, Tension -3' },
+    'reposition-fleet': { desc: 'Move naval assets to deter Iranian aggression or protect shipping lanes.', effect: 'Tension +3, Iran aggr. -2' },
+    'change-roe':       { desc: 'Cycle rules of engagement: Defensive → Moderate → Aggressive. Affects all engagements.', effect: 'Changes ROE' },
+    'escort-tankers':   { desc: 'Assign warships to escort oil tankers through the strait. Protects oil flow.', effect: 'Oil flow +3, Tension +2' },
+    'precision-strike': { desc: 'Strike a specific military target. Effective but escalatory.', effect: 'Iran aggr. -5, Tension +8' },
+    'spec-ops-raid':    { desc: 'Special forces raid on Iranian military assets. High risk, high reward.', effect: 'Iran aggr. -6, Fog -5' },
+    'air-strikes':      { desc: 'Launch sustained air campaign against Iranian military infrastructure.', effect: 'Iran aggr. -10, WarPath +1' },
+    'sead-mission':     { desc: 'Suppress enemy air defenses. Enables further air operations.', effect: 'Tension +5, Fog -5' },
+    'ground-troops':    { desc: 'Deploy ground forces to Iranian-held territory. Major escalation.', effect: 'Iran aggr. -15, WarPath +1' },
+    'seize-islands':    { desc: 'Seize strategic Iranian islands controlling the strait.', effect: 'Iran aggr. -12, WarPath +1' },
+    'full-mobilization':{ desc: 'Full military mobilization. Total commitment to war footing.', effect: 'All military metrics shift' },
+    'press-conference': { desc: 'Hold a press conference to shape the narrative and boost approval.', effect: 'Approval +3, Polarization -2' },
+    'brief-congress':   { desc: 'Brief congressional leaders. Builds political support for your strategy.', effect: 'Approval +2' },
+    'adjust-sanctions': { desc: 'Tighten or loosen sanctions on Iran. Affects their economy and aggression.', effect: 'Iran econ ±5' },
+    'market-intervention':{ desc: 'Release strategic oil reserves or subsidize fuel to stabilize markets.', effect: 'Oil price -5' },
+    'issue-ultimatum':  { desc: 'Deliver a public ultimatum to Iran. Dramatic but polarizing.', effect: 'Tension +8, Approval +5' },
+    'emergency-coalition':{ desc: 'Form an emergency multinational coalition for strait operations.', effect: 'Standing +5, Budget +15' },
+    'escalate':         { desc: 'Increase military escalation level. Unlocks more aggressive options.', effect: 'Escalation +1' },
+    'deescalate':       { desc: 'Reduce military escalation. Locks out aggressive options but eases tension.', effect: 'Escalation -1, Tension -5' },
+};
+
+// ======================== COLLAPSIBLE SECTION STATE ========================
+
+const _sitCollapsed = {
+    force: false,
+    wire: false,
+    intel: true,     // collapsed by default
+    strategy: true,  // collapsed by default
+    pending: true,   // collapsed by default
+    decisions: true, // collapsed by default
+};
+
 function initUI() {
     updateGauges();
     setupKeyboardShortcuts();
@@ -242,6 +281,32 @@ function updateSituationPanel() {
     const roeLabel = SIM.roe === 'aggressive' ? 'AGGRESSIVE' : SIM.roe === 'moderate' ? 'MODERATE' : 'DEFENSIVE';
     const roeColor = SIM.roe === 'aggressive' ? '#dd4444' : SIM.roe === 'moderate' ? '#ddaa44' : '#44dd88';
 
+    function collSec(key, label, bodyHtml, alwaysShow) {
+        if (alwaysShow) {
+            return `<div class="sit-section"><div class="sit-label">${label}</div>${bodyHtml}</div>`;
+        }
+        const isCollapsed = _sitCollapsed[key];
+        return `<div class="sit-section">
+            <div class="sit-label collapsible ${isCollapsed ? 'collapsed' : ''}" data-sit-key="${key}">
+                <span class="sit-toggle">\u25BC</span> ${label}
+            </div>
+            <div class="sit-section-body ${isCollapsed ? 'collapsed' : ''}" data-sit-body="${key}">
+                ${bodyHtml}
+            </div>
+        </div>`;
+    }
+
+    const forceHtml = `
+        <div class="sit-row"><span>USN Ships</span><span class="sit-val ${navyCount > 0 ? 'good' : 'danger'}">${navyCount}${SIM.carrier ? ' +CSG' : ''}</span></div>
+        <div class="sit-row"><span>Tankers in transit</span><span class="sit-val">${tankerCount}</span></div>
+        ${seizedCount > 0 ? `<div class="sit-row"><span>Seized</span><span class="sit-val danger">${seizedCount}</span></div>` : ''}
+        <div class="sit-row"><span>IRGC boats</span><span class="sit-val ${boatCount > 3 ? 'danger' : boatCount > 0 ? 'warning' : 'good'}">${boatCount}</span></div>
+        ${mineCount > 0 ? `<div class="sit-row"><span>Sea mines</span><span class="sit-val danger">${mineCount}</span></div>` : ''}
+        ${SIM.drones.length > 0 ? `<div class="sit-row"><span>Drones</span><span class="sit-val warning">${SIM.drones.length}</span></div>` : ''}
+        <div class="sit-row"><span>Iran posture</span><span class="sit-val warning">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span></div>
+        <div class="sit-row"><span>Intercepts</span><span class="sit-val good">${SIM.interceptCount}</span></div>
+    `;
+
     panel.innerHTML = `
         <div class="sit-section">
             <div class="sit-label">SITUATION REPORT \u2014 DAY ${SIM.day}</div>
@@ -251,37 +316,24 @@ function updateSituationPanel() {
             <div class="sit-row"><span>Budget</span><span class="sit-val ${SIM.budget > 500 ? 'good' : SIM.budget > 200 ? 'warning' : 'danger'}">$${Math.round(SIM.budget)}M</span></div>
             <div class="sit-row"><span>Rating</span><span class="sit-val ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
         </div>
-        <div class="sit-section">
-            <div class="sit-label">FORCE DISPOSITION</div>
-            <div class="sit-row"><span>USN Ships</span><span class="sit-val ${navyCount > 0 ? 'good' : 'danger'}">${navyCount}${SIM.carrier ? ' +CSG' : ''}</span></div>
-            <div class="sit-row"><span>Tankers in transit</span><span class="sit-val">${tankerCount}</span></div>
-            ${seizedCount > 0 ? `<div class="sit-row"><span>Seized</span><span class="sit-val danger">${seizedCount}</span></div>` : ''}
-            <div class="sit-row"><span>IRGC boats</span><span class="sit-val ${boatCount > 3 ? 'danger' : boatCount > 0 ? 'warning' : 'good'}">${boatCount}</span></div>
-            ${mineCount > 0 ? `<div class="sit-row"><span>Sea mines</span><span class="sit-val danger">${mineCount}</span></div>` : ''}
-            ${SIM.drones.length > 0 ? `<div class="sit-row"><span>Drones</span><span class="sit-val warning">${SIM.drones.length}</span></div>` : ''}
-            <div class="sit-row"><span>Iran posture</span><span class="sit-val warning">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span></div>
-            <div class="sit-row"><span>Intercepts</span><span class="sit-val good">${SIM.interceptCount}</span></div>
-        </div>
-        <div class="sit-section">
-            <div class="sit-label">WIRE FEED</div>
-            ${headlinesHtml || '<div class="sit-headline" style="color:#2a6a4a">No breaking news.</div>'}
-        </div>
-        <div class="sit-section">
-            <div class="sit-label"><span class="wire-classify">TS//SI</span> INTEL</div>
-            ${intelHtml}
-        </div>
-        ${SIM.activeStances.length > 0 ? `
-        <div class="sit-section">
-            <div class="sit-label">ACTIVE STRATEGY</div>
-            ${stancesHtml}
-        </div>` : ''}
-        ${pendingHtml ? `
-        <div class="sit-section">
-            <div class="sit-label">PENDING ORDERS</div>
-            ${pendingHtml}
-        </div>` : ''}
+        ${collSec('force', 'FORCE DISPOSITION', forceHtml)}
+        ${collSec('wire', 'WIRE FEED', headlinesHtml || '<div class="sit-headline" style="color:#2a6a4a">No breaking news.</div>')}
+        ${collSec('intel', '<span class="wire-classify">TS//SI</span> INTEL', intelHtml)}
+        ${SIM.activeStances.length > 0 ? collSec('strategy', 'ACTIVE STRATEGY', stancesHtml) : ''}
+        ${pendingHtml ? collSec('pending', 'PENDING ORDERS', pendingHtml) : ''}
         ${_buildDecisionLogHtml()}
     `;
+
+    // Wire up collapsible toggles
+    panel.querySelectorAll('.sit-label.collapsible').forEach(label => {
+        label.addEventListener('click', () => {
+            const key = label.dataset.sitKey;
+            _sitCollapsed[key] = !_sitCollapsed[key];
+            label.classList.toggle('collapsed');
+            const body = panel.querySelector(`[data-sit-body="${key}"]`);
+            if (body) body.classList.toggle('collapsed');
+        });
+    });
 }
 
 function hideSituationPanel() {
@@ -998,6 +1050,7 @@ function _applyEffect(key, val) {
     else if (key === 'warPath') SIM.warPath = Math.max(0, SIM.warPath + val);
     else if (key === 'iranEconomy') SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + val));
     else if (key === 'interceptCount') SIM.interceptCount = (SIM.interceptCount || 0) + val;
+    else if (key === 'oilFlowProtection') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
 }
 
 function _applyEffects(effects) {
@@ -1076,6 +1129,13 @@ function showActionPanel() {
         const escName = escInfo ? escInfo.name : 'UNKNOWN';
         const escColor = escInfo ? escInfo.color : '#888';
 
+        // Tooltip helper
+        function tip(action) {
+            const t = ACTION_TIPS[action];
+            if (!t) return '';
+            return `<span class="ap-tooltip">${t.desc}<div class="tt-effect">${t.effect}</div></span>`;
+        }
+
         // Helper: locked button if escalation too low
         function milBtn(label, action, reqLevel, cost) {
             const costStr = cost ? ` <span class="ap-cost">$${cost}M</span>` : '';
@@ -1084,7 +1144,7 @@ function showActionPanel() {
                 return `<button class="ap-btn locked" title="Requires ${reqName}"><span class="ap-lock">\u25A0 LVL${reqLevel}</span> ${label}${costStr}</button>`;
             }
             const budgetOk = !cost || SIM.budget >= cost;
-            return `<button class="ap-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${action}">${label}${costStr}</button>`;
+            return `<button class="ap-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${action}">${label}${costStr}${tip(action)}</button>`;
         }
 
         // Can escalate if not already at max and AP available
@@ -1107,15 +1167,15 @@ function showActionPanel() {
             <div class="ap-scroll">
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#44dd88">INTELLIGENCE</div>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 15 ? 'disabled' : ''}" data-action="gather-intel">GATHER INTEL <span class="ap-cost">$15M</span></button>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="analyze-threats">ANALYZE THREATS</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 15 ? 'disabled' : ''}" data-action="gather-intel">GATHER INTEL <span class="ap-cost">$15M</span>${tip('gather-intel')}</button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="analyze-threats">ANALYZE THREATS${tip('analyze-threats')}</button>
                 </div>
 
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#4488dd">DIPLOMACY</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span></button>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="demand-un-session">DEMAND UN SESSION</button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL${tip('phone-call')}</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span>${tip('draft-proposal')}</button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="demand-un-session">DEMAND UN SESSION${tip('demand-un-session')}</button>
                 </div>
 
                 <div class="ap-category">
@@ -1134,22 +1194,22 @@ function showActionPanel() {
 
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#aa88dd">DOMESTIC</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="press-conference">PRESS CONFERENCE</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 5 ? 'disabled' : ''}" data-action="brief-congress">BRIEF CONGRESS <span class="ap-cost">$5M</span></button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="press-conference">PRESS CONFERENCE${tip('press-conference')}</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 5 ? 'disabled' : ''}" data-action="brief-congress">BRIEF CONGRESS <span class="ap-cost">$5M</span>${tip('brief-congress')}</button>
                 </div>
 
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#ddaa44">ECONOMIC</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="adjust-sanctions">ADJUST SANCTIONS</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 25 ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span></button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="adjust-sanctions">ADJUST SANCTIONS${tip('adjust-sanctions')}</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 25 ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span>${tip('market-intervention')}</button>
                 </div>
 
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#dd4444">ESCALATION</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="issue-ultimatum">ISSUE ULTIMATUM</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 20 ? 'disabled' : ''}" data-action="emergency-coalition">EMERGENCY COALITION <span class="ap-cost">$20M</span></button>
-                    ${canEscalate ? `<button class="ap-btn escalate-btn" data-action="escalate" title="Move to: ${nextEsc.name}">ESCALATE \u25B2 <span style="color:${nextEsc.color}">${nextEsc.name}</span></button>` : ''}
-                    ${esc > 0 ? `<button class="ap-btn deescalate-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deescalate">DE-ESCALATE \u25BC</button>` : ''}
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="issue-ultimatum">ISSUE ULTIMATUM${tip('issue-ultimatum')}</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 20 ? 'disabled' : ''}" data-action="emergency-coalition">EMERGENCY COALITION <span class="ap-cost">$20M</span>${tip('emergency-coalition')}</button>
+                    ${canEscalate ? `<button class="ap-btn escalate-btn" data-action="escalate" title="Move to: ${nextEsc.name}">ESCALATE \u25B2 <span style="color:${nextEsc.color}">${nextEsc.name}</span>${tip('escalate')}</button>` : ''}
+                    ${esc > 0 ? `<button class="ap-btn deescalate-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deescalate">DE-ESCALATE \u25BC${tip('deescalate')}</button>` : ''}
                 </div>
 
                 ${specialHtml}
@@ -1182,6 +1242,107 @@ function showActionPanel() {
     requestAnimationFrame(() => {
         panel.classList.add('visible');
     });
+
+    // Day 1: show advisor guide walkthrough
+    if (SIM.day === 1 && !SIM._guideSeen) {
+        SIM._guideSeen = true;
+        setTimeout(() => _showAdvisorGuide(), 800);
+    }
+}
+
+// ======================== ADVISOR GUIDE (Day 1 tutorial) ========================
+
+const _GUIDE_STEPS = [
+    {
+        anchor: 'gauge-bar',
+        position: 'below',
+        title: 'ADVISOR BRIEFING',
+        text: 'These are your <em>4 key gauges</em>: Stability, Economy, Support, and Intel. Keep them balanced. If any drops critically low, you lose.',
+    },
+    {
+        anchor: 'situation-panel',
+        position: 'right',
+        title: 'SITUATION PANEL',
+        text: 'Your intelligence dashboard. The <em>Situation Report</em> at top shows the essentials. Click section headers to expand details like Force Disposition and Wire Feed.',
+    },
+    {
+        anchor: 'action-panel',
+        position: 'left',
+        title: 'ACTIONS',
+        text: 'You get <em>3 Action Points</em> per day. Each action costs 1 AP. Some also cost budget. Hover any action to see what it does. When done, hit END DAY.',
+    },
+    {
+        anchor: 'action-panel',
+        position: 'left',
+        offsetY: 200,
+        title: 'ESCALATION',
+        text: 'The <em>Escalation Ladder</em> controls which military options are available. Higher escalation unlocks stronger actions but brings you closer to war.',
+    },
+];
+
+function _showAdvisorGuide() {
+    let step = 0;
+
+    function showStep() {
+        // Remove previous
+        document.querySelectorAll('.advisor-guide').forEach(el => el.remove());
+
+        if (step >= _GUIDE_STEPS.length) return;
+
+        const s = _GUIDE_STEPS[step];
+        const anchorEl = document.getElementById(s.anchor);
+        if (!anchorEl) { step++; showStep(); return; }
+
+        const rect = anchorEl.getBoundingClientRect();
+        const guide = document.createElement('div');
+        guide.className = 'advisor-guide';
+
+        let arrowClass = '';
+        let top, left;
+
+        switch (s.position) {
+            case 'below':
+                top = rect.bottom + 12;
+                left = rect.left + rect.width / 2 - 160;
+                arrowClass = 'down';
+                break;
+            case 'right':
+                top = rect.top + (s.offsetY || rect.height / 3);
+                left = rect.right + 14;
+                arrowClass = 'right';
+                break;
+            case 'left':
+                top = rect.top + (s.offsetY || rect.height / 4);
+                left = rect.left - 340;
+                arrowClass = 'left';
+                break;
+        }
+
+        // Clamp to viewport
+        top = Math.max(10, Math.min(window.innerHeight - 200, top));
+        left = Math.max(10, Math.min(window.innerWidth - 340, left));
+
+        guide.style.top = top + 'px';
+        guide.style.left = left + 'px';
+
+        guide.innerHTML = `
+            <div class="advisor-guide-arrow ${arrowClass}"></div>
+            <div class="guide-title">${s.title}</div>
+            <div class="guide-text">${s.text}</div>
+            <button class="guide-dismiss">${step < _GUIDE_STEPS.length - 1 ? '[ NEXT ]' : '[ GOT IT ]'}</button>
+            <div class="guide-step">STEP ${step + 1} / ${_GUIDE_STEPS.length}</div>
+        `;
+
+        document.body.appendChild(guide);
+
+        guide.querySelector('.guide-dismiss').addEventListener('click', () => {
+            guide.remove();
+            step++;
+            showStep();
+        });
+    }
+
+    showStep();
 }
 
 function _executeAction(actionId, rerenderFn) {
@@ -1922,9 +2083,14 @@ function _buildDecisionLogHtml() {
         </div>`;
     }).join('');
 
+    const isCollapsed = _sitCollapsed.decisions;
     return `<div class="sit-section">
-        <div class="sit-label">DECISION LOG</div>
-        ${entries}
+        <div class="sit-label collapsible ${isCollapsed ? 'collapsed' : ''}" data-sit-key="decisions">
+            <span class="sit-toggle">\u25BC</span> DECISION LOG
+        </div>
+        <div class="sit-section-body ${isCollapsed ? 'collapsed' : ''}" data-sit-body="decisions">
+            ${entries}
+        </div>
     </div>`;
 }
 
