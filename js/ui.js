@@ -694,10 +694,8 @@ function showActionPanel() {
     const canvas = document.getElementById('game-canvas');
     if (canvas) {
         canvas.style.width = 'calc(100% - 280px)';
-        canvas.style.left = '0';
-        canvas.style.transform = 'none';
-        // Update canvas resolution to match new CSS size
-        requestAnimationFrame(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); });
+        // Force canvas resolution update after CSS reflow
+        setTimeout(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); }, 50);
     }
 
     const panel = document.createElement('div');
@@ -1104,9 +1102,7 @@ function hideActionPanel() {
     const canvas = document.getElementById('game-canvas');
     if (canvas) {
         canvas.style.width = '';
-        canvas.style.left = '';
-        canvas.style.transform = '';
-        requestAnimationFrame(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); });
+        setTimeout(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); }, 50);
     }
 }
 

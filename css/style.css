@@ -66,9 +66,8 @@ body {
     display: block;
     position: absolute;
     top: 114px;  /* 70px gauge + 44px tickers */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
+    left: 0;
+    width: 100%;
     height: calc(100% - 114px);
     image-rendering: pixelated;
 }
