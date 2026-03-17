@@ -315,6 +315,7 @@ function updateSituationPanel() {
             <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/14 OPEN' : 'CONTESTED'}</span></div>
             <div class="sit-row"><span>Budget</span><span class="sit-val ${SIM.budget > 500 ? 'good' : SIM.budget > 200 ? 'warning' : 'danger'}">$${Math.round(SIM.budget)}M</span></div>
             <div class="sit-row"><span>Rating</span><span class="sit-val ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
+            ${typeof _getWinProgress === 'function' ? _getWinProgress() : ''}
         </div>
         ${collSec('force', 'FORCE DISPOSITION', forceHtml)}
         ${collSec('wire', 'WIRE FEED', headlinesHtml || '<div class="sit-headline" style="color:#2a6a4a">No breaking news.</div>')}
@@ -404,12 +405,18 @@ function fadeInButtons(container, delay) {
 
 // ======================== GAUGES ========================
 
+let _prevGaugeSnapshot = null;
+
 function updateGauges() {
     const g = calculateGauges();
-    setGauge('gauge-stability', g.stability);
-    setGauge('gauge-economy', g.economy);
-    setGauge('gauge-support', g.support);
-    setGauge('gauge-intel', g.intel);
+    const prev = _prevGaugeSnapshot || g;
+
+    setGauge('gauge-stability', g.stability, g.stability - prev.stability);
+    setGauge('gauge-economy', g.economy, g.economy - prev.economy);
+    setGauge('gauge-support', g.support, g.support - prev.support);
+    setGauge('gauge-intel', g.intel, g.intel - prev.intel);
+
+    _prevGaugeSnapshot = { ...g };
 
     // Day counter in HUD
     const dayEl = document.getElementById('hud-day');
@@ -440,11 +447,12 @@ function updateGauges() {
     }
 }
 
-function setGauge(id, value) {
+function setGauge(id, value, delta) {
     const el = document.getElementById(id);
     if (!el) return;
     const fill = el.querySelector('.gauge-fill');
     const valEl = el.querySelector('.gauge-value');
+    const trendEl = el.querySelector('.gauge-trend');
     if (fill) {
         fill.style.width = value + '%';
         fill.className = 'gauge-fill ' + (value >= 60 ? 'good' : value >= 35 ? 'warning' : 'danger');
@@ -452,6 +460,19 @@ function setGauge(id, value) {
     if (valEl) {
         valEl.textContent = Math.round(value);
         valEl.className = 'gauge-value ' + (value >= 60 ? 'good' : value >= 35 ? 'warning' : 'danger');
+    }
+    // Trend arrow
+    if (trendEl && delta !== undefined) {
+        const d = Math.round(delta);
+        if (d > 0) { trendEl.textContent = '\u25B2+' + d; trendEl.className = 'gauge-trend up'; }
+        else if (d < 0) { trendEl.textContent = '\u25BC' + d; trendEl.className = 'gauge-trend down'; }
+        else { trendEl.textContent = ''; trendEl.className = 'gauge-trend stable'; }
+    }
+    // Warning flash when gauge drops below 35
+    if (value < 35 && delta < -2) {
+        el.classList.remove('danger-flash');
+        void el.offsetWidth; // reflow to restart animation
+        el.classList.add('danger-flash');
     }
 }
 
@@ -1801,7 +1822,121 @@ function _executeAction(actionId, rerenderFn) {
 
 function _endDay() {
     hideActionPanel();
-    advanceDay();
+
+    // Capture state for end-of-day summary
+    const gaugesAfter = calculateGauges();
+    const gaugesBefore = SIM.prevGauges || gaugesAfter;
+    const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day).slice(-4);
+    const todayDecisions = (SIM.decisionLog || []).filter(d => d.day === SIM.day);
+    const actionsUsed = 3 - (SIM.actionPoints || 0);
+
+    _showEndOfDaySummary(gaugesBefore, gaugesAfter, todayHeadlines, todayDecisions, actionsUsed, () => {
+        advanceDay();
+    });
+}
+
+function _showEndOfDaySummary(gaugesBefore, gaugesAfter, headlines, decisions, actionsUsed, onContinue) {
+    const overlay = document.createElement('div');
+    overlay.className = 'ap-interrupt'; // reuse interrupt overlay styling for positioning
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100;display:flex;align-items:center;justify-content:center;';
+
+    const gaugeNames = [
+        { key: 'stability', label: 'STABILITY', color: '#44dd88' },
+        { key: 'economy', label: 'ECONOMY', color: '#ddaa44' },
+        { key: 'support', label: 'SUPPORT', color: '#4488dd' },
+        { key: 'intel', label: 'INTEL', color: '#aa88dd' },
+    ];
+
+    const gaugeRows = gaugeNames.map(g => {
+        const val = Math.round(gaugesAfter[g.key]);
+        const d = Math.round(gaugesAfter[g.key] - gaugesBefore[g.key]);
+        const deltaStr = d > 0 ? `+${d}` : d < 0 ? `${d}` : '--';
+        const deltaCls = d > 0 ? 'up' : d < 0 ? 'down' : 'stable';
+        const fillColor = val >= 60 ? '#44dd88' : val >= 35 ? '#ddaa44' : '#dd4444';
+        return `<div class="eod-gauge-row">
+            <span class="eod-gauge-name">${g.label}</span>
+            <div class="eod-gauge-bar"><div class="eod-gauge-fill" style="width:${val}%;background:${fillColor}"></div></div>
+            <span class="eod-gauge-val" style="color:${fillColor}">${val}</span>
+            <span class="eod-gauge-delta ${deltaCls}">${deltaStr}</span>
+        </div>`;
+    }).join('');
+
+    const headlineHtml = headlines.length > 0
+        ? headlines.map(h => `<div class="eod-headline ${h.level}">${h.text}</div>`).join('')
+        : '<div class="eod-headline" style="color:#2a6a4a">A quiet day.</div>';
+
+    const decisionHtml = decisions.length > 0
+        ? `<div class="eod-actions-taken">DECISIONS: ${decisions.map(d => d.choice).join(' / ')}</div>`
+        : '';
+
+    // Win progress
+    const winProg = _getWinProgress();
+
+    overlay.innerHTML = `
+        <div class="eod-summary" style="max-width:420px;background:#0a0a0a;border:2px solid #1a3a2a;border-radius:0;">
+            <div class="eod-title">END OF DAY ${SIM.day}</div>
+            ${gaugeRows}
+            ${winProg}
+            <div style="margin-top:10px;padding-top:8px;border-top:1px solid #1a3a2a">
+                <div style="font-size:8px;letter-spacing:2px;color:#2a6a4a;margin-bottom:4px">TODAY'S EVENTS</div>
+                ${headlineHtml}
+            </div>
+            ${decisionHtml}
+            <div style="font-size:9px;color:#5a6e80;margin-top:8px">${actionsUsed}/3 actions used | Budget: $${Math.round(SIM.budget)}M</div>
+            <button class="eod-continue-btn" id="eod-continue">[ NEXT DAY ]</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Animate in
+    overlay.style.opacity = '0';
+    requestAnimationFrame(() => {
+        overlay.style.transition = 'opacity 0.3s ease';
+        overlay.style.opacity = '1';
+    });
+
+    document.getElementById('eod-continue').addEventListener('click', () => {
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.remove();
+            onContinue();
+        }, 300);
+    });
+}
+
+function _getWinProgress() {
+    if (!SIM.character || !SIM.character.scenario || !SIM.character.scenario.winConditions) {
+        // Generic win: strait open days
+        const pct = Math.min(100, Math.round((SIM.straitOpenDays / 14) * 100));
+        return `<div class="win-progress">
+            <div class="win-progress-label">OBJECTIVE: KEEP STRAIT OPEN 14 DAYS</div>
+            <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%"></div></div>
+            <div class="win-progress-text">${SIM.straitOpenDays}/14 days</div>
+        </div>`;
+    }
+
+    const wc = SIM.character.scenario.winConditions[0];
+    const met = wc.check(SIM);
+    const sustained = wc._days || 0;
+    const pct = met ? Math.min(100, Math.round((sustained / 3) * 100)) : 0;
+
+    // Build a readable condition summary
+    const charId = SIM.character.id;
+    const labels = {
+        trump: 'WIN BIG: High approval + oil flowing + low tension',
+        hegseth: 'TOTAL VICTORY: Escalation 4+ + approval 55+ + Iran crushed',
+        kushner: 'THE DEAL: Trust 70+ + diplomacy 55+ + budget 400+',
+        asmongold: 'CALLED IT: Credibility 70+ + approval 60+ + fog low',
+        fuentes: 'AMERICA FIRST: Escalation 1- + standing 40+ + base 60+',
+    };
+    const label = labels[charId] || 'Complete your objective';
+
+    return `<div class="win-progress">
+        <div class="win-progress-label">${label}</div>
+        <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%;${met ? '' : 'background:#ddaa44;box-shadow:0 0 4px rgba(221,170,68,0.3)'}"></div></div>
+        <div class="win-progress-text">${met ? sustained + '/3 days sustained' : 'Conditions not yet met'}</div>
+    </div>`;
 }
 
 function showInterrupt(afterCallback) {
@@ -2235,6 +2370,21 @@ function showGameOverScreen() {
     const rating = calculateRating();
     const postMortem = generatePostMortem();
     const gradeClass = rating.score >= 60 ? 'good' : rating.score >= 35 ? 'warning' : 'danger';
+    const g = calculateGauges();
+
+    const gaugeBreakdown = [
+        { label: 'STABILITY', val: Math.round(g.stability) },
+        { label: 'ECONOMY', val: Math.round(g.economy) },
+        { label: 'SUPPORT', val: Math.round(g.support) },
+        { label: 'INTEL', val: Math.round(g.intel) },
+    ].map(item => {
+        const cls = item.val >= 60 ? 'good' : item.val >= 35 ? 'warning' : 'danger';
+        const color = item.val >= 60 ? '#44dd88' : item.val >= 35 ? '#ddaa44' : '#dd4444';
+        return `<div class="gameover-gauge-col">
+            <div class="go-gauge-label">${item.label}</div>
+            <div class="go-gauge-val" style="color:${color}">${item.val}</div>
+        </div>`;
+    }).join('');
 
     openTerminal(`
         <div class="gameover-title ${SIM.gameWon ? 'victory' : 'defeat'}">
@@ -2242,18 +2392,23 @@ function showGameOverScreen() {
         </div>
 
         <div class="gameover-grade ${gradeClass}">${rating.grade}</div>
+        <div class="gameover-sublabel">${rating.label.toUpperCase()} \u2014 SCORE ${rating.score}/100</div>
+
+        <div class="gameover-gauge-breakdown">${gaugeBreakdown}</div>
+
         <div class="gameover-reason">${SIM.gameOverReason}</div>
 
         <div class="term-section">
             <div class="term-section-label">FINAL STATS</div>
-            <div class="stat-row"><span>Advisor</span><span>${SIM.character ? SIM.character.name : 'None'}</span></div>
+            <div class="stat-row"><span>Character</span><span>${SIM.character ? SIM.character.name : 'None'}</span></div>
             <div class="stat-row"><span>Days Survived</span><span>${SIM.day}</span></div>
             <div class="stat-row"><span>Escalation</span><span style="color:${_getEscalationColor()}">${_getEscalationName()} (${SIM.warPath}/5)</span></div>
-            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/14</span></div>
+            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/14 days</span></div>
             <div class="stat-row"><span>Tankers Seized</span><span>${SIM.seizureCount}</span></div>
             <div class="stat-row"><span>Intercepts</span><span>${SIM.interceptCount}</span></div>
-            <div class="stat-row"><span>Budget</span><span>$${Math.round(SIM.budget)}M</span></div>
-            ${SIM.character && SIM.character.uniqueResource ? `<div class="stat-row"><span>${SIM.character.uniqueResource.name}</span><span>${Math.round(SIM.uniqueResource)}</span></div>` : ''}
+            <div class="stat-row"><span>Budget Remaining</span><span>$${Math.round(SIM.budget)}M / $900M</span></div>
+            <div class="stat-row"><span>Decisions Made</span><span>${(SIM.decisionLog || []).length}</span></div>
+            ${SIM.character && SIM.character.uniqueResource ? `<div class="stat-row"><span>${SIM.character.uniqueResource.name}</span><span>${Math.round(SIM.uniqueResource)}/100</span></div>` : ''}
         </div>
 
         <div class="term-section">
@@ -2262,11 +2417,11 @@ function showGameOverScreen() {
         </div>
 
         <div class="term-btn-row">
-            <button class="term-btn" id="btn-restart">[ RESTART ]</button>
+            <button class="term-btn" id="btn-restart">[ PLAY AGAIN ]</button>
         </div>
     `);
 
-    fadeInButtons(TERMINAL, 800);
+    fadeInButtons(TERMINAL, 1200);
 
     document.getElementById('btn-restart').addEventListener('click', restartGame);
 }
