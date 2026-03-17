@@ -98,6 +98,31 @@ const SIM = {
     _leakCount: 0, // Kushner leak tracking
 };
 
+/** Default values for SIM reset — used by restartGame() */
+const SIM_DEFAULTS = {
+    day: 1, hour: 0, week: 1, weekDay: 1, speed: 2,
+    phase: 'morning', actionPoints: 3,
+    stanceActivationDay: {}, firedConsequences: [], pendingNews: [], prevGauges: null,
+    oilFlow: 25, oilPrice: 145, tension: 72, domesticApproval: 55,
+    internationalStanding: 50, conflictRisk: 35, budget: 900,
+    iranAggression: 65, iranEconomy: 40, iranStrategy: 'escalatory',
+    fogOfWar: 82, diplomaticCapital: 25, proxyThreat: 40,
+    chinaRelations: 50, russiaRelations: 40, polarization: 25,
+    assassinationRisk: 0, warPath: 1, escalationLevel: 1,
+    straitOpenDays: 0, lowApprovalDays: 0, lowStandingDays: 0,
+    recentSeizureDays: [],
+    tankers: [], navyShips: [], iranBoats: [], platforms: [],
+    mines: [], drones: [], carrier: null,
+    eventLog: [], headlines: [], effects: [],
+    gameOver: false, gameOverReason: '', gameWon: false,
+    activeStances: [], playedExclusives: [],
+    crisisLevel: 1, crisisTimer: 5, consecutiveProvocations: 3,
+    interceptCount: 0, seizureCount: 0,
+    decisionEventActive: false, decisionHistory: [], lastDecisionDay: 0,
+    metricHistory: [], incidentMarkers: [],
+    uniqueResource: 0, _leakCount: 0,
+};
+
 const ESCALATION_LADDER = [
     { level: 0, name: 'DIPLOMATIC TENSIONS', description: 'Sanctions and rhetoric. No military engagement.', color: '#44dd88' },
     { level: 1, name: 'NAVAL STANDOFF', description: 'Warships deployed. Seizures and standoffs. Limited skirmishes.', color: '#88aa44' },

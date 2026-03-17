@@ -642,11 +642,6 @@ function resetActionPoints() {
     if (SIM.roe === undefined) SIM.roe = 'defensive';
 }
 
-/** Backward compat alias */
-function resetQuickActions() {
-    resetActionPoints();
-}
-
 function _applyEffect(key, val) {
     if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
     else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
@@ -1112,14 +1107,6 @@ function hideActionPanel() {
     }
 }
 
-/** Backward compat alias */
-function showQuickActions() {
-    showActionPanel();
-}
-
-function hideQuickActions() {
-    hideActionPanel();
-}
 
 // ======================== FLOATING NUMBERS ========================
 
@@ -1229,27 +1216,8 @@ function resolveDecision(event, choiceIdx) {
 
     // Apply effects
     for (const [key, val] of Object.entries(choice.effects)) {
-        if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
-        else if (key === 'oilFlowProtection') {}
-        else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
-        else if (key === 'tension') SIM.tension = Math.max(0, Math.min(100, SIM.tension + val));
-        else if (key === 'domesticApproval') SIM.domesticApproval = Math.max(0, Math.min(100, SIM.domesticApproval + val));
-        else if (key === 'internationalStanding') SIM.internationalStanding = Math.max(0, Math.min(100, SIM.internationalStanding + val));
-        else if (key === 'iranAggression') SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + val));
-        else if (key === 'budget') SIM.budget += val;
-        else if (key === 'conflictRisk') SIM.conflictRisk = Math.max(0, Math.min(100, SIM.conflictRisk + val));
-        else if (key === 'fogOfWar') SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + val));
-        else if (key === 'diplomaticCapital') SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital + val));
-        else if (key === 'proxyThreat') SIM.proxyThreat = Math.max(0, Math.min(100, SIM.proxyThreat + val));
-        else if (key === 'chinaRelations') SIM.chinaRelations = Math.max(0, Math.min(100, SIM.chinaRelations + val));
-        else if (key === 'russiaRelations') SIM.russiaRelations = Math.max(0, Math.min(100, SIM.russiaRelations + val));
-        else if (key === 'polarization') SIM.polarization = Math.max(0, Math.min(100, SIM.polarization + val));
-        else if (key === 'assassinationRisk') SIM.assassinationRisk = Math.max(0, Math.min(100, SIM.assassinationRisk + val));
-        else if (key === 'warPath') SIM.warPath = Math.max(0, SIM.warPath + val);
-        else if (key === 'iranEconomy') SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + val));
-        else if (key === 'politicalCapital' || key === 'commandAuthority' || key === 'credibility' || key === 'baseEnthusiasm' || key === 'exposure') {
-            SIM.uniqueResource = Math.max(0, Math.min(100, SIM.uniqueResource + val));
-        }
+        _applyEffect(key, val);
+        if (val !== 0) showFloatingNumber(key, val);
     }
 
     // Contact trust effects (Kushner)
@@ -1408,68 +1376,10 @@ function restartGame() {
     const toastContainer = document.getElementById('toast-container');
     if (toastContainer) toastContainer.innerHTML = '';
 
-    SIM.day = 1;
-    SIM.hour = 0;
-    SIM.week = 1;
-    SIM.weekDay = 1;
-    SIM.speed = 2;
-    SIM.phase = 'morning';
-    SIM.actionPoints = 3;
-    SIM.stanceActivationDay = {};
-    SIM.firedConsequences = [];
-    SIM.pendingNews = [];
-    SIM.prevGauges = null;
-    SIM.oilFlow = 25;
-    SIM.oilPrice = 145;
-    SIM.tension = 72;
-    SIM.domesticApproval = 55;
-    SIM.internationalStanding = 50;
-    SIM.conflictRisk = 35;
-    SIM.budget = 900;
-    SIM.iranAggression = 65;
-    SIM.iranEconomy = 40;
-    SIM.iranStrategy = 'escalatory';
-    SIM.fogOfWar = 82;
-    SIM.diplomaticCapital = 25;
-    SIM.proxyThreat = 40;
-    SIM.chinaRelations = 50;
-    SIM.russiaRelations = 40;
-    SIM.polarization = 25;
-    SIM.assassinationRisk = 0;
-    SIM.warPath = 0;
-    SIM.straitOpenDays = 0;
-    SIM.lowApprovalDays = 0;
-    SIM.lowStandingDays = 0;
-    SIM.recentSeizureDays = [];
-    SIM.tankers = [];
-    SIM.navyShips = [];
-    SIM.iranBoats = [];
-    SIM.platforms = [];
-    SIM.mines = [];
-    SIM.drones = [];
-    SIM.carrier = null;
-    SIM.eventLog = [];
-    SIM.headlines = [];
-    SIM.effects = [];
-    SIM.gameOver = false;
-    SIM.gameOverReason = '';
-    SIM.gameWon = false;
-    SIM.activeStances = [];
-    SIM.playedExclusives = [];
-    SIM.crisisLevel = 1;
-    SIM.crisisTimer = 5;
-    SIM.consecutiveProvocations = 3;
-    SIM.interceptCount = 0;
-    SIM.seizureCount = 0;
-    SIM.decisionEventActive = false;
-    SIM.decisionHistory = [];
-    SIM.lastDecisionDay = 0;
-    SIM.metricHistory = [];
-    SIM.incidentMarkers = [];
-    SIM.uniqueResource = SIM.character?.uniqueResource?.value || 0;
-    SIM._leakCount = 0;
-    SIM.warPath = 1;
-    SIM.escalationLevel = 1;
+    // Reset SIM to defaults
+    for (const [key, val] of Object.entries(SIM_DEFAULTS)) {
+        SIM[key] = Array.isArray(val) ? [] : (typeof val === 'object' && val !== null) ? {} : val;
+    }
 
     // Reset character-specific state
     if (SIM.character) {
@@ -1643,292 +1553,9 @@ function formatEffectName(key) {
     return names[key] || key;
 }
 
-// ======================== INJECT ACTION PANEL CSS ========================
+// ======================== ACTION PANEL CSS ========================
+// All action panel, interrupt, and floating number styles are in css/style.css
 
 function _injectActionPanelStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* ======================== ACTION PANEL ======================== */
-
-        #action-panel {
-            position: fixed;
-            top: 70px;
-            right: 0;
-            width: 280px;
-            height: calc(100vh - 70px);
-            background: #0a0a0a;
-            border-left: 2px solid #1a3a2a;
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Courier New', Courier, monospace;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-
-        #action-panel.visible {
-            transform: translateX(0);
-        }
-
-        .ap-header {
-            padding: 12px 14px 10px;
-            border-bottom: 1px solid #1a3a2a;
-            flex-shrink: 0;
-        }
-
-        .ap-title {
-            font-size: 11px;
-            color: #2a6a4a;
-            letter-spacing: 4px;
-            margin-bottom: 6px;
-        }
-
-        .ap-points {
-            font-size: 18px;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-        }
-
-        .ap-dot.filled {
-            color: #44dd88;
-            text-shadow: 0 0 8px rgba(68, 221, 136, 0.5);
-        }
-
-        .ap-dot.empty {
-            color: #1a3a2a;
-        }
-
-        .ap-budget {
-            font-size: 11px;
-            color: #ddaa44;
-            letter-spacing: 1px;
-        }
-
-        .ap-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 0;
-        }
-
-        .ap-category {
-            padding: 0 14px;
-            margin-bottom: 10px;
-        }
-
-        .ap-cat-header {
-            font-size: 9px;
-            letter-spacing: 3px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .ap-btn {
-            display: block;
-            width: 100%;
-            background: #0d1a10;
-            border: 1px solid #1a3a2a;
-            color: #44dd88;
-            padding: 7px 10px;
-            font-size: 10px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-align: left;
-            margin-bottom: 3px;
-            transition: all 0.15s ease;
-            border-radius: 0;
-            position: relative;
-        }
-
-        .ap-btn:hover {
-            border-color: #44dd88;
-            background: #0d2a15;
-            box-shadow: 0 0 8px rgba(68, 221, 136, 0.12);
-        }
-
-        .ap-btn:active {
-            background: #1a4a2a;
-            transform: scale(0.98);
-        }
-
-        .ap-btn.disabled {
-            color: #1a3a2a;
-            border-color: #111;
-            background: #080808;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .ap-btn.special {
-            border-color: #ddaa44;
-            color: #ddaa44;
-        }
-
-        .ap-btn.special:hover {
-            border-color: #ddaa44;
-            background: #1a1500;
-            box-shadow: 0 0 8px rgba(221, 170, 68, 0.15);
-        }
-
-        .ap-cost {
-            color: #2a6a4a;
-            font-size: 9px;
-            float: right;
-            margin-top: 1px;
-        }
-
-        .ap-roe {
-            font-size: 9px;
-            float: right;
-            margin-top: 1px;
-        }
-
-        .ap-footer {
-            padding: 10px 14px;
-            border-top: 1px solid #1a3a2a;
-            flex-shrink: 0;
-        }
-
-        .ap-end-btn {
-            display: block;
-            width: 100%;
-            background: transparent;
-            border: 2px solid #ddaa44;
-            color: #ddaa44;
-            padding: 10px;
-            font-size: 12px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 3px;
-            cursor: pointer;
-            text-align: center;
-            border-radius: 0;
-            transition: all 0.15s ease;
-            text-shadow: 0 0 6px rgba(221, 170, 68, 0.3);
-        }
-
-        .ap-end-btn:hover {
-            background: #1a1500;
-            box-shadow: 0 0 12px rgba(221, 170, 68, 0.2);
-        }
-
-        /* ======================== INTERRUPT OVERLAY ======================== */
-
-        .ap-interrupt {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 16px;
-            z-index: 60;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .ap-interrupt.visible {
-            opacity: 1;
-        }
-
-        .ap-interrupt-flash {
-            font-size: 10px;
-            color: #dd4444;
-            letter-spacing: 4px;
-            margin-bottom: 12px;
-            animation: blink 0.8s infinite;
-            text-shadow: 0 0 8px rgba(221, 68, 68, 0.5);
-        }
-
-        .ap-interrupt-text {
-            font-size: 12px;
-            color: #44dd88;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 18px;
-            padding: 0 8px;
-            text-shadow: 0 0 4px rgba(68, 221, 136, 0.2);
-        }
-
-        .ap-interrupt-choices {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .ap-interrupt-btn {
-            display: block;
-            width: 100%;
-            background: #0d1a10;
-            border: 2px solid #1a3a2a;
-            color: #44dd88;
-            padding: 12px 14px;
-            font-size: 12px;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
-            cursor: pointer;
-            text-align: center;
-            border-radius: 0;
-            transition: all 0.15s ease;
-        }
-
-        .ap-interrupt-btn:hover {
-            border-color: #44dd88;
-            background: #0d2a15;
-            box-shadow: 0 0 10px rgba(68, 221, 136, 0.2);
-        }
-
-        .ap-interrupt-btn:active {
-            background: #1a4a2a;
-        }
-
-        /* ======================== FLOATING NUMBERS ======================== */
-
-        .floating-number {
-            position: fixed;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            pointer-events: none;
-            z-index: 200;
-            opacity: 0;
-            transform: translateY(0);
-            white-space: nowrap;
-        }
-
-        .floating-number.animate {
-            animation: floatUp 1.4s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 0;
-                transform: translateY(10px) scale(0.8);
-            }
-            15% {
-                opacity: 1;
-                transform: translateY(0) scale(1.1);
-            }
-            30% {
-                transform: translateY(-5px) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.9);
-            }
-        }
-
-        /* ======================== ACTION PANEL SCROLLBAR ======================== */
-
-        .ap-scroll::-webkit-scrollbar { width: 4px; }
-        .ap-scroll::-webkit-scrollbar-track { background: #0a0a0a; }
-        .ap-scroll::-webkit-scrollbar-thumb { background: #1a3a2a; }
-        .ap-scroll::-webkit-scrollbar-thumb:hover { background: #2a5a3a; }
-    `;
-    document.head.appendChild(style);
+    // Styles moved to css/style.css
 }
