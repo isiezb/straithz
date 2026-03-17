@@ -184,6 +184,94 @@ const STRATEGY_CARDS = [
         },
     },
 
+    // --- MILITARY (NEW) ---
+    {
+        id: 'mine_countermeasures', name: 'Mine Countermeasures', category: 'military',
+        description: 'Deploy MCM vessels and underwater drones to clear mines from shipping lanes.',
+        hint: { low: 'Survey operations only', medium: 'Active sweeping of shipping lanes', high: 'Full clearance with combat divers' },
+        effects: {
+            low:    { oilFlowProtection: 5, fogOfWar: -5, cost: 15 },
+            medium: { oilFlowProtection: 12, fogOfWar: -10, cost: 40, tension: 2 },
+            high:   { oilFlowProtection: 20, fogOfWar: -15, cost: 80, tension: 5, iranAggression: -3 },
+        },
+    },
+    {
+        id: 'submarine_warfare', name: 'Submarine Warfare', category: 'military',
+        description: 'Deploy Los Angeles-class attack submarines to shadow Iranian naval assets.',
+        hint: { low: 'Single sub on station', medium: 'Hunter-killer patrols', high: 'Submarine blockade of Iranian ports' },
+        effects: {
+            low:    { fogOfWar: -8, tension: 2, cost: 20, iranAggression: -2 },
+            medium: { fogOfWar: -15, tension: 5, cost: 50, iranAggression: -5, oilFlowProtection: 8 },
+            high:   { fogOfWar: -20, tension: 12, cost: 80, iranAggression: -10, oilFlowProtection: 15, warPath: 1 },
+        },
+    },
+    {
+        id: 'ballistic_missile_defense', name: 'Missile Defense', category: 'military',
+        description: 'Deploy THAAD and Patriot batteries to protect Gulf bases and allied territory.',
+        hint: { low: 'Point defense for US bases', medium: 'Integrated air defense umbrella', high: 'Full theater missile shield' },
+        effects: {
+            low:    { cost: 30, domesticApproval: 2, tension: 2, conflictRisk: -3 },
+            medium: { cost: 80, domesticApproval: 5, tension: 3, conflictRisk: -8, internationalStanding: 3 },
+            high:   { cost: 150, domesticApproval: 8, tension: 5, conflictRisk: -15, internationalStanding: 5, iranAggression: -5 },
+        },
+    },
+
+    // --- DIPLOMATIC (NEW) ---
+    {
+        id: 'war_crimes_tribunal', name: 'War Crimes Tribunal', category: 'diplomatic',
+        description: 'Push for international tribunal to document Iranian violations. Legal warfare.',
+        hint: { low: 'Fact-finding mission', medium: 'Formal ICC referral', high: 'Full tribunal with allied backing' },
+        effects: {
+            low:    { internationalStanding: 3, diplomaticCapital: 3, tension: 1 },
+            medium: { internationalStanding: 8, diplomaticCapital: 8, tension: 2, iranAggression: -3 },
+            high:   { internationalStanding: 12, diplomaticCapital: 12, tension: 3, iranAggression: -5, domesticApproval: 3 },
+        },
+    },
+
+    // --- ECONOMIC (NEW) ---
+    {
+        id: 'oil_diplomacy', name: 'Oil Diplomacy', category: 'economic',
+        description: 'Coordinate with OPEC+ and IEA to stabilize global oil markets.',
+        hint: { low: 'Talk to Saudi Arabia', medium: 'OPEC+ production increase deal', high: 'Global coordinated reserve release' },
+        effects: {
+            low:    { oilPrice: -3, internationalStanding: 3, cost: 10 },
+            medium: { oilPrice: -8, internationalStanding: 5, oilFlow: 3, cost: 30 },
+            high:   { oilPrice: -15, internationalStanding: 8, oilFlow: 5, cost: 60, diplomaticCapital: 5 },
+        },
+    },
+    {
+        id: 'insurance_backstop', name: 'Insurance Backstop', category: 'economic',
+        description: 'Government-backed maritime insurance to keep tankers transiting the strait.',
+        hint: { low: 'Partial guarantees', medium: 'Full government backstop', high: 'Sovereign insurance program' },
+        effects: {
+            low:    { oilFlow: 5, cost: 20, domesticApproval: 2 },
+            medium: { oilFlow: 12, cost: 60, domesticApproval: 3, oilPrice: -5 },
+            high:   { oilFlow: 20, cost: 120, domesticApproval: 5, oilPrice: -10, internationalStanding: 3 },
+        },
+    },
+
+    // --- INTELLIGENCE (NEW) ---
+    {
+        id: 'humint_iran', name: 'HUMINT Iran', category: 'intelligence',
+        description: 'Deploy human intelligence assets inside Iran to understand leadership intentions.',
+        hint: { low: 'Cultivate existing contacts', medium: 'Recruit new assets in IRGC', high: 'Deep penetration of Iranian command' },
+        effects: {
+            low:    { fogOfWar: -8, cost: 15, iranAggression: -2 },
+            medium: { fogOfWar: -18, cost: 40, iranAggression: -5, intelLevel: 1 },
+            high:   { fogOfWar: -30, cost: 80, iranAggression: -8, intelLevel: 2, tension: 3 },
+        },
+    },
+    {
+        id: 'electronic_warfare', name: 'Electronic Warfare', category: 'intelligence',
+        description: 'Deploy EA-18G Growlers and shipboard EW systems to jam Iranian communications.',
+        hint: { low: 'Passive monitoring', medium: 'Active jamming of IRGC comms', high: 'Full spectrum dominance — blind them' },
+        effects: {
+            low:    { fogOfWar: -10, cost: 10 },
+            medium: { fogOfWar: -20, iranAggression: -5, cost: 30, tension: 3 },
+            high:   { fogOfWar: -35, iranAggression: -10, cost: 60, tension: 8, conflictRisk: -5 },
+        },
+    },
+
     // --- DOMESTIC ---
     {
         id: 'media_blitz', name: 'Media Campaign', category: 'domestic',

@@ -90,6 +90,55 @@ const INTERRUPTS = [
         { label: "WEAPONS FREE", effects: { tension: 5, iranAggression: -3, domesticApproval: 3, warPath: 1 } },
         { label: "ELECTRONIC WARFARE ONLY", effects: { tension: 2, fogOfWar: -2 } }
     ]},
+    // NEW INTERRUPTS — based on real March 2026 events
+    { text: "Mojtaba Khamenei broadcasts defiant speech — 'We will drown the enemy in the strait'", choices: [
+        { label: "RESPOND WITH FORCE POSTURE", effects: { tension: 5, domesticApproval: 3, iranAggression: -2 } },
+        { label: "IGNORE THE RHETORIC", effects: { tension: -1 } }
+    ]},
+    { text: "Three Iranian Heydar-class fast boats racing toward tanker at 110 knots", choices: [
+        { label: "WEAPONS HOT — ENGAGE", effects: { tension: 8, iranAggression: -5, domesticApproval: 5, warPath: 1 } },
+        { label: "WARNING SHOTS ONLY", effects: { tension: 3, iranAggression: -1, domesticApproval: 2 } }
+    ]},
+    { text: "CENTCOM reports Iranian drone swarm detected — 15+ UAVs heading toward carrier group", choices: [
+        { label: "ACTIVATE AEGIS — FULL DEFENSE", effects: { tension: 8, budget: -5, domesticApproval: 5, iranAggression: -5 } },
+        { label: "ELECTRONIC COUNTERMEASURES", effects: { tension: 3, fogOfWar: -3 } }
+    ]},
+    { text: "Turkish FM calls — Erdogan offers to mediate if you ease sanctions on Turkish banks", choices: [
+        { label: "ACCEPT MEDIATION", effects: { tension: -3, diplomaticCapital: 5, domesticApproval: -2 } },
+        { label: "DECLINE — TOO MANY CONDITIONS", effects: { diplomaticCapital: -2, tension: 1 } }
+    ]},
+    { text: "Israeli PM shares Mossad intercept: IRGC planning to sink a tanker with torpedo", choices: [
+        { label: "PREEMPTIVE STRIKE ON SUB", effects: { tension: 10, warPath: 1, iranAggression: -8, domesticApproval: 5 } },
+        { label: "REPOSITION FLEET — DEFENSIVE", effects: { tension: 3, fogOfWar: -5, oilFlowProtection: 5 } }
+    ]},
+    { text: "GCC states demand emergency meeting — threatening to seek Chinese security guarantee", choices: [
+        { label: "REASSURE ALLIES — SEND ENVOY", effects: { internationalStanding: 5, diplomaticCapital: 3, budget: -5 } },
+        { label: "LET THEM POSTURE", effects: { internationalStanding: -3, chinaRelations: -3 } }
+    ]},
+    { text: "Iranian civilian cargo ship requesting safe passage through strait — families aboard", choices: [
+        { label: "GRANT PASSAGE — ESCORT THROUGH", effects: { internationalStanding: 5, tension: -2, domesticApproval: 3 } },
+        { label: "INSPECT FIRST", effects: { tension: 3, fogOfWar: -2, internationalStanding: -1 } }
+    ]},
+    { text: "AP reporter captured by IRGC near Bandar Abbas — State Dept demanding action", choices: [
+        { label: "PUBLIC DEMAND FOR RELEASE", effects: { domesticApproval: 5, tension: 5, internationalStanding: 3 } },
+        { label: "QUIET BACK-CHANNEL", effects: { tension: -1, diplomaticCapital: -3 } }
+    ]},
+    { text: "Pentagon: Iranian ballistic missile launch detected from Shiraz — trajectory unclear", choices: [
+        { label: "ACTIVATE MISSILE DEFENSE", effects: { tension: 8, budget: -5, domesticApproval: 5 } },
+        { label: "WAIT — COULD BE A TEST", effects: { tension: 3, domesticApproval: -2 } }
+    ]},
+    { text: "Oil tanker crew mutiny — refuse to transit strait without military escort", choices: [
+        { label: "PROVIDE ESCORT IMMEDIATELY", effects: { oilFlow: 3, budget: -5, tension: 2, domesticApproval: 2 } },
+        { label: "NOT OUR PROBLEM", effects: { oilFlow: -3, oilPrice: 3, domesticApproval: -2 } }
+    ]},
+    { text: "Fox News anchor: 'Is the President losing control of the situation?'", choices: [
+        { label: "SEND SPOKESPERSON — STRONG MESSAGE", effects: { domesticApproval: 3, polarization: -2 } },
+        { label: "NO RESPONSE", effects: { domesticApproval: -2, polarization: 2 } }
+    ]},
+    { text: "Iran claims to have captured a US underwater drone near Qeshm Island", choices: [
+        { label: "DEMAND RETURN", effects: { tension: 5, domesticApproval: 3, internationalStanding: 2 } },
+        { label: "DENY IT'S OURS", effects: { tension: 2, fogOfWar: 3 } }
+    ]},
 ];
 
 const _intelSnippets = [
@@ -109,6 +158,17 @@ const _intelSnippets = [
     'Asset report: Iranian regime concerned about public unrest over economic collapse.',
     'Satellite: Russia-flagged cargo vessel entered Bandar Abbas with military containers.',
     'NSA: APT33 staging infrastructure for cyberattack on Gulf state port systems.',
+    'HUMINT: Mojtaba Khamenei consolidating IRGC loyalty — purging moderates from command.',
+    'Satellite: Three carrier groups now visible in Arabian Sea — Lincoln, Truman, Carl Vinson.',
+    'SIGINT: IRGC Navy switching to burst transmissions — harder to intercept.',
+    'Asset report: Iranian civilian protests in Isfahan over economic collapse and war.',
+    'Imagery: New IRGC fast boat base detected on Farur Island — 20+ Heydar-class vessels.',
+    'NSA intercept: Russian military advisors detected at IRGC Aerospace Force HQ.',
+    'HUMINT: Chinese ambassador in Tehran offering "comprehensive strategic package" to Iran.',
+    'Satellite: Iranian mobile missile launchers dispersing from known bases — targeting unknown.',
+    'SIGINT: Houthi commanders receiving encrypted satellite phones from IRGC Quds Force.',
+    'Asset report: IRGC Quds Force activating sleeper cells in Bahrain and Kuwait.',
+    'Imagery: IRIS Shahid Bagheri drone carrier detected deploying explosive drone boats.',
 ];
 
 // Floating number stack counter for positioning

@@ -23,16 +23,16 @@ const SIM = {
 
     // Core metrics (underlying — player sees 4 gauges)
     oilFlow: 25,
-    oilPrice: 145,
-    tension: 72,
-    domesticApproval: 55,
-    internationalStanding: 50,
-    conflictRisk: 35,
+    oilPrice: 110,
+    tension: 85,
+    domesticApproval: 60,
+    internationalStanding: 45,
+    conflictRisk: 45,
     budget: 900,
 
     // Iran state
-    iranAggression: 65,
-    iranEconomy: 40,
+    iranAggression: 70,
+    iranEconomy: 30,
     iranStrategy: 'escalatory', // restrained/probing/escalatory/confrontational
 
     // Geopolitics
@@ -43,8 +43,8 @@ const SIM = {
     russiaRelations: 40,
     polarization: 25,
     assassinationRisk: 0,
-    warPath: 1,
-    escalationLevel: 1,    // 0=diplomatic, 1=naval standoff, 2=limited strikes, 3=air campaign, 4=ground invasion, 5=total war
+    warPath: 3,
+    escalationLevel: 3,    // 0=diplomatic, 1=naval standoff, 2=limited strikes, 3=air campaign, 4=ground invasion, 5=total war
 
     // Win/Lose tracking
     straitOpenDays: 0,
@@ -103,12 +103,12 @@ const SIM_DEFAULTS = {
     day: 1, hour: 0, week: 1, weekDay: 1, speed: 2,
     phase: 'morning', actionPoints: 3,
     stanceActivationDay: {}, firedConsequences: [], pendingNews: [], prevGauges: null,
-    oilFlow: 25, oilPrice: 145, tension: 72, domesticApproval: 55,
-    internationalStanding: 50, conflictRisk: 35, budget: 900,
-    iranAggression: 65, iranEconomy: 40, iranStrategy: 'escalatory',
+    oilFlow: 25, oilPrice: 110, tension: 85, domesticApproval: 60,
+    internationalStanding: 45, conflictRisk: 45, budget: 900,
+    iranAggression: 70, iranEconomy: 30, iranStrategy: 'escalatory',
     fogOfWar: 82, diplomaticCapital: 25, proxyThreat: 40,
     chinaRelations: 50, russiaRelations: 40, polarization: 25,
-    assassinationRisk: 0, warPath: 1, escalationLevel: 1,
+    assassinationRisk: 0, warPath: 3, escalationLevel: 3,
     straitOpenDays: 0, lowApprovalDays: 0, lowStandingDays: 0,
     recentSeizureDays: [],
     tankers: [], navyShips: [], iranBoats: [], platforms: [],
@@ -203,12 +203,15 @@ function initSimulation() {
         SIM.platforms.push({ x, y, active: true, health: 100 });
     }
 
-    // Initial crisis headlines
+    // Initial crisis headlines — based on real March 2026 events
     addHeadline('FEB 28: US-Israel joint strikes hit 500 targets across Iran — Khamenei killed', 'critical');
     addHeadline('Iran retaliates with 500+ ballistic missiles and 2,000 drones — 60% targeting US forces', 'critical');
     addHeadline('IRGC Navy deploys across strait — tanker MV Advantage Sweet seized with $50M cargo', 'warning');
-    addHeadline('Oil surges past $140/barrel — Lloyd\'s suspends war risk coverage for Gulf transit', 'warning');
-    addHeadline('Pentagon orders USS Abraham Lincoln carrier strike group to Persian Gulf', 'warning');
+    addHeadline('IRIS Dena frigate sunk by US Navy in first major naval engagement since 1988', 'critical');
+    addHeadline('Oil surges past $110/barrel — Lloyd\'s suspends war risk coverage for Gulf transit', 'warning');
+    addHeadline('Three US carrier strike groups deployed: Lincoln, Truman, Carl Vinson', 'warning');
+    addHeadline('Mojtaba Khamenei emerges as likely Supreme Leader successor — IRGC backs him', 'critical');
+    addHeadline('KC-135 tanker crashes during combat ops — 3 airmen killed', 'warning');
 }
 
 function spawnTanker() {
@@ -1113,6 +1116,45 @@ const CARD_CONSEQUENCES = {
         { text: 'Troops coming home makes front page — base energized', effect: () => { SIM.domesticApproval += 5; }, level: 'good', funding: 'high' },
         { text: 'Allies panic at withdrawal rhetoric — coalition fractures', effect: () => { SIM.internationalStanding -= 5; }, level: 'warning', funding: 'any' },
     ],
+    // NEW CARD CONSEQUENCES
+    mine_countermeasures: [
+        { text: 'MCM vessel clears 3 mines from shipping lane — safe transit restored', effect: () => { SIM.oilFlow = Math.min(100, SIM.oilFlow + 5); SIM.oilPrice -= 3; }, level: 'good', funding: 'medium' },
+        { text: 'Combat diver killed disarming Iranian mine — first MCM casualty', effect: () => { SIM.domesticApproval -= 3; SIM.tension += 5; }, level: 'critical', funding: 'high' },
+        { text: 'Drone submarine maps entire Iranian minefield — invaluable data', effect: () => { SIM.fogOfWar -= 10; }, level: 'good', funding: 'any' },
+    ],
+    submarine_warfare: [
+        { text: 'US submarine tracks Iranian Kilo-class sub for 72 hours — full pattern of life', effect: () => { SIM.fogOfWar -= 12; SIM.iranAggression -= 3; }, level: 'good', funding: 'medium' },
+        { text: 'Near-collision between US and Iranian submarines in shallow waters', effect: () => { SIM.tension += 10; SIM.warPath++; }, level: 'critical', funding: 'high' },
+        { text: 'Submarine intelligence reveals IRGC coastal battery locations', effect: () => { SIM.fogOfWar -= 8; SIM.conflictRisk -= 3; }, level: 'good', funding: 'any' },
+    ],
+    ballistic_missile_defense: [
+        { text: 'Patriot battery intercepts Iranian ballistic missile targeting Al Udeid — system works', effect: () => { SIM.domesticApproval += 5; SIM.internationalStanding += 3; }, level: 'good', funding: 'medium' },
+        { text: 'THAAD deployment reassures Gulf allies — Bahrain and UAE increase cooperation', effect: () => { SIM.internationalStanding += 4; SIM.oilFlow = Math.min(100, SIM.oilFlow + 2); }, level: 'good', funding: 'any' },
+        { text: 'Interceptor miss — debris falls in populated area. 3 civilian casualties', effect: () => { SIM.internationalStanding -= 5; SIM.domesticApproval -= 3; }, level: 'critical', funding: 'high' },
+    ],
+    oil_diplomacy: [
+        { text: 'Saudi Arabia announces 2M barrel/day production increase — markets rally', effect: () => { SIM.oilPrice -= 8; SIM.domesticApproval += 3; }, level: 'good', funding: 'high' },
+        { text: 'OPEC+ deal falls apart — Russia blocks the increase', effect: () => { SIM.oilPrice += 5; SIM.russiaRelations -= 3; }, level: 'warning', funding: 'medium' },
+        { text: 'IEA coordinated reserve release calms speculation', effect: () => { SIM.oilPrice -= 4; }, level: 'good', funding: 'any' },
+    ],
+    insurance_backstop: [
+        { text: 'Government insurance restores tanker traffic — 12 ships transit in 24 hours', effect: () => { SIM.oilFlow = Math.min(100, SIM.oilFlow + 5); }, level: 'good', funding: 'medium' },
+        { text: 'Insurance program cost overruns — $3B more than projected', effect: () => { SIM.budget -= 30; SIM.domesticApproval -= 2; }, level: 'warning', funding: 'high' },
+    ],
+    humint_iran: [
+        { text: 'Asset inside IRGC reveals planned seizure operation — preempted', effect: () => { SIM.fogOfWar -= 10; SIM.interceptCount++; }, level: 'good', funding: 'medium' },
+        { text: 'HUMINT asset compromised — Iran arrests double agent. Source network at risk', effect: () => { SIM.fogOfWar += 10; SIM.tension += 5; }, level: 'critical', funding: 'high' },
+        { text: 'Iranian defector provides detailed order of battle for IRGC Navy', effect: () => { SIM.fogOfWar -= 15; SIM.iranAggression -= 3; }, level: 'good', funding: 'high' },
+    ],
+    electronic_warfare: [
+        { text: 'EA-18G Growler jams IRGC command frequency — fast boats lose coordination', effect: () => { SIM.iranAggression -= 5; SIM.oilFlow = Math.min(100, SIM.oilFlow + 3); }, level: 'good', funding: 'medium' },
+        { text: 'Iran adapts to jamming — switches to fiber optic landlines', effect: () => { SIM.fogOfWar += 5; }, level: 'warning', funding: 'any' },
+        { text: 'Full spectrum EW blinds IRGC radar network for 6 hours — shipping transits freely', effect: () => { SIM.oilFlow = Math.min(100, SIM.oilFlow + 8); SIM.iranAggression -= 8; }, level: 'good', funding: 'high' },
+    ],
+    war_crimes_tribunal: [
+        { text: 'ICC fact-finding team documents Iranian mine-laying — legal case builds', effect: () => { SIM.internationalStanding += 5; SIM.iranAggression -= 2; }, level: 'good', funding: 'any' },
+        { text: 'Tribunal investigation also scrutinizes US civilian casualties — awkward', effect: () => { SIM.internationalStanding -= 3; SIM.domesticApproval -= 2; }, level: 'warning', funding: 'high' },
+    ],
 };
 
 function triggerCardConsequence() {
@@ -1155,6 +1197,17 @@ function triggerAmbientEvent() {
         { text: 'Pentagon confirms Iran retains 80-90% of naval fast boat fleet despite strikes', effect: () => { SIM.iranAggression += 2; SIM.conflictRisk += 2; }, level: 'warning' },
         { text: 'US trucking industry warns of supply chain collapse if oil stays above $140', effect: () => { SIM.domesticApproval -= 3; SIM.polarization += 2; }, level: 'warning' },
         { text: 'Chinese spy ship detected in Gulf of Oman — sharing data with IRGC?', effect: () => { SIM.chinaRelations -= 3; SIM.fogOfWar += 3; }, level: 'warning' },
+        { text: 'European Central Bank emergency meeting — strait crisis threatening EU economy', effect: () => { SIM.internationalStanding += 3; SIM.oilPrice += 2; }, level: 'warning' },
+        { text: 'Iranian rial hits record low — 800,000 to the dollar', effect: () => { SIM.iranEconomy -= 5; SIM.iranAggression += 2; }, level: 'warning' },
+        { text: 'Bahrain closes US Naval Forces Central Command to non-essential personnel', effect: () => { SIM.tension += 3; SIM.internationalStanding -= 2; }, level: 'warning' },
+        { text: 'Norway sends frigate to join coalition — first Arctic nation contribution', effect: () => { SIM.internationalStanding += 3; SIM.oilFlow = Math.min(100, SIM.oilFlow + 1); }, level: 'good' },
+        { text: 'Iranian diaspora protests in London, Berlin, and Toronto — "Regime must fall"', effect: () => { SIM.iranAggression += 2; SIM.internationalStanding += 2; }, level: 'normal' },
+        { text: 'US trucking industry halts non-essential routes — diesel rationing begins', effect: () => { SIM.domesticApproval -= 4; SIM.polarization += 2; }, level: 'warning' },
+        { text: 'Australian PM pledges naval support — HMAS Hobart en route', effect: () => { SIM.internationalStanding += 3; }, level: 'good' },
+        { text: 'IRGC propaganda video shows missile strike simulation on US carrier', effect: () => { SIM.tension += 3; SIM.iranAggression += 2; }, level: 'warning' },
+        { text: 'Gold hits $3,200/oz as investors flee to safe havens', effect: () => { SIM.oilPrice += 2; SIM.domesticApproval -= 1; }, level: 'warning' },
+        { text: 'Iranian FM Araghchi offers "conditional ceasefire" through Swiss intermediary', effect: () => { SIM.tension -= 3; SIM.diplomaticCapital += 3; }, level: 'good' },
+        { text: 'Pentagon confirms Iran using North Korean missile technology in latest launches', effect: () => { SIM.tension += 3; SIM.internationalStanding += 2; }, level: 'warning' },
     ];
     const event = events[Math.floor(Math.random() * events.length)];
     event.effect();
@@ -1178,6 +1231,12 @@ function triggerIranProvocation() {
         { text: 'Iran announces live-fire naval exercise in strait shipping lanes', tension: 6, level: 'warning' },
         { text: 'Iranian state media broadcasts footage of anti-ship missile test', tension: 5, level: 'warning' },
         { text: 'IRGC deploys explosive-laden drone boats in shipping channel', tension: 7, level: 'critical' },
+        { text: 'Iran launches anti-ship ballistic missile into Gulf — splashes 5nm from tanker convoy', tension: 10, level: 'critical' },
+        { text: 'IRGC underwater divers detected attaching limpet mines to tanker hull', tension: 8, level: 'critical' },
+        { text: 'Iranian Fateh-class submarine surfaces aggressively near US destroyer', tension: 6, level: 'critical' },
+        { text: 'Mojtaba Khamenei orders IRGC to "prepare for the final battle"', tension: 5, level: 'warning' },
+        { text: 'Iran blocks Omani diplomatic aircraft from landing — escalation of isolation', tension: 4, level: 'warning' },
+        { text: 'IRGC fires warning shots at commercial helicopter servicing oil platforms', tension: 5, level: 'warning' },
     ];
     const prov = provocations[Math.floor(Math.random() * provocations.length)];
     SIM.tension = Math.min(100, SIM.tension + prov.tension);
@@ -1676,6 +1735,150 @@ const DECISION_EVENTS = [
             { text: 'Subsidize rerouting costs', effects: { budget: -50, oilFlow: 8, oilPrice: -5, domesticApproval: 3 }, flavor: 'Government subsidies keep tankers moving. It\'s expensive but it works.' },
             { text: 'Demand strait reopening as red line', effects: { tension: 10, iranAggression: -5, oilFlow: 3, warPath: 1 }, flavor: 'A formal ultimatum. Iran has 72 hours to guarantee safe passage. The clock ticks.' },
             { text: 'Accept the new normal', effects: { oilPrice: 8, domesticApproval: -5, internationalStanding: -3 }, flavor: 'Markets price in the permanent disruption. The "new Suez" route becomes standard. Costs cascade through the global economy.' },
+        ],
+    },
+    // --- NEW EVENTS: Based on real March 2026 Iran war developments ---
+    {
+        id: 'minab_school_strike', title: 'MINAB SCHOOL STRIKE',
+        description: 'Reports emerge of a US airstrike hitting a school in Minab, southern Iran. 47 civilians reported killed including children. Iran broadcasting footage globally. UN demands investigation.',
+        minDay: 3, maxDay: 30,
+        condition: () => SIM.warPath >= 2,
+        choices: [
+            { text: 'Express regret — open investigation', effects: { internationalStanding: 5, domesticApproval: -5, tension: -3, iranAggression: -3 }, flavor: 'You acknowledge the tragedy. The investigation finds mixed-use targeting. International pressure eases slightly.' },
+            { text: 'Deny — claim it was a military site', effects: { internationalStanding: -10, domesticApproval: 3, tension: 5, iranAggression: 5 }, flavor: 'Pentagon releases grainy satellite photos. Nobody is convinced. Global protests erupt.' },
+            { text: 'Pause air operations for review', effects: { domesticApproval: -8, tension: -10, iranAggression: 8, internationalStanding: 8, warPath: -1 }, flavor: 'A 72-hour pause. Hawks scream. Allies exhale. Iran uses the time to reposition forces.' },
+        ],
+    },
+    {
+        id: 'mojtaba_succession', title: 'SUPREME LEADER SUCCESSION CRISIS',
+        description: 'With Khamenei dead, his son Mojtaba is consolidating power with IRGC backing. But the Assembly of Experts is divided. Iran\'s internal chaos creates both danger and opportunity.',
+        minDay: 5, maxDay: 45,
+        condition: () => SIM.iranAggression > 40,
+        choices: [
+            { text: 'Covert ops to empower moderates', effects: { iranAggression: -12, tension: -5, fogOfWar: 8, diplomaticCapital: -8 }, flavor: 'CIA channels support Raisi-faction moderates. The succession battle intensifies. IRGC is distracted.' },
+            { text: 'Publicly demand democratic transition', effects: { internationalStanding: 8, domesticApproval: 5, iranAggression: 10, tension: 5 }, flavor: 'Your call for democracy rallies Western opinion but unites Iranian factions against external meddling.' },
+            { text: 'Exploit the chaos — escalate strikes', effects: { tension: 15, warPath: 1, iranAggression: -10, domesticApproval: 3, internationalStanding: -10 }, flavor: 'You hit command centers while leadership is in disarray. Effective but brutal. The world recoils.' },
+        ],
+    },
+    {
+        id: 'joe_kent_resignation', title: 'NSA KENT RESIGNS',
+        description: 'National Security Advisor Joe Kent has resigned, citing disagreements over escalation. He goes on Fox News within the hour. "The President is being misled by hawks who\'ve never seen combat."',
+        minDay: 10, maxDay: 50,
+        condition: () => SIM.warPath >= 2 && SIM.domesticApproval < 65,
+        choices: [
+            { text: 'Attack Kent publicly', effects: { domesticApproval: -5, polarization: 8, tension: 3 }, flavor: 'A public feud dominates the news cycle. Your war cabinet looks fractured.' },
+            { text: 'Replace quietly — project unity', effects: { domesticApproval: 3, polarization: -3 }, flavor: 'The new NSA takes over smoothly. But Kent\'s book deal is already signed.' },
+            { text: 'Reach out — bring him back with concessions', effects: { domesticApproval: 5, tension: -5, warPath: -1, polarization: -5 }, flavor: 'Kent returns with a mandate for restraint. Hawks are furious but the team is reunited.' },
+        ],
+    },
+    {
+        id: 'gcc_attacks', title: 'GCC BASES UNDER FIRE',
+        description: 'Iran launches ballistic missiles at Al Udeid (Qatar) and Al Dhafra (UAE). Both house US forces. Patriot batteries intercept most but three impact inside Al Udeid. 8 US casualties.',
+        minDay: 5, maxDay: 40,
+        condition: () => SIM.tension > 60 && SIM.iranAggression > 55,
+        choices: [
+            { text: 'Massive retaliation — hit IRGC bases', effects: { tension: 20, warPath: 2, iranAggression: -15, domesticApproval: 12, internationalStanding: -5, budget: -40 }, flavor: 'B-2s and Tomahawks devastate IRGC coastal bases. Iran\'s ability to project force is degraded. But the war deepens.' },
+            { text: 'Proportional response — missile batteries only', effects: { tension: 10, warPath: 1, iranAggression: -8, domesticApproval: 8, internationalStanding: 3 }, flavor: 'Precision strikes eliminate the launch sites. Measured but firm. Allies approve.' },
+            { text: 'Evacuate non-essential personnel', effects: { tension: -5, domesticApproval: -8, iranAggression: 5, internationalStanding: -5 }, flavor: 'You pull back from exposed positions. Critics call it retreat. Families of the fallen demand action.' },
+        ],
+    },
+    {
+        id: 'iris_dena_aftermath', title: 'IRIS DENA SINKING — AFTERMATH',
+        description: 'The sinking of the IRIS Dena — Iran\'s largest warship — has become a rallying cry in Tehran. Massive funeral processions. IRGC vows "rivers of fire." But their navy just lost its flagship.',
+        minDay: 4, maxDay: 25,
+        condition: () => SIM.iranAggression > 50,
+        choices: [
+            { text: 'Press the advantage — hit more ships', effects: { tension: 20, warPath: 1, iranAggression: -15, domesticApproval: 5, internationalStanding: -10 }, flavor: 'Three more Iranian vessels sunk. Their navy is broken. But the world sees a superpower bullying a regional power.' },
+            { text: 'Offer humanitarian aid to survivors', effects: { internationalStanding: 10, tension: -5, iranAggression: -5, domesticApproval: 3 }, flavor: 'US Navy rescues 47 Iranian sailors. The footage is powerful. A rare moment of humanity in the crisis.' },
+            { text: 'Use as leverage — demand negotiations', effects: { tension: -3, diplomaticCapital: 10, iranAggression: -3, domesticApproval: 5 }, flavor: '"We don\'t want to destroy your navy. We want to open the strait." The message resonates with Iranian moderates.' },
+        ],
+    },
+    {
+        id: 'three_carriers', title: 'THREE CARRIER GROUPS IN THEATER',
+        description: 'Lincoln, Truman, and Carl Vinson are all in the Arabian Sea. 200+ aircraft, 30 warships, 25,000 sailors. The largest US naval deployment since Iraq 2003. The world is watching.',
+        minDay: 3, maxDay: 35,
+        condition: () => SIM.carrier !== null && SIM.tension > 50,
+        choices: [
+            { text: 'Launch sustained air campaign', effects: { tension: 25, warPath: 2, iranAggression: -20, domesticApproval: 8, internationalStanding: -12, budget: -80 }, flavor: 'Operation Southern Watch II begins. 200 sorties per day. Iran\'s military infrastructure is systematically degraded.' },
+            { text: 'Maintain pressure — deterrence posture', effects: { tension: 5, iranAggression: -10, domesticApproval: 5, budget: -40 }, flavor: 'The carriers patrol. Iran\'s navy stays in port. The mere presence changes the calculus.' },
+            { text: 'Withdraw one carrier — signal restraint', effects: { tension: -8, domesticApproval: -3, iranAggression: 3, internationalStanding: 5, budget: 20 }, flavor: 'Vinson returns to the Pacific. A signal that you\'re not seeking war. Allies approve. Iran is uncertain.' },
+        ],
+    },
+    {
+        id: 'china_mediation_real', title: 'BEIJING CEASEFIRE PROPOSAL',
+        description: 'Chinese FM Wang Yi proposes a 5-point ceasefire framework: mutual de-escalation, UN peacekeepers in strait, sanctions relief timeline, nuclear talks restart, regional security forum. Beijing is serious.',
+        minDay: 10, maxDay: 55,
+        condition: () => SIM.chinaRelations > 20 && SIM.tension > 40,
+        choices: [
+            { text: 'Accept the framework as starting point', effects: { tension: -15, iranAggression: -10, chinaRelations: 15, domesticApproval: -8, internationalStanding: 10, diplomaticCapital: 15 }, flavor: 'Talks begin in Beijing. Hawks rage about "selling out to China." But the guns go quiet for the first time in weeks.' },
+            { text: 'Counter-propose (US-led framework)', effects: { tension: -5, chinaRelations: -5, diplomaticCapital: -8, internationalStanding: 5 }, flavor: 'You reject Chinese mediation but propose your own plan. Beijing is annoyed but the diplomatic track opens.' },
+            { text: 'Reject — China is not a neutral broker', effects: { chinaRelations: -15, domesticApproval: 8, tension: 5, iranAggression: 3 }, flavor: 'Hawks applaud. China retaliates with arms sales to Iran. The diplomatic window narrows.' },
+        ],
+    },
+    {
+        id: 'russia_intel_leak', title: 'RUSSIAN INTELLIGENCE LEAK',
+        description: 'An FSB defector reveals Russia has been sharing US military intelligence with Iran — satellite passes, carrier positions, submarine locations. Your operational security is compromised.',
+        minDay: 12, maxDay: 60,
+        condition: () => SIM.russiaRelations < 35,
+        choices: [
+            { text: 'Expel Russian diplomats', effects: { russiaRelations: -20, fogOfWar: -10, tension: 5, internationalStanding: 5 }, flavor: '15 diplomats expelled. NATO allies follow suit. Russia retaliates but the leak is plugged.' },
+            { text: 'Exploit the defector — feed disinformation', effects: { fogOfWar: -20, iranAggression: -5, russiaRelations: -5 }, flavor: 'You turn the leak into an advantage. False intelligence flows to Tehran through Moscow. Iran chases ghosts.' },
+            { text: 'Quiet protest — preserve the channel', effects: { russiaRelations: -5, fogOfWar: -5 }, flavor: 'A stern demarche. Russia denies everything. But the intelligence sharing slows.' },
+        ],
+    },
+    {
+        id: 'nowruz_ceasefire', title: 'NOWRUZ CEASEFIRE WINDOW',
+        description: 'Iranian New Year (Nowruz) is in 3 days. Iranian moderates propose a 5-day ceasefire for the holiday. IRGC hasn\'t objected. This could be the off-ramp.',
+        minDay: 18, maxDay: 35,
+        condition: () => SIM.tension > 30 && SIM.diplomaticCapital > 10,
+        choices: [
+            { text: 'Accept — extend to 10 days', effects: { tension: -20, iranAggression: -12, domesticApproval: -5, internationalStanding: 15, diplomaticCapital: 20 }, flavor: 'Both sides stand down. Tankers transit. The ceasefire holds. Diplomats work feverishly to make it permanent.' },
+            { text: 'Accept 5 days only', effects: { tension: -12, iranAggression: -5, internationalStanding: 8, diplomaticCapital: 10 }, flavor: 'A brief respite. Oil flows. Markets rally. But everyone knows the clock is ticking.' },
+            { text: 'Reject — no pause while tankers are held', effects: { tension: 5, domesticApproval: 5, iranAggression: 5, internationalStanding: -5 }, flavor: 'You demand tanker release as precondition. Iran calls you unreasonable. The fighting continues through Nowruz.' },
+        ],
+    },
+    {
+        id: 'hezbollah_ceasefire_break', title: 'HEZBOLLAH BREAKS CEASEFIRE',
+        description: 'Hezbollah launches 150 rockets into northern Israel, breaking the Lebanon ceasefire. Israel retaliates immediately. Iran\'s proxy network is activating across the region.',
+        minDay: 8, maxDay: 55,
+        condition: () => SIM.proxyThreat > 30 && SIM.tension > 40,
+        choices: [
+            { text: 'Support Israel — joint strikes on Hezbollah', effects: { proxyThreat: -15, tension: 12, warPath: 1, internationalStanding: -8, budget: -25 }, flavor: 'US and Israeli jets hit Hezbollah positions. The proxy front collapses. But you\'re now fighting a multi-front war.' },
+            { text: 'Demand ceasefire restoration through UN', effects: { proxyThreat: -5, tension: -3, internationalStanding: 8, diplomaticCapital: 5 }, flavor: 'French-led mediation produces a fragile truce. Hezbollah pulls back. For now.' },
+            { text: 'Focus on strait — Israel can handle it', effects: { proxyThreat: 5, internationalStanding: -5, domesticApproval: -3 }, flavor: 'You keep your eyes on the prize. Israel is capable. But the multi-front pressure on Iran lessens.' },
+        ],
+    },
+    {
+        id: 'houthi_escalation', title: 'HOUTHIS TARGET US WARSHIP',
+        description: 'Houthi anti-ship ballistic missile targets USS Gravely (DDG-107) in the Red Sea. SM-2 intercept at 8nm. The closest a Houthi missile has come to hitting a US warship.',
+        minDay: 6, maxDay: 50,
+        condition: () => SIM.proxyThreat > 25,
+        choices: [
+            { text: 'Massive strike on Houthi infrastructure', effects: { proxyThreat: -20, tension: 8, warPath: 1, budget: -30, domesticApproval: 8 }, flavor: 'B-2s flatten Houthi missile storage. The Red Sea calms. Yemen civilians pay the price.' },
+            { text: 'Tighten the naval screen', effects: { proxyThreat: -8, budget: -15, domesticApproval: 3 }, flavor: 'More AEGIS destroyers deployed. An expensive but defensive solution.' },
+            { text: 'Pressure Saudi to negotiate with Houthis', effects: { proxyThreat: -5, tension: -3, internationalStanding: 5, diplomaticCapital: -5 }, flavor: 'Riyadh reopens the Yemen peace track. Slow but addresses root causes.' },
+        ],
+    },
+    {
+        id: 'kc135_crash', title: 'KC-135 CRASH — COMBAT LOSSES MOUNT',
+        description: 'A KC-135 aerial refueling tanker crashes during combat operations, killing all 3 crew. It\'s the first US aircraft loss. Cable news shows the wreckage on loop.',
+        minDay: 4, maxDay: 35,
+        condition: () => SIM.warPath >= 2,
+        choices: [
+            { text: 'Honor the fallen — steel resolve', effects: { domesticApproval: 5, tension: 3, polarization: -3 }, flavor: 'A solemn ceremony at Dover. The nation mourns but rallies. "Their sacrifice will not be in vain."' },
+            { text: 'Review operations — reduce tempo', effects: { domesticApproval: -3, tension: -5, iranAggression: 3, warPath: -1 }, flavor: 'Sortie rates drop 40%. Safety improves. Hawks worry about losing momentum.' },
+            { text: 'Escalate — make their sacrifice count', effects: { domesticApproval: 3, tension: 10, warPath: 1, internationalStanding: -5 }, flavor: 'The loss fuels a surge. More targets struck. The cycle accelerates.' },
+        ],
+    },
+    {
+        id: 'war_crimes_tribunal', title: 'ICC WAR CRIMES INVESTIGATION',
+        description: 'The International Criminal Court announces an investigation into both US and Iranian conduct. Warrants could be issued for senior officials. European allies are divided.',
+        minDay: 15, maxDay: 65,
+        condition: () => SIM.warPath >= 2 && SIM.internationalStanding < 50,
+        choices: [
+            { text: 'Reject ICC jurisdiction — sanction the court', effects: { internationalStanding: -12, domesticApproval: 8, polarization: 5 }, flavor: 'America First crowd loves it. Europeans are horrified. The legal threat remains for allied officials.' },
+            { text: 'Cooperate partially — show good faith', effects: { internationalStanding: 8, domesticApproval: -5, tension: -3 }, flavor: 'You provide limited documentation. It buys goodwill. The investigation slows.' },
+            { text: 'Use it as leverage against Iran', effects: { internationalStanding: 5, iranAggression: -5, diplomaticCapital: 5 }, flavor: 'You frame it as mutual accountability. Iran\'s crimes are documented alongside yours. A diplomatic tool emerges.' },
         ],
     },
 ];
