@@ -180,6 +180,105 @@ function initUI() {
     _injectActionPanelStyles();
     initMusic();
     updateTickers();
+    initSituationPanel();
+}
+
+// ======================== SITUATION PANEL (left sidebar) ========================
+
+function initSituationPanel() {
+    const panel = document.getElementById('situation-panel');
+    if (!panel) return;
+    panel.style.display = '';
+    const canvas = document.getElementById('game-canvas');
+    if (canvas) canvas.classList.add('with-sitpanel');
+    updateSituationPanel();
+}
+
+function updateSituationPanel() {
+    const panel = document.getElementById('situation-panel');
+    if (!panel || panel.style.display === 'none') return;
+
+    const g = calculateGauges();
+    const r = calculateRating();
+    const esc = ESCALATION_LADDER[Math.min(SIM.escalationLevel, 5)];
+
+    function valClass(v) { return v >= 60 ? 'good' : v >= 35 ? 'warning' : 'danger'; }
+
+    // Recent headlines (last 4)
+    const recent = SIM.headlines.slice(-4);
+    const headlinesHtml = recent.map(h => {
+        const prefix = h.level === 'critical' ? '<span class="wire-prefix wire-flash">FLASH</span> '
+                     : h.level === 'warning' ? '<span class="wire-prefix wire-urgent">URGENT</span> '
+                     : '';
+        return `<div class="sit-headline ${h.level}">${prefix}${h.text}</div>`;
+    }).join('');
+
+    // Intel (last 2)
+    const intelHtml = SIM.intelBriefings.slice(-2).map(b => {
+        const cls = b.confidence === 'HIGH' ? 'conf-high' : b.confidence === 'MEDIUM' ? 'conf-medium' : 'conf-low';
+        return `<div class="sit-intel-item"><span class="${cls}">[${b.confidence}]</span> ${b.text}</div>`;
+    }).join('') || '<div class="sit-intel-item" style="color:#2a6a4a">No current intel.</div>';
+
+    // Pending orders
+    const pendingHtml = SIM.pendingEffects.map(p => {
+        const eta = p.activateOnDay - SIM.day;
+        return `<div class="sit-pending">\u25B7 ${p.cardName} \u2014 ${eta === 1 ? 'TOMORROW' : eta + 'd'}</div>`;
+    }).join('');
+
+    // Active stances
+    const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
+    const stancesHtml = SIM.activeStances.map(s => {
+        const card = allCards.find(c => c.id === s.cardId);
+        if (!card) return '';
+        return `<div class="sit-row"><span>${card.name}</span><span class="sit-val" style="color:${s.funding === 'high' ? '#dd4444' : s.funding === 'medium' ? '#ddaa44' : '#2a6a4a'}">${s.funding.toUpperCase()}</span></div>`;
+    }).join('') || '<div class="sit-row" style="color:#2a6a4a">No active strategies</div>';
+
+    panel.innerHTML = `
+        <div class="sit-section">
+            <div class="sit-label">ESCALATION</div>
+            <div class="sit-row"><span style="color:${esc.color}">${esc.name}</span><span class="sit-val danger">${SIM.warPath}/5</span></div>
+            <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/14 OPEN' : 'CONTESTED'}</span></div>
+            <div class="sit-row"><span>Budget</span><span class="sit-val ${SIM.budget > 500 ? 'good' : SIM.budget > 200 ? 'warning' : 'danger'}">$${Math.round(SIM.budget)}M</span></div>
+            <div class="sit-row"><span>Iran</span><span class="sit-val warning">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span></div>
+            <div class="sit-row"><span>Rating</span><span class="sit-val ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
+        </div>
+        <div class="sit-section">
+            <div class="sit-label">WIRE FEED</div>
+            ${headlinesHtml || '<div class="sit-headline" style="color:#2a6a4a">No breaking news.</div>'}
+        </div>
+        <div class="sit-section">
+            <div class="sit-label"><span class="wire-classify">TS//SI</span> INTEL</div>
+            ${intelHtml}
+        </div>
+        ${SIM.activeStances.length > 0 ? `
+        <div class="sit-section">
+            <div class="sit-label">ACTIVE STRATEGY</div>
+            ${stancesHtml}
+        </div>` : ''}
+        ${pendingHtml ? `
+        <div class="sit-section">
+            <div class="sit-label">PENDING ORDERS</div>
+            ${pendingHtml}
+        </div>` : ''}
+    `;
+}
+
+function hideSituationPanel() {
+    const panel = document.getElementById('situation-panel');
+    if (panel) panel.style.display = 'none';
+    const canvas = document.getElementById('game-canvas');
+    if (canvas) {
+        canvas.classList.remove('with-sitpanel');
+        canvas.classList.remove('with-both');
+    }
+}
+
+function showSituationPanel() {
+    const panel = document.getElementById('situation-panel');
+    if (panel) panel.style.display = '';
+    const canvas = document.getElementById('game-canvas');
+    if (canvas) canvas.classList.add('with-sitpanel');
+    updateSituationPanel();
 }
 
 // ======================== TERMINAL HELPERS ========================
@@ -243,8 +342,9 @@ function updateGauges() {
     const dayEl = document.getElementById('hud-day');
     if (dayEl) dayEl.textContent = _getDateString();
 
-    // Update tickers periodically
+    // Update tickers and situation panel periodically
     if (SIM.day && typeof updateTickers === 'function') updateTickers();
+    if (typeof updateSituationPanel === 'function') updateSituationPanel();
 
     // Rating
     const ratingEl = document.getElementById('hud-rating');
@@ -301,6 +401,111 @@ function getAdvisorRecommendation() {
         return 'Budget critical. Cut costs or negotiate burden-sharing.';
     }
     return 'Stay the course. Monitor the situation.';
+}
+
+// ======================== FIRST MORNING (Immersive Day 1 Intro) ========================
+
+function showFirstMorning() {
+    const charName = SIM.character ? SIM.character.name : 'ADVISOR';
+    const charTitle = SIM.character ? SIM.character.title : '';
+
+    openTerminal(`
+        <div class="term-header" style="color:#dd4444">FEB 28, 2026 \u2014 0547 HOURS</div>
+        <div class="term-title" style="color:#dd4444">SITUATION ROOM</div>
+        <div class="term-line dim" style="margin-bottom:12px">EYES ONLY \u2014 ${charName.toUpperCase()}, ${charTitle.toUpperCase()}</div>
+
+        <div class="term-section">
+            <div class="term-section-label" style="color:#dd4444">AP FLASH \u2014 WIRE FEED</div>
+            <div id="fm-wire" class="morning-news-item critical" style="min-height:120px"></div>
+        </div>
+
+        <div class="term-section" id="fm-sitrep-section" style="display:none">
+            <div class="term-section-label"><span class="wire-prefix wire-sitrep">SITREP 280547ZFEB26</span></div>
+            <div id="fm-sitrep" class="term-line" style="min-height:60px"></div>
+        </div>
+
+        <div class="term-section" id="fm-orders-section" style="display:none">
+            <div class="term-section-label" style="color:#ddaa44">YOUR ORDERS</div>
+            <div id="fm-orders" class="term-line" style="min-height:40px"></div>
+        </div>
+
+        <div class="term-btn-row" id="fm-buttons" style="display:none">
+            <button class="term-btn danger-btn" id="fm-proceed">[ ENTER THE SITUATION ROOM ]</button>
+        </div>
+    `);
+
+    const wireEl = document.getElementById('fm-wire');
+    const sitrepSection = document.getElementById('fm-sitrep-section');
+    const sitrepEl = document.getElementById('fm-sitrep');
+    const ordersSection = document.getElementById('fm-orders-section');
+    const ordersEl = document.getElementById('fm-orders');
+    const buttonsRow = document.getElementById('fm-buttons');
+
+    const wireText = 'US-Israel joint strikes hit 500 targets across Iran. Supreme Leader Khamenei confirmed killed. Iran retaliating with 500+ ballistic missiles and 2,000 drones — 60% targeting US forces in region. IRGC Navy deploying across Strait of Hormuz. Tanker MV Advantage Sweet seized. Oil surges past $110. Lloyd\'s suspends all war risk coverage. Three carrier strike groups en route.';
+
+    const sitrepText = 'IRIS Dena frigate sunk — first major naval engagement since 1988. KC-135 tanker down, 3 KIA. Al Udeid and Al Dhafra bases under ballistic missile attack. Mojtaba Khamenei emerging as Supreme Leader successor with full IRGC backing. Houthis resuming Red Sea attacks. Hezbollah mobilizing on Lebanese border. China and Russia calling emergency UNSC session.';
+
+    const ordersText = `You are ${charName}. The strait is closed. Oil is spiking. Three carrier groups are in theater. Iran\'s leadership is in chaos but its military is retaliating hard. The world is watching what you do in the next 24 hours. There are no good options — only less bad ones.`;
+
+    let skipped = false;
+
+    // Allow click to skip typewriter
+    TERMINAL.addEventListener('click', function skipHandler(e) {
+        if (e.target.id === 'fm-proceed') return;
+        if (!skipped) {
+            skipped = true;
+            wireEl.textContent = wireText;
+            sitrepSection.style.display = '';
+            sitrepEl.textContent = sitrepText;
+            ordersSection.style.display = '';
+            ordersEl.textContent = ordersText;
+            buttonsRow.style.display = '';
+            fadeInButtons(TERMINAL, 100);
+            TERMINAL.removeEventListener('click', skipHandler);
+        }
+    });
+
+    // Typewriter sequence
+    typewrite(wireEl, wireText, 18).then(() => {
+        if (skipped) return;
+        sitrepSection.style.display = '';
+        return typewrite(sitrepEl, sitrepText, 15);
+    }).then(() => {
+        if (skipped) return;
+        ordersSection.style.display = '';
+        return typewrite(ordersEl, ordersText, 20);
+    }).then(() => {
+        if (skipped) return;
+        buttonsRow.style.display = '';
+        fadeInButtons(TERMINAL, 300);
+    });
+
+    // Wait for button
+    const waitForButton = setInterval(() => {
+        const btn = document.getElementById('fm-proceed');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                clearInterval(waitForButton);
+                closeTerminal();
+                // Day 1: drop straight into dayplay with a crisis event
+                SIM.phase = 'dayplay';
+                SIM.actionPoints = 3;
+                SIM.prevGauges = calculateGauges();
+                showActionPanel();
+                // Force an immediate interrupt to make it feel reactive
+                setTimeout(() => {
+                    showInterrupt(() => {
+                        const panel = document.getElementById('action-panel');
+                        if (panel) {
+                            const renderFn = panel._renderFn;
+                            if (renderFn) renderFn();
+                        }
+                    });
+                }, 1500);
+            });
+            clearInterval(waitForButton);
+        }
+    }, 100);
 }
 
 // ======================== INITIAL PICK (Day 1) ========================
@@ -464,12 +669,16 @@ function showDailyReport() {
         { label: 'INTEL', value: g.intel, delta: delta(g.intel, prev.intel) },
     ];
 
+    // Day 1: show immersive first morning instead of generic report
+    if (SIM.day === 1) {
+        showFirstMorning();
+        return;
+    }
+
     // Headlines for current day — with wire service formatting
     const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day).slice(-5);
     let headlinesHtml;
-    if (SIM.day === 1) {
-        headlinesHtml = '<div class="morning-news-item critical"><span class="wire-prefix wire-flash">AP FLASH:</span> US-Israel strikes killed Khamenei. Iran retaliating with 500+ missiles and 2,000 drones. Strait under siege.</div>';
-    } else if (todayHeadlines.length > 0) {
+    if (todayHeadlines.length > 0) {
         headlinesHtml = todayHeadlines.map(h => {
             const prefix = h.level === 'critical' ? '<span class="wire-prefix wire-flash">FLASH</span> '
                          : h.level === 'warning' ? '<span class="wire-prefix wire-urgent">URGENT</span> '
@@ -801,7 +1010,11 @@ function showActionPanel() {
     const canvas = document.getElementById('game-canvas');
     const gaugeBar = document.getElementById('gauge-bar');
     const tickers = document.getElementById('news-tickers');
-    if (canvas) canvas.style.width = 'calc(100% - 280px)';
+    if (canvas) {
+        canvas.classList.remove('with-sitpanel');
+        canvas.classList.add('with-both');
+        canvas.style.width = '';
+    }
     if (gaugeBar) gaugeBar.style.right = '280px';
     if (tickers) tickers.style.right = '280px';
 
@@ -904,6 +1117,7 @@ function showActionPanel() {
     }
 
     document.body.appendChild(panel);
+    panel._renderFn = renderPanel;
     renderPanel();
 
     // Slide-in animation
@@ -925,10 +1139,14 @@ function _executeAction(actionId, rerenderFn) {
             SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 8);
             showFloatingNumber('fogOfWar', -8);
             showFloatingNumber('budget', -15);
-            const snippet = _intelSnippets[Math.floor(Math.random() * _intelSnippets.length)];
-            toastMsg = snippet;
+            const intelItem = typeof generateIntelItem === 'function' ? generateIntelItem() : null;
+            if (intelItem) {
+                toastMsg = `[${intelItem.confidence}] ${intelItem.text}`;
+            } else {
+                toastMsg = _intelSnippets[Math.floor(Math.random() * _intelSnippets.length)];
+            }
             toastLevel = 'good';
-            addHeadline('Intelligence gathering operation conducted.', 'normal');
+            addHeadline('CIA OPS NOTICE [TS//SI]: Intelligence collection operation conducted.', 'normal');
             break;
 
         case 'analyze-threats':
@@ -1209,7 +1427,15 @@ function hideActionPanel() {
     const canvas = document.getElementById('game-canvas');
     const gaugeBar = document.getElementById('gauge-bar');
     const tickers = document.getElementById('news-tickers');
-    if (canvas) canvas.style.width = '';
+    if (canvas) {
+        canvas.classList.remove('with-both');
+        // Restore situation panel sizing if it's visible
+        const sitPanel = document.getElementById('situation-panel');
+        if (sitPanel && sitPanel.style.display !== 'none') {
+            canvas.classList.add('with-sitpanel');
+        }
+        canvas.style.width = '';
+    }
     if (gaugeBar) gaugeBar.style.right = '';
     if (tickers) tickers.style.right = '';
 }
