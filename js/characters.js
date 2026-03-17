@@ -3,6 +3,32 @@
  * Unique resources, lose conditions, events, card pools, special actions
  */
 
+function showTitleScreen() {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.id = 'title-screen';
+        overlay.innerHTML = `
+            <img src="assets/title screen.png" class="title-art" alt="Strait Out of Hormuz">
+            <div class="title-prompt">PRESS ANY KEY OR CLICK TO START</div>
+        `;
+        document.getElementById('game-container').appendChild(overlay);
+
+        // Try to start music on interaction
+        function dismiss() {
+            const music = document.getElementById('bg-music');
+            if (music) { music.volume = 0.3; music.play().catch(() => {}); }
+            overlay.classList.add('fading');
+            setTimeout(() => { overlay.remove(); resolve(); }, 600);
+        }
+
+        overlay.addEventListener('click', dismiss, { once: true });
+        document.addEventListener('keydown', function handler() {
+            document.removeEventListener('keydown', handler);
+            dismiss();
+        });
+    });
+}
+
 const CHARACTERS = [
     {
         id: 'trump', name: 'Donald Trump', title: '45th & 47th President',

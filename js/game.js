@@ -6,6 +6,7 @@
     try {
         initSprites();
 
+        await showTitleScreen();
         const character = await showCharacterSelect();
         await showLoreScreen(character);
 
