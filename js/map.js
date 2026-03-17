@@ -709,7 +709,8 @@ function drawProceduralMap(ctx, w, h) {
 function getLanePosition(lane, progress) {
     const pts = lane.points;
     const totalSegments = pts.length - 1;
-    const rawIdx = progress * totalSegments;
+    const clampedProgress = Math.max(0, Math.min(progress, 0.9999));
+    const rawIdx = clampedProgress * totalSegments;
     const idx = Math.floor(rawIdx);
     const t = rawIdx - idx;
 

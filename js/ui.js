@@ -18,7 +18,18 @@ const POLICY_ICON_MAP = {
     intel_ops: 'iconIntel',
 };
 
+let _policyDirty = true;
+let _policyLastState = '';
+
+function markPolicyDirty() { _policyDirty = true; }
+
 function renderPolicyCards() {
+    // Build a state fingerprint to avoid unnecessary DOM rebuilds
+    const state = POLICIES.map(p => `${p.id}:${p.level}:${p.cooldown}`).join('|');
+    if (state === _policyLastState && !_policyDirty) return;
+    _policyLastState = state;
+    _policyDirty = false;
+
     const list = document.getElementById('policy-list');
     list.innerHTML = '';
 
@@ -59,12 +70,14 @@ function renderPolicyCards() {
         slider.addEventListener('input', (e) => {
             const newLevel = parseInt(e.target.value);
             if (policy.cooldown > 0) return;
+            if (newLevel === policy.level) return;
 
             policy.level = newLevel;
             policy.active = newLevel > 0;
             policy.cooldown = policy.cooldownMax;
 
             logEvent('Policy changed: ' + policy.name + ' -> ' + policy.levelLabels[newLevel], 'normal');
+            markPolicyDirty();
             renderPolicyCards();
         });
 
@@ -113,7 +126,11 @@ function updateHUD() {
 
 function updateEventLog() {
     const inner = document.getElementById('event-log-inner');
-    const recent = SIM.eventLog.slice(-20).reverse();
+    // Only rebuild if events changed
+    if (inner._lastLen === SIM.eventLog.length) return;
+    inner._lastLen = SIM.eventLog.length;
+
+    const recent = SIM.eventLog.slice(-20);
 
     inner.innerHTML = recent.map(e => `
         <div class="event-entry event-${e.level}">
@@ -121,6 +138,10 @@ function updateEventLog() {
             ${e.text}
         </div>
     `).join('');
+
+    // Auto-scroll to newest event
+    const log = inner.parentElement;
+    log.scrollTop = log.scrollHeight;
 }
 
 function setupSpeedControls() {
@@ -244,6 +265,7 @@ function restartGame() {
 
     // Re-init
     initSimulation();
+    if (SIM.character && SIM.character.applyBonus) SIM.character.applyBonus(SIM);
     renderPolicyCards();
 
     logEvent('Simulation restarted. Set policies and press Play to begin.', 'good');

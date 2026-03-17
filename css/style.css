@@ -257,7 +257,7 @@ body {
 
 #event-log-inner {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 }
 
 .event-entry {

@@ -33,6 +33,7 @@
         // Init game
         initMap();
         initSimulation();
+        if (character.applyBonus) character.applyBonus(SIM);
         initUI();
 
         // Log starting event
@@ -40,6 +41,7 @@
 
         // Main loop
         let lastTick = 0;
+        let lastPolicyRender = 0;
         const tickInterval = 100;
 
         function gameLoop(timestamp) {
@@ -53,7 +55,8 @@
                 updateHUD();
                 updateEventLog();
 
-                if (Math.floor(timestamp / 2000) !== Math.floor((timestamp - 16) / 2000)) {
+                if (timestamp - lastPolicyRender >= 2000) {
+                    lastPolicyRender = timestamp;
                     renderPolicyCards();
                 }
             } catch (e) {

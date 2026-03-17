@@ -106,6 +106,7 @@ function spawnTanker() {
 function spawnNavyShip(x, y) {
     const types = ['DDG', 'CG', 'FFG'];
     const type = types[Math.floor(Math.random() * types.length)];
+    const readinessBonus = getCharacterBonus('readinessBonus') || 0;
     SIM.navyShips.push({
         x, y,
         targetX: x, targetY: y,
@@ -114,7 +115,7 @@ function spawnNavyShip(x, y) {
         speed: 0.001,
         id: 'USN-' + type + '-' + Math.random().toString(36).substr(2, 3).toUpperCase(),
         type,
-        readiness: 100,
+        readiness: Math.min(100, 100 + readinessBonus),
     });
 }
 
@@ -141,17 +142,26 @@ function tickSimulation() {
         checkWinLose();
     }
 
-    // Update policy cooldowns
+    // Update policy cooldowns (Kushner bonus reduces diplomacy cooldowns faster)
+    const diplomacyCooldownReduction = getCharacterBonus('diplomacyCooldownReduction') || 0;
     for (const p of POLICIES) {
-        if (p.cooldown > 0 && SIM.hour === 0) p.cooldown--;
+        if (p.cooldown > 0 && SIM.hour === 0) {
+            p.cooldown--;
+            if (p.id === 'diplomacy' && diplomacyCooldownReduction > 0 && p.cooldown > 0) {
+                p.cooldown = Math.max(0, p.cooldown - (diplomacyCooldownReduction / p.cooldownMax));
+            }
+        }
     }
 
     // Move tankers
-    for (const t of SIM.tankers) {
+    for (let i = SIM.tankers.length - 1; i >= 0; i--) {
+        const t = SIM.tankers[i];
         if (t.seized) continue;
         t.progress += t.speed * SIM.speed;
         if (t.progress >= 1) {
-            t.progress = 0;
+            // Remove and respawn a fresh tanker
+            SIM.tankers.splice(i, 1);
+            spawnTanker();
         }
     }
 
@@ -293,10 +303,11 @@ function updateIranBoatBehavior() {
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 0.03) {
                     // Check if navy is nearby to prevent
+                    const navyNearRange = 0.08 * (getCharacterBonus('interceptRange') || 1);
                     const navyNear = SIM.navyShips.some(s => {
                         const ndx = s.x - boat.x;
                         const ndy = s.y - boat.y;
-                        return Math.sqrt(ndx * ndx + ndy * ndy) < 0.08;
+                        return Math.sqrt(ndx * ndx + ndy * ndy) < navyNearRange;
                     });
 
                     if (navyNear && blockadeLevel >= 2) {
@@ -350,7 +361,8 @@ function updateNavyBehavior() {
                     }
                 }
             }
-            if (closest && closeDist < 0.3) {
+            const interceptRange = 0.3 * (getCharacterBonus('interceptRange') || 1);
+            if (closest && closeDist < interceptRange) {
                 ship.intercepting = closest.id;
                 ship.patrolling = false;
             }
@@ -420,8 +432,9 @@ function dailyUpdate() {
     // Deduct daily budget
     SIM.budget -= adjustedCost;
 
-    // Tension drifts toward policy-driven level
-    const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta));
+    // Diplomatic capital moderates tension (high capital = better de-escalation)
+    const dipBonus = (SIM.diplomaticCapital - 50) * 0.05; // -2.5 to +2.5
+    const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus));
     SIM.tension += (targetTension - SIM.tension) * 0.1;
 
     // Crisis amplifies tension
@@ -445,12 +458,14 @@ function dailyUpdate() {
     const targetPrice = 80 + (100 - SIM.oilFlow) * 1.5 + priceDelta;
     SIM.oilPrice += (targetPrice - SIM.oilPrice) * 0.15;
 
-    // Approval
-    const targetApproval = Math.max(0, Math.min(100, 72 + approvalDelta));
+    // Approval (Fuentes bonus reduces approval loss from military actions)
+    const approvalLossMult = getCharacterBonus('approvalLossMult') || 1;
+    const adjustedApprovalDelta = approvalDelta < 0 ? approvalDelta * approvalLossMult : approvalDelta;
+    const targetApproval = Math.max(0, Math.min(100, 72 + adjustedApprovalDelta));
     SIM.approval += (targetApproval - SIM.approval) * 0.08;
 
     // Seizures hurt approval
-    if (seizedCount > 0) SIM.approval -= seizedCount * 0.5;
+    if (seizedCount > 0) SIM.approval -= seizedCount * 0.5 * approvalLossMult;
 
     // Successful intercepts boost approval slightly
     if (SIM.interceptCount > 0) {
@@ -465,9 +480,10 @@ function dailyUpdate() {
         SIM.iranAggression += 0.5;
     }
 
-    // Update Iran economy from sanctions
+    // Update Iran economy from sanctions (Trump bonus amplifies)
     const econDelta = getAggregateEffect('iranEconomy');
-    SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + econDelta * 0.02));
+    const econMult = getCharacterBonus('sanctionsEconMult') || 1;
+    SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + econDelta * 0.02 * econMult));
 
     // Conflict risk
     SIM.conflictRisk = Math.max(0, Math.min(100,

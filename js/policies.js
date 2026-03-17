@@ -39,6 +39,7 @@ const POLICIES = [
             approval: [0, 5, 0, -10],
             iranAggression: [0, 5, 15, 30],
             iranEconomy: [0, -10, -25, -50],
+            cost: [0, 10, 30, 60],
         },
         cooldown: 0,
         cooldownMax: 10,
