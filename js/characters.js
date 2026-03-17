@@ -9,7 +9,7 @@ const CHARACTERS = [
         spriteKey: 'portrait_trump',
         ability: 'The Decider',
         abilityDesc: 'Gets ALL cards. 1.5x effects. Political Capital resource. 4 picks instead of 3.',
-        lore: 'January 2026. You never left. After a decisive re-election, the world expected stability. Then Iran seized three tankers in 72 hours. The Situation Room is yours. The generals are waiting. You\'ve dealt with Iran before — this time, you finish it.',
+        lore: 'February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it.',
 
         // Unique resource
         uniqueResource: { id: 'politicalCapital', name: 'POLITICAL CAPITAL', value: 80, max: 100, color: '#ddaa44' },
@@ -95,6 +95,11 @@ const CHARACTERS = [
                 "Nobody handles pressure like me. Nobody.",
                 "Iran is weak. They know it. We know it.",
             ],
+            morningBrief: [
+                "Mr. President, here's your Presidential Daily Brief for today.",
+                "Good morning, Mr. President. The overnight situation report.",
+                "Sir, your morning intelligence brief is ready.",
+            ],
             highTension: "This is where we separate the winners from the losers. Stay strong.",
             lowApproval: "The fake news is killing our numbers. We need a win, and fast.",
             seizure: "They seized our tanker? That's an act of war. Hit them back. Hard.",
@@ -111,7 +116,7 @@ const CHARACTERS = [
         spriteKey: 'portrait_hegseth',
         ability: 'The Warhorse',
         abilityDesc: 'Command Authority resource. Military cards cost authority. Override special action.',
-        lore: 'Two tours in Iraq. A Bronze Star. Years on Fox News calling out weak leadership. When the President needed a wartime Secretary of War, your phone rang at 0300. You\'ve trained for this your entire life. The brass respects you. Iran should too.',
+        lore: 'February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran\'s response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You\'ve trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003.',
 
         uniqueResource: { id: 'commandAuthority', name: 'COMMAND AUTH', value: 60, max: 100, color: '#dd4444' },
 
@@ -224,6 +229,11 @@ const CHARACTERS = [
                 "Our forces are ready. Waiting on your orders.",
                 "Let's review our options and make a decision.",
             ],
+            morningBrief: [
+                "Good morning, Mr. Secretary. Overnight SITREP on your desk.",
+                "Sir, CENTCOM's morning operational update is in.",
+                "Daily force readiness report, Mr. Secretary.",
+            ],
             highTension: "Tension is high but our forces are disciplined. We've trained for this.",
             lowApproval: "Sir, the politics will sort themselves. Focus on the mission.",
             seizure: "That's a hostile act against commercial shipping. Rules of engagement are clear.",
@@ -240,7 +250,7 @@ const CHARACTERS = [
         spriteKey: 'portrait_kushner',
         ability: 'The Operator',
         abilityDesc: 'Contacts & exposure system. Build trust with 5 key contacts. Avoid leaks.',
-        lore: 'The Abraham Accords were just the beginning. When the strait crisis erupted, every Gulf leader had your personal number. The President trusts you more than the State Department. You don\'t need a title — you have relationships. And in the Middle East, relationships are everything.',
+        lore: 'February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they\'re all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe.',
 
         uniqueResource: { id: 'exposure', name: 'EXPOSURE', value: 10, max: 100, color: '#aa44dd', inverted: true },
 
@@ -343,6 +353,11 @@ const CHARACTERS = [
                 "The key is relationships. Let me tell you what I'm hearing.",
                 "There's an opportunity here if we play it right.",
             ],
+            morningBrief: [
+                "Your overnight diplomatic traffic summary, sir.",
+                "Three missed calls from Gulf capitals. Here's the brief.",
+                "Back-channel status update and morning intelligence digest.",
+            ],
             highTension: "High tension, but I have a back-channel that might help. Let me work it.",
             lowApproval: "The numbers aren't great, but a diplomatic win would turn this around fast.",
             seizure: "This is a provocation. But it's also leverage. Let's use it at the table.",
@@ -359,7 +374,7 @@ const CHARACTERS = [
         spriteKey: 'portrait_asmongold',
         ability: 'The Analyst',
         abilityDesc: 'Credibility resource. Intel Feed mini-game. Flag signals from noise each week.',
-        lore: 'It started as a joke. A viral 14-hour stream dissecting Pentagon leaked documents got 2 million concurrent viewers. Then the SecDef DM\'d you. "We need someone who can process information faster than anyone alive." Now you\'re in a classified Discord with the Joint Chiefs. Chat is... concerned.',
+        lore: 'February 28, 2026. Chat, this is not a drill. The US just killed Iran\'s Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran\'s response. The intel is flooding in faster than anyone can process. Except you.',
 
         uniqueResource: { id: 'credibility', name: 'CREDIBILITY', value: 50, max: 100, color: '#4488dd' },
 
@@ -462,6 +477,11 @@ const CHARACTERS = [
                 "Dude, this geopolitics stuff is actually insane.",
                 "OK so basically Iran is malding right now. Let me explain.",
             ],
+            morningBrief: [
+                "Chat, the overnight mod-curated intel feed just dropped.",
+                "OK dude, the mods flagged the important stuff from last night.",
+                "Morning intel digest — crowd-sourced and verified by the community.",
+            ],
             highTension: "Chat, the tension is actually insane right now. We need to chill.",
             lowApproval: "Guys, our approval is in the gutter. We're getting ratio'd by Congress.",
             seizure: "They just took our tanker. This is actually a bruh moment.",
@@ -478,7 +498,7 @@ const CHARACTERS = [
         spriteKey: 'portrait_fuentes',
         ability: 'The Outsider',
         abilityDesc: 'Base Enthusiasm drops 12/week without America First cards. Address the Nation special action.',
-        lore: 'The establishment failed. Three administrations, three failed Iran policies. When the crisis hit, the new populist coalition demanded someone outside the machine. You\'re the youngest national security advisor in history. The media hates you. The base loves you. Iran doesn\'t know what to make of you.',
+        lore: 'February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You\'re the youngest national security advisor in history.',
 
         uniqueResource: { id: 'baseEnthusiasm', name: 'BASE', value: 85, max: 100, color: '#ff6644' },
 
@@ -600,6 +620,11 @@ const CHARACTERS = [
                 "The establishment wants us to play their game. We won't.",
                 "Let's focus on what matters — American interests.",
             ],
+            morningBrief: [
+                "Morning brief from our team. The establishment doesn't want you to see this.",
+                "Here's what really happened overnight — not the media spin.",
+                "Your advisors compiled the real intelligence. No filter.",
+            ],
             highTension: "High tension? Good. Let them know we're not backing down.",
             lowApproval: "Our base is solid. The silent majority sees through the media lies.",
             seizure: "Iran thinks they can push us around? Wrong. America doesn't negotiate with thugs.",
@@ -631,7 +656,7 @@ function showLoreScreen(character) {
         overlay.innerHTML = `
             <div class="lore-box">
                 <div class="lore-scanlines"></div>
-                <canvas class="lore-portrait" id="lore-portrait" width="96" height="96"></canvas>
+                <canvas class="lore-portrait" id="lore-portrait" width="112" height="112"></canvas>
                 <div class="lore-name">${character.name}</div>
                 <div class="lore-title">${character.title}</div>
                 <div class="lore-ability">${character.ability}: ${character.abilityDesc}</div>
@@ -646,7 +671,7 @@ function showLoreScreen(character) {
         if (canvas && SPRITES[character.spriteKey]) {
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 96, 96);
+            ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 112, 112);
         }
 
         const textEl = document.getElementById('lore-text');
@@ -700,7 +725,7 @@ function showCharacterSelect() {
                     <div class="char-grid">
                         ${CHARACTERS.map((ch, i) => `
                             <div class="char-card ${selectedIdx === i ? 'selected' : ''}" data-idx="${i}">
-                                <canvas class="char-portrait" id="char-portrait-${i}" width="48" height="48"></canvas>
+                                <canvas class="char-portrait" id="char-portrait-${i}" width="56" height="56"></canvas>
                                 <div class="char-info">
                                     <div class="char-name">${ch.name}</div>
                                     <div class="char-title">${ch.title}</div>
@@ -726,7 +751,7 @@ function showCharacterSelect() {
                 if (canvas && SPRITES[ch.spriteKey]) {
                     const ctx = canvas.getContext('2d');
                     ctx.imageSmoothingEnabled = false;
-                    ctx.drawImage(SPRITES[ch.spriteKey], 0, 0, 48, 48);
+                    ctx.drawImage(SPRITES[ch.spriteKey], 0, 0, 56, 56);
                 }
             });
 

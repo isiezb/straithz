@@ -44,6 +44,7 @@ const SIM = {
     polarization: 25,
     assassinationRisk: 0,
     warPath: 1,
+    escalationLevel: 1,    // 0=diplomatic, 1=naval standoff, 2=limited strikes, 3=air campaign, 4=ground invasion, 5=total war
 
     // Win/Lose tracking
     straitOpenDays: 0,
@@ -96,6 +97,25 @@ const SIM = {
     uniqueResource: 0,
     _leakCount: 0, // Kushner leak tracking
 };
+
+const ESCALATION_LADDER = [
+    { level: 0, name: 'DIPLOMATIC TENSIONS', description: 'Sanctions and rhetoric. No military engagement.', color: '#44dd88' },
+    { level: 1, name: 'NAVAL STANDOFF', description: 'Warships deployed. Seizures and standoffs. Limited skirmishes.', color: '#88aa44' },
+    { level: 2, name: 'LIMITED STRIKES', description: 'Precision strikes on military targets. Tit-for-tat.', color: '#ddaa44' },
+    { level: 3, name: 'AIR CAMPAIGN', description: 'Sustained air operations. Infrastructure targeted. Civilian risk.', color: '#dd6644' },
+    { level: 4, name: 'GROUND INVASION', description: 'Ground forces deployed. Draft considered. Regional war.', color: '#dd4444' },
+    { level: 5, name: 'TOTAL WAR', description: 'Nuclear threshold. Chemical weapons. Civilization at stake.', color: '#ff0000' },
+];
+
+// Iran's escalation ladder (AI side)
+const IRAN_ESCALATION = [
+    { level: 0, name: 'RESTRAINED', triggers: 'aggression < 25' },
+    { level: 1, name: 'PROBING', triggers: 'aggression 25-50, fast boats and seizures' },
+    { level: 2, name: 'PROXY WAR', triggers: 'aggression 50-65, Houthis + Iraqi militias activated' },
+    { level: 3, name: 'DIRECT ENGAGEMENT', triggers: 'aggression 65-80, missile strikes, mine-laying' },
+    { level: 4, name: 'NUCLEAR LEVERAGE', triggers: 'aggression 80-90, breakout threats, enrichment acceleration' },
+    { level: 5, name: 'ALL-OUT', triggers: 'aggression > 90, mass missile/drone swarm, suicide boats' },
+];
 
 // 4 Composite Gauges (0-100)
 function calculateGauges() {
@@ -159,10 +179,11 @@ function initSimulation() {
     }
 
     // Initial crisis headlines
-    addHeadline('BREAKING: IRGC Navy seizes Marshall Islands-flagged tanker MV Advantage Sweet — $50M cargo', 'critical');
-    addHeadline('Pentagon confirms IRGC fast boats deployed across Strait of Hormuz shipping lanes', 'warning');
-    addHeadline('Lloyd\'s of London suspends war risk coverage for Persian Gulf transit', 'warning');
-    addHeadline('Oil surges past $140/barrel — Asian energy markets in panic', 'critical');
+    addHeadline('FEB 28: US-Israel joint strikes hit 500 targets across Iran — Khamenei killed', 'critical');
+    addHeadline('Iran retaliates with 500+ ballistic missiles and 2,000 drones — 60% targeting US forces', 'critical');
+    addHeadline('IRGC Navy deploys across strait — tanker MV Advantage Sweet seized with $50M cargo', 'warning');
+    addHeadline('Oil surges past $140/barrel — Lloyd\'s suspends war risk coverage for Gulf transit', 'warning');
+    addHeadline('Pentagon orders USS Abraham Lincoln carrier strike group to Persian Gulf', 'warning');
 }
 
 function spawnTanker() {
@@ -527,6 +548,15 @@ function dailyUpdate() {
         SIM.diplomaticCapital += dipDelta * 0.1;
     }
     SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital));
+
+    // --- Escalation Ladder ---
+    // Player escalation based on warPath
+    if (SIM.warPath <= 0) SIM.escalationLevel = 0;
+    else if (SIM.warPath === 1) SIM.escalationLevel = 1;
+    else if (SIM.warPath === 2) SIM.escalationLevel = 2;
+    else if (SIM.warPath === 3) SIM.escalationLevel = 3;
+    else if (SIM.warPath === 4) SIM.escalationLevel = 4;
+    else SIM.escalationLevel = 5;
 
     // --- Entity Management ---
     const navalPresence = getStanceMax('navalPresence');

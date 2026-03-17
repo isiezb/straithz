@@ -118,6 +118,8 @@ function initUI() {
     updateGauges();
     setupKeyboardShortcuts();
     _injectActionPanelStyles();
+    initMusic();
+    updateTickers();
 }
 
 // ======================== TERMINAL HELPERS ========================
@@ -179,7 +181,10 @@ function updateGauges() {
 
     // Day counter in HUD
     const dayEl = document.getElementById('hud-day');
-    if (dayEl) dayEl.textContent = 'DAY ' + SIM.day;
+    if (dayEl) dayEl.textContent = _getDateString();
+
+    // Update tickers periodically
+    if (SIM.day && typeof updateTickers === 'function') updateTickers();
 
     // Rating
     const ratingEl = document.getElementById('hud-rating');
@@ -277,9 +282,9 @@ function showInitialPick() {
                     `;
                 }).join('')}
             </div>
-            <div class="term-line dim" style="text-align:center;margin-top:8px">${selected.length}/${maxPicks} selected</div>
+            <div class="term-line dim" style="text-align:center;margin-top:8px">${selected.length} selected (up to ${maxPicks})</div>
             <div class="term-btn-row">
-                <button class="term-btn ${selected.length === maxPicks ? 'visible' : ''}" id="pick-confirm">
+                <button class="term-btn ${selected.length > 0 ? 'visible' : ''}" id="pick-confirm">
                     [ DEPLOY STRATEGY ]
                 </button>
             </div>
@@ -315,7 +320,7 @@ function showInitialPick() {
         const confirmBtn = document.getElementById('pick-confirm');
         if (confirmBtn) {
             confirmBtn.addEventListener('click', () => {
-                if (selected.length !== maxPicks) return;
+                if (selected.length === 0) return;
                 applyStances(selected);
                 closeTerminal();
                 resetActionPoints();
@@ -386,7 +391,7 @@ function showDailyReport() {
     const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day).slice(-5);
     let headlinesHtml;
     if (SIM.day === 1) {
-        headlinesHtml = '<div class="morning-news-item critical">Crisis ongoing \u2014 Iran has seized three tankers in the Strait of Hormuz.</div>';
+        headlinesHtml = '<div class="morning-news-item critical">US-Israel strikes killed Khamenei. Iran retaliating with 500+ missiles and 2,000 drones. Strait under siege.</div>';
     } else if (todayHeadlines.length > 0) {
         headlinesHtml = todayHeadlines.map(h => `<div class="morning-news-item ${h.level}">${h.text}</div>`).join('');
     } else {
@@ -412,9 +417,9 @@ function showDailyReport() {
     }
 
     openTerminal(`
-        <div class="term-header">DAILY REPORT \u2014 DAY ${SIM.day}</div>
-        <div class="term-title">SITUATION ROOM</div>
-        <div class="term-line dim">"${advisorQuote}" \u2014 ${SIM.character.name}</div>
+        <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
+        <div class="term-title">${_getBriefingTitle()}</div>
+        <div class="term-line dim">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
         <div class="term-line" style="color:#ddaa44;margin:4px 0 8px 0">\u25B6 ${recommendation}</div>
 
         <div class="term-section">
@@ -440,7 +445,7 @@ function showDailyReport() {
 
         <div class="term-section">
             <div class="term-section-label">STATUS</div>
-            <div class="stat-row"><span>Escalation</span><span>${SIM.warPath}/5</span></div>
+            <div class="stat-row"><span>Escalation</span><span style="color:${_getEscalationColor()}">${_getEscalationName()} (${SIM.warPath}/5)</span></div>
             <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/14</span></div>
             <div class="stat-row"><span>Budget</span><span>$${Math.round(SIM.budget)}M</span></div>
             <div class="stat-row"><span>Iran</span><span>${SIM.iranStrategy.toUpperCase()}</span></div>
@@ -1367,7 +1372,7 @@ function showGameOverScreen() {
             <div class="term-section-label">FINAL STATS</div>
             <div class="stat-row"><span>Advisor</span><span>${SIM.character ? SIM.character.name : 'None'}</span></div>
             <div class="stat-row"><span>Days Survived</span><span>${SIM.day}</span></div>
-            <div class="stat-row"><span>Escalation</span><span>${SIM.warPath}/5</span></div>
+            <div class="stat-row"><span>Escalation</span><span style="color:${_getEscalationColor()}">${_getEscalationName()} (${SIM.warPath}/5)</span></div>
             <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/14</span></div>
             <div class="stat-row"><span>Tankers Seized</span><span>${SIM.seizureCount}</span></div>
             <div class="stat-row"><span>Intercepts</span><span>${SIM.interceptCount}</span></div>
@@ -1460,6 +1465,7 @@ function restartGame() {
     SIM.uniqueResource = SIM.character?.uniqueResource?.value || 0;
     SIM._leakCount = 0;
     SIM.warPath = 1;
+    SIM.escalationLevel = 1;
 
     // Reset character-specific state
     if (SIM.character) {
@@ -1501,7 +1507,119 @@ function setupKeyboardShortcuts() {
     });
 }
 
+// ======================== MUSIC ========================
+
+function initMusic() {
+    const audio = document.getElementById('bg-music');
+    const muteBtn = document.getElementById('mute-btn');
+    if (!audio || !muteBtn) return;
+
+    // Try to play (will fail without user interaction)
+    audio.volume = 0.3;
+
+    muteBtn.addEventListener('click', () => {
+        if (audio.paused) {
+            audio.play().catch(() => {});
+            muteBtn.textContent = '\u266B';
+            muteBtn.classList.remove('muted');
+        } else {
+            audio.pause();
+            muteBtn.textContent = '\u266B';
+            muteBtn.classList.add('muted');
+        }
+    });
+
+    // Auto-play on first user click anywhere
+    document.addEventListener('click', function startMusic() {
+        audio.play().catch(() => {});
+        document.removeEventListener('click', startMusic);
+    }, { once: true });
+}
+
+// ======================== NEWS TICKERS ========================
+
+function updateTickers() {
+    const publicEl = document.getElementById('public-ticker-content');
+    const intelEl = document.getElementById('intel-ticker-content');
+    if (!publicEl || !intelEl) return;
+
+    // Public ticker: recent headlines (last 8)
+    const publicNews = SIM.headlines
+        .filter(h => h.level !== 'normal')
+        .slice(-8)
+        .map(h => h.text)
+        .join('  ///  ');
+
+    // Intel ticker: fog-dependent
+    let intelNews;
+    if (SIM.fogOfWar > 70) {
+        intelNews = 'INTEL DEGRADED \u2014 INCREASE SURVEILLANCE ASSETS  ///  Signal clarity: LOW  ///  Multiple unverified contacts  ///  Assessment confidence: MINIMAL';
+    } else if (SIM.fogOfWar > 40) {
+        const intelItems = [
+            `Iran strategy: ${(SIM.iranStrategy || 'unknown').toUpperCase()}`,
+            `Iran aggression index: ${Math.round(SIM.iranAggression)}`,
+            `Proxy threat level: ${SIM.proxyThreat > 50 ? 'HIGH' : SIM.proxyThreat > 25 ? 'MODERATE' : 'LOW'}`,
+            `IRGC naval assets tracked: ${SIM.iranBoats.length}`,
+            `Active mines detected: ${SIM.mines.length}`,
+            `FOG: ${Math.round(SIM.fogOfWar)}% \u2014 partial picture`,
+        ];
+        intelNews = intelItems.join('  ///  ');
+    } else {
+        const intelItems = [
+            `Iran strategy: ${(SIM.iranStrategy || 'unknown').toUpperCase()}`,
+            `Aggression: ${Math.round(SIM.iranAggression)} | Economy: ${Math.round(SIM.iranEconomy)}`,
+            `IRGC boats: ${SIM.iranBoats.length} | Mines: ${SIM.mines.length}`,
+            `Proxy threat: ${Math.round(SIM.proxyThreat)} | China relations: ${Math.round(SIM.chinaRelations)}`,
+            `Nuclear risk: ${SIM.iranAggression > 70 ? 'ELEVATED' : 'BASELINE'}`,
+            `Escalation: ${_getEscalationName()}`,
+            `FOG: ${Math.round(SIM.fogOfWar)}% \u2014 good intel picture`,
+        ];
+        intelNews = intelItems.join('  ///  ');
+    }
+
+    // Duplicate for seamless scroll
+    publicEl.innerHTML = publicNews ? `<span>${publicNews}  ///  ${publicNews}</span>` : '<span>No breaking news.</span>';
+    intelEl.innerHTML = `<span>${intelNews}  ///  ${intelNews}</span>`;
+}
+
 // ======================== HELPERS ========================
+
+function _getDateString() {
+    // Game starts Feb 28, 2026
+    const startDate = new Date(2026, 1, 28); // Feb 28
+    const gameDate = new Date(startDate);
+    gameDate.setDate(gameDate.getDate() + SIM.day - 1);
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    return `${months[gameDate.getMonth()]} ${gameDate.getDate()}, 2026`;
+}
+
+function _getBriefingTitle() {
+    if (!SIM.character) return 'DAILY BRIEFING';
+    switch (SIM.character.id) {
+        case 'trump': return 'PRESIDENTIAL DAILY BRIEF';
+        case 'hegseth': return 'SECDEF MORNING SITREP';
+        case 'kushner': return 'DIPLOMATIC TRAFFIC SUMMARY';
+        case 'asmongold': return 'MOD-CURATED INTEL FEED';
+        case 'fuentes': return 'AMERICA FIRST DAILY BRIEF';
+        default: return 'DAILY BRIEFING';
+    }
+}
+
+function _getMorningBrief() {
+    return getAdvisorReaction('morningBrief') || getAdvisorReaction('weekStart');
+}
+
+function _getEscalationColor() {
+    const level = SIM.escalationLevel || 0;
+    const colors = ['#44dd88', '#88aa44', '#ddaa44', '#dd6644', '#dd4444', '#ff0000'];
+    return colors[Math.min(level, 5)];
+}
+
+function _getEscalationName() {
+    const level = SIM.escalationLevel || 0;
+    const names = ['DIPLOMATIC', 'NAVAL STANDOFF', 'LIMITED STRIKES', 'AIR CAMPAIGN', 'GROUND WAR', 'TOTAL WAR'];
+    return names[Math.min(level, 5)];
+}
 
 function formatEffectName(key) {
     const names = {

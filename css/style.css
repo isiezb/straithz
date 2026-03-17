@@ -44,10 +44,10 @@ body {
 #game-canvas {
     display: block;
     position: absolute;
-    top: 70px;
+    top: 114px;  /* 70px gauge + 44px tickers */
     left: 0;
     width: 100%;
-    height: calc(100% - 70px);
+    height: calc(100% - 114px);
     image-rendering: pixelated;
 }
 
@@ -152,6 +152,86 @@ body {
 @keyframes straitPulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.6; }
+}
+
+.mute-btn {
+    background: none;
+    border: 1px solid #1a3a2a;
+    color: #44dd88;
+    font-size: 14px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.mute-btn:hover {
+    border-color: #44dd88;
+    text-shadow: 0 0 6px rgba(68, 221, 136, 0.4);
+}
+
+.mute-btn.muted {
+    color: #2a6a4a;
+    border-color: #111;
+}
+
+/* ======================== NEWS TICKERS ======================== */
+
+#news-tickers {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #050505;
+}
+
+.ticker {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    border-bottom: 1px solid #0d1a10;
+    overflow: hidden;
+}
+
+.ticker-label {
+    flex-shrink: 0;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 0 8px;
+    color: #0a0a0a;
+    background: #44dd88;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.ticker.intel .ticker-label {
+    background: #ddaa44;
+    color: #0a0a0a;
+}
+
+.ticker-content {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 10px;
+    color: #44dd88;
+    letter-spacing: 0.5px;
+    padding-left: 12px;
+    animation: tickerScroll 30s linear infinite;
+}
+
+.ticker.intel .ticker-content {
+    color: #ddaa44;
+}
+
+@keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 /* ======================== TERMINAL OVERLAY ======================== */
@@ -990,7 +1070,7 @@ body {
 
 #toast-container {
     position: absolute;
-    top: 78px;
+    top: 122px;  /* Below tickers */
     right: 12px;
     width: 300px;
     display: flex;
