@@ -34,7 +34,7 @@ const CHARACTERS = [
         id: 'trump', name: 'Donald Trump', title: '45th & 47th President',
         spriteKey: 'portrait_trump', portraitImage: 'assets/trump.png',
         ability: 'The Decider',
-        abilityDesc: 'Gets ALL cards. 1.5x effects. Political Capital resource. 4 picks instead of 3.',
+        abilityDesc: 'Gets ALL cards. 1.5x effects. 4 picks. WIN: Make America win BIG — high approval, oil flowing, low tension.',
         lore: 'February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it.',
 
         // Unique resource
@@ -64,6 +64,14 @@ const CHARACTERS = [
                 },
             ],
             winFlavor: 'The art of the deal — on a global scale. Nobody handles pressure like you.',
+            winConditions: [
+                {
+                    id: 'win_big',
+                    check: (sim) => sim.domesticApproval >= 75 && sim.oilFlow >= 70 && sim.tension < 35 && sim.day >= 14,
+                    message: 'AMERICA WINS BIG. Oil is flowing, the base is ecstatic, and the world knows who solved the crisis. ' +
+                        'The polls are through the roof. Trump rallies sell out coast to coast. "Nobody could have done what I did. Nobody."',
+                },
+            ],
         },
 
         // Unique events
@@ -141,7 +149,7 @@ const CHARACTERS = [
         id: 'hegseth', name: 'Pete Hegseth', title: 'Secretary of War',
         spriteKey: 'portrait_hegseth', portraitImage: 'assets/pete.png',
         ability: 'The Warhorse',
-        abilityDesc: 'Command Authority resource. Military cards cost authority. Override special action.',
+        abilityDesc: 'Command Authority resource. Military cards cost authority. WIN: Total war with public support — crush Iran.',
         lore: 'February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran\'s response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You\'ve trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003.',
 
         uniqueResource: { id: 'commandAuthority', name: 'COMMAND AUTH', value: 60, max: 100, color: '#dd4444' },
@@ -188,6 +196,14 @@ const CHARACTERS = [
                 },
             ],
             winFlavor: 'Mission accomplished, sir. The strait is secure. Outstanding work by our troops.',
+            winConditions: [
+                {
+                    id: 'total_war_victory',
+                    check: (sim) => sim.escalationLevel >= 4 && sim.domesticApproval >= 55 && sim.iranAggression < 30 && sim.day >= 14,
+                    message: 'TOTAL VICTORY. Iran\'s military capability is shattered. The American public stands behind the mission. ' +
+                        'Pentagon brass call it "the most decisive military campaign since Desert Storm." Secretary Hegseth\'s war doctrine becomes textbook.',
+                },
+            ],
         },
 
         uniqueEvents: [
@@ -275,7 +291,7 @@ const CHARACTERS = [
         id: 'kushner', name: 'Jared Kushner', title: 'Senior Advisor',
         spriteKey: 'portrait_kushner', portraitImage: 'assets/kushner.png',
         ability: 'The Operator',
-        abilityDesc: 'Contacts & exposure system. Build trust with 5 key contacts. Avoid leaks.',
+        abilityDesc: 'Contacts & exposure system. Build trust, avoid leaks. WIN: Enrich yourself and build lasting relationships.',
         lore: 'February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they\'re all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe.',
 
         uniqueResource: { id: 'exposure', name: 'EXPOSURE', value: 10, max: 100, color: '#aa44dd', inverted: true },
@@ -311,6 +327,14 @@ const CHARACTERS = [
                 },
             ],
             winFlavor: 'The relationships we built made this possible. This is just the beginning.',
+            winConditions: [
+                {
+                    id: 'kushner_enrichment',
+                    check: (sim) => sim.uniqueResource >= 70 && sim.diplomaticCapital >= 55 && sim.budget >= 400 && sim.day >= 14,
+                    message: 'THE ART OF THE DEAL (FAMILY EDITION). Your back-channel relationships delivered a ceasefire — and a portfolio of Gulf state investments. ' +
+                        'Kushner Industries quietly signs a $2B development deal with Saudi Arabia. "It was never about the money," you tell reporters. It was always about the money.',
+                },
+            ],
         },
 
         uniqueEvents: [
@@ -399,7 +423,7 @@ const CHARACTERS = [
         id: 'asmongold', name: 'Asmongold', title: 'Streamer & Analyst',
         spriteKey: 'portrait_asmongold', portraitImage: 'assets/asmongold.png',
         ability: 'The Analyst',
-        abilityDesc: 'Credibility resource. Intel Feed mini-game. Flag signals from noise each week.',
+        abilityDesc: 'Credibility resource. Intel Feed mini-game. WIN: Be right about everything — high credibility, low fog, public loves you.',
         lore: 'February 28, 2026. Chat, this is not a drill. The US just killed Iran\'s Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran\'s response. The intel is flooding in faster than anyone can process. Except you.',
 
         uniqueResource: { id: 'credibility', name: 'CREDIBILITY', value: 50, max: 100, color: '#4488dd' },
@@ -449,6 +473,14 @@ const CHARACTERS = [
                 },
             ],
             winFlavor: 'GG EZ. Chat, we actually saved the strait. Let\'s go.',
+            winConditions: [
+                {
+                    id: 'called_it',
+                    check: (sim) => sim.uniqueResource >= 70 && sim.domesticApproval >= 60 && sim.fogOfWar < 40 && sim.day >= 14,
+                    message: 'ASMONGOLD WAS RIGHT. Every prediction landed. Chat clipped every call. The mainstream media is seething. ' +
+                        'Viewer count hits 500K as world leaders tune in for your post-crisis analysis. "I literally told you guys this would happen on day one." GG EZ.',
+                },
+            ],
         },
 
         uniqueEvents: [
@@ -523,7 +555,7 @@ const CHARACTERS = [
         id: 'fuentes', name: 'Nick Fuentes', title: 'Political Commentator',
         spriteKey: 'portrait_fuentes', portraitImage: 'assets/nick.png',
         ability: 'The Outsider',
-        abilityDesc: 'Base Enthusiasm drops 12/week without America First cards. Address the Nation special action.',
+        abilityDesc: 'Base Enthusiasm drops without America First cards. WIN: Pull out of the Middle East without losing global power.',
         lore: 'February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You\'re the youngest national security advisor in history.',
 
         uniqueResource: { id: 'baseEnthusiasm', name: 'BASE', value: 85, max: 100, color: '#ff6644' },
@@ -574,6 +606,14 @@ const CHARACTERS = [
                 },
             ],
             winFlavor: 'America First wins again. The establishment said it couldn\'t be done.',
+            winConditions: [
+                {
+                    id: 'america_first_victory',
+                    check: (sim) => sim.escalationLevel <= 1 && sim.internationalStanding >= 40 && sim.uniqueResource >= 60 && sim.day >= 14,
+                    message: 'AMERICA FIRST WINS. The troops are coming home. Iran backed down without a single American casualty. ' +
+                        'Global power intact, base ecstatic. The establishment is speechless. "We did it without their wars, without their deals, without their permission."',
+                },
+            ],
         },
 
         uniqueEvents: [

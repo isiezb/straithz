@@ -136,6 +136,7 @@ const SIM_DEFAULTS = {
     metricHistory: [], incidentMarkers: [], pendingEffects: [],
     intelBriefings: [], hawkDove: 50, unilateralMultilateral: 50, escalationRestraint: 50,
     uniqueResource: 0, _leakCount: 0,
+    decisionLog: [], weeklyReportActive: false, selectedEntity: null, selectedType: null,
 };
 
 const ESCALATION_LADDER = [
@@ -584,7 +585,6 @@ function dailyUpdate() {
 
     // Fog of war
     let fogDelta = getStanceEffect('fogOfWar');
-    if (SIM.character && SIM.character.intelMult) fogDelta *= SIM.character.intelMult;
     SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + 0.8 + fogDelta * 0.05));
 
     // Conflict risk
@@ -750,6 +750,11 @@ function dailyUpdate() {
         conflictRisk: SIM.conflictRisk, budget: SIM.budget,
         gauges: calculateGauges(), rating: calculateRating(),
     });
+
+    // --- Special Action Cooldown Decrement ---
+    if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown > 0) {
+        SIM.character.specialAction.cooldown--;
+    }
 
     // --- Character Unique Resource ---
     if (SIM.character && SIM.character.updateResource) {
@@ -918,7 +923,22 @@ function updateDomesticPolitics() {
 function checkWinLose() {
     if (SIM.gameOver) return true;
 
-    // --- Win: Strait open 14 consecutive days ---
+    // --- Win 1: Character-specific win conditions ---
+    if (SIM.character && SIM.character.scenario && SIM.character.scenario.winConditions) {
+        for (const wc of SIM.character.scenario.winConditions) {
+            if (wc.check(SIM)) {
+                wc._days = (wc._days || 0) + 1;
+                if (wc._days >= 3) { // Must sustain for 3 days
+                    endGame(true, wc.message);
+                    return true;
+                }
+            } else {
+                wc._days = 0;
+            }
+        }
+    }
+
+    // --- Win 2: Strait open 14 consecutive days (generic fallback) ---
     const recentSeizures = SIM.recentSeizureDays.filter(d => SIM.day - d <= 7).length;
     const straitOpen = SIM.oilFlow > 65 && SIM.tension < 45 && recentSeizures === 0 && SIM.crisisLevel === 0;
 
