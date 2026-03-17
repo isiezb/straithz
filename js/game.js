@@ -14,8 +14,8 @@
         initSimulation();
         initUI();
 
-        SIM.phase = 'initial_pick';
-        showInitialPick();
+        SIM.phase = 'morning';
+        showDailyReport();
 
         let lastFrame = 0;
 

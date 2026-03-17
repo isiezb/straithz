@@ -1413,7 +1413,7 @@ function restartGame() {
     SIM.week = 1;
     SIM.weekDay = 1;
     SIM.speed = 2;
-    SIM.phase = 'initial_pick';
+    SIM.phase = 'morning';
     SIM.actionPoints = 3;
     SIM.stanceActivationDay = {};
     SIM.firedConsequences = [];
@@ -1497,7 +1497,7 @@ function restartGame() {
 
     initSimulation();
     updateGauges();
-    showInitialPick();
+    showDailyReport();
 }
 
 // ======================== KEYBOARD SHORTCUTS ========================
