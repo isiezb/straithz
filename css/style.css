@@ -1044,56 +1044,7 @@ body {
 .cat-intelligence { color: #44dd88; }
 .cat-domestic { color: #aa88dd; }
 
-/* ======================== QUICK ACTIONS (during dayplay) ======================== */
-
-#quick-actions {
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 50;
-}
-
-.quick-btn {
-    background: rgba(10, 10, 10, 0.85);
-    border: 1px solid #1a3a2a;
-    color: #44dd88;
-    padding: 8px 14px;
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    cursor: pointer;
-    border-radius: 0;
-    transition: all 0.15s ease;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.quick-btn:hover {
-    border-color: #44dd88;
-    background: rgba(13, 42, 21, 0.9);
-    box-shadow: 0 0 8px rgba(68, 221, 136, 0.15);
-}
-
-.quick-btn.used {
-    border-color: #0d1a10;
-    color: #1a3a2a;
-    cursor: default;
-    pointer-events: none;
-}
-
-.quick-btn.skip-btn {
-    border-color: #ddaa44;
-    color: #ddaa44;
-    margin-top: 4px;
-}
-
-.quick-btn.skip-btn:hover {
-    background: rgba(26, 21, 0, 0.9);
-    box-shadow: 0 0 8px rgba(221, 170, 68, 0.15);
-}
+/* Action panel, floating numbers, and interrupt styles are injected via _injectActionPanelStyles() in ui.js */
 
 /* Special action button in daily report */
 .term-btn.special-btn.visible {

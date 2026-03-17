@@ -2,23 +2,80 @@
  * UI Controller — Daily Desk terminal screens
  * All screens use the lore intro typewriter aesthetic
  * Phases: initial_pick → daily_report → dayplay → event → daily_report (loop)
- * Quick actions available during dayplay
+ * Action Point system during dayplay (Game Dev Tycoon style)
  */
 
 const TERMINAL = document.getElementById('terminal-overlay');
 
-// Quick action cooldowns (reset each day)
-let _quickActionCooldowns = { intel: false, press: false, emergency: false, skip: false };
+// ======================== ACTION POINT SYSTEM ========================
+
+const INTERRUPTS = [
+    { text: "IRGC boat approaching tanker — intercept?", choices: [
+        { label: "INTERCEPT", effects: { tension: 3, interceptCount: 1, domesticApproval: 2 } },
+        { label: "MONITOR", effects: { tension: -1 } }
+    ]},
+    { text: "Reporter asks: 'Is war imminent?'", choices: [
+        { label: "DENY", effects: { domesticApproval: 2, tension: -2 } },
+        { label: "NO COMMENT", effects: {} }
+    ]},
+    { text: "Ally requests emergency meeting", choices: [
+        { label: "ACCEPT", effects: { internationalStanding: 3, diplomaticCapital: 3 } },
+        { label: "DECLINE", effects: { internationalStanding: -2 } }
+    ]},
+    { text: "Intel flash: suspicious vessel detected", choices: [
+        { label: "INVESTIGATE ($10M)", effects: { budget: -10, fogOfWar: -5 } },
+        { label: "LOG IT", effects: { fogOfWar: -1 } }
+    ]},
+    { text: "Congress member leaks classified info", choices: [
+        { label: "DAMAGE CONTROL", effects: { domesticApproval: -2, fogOfWar: 5 } },
+        { label: "IGNORE", effects: { polarization: 2 } }
+    ]},
+    { text: "Iranian fisherman rescued by Navy", choices: [
+        { label: "PUBLICIZE", effects: { internationalStanding: 3, domesticApproval: 2 } },
+        { label: "KEEP QUIET", effects: {} }
+    ]},
+    { text: "Oil company threatens to reroute permanently", choices: [
+        { label: "PROMISE PROTECTION", effects: { oilFlow: 3, tension: 2 } },
+        { label: "LET THEM", effects: { oilFlow: -3, oilPrice: 3 } }
+    ]},
+    { text: "Satellite shows new IRGC deployment", choices: [
+        { label: "ALERT ALLIES", effects: { internationalStanding: 2, fogOfWar: -3 } },
+        { label: "CLASSIFY", effects: { fogOfWar: -5 } }
+    ]},
+    { text: "Protest at embassy — 'No War With Iran'", choices: [
+        { label: "ACKNOWLEDGE", effects: { domesticApproval: 2, polarization: -1 } },
+        { label: "IGNORE", effects: { polarization: 2 } }
+    ]},
+    { text: "Iranian state TV mocks your leadership", choices: [
+        { label: "FIRE BACK", effects: { domesticApproval: 3, tension: 3, iranAggression: 2 } },
+        { label: "STAY SILENT", effects: { domesticApproval: -1 } }
+    ]},
+];
+
+const _intelSnippets = [
+    'SIGINT intercept: IRGC naval base showing increased activity.',
+    'Satellite imagery: new missile battery deployed near Bandar Abbas.',
+    'HUMINT report: Iranian commander expressing doubts about escalation.',
+    'Intercepted comms: supply convoy scheduled for next 48 hours.',
+    'Drone recon: mine-laying vessel spotted near shipping lane.',
+    'Signal analysis: Iranian C2 network traffic spike detected.',
+    'Asset report: internal regime debate over strait strategy.',
+    'NSA intercept: Chinese tanker negotiating alternate route.',
+];
+
+// Floating number stack counter for positioning
+let _floatingNumberStack = 0;
 
 function initUI() {
     updateGauges();
     setupKeyboardShortcuts();
+    _injectActionPanelStyles();
 }
 
 // ======================== TERMINAL HELPERS ========================
 
 function openTerminal(html) {
-    hideQuickActions();
+    hideActionPanel();
     TERMINAL.innerHTML = `
         <div class="terminal-bg"></div>
         <div class="terminal-box">
@@ -213,7 +270,7 @@ function showInitialPick() {
                 if (selected.length !== maxPicks) return;
                 applyStances(selected);
                 closeTerminal();
-                resetQuickActions();
+                resetActionPoints();
                 startDayPlay();
             });
         }
@@ -353,7 +410,7 @@ function showDailyReport() {
 
     document.getElementById('btn-maintain').addEventListener('click', () => {
         closeTerminal();
-        resetQuickActions();
+        resetActionPoints();
         startDayPlay();
     });
 
@@ -516,7 +573,7 @@ function showAdjustStrategy() {
                 addHeadline(`Strategy changed: ${removed.card.name} \u2192 ${replacement.card.name}`, 'warning');
 
                 closeTerminal();
-                resetQuickActions();
+                resetActionPoints();
                 startDayPlay();
             });
         }
@@ -525,127 +582,501 @@ function showAdjustStrategy() {
     render();
 }
 
-// ======================== QUICK ACTIONS (during dayplay) ========================
+// ======================== ACTION PANEL (replaces Quick Actions) ========================
 
-const _intelSnippets = [
-    'SIGINT intercept: IRGC naval base showing increased activity.',
-    'Satellite imagery: new missile battery deployed near Bandar Abbas.',
-    'HUMINT report: Iranian commander expressing doubts about escalation.',
-    'Intercepted comms: supply convoy scheduled for next 48 hours.',
-    'Drone recon: mine-laying vessel spotted near shipping lane.',
-    'Signal analysis: Iranian C2 network traffic spike detected.',
-    'Asset report: internal regime debate over strait strategy.',
-    'NSA intercept: Chinese tanker negotiating alternate route.',
-];
-
-function resetQuickActions() {
-    _quickActionCooldowns = { intel: false, press: false, emergency: false, skip: false };
+function resetActionPoints() {
+    SIM.actionPoints = 3;
+    if (SIM.roe === undefined) SIM.roe = 'defensive';
 }
 
-function showQuickActions() {
-    hideQuickActions(); // clean up any existing panel
+/** Backward compat alias */
+function resetQuickActions() {
+    resetActionPoints();
+}
+
+function _applyEffect(key, val) {
+    if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
+    else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
+    else if (key === 'tension') SIM.tension = Math.max(0, Math.min(100, SIM.tension + val));
+    else if (key === 'domesticApproval') SIM.domesticApproval = Math.max(0, Math.min(100, SIM.domesticApproval + val));
+    else if (key === 'internationalStanding') SIM.internationalStanding = Math.max(0, Math.min(100, SIM.internationalStanding + val));
+    else if (key === 'iranAggression') SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + val));
+    else if (key === 'budget') SIM.budget += val;
+    else if (key === 'conflictRisk') SIM.conflictRisk = Math.max(0, Math.min(100, SIM.conflictRisk + val));
+    else if (key === 'fogOfWar') SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + val));
+    else if (key === 'diplomaticCapital') SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital + val));
+    else if (key === 'proxyThreat') SIM.proxyThreat = Math.max(0, Math.min(100, SIM.proxyThreat + val));
+    else if (key === 'chinaRelations') SIM.chinaRelations = Math.max(0, Math.min(100, SIM.chinaRelations + val));
+    else if (key === 'russiaRelations') SIM.russiaRelations = Math.max(0, Math.min(100, SIM.russiaRelations + val));
+    else if (key === 'polarization') SIM.polarization = Math.max(0, Math.min(100, SIM.polarization + val));
+    else if (key === 'assassinationRisk') SIM.assassinationRisk = Math.max(0, Math.min(100, SIM.assassinationRisk + val));
+    else if (key === 'warPath') SIM.warPath = Math.max(0, SIM.warPath + val);
+    else if (key === 'iranEconomy') SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + val));
+    else if (key === 'interceptCount') SIM.interceptCount = (SIM.interceptCount || 0) + val;
+}
+
+function _applyEffects(effects) {
+    for (const [key, val] of Object.entries(effects)) {
+        _applyEffect(key, val);
+        if (val !== 0) {
+            showFloatingNumber(key, val);
+        }
+    }
+    updateGauges();
+}
+
+function _getROELabel() {
+    const roe = SIM.roe || 'defensive';
+    if (roe === 'defensive') return 'DEFENSIVE';
+    if (roe === 'moderate') return 'MODERATE';
+    return 'AGGRESSIVE';
+}
+
+function _getROEColor() {
+    const roe = SIM.roe || 'defensive';
+    if (roe === 'defensive') return '#44dd88';
+    if (roe === 'moderate') return '#ddaa44';
+    return '#dd4444';
+}
+
+function showActionPanel() {
+    hideActionPanel();
+
+    // Adjust canvas width to make room for action panel
+    const canvas = document.getElementById('game-canvas');
+    if (canvas) {
+        canvas.style.width = 'calc(100% - 280px)';
+    }
 
     const panel = document.createElement('div');
-    panel.id = 'quick-actions';
-    panel.style.cssText = 'position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:6px;z-index:900;';
+    panel.id = 'action-panel';
 
-    function renderButtons() {
-        const intelDisabled = _quickActionCooldowns.intel || SIM.budget < 20;
-        const pressDisabled = _quickActionCooldowns.press;
-        const emergencyDisabled = _quickActionCooldowns.emergency;
-        const skipDisabled = _quickActionCooldowns.skip;
+    function renderPanel() {
+        const ap = SIM.actionPoints || 0;
+        const apDots = Array.from({ length: 3 }, (_, i) => i < ap
+            ? '<span class="ap-dot filled">\u25CF</span>'
+            : '<span class="ap-dot empty">\u25CB</span>'
+        ).join('');
 
-        // Determine emergency action label
-        let emergencyLabel = 'EMERGENCY CALL';
-        if (SIM.tension > 60) emergencyLabel = 'EMERGENCY CALL: DE-ESCALATE';
-        else if (SIM.oilFlow < 40) emergencyLabel = 'EMERGENCY CALL: OIL FLOW';
+        const budgetStr = '$' + Math.round(SIM.budget) + 'M';
+        const roeLabel = _getROELabel();
+        const roeColor = _getROEColor();
+
+        // Determine if special action is available
+        let specialHtml = '';
+        if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown === 0) {
+            specialHtml = `
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#ddaa44">SPECIAL</div>
+                    <button class="ap-btn special" data-action="special">${SIM.character.specialAction.name.toUpperCase()}</button>
+                </div>
+            `;
+        } else if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown > 0) {
+            specialHtml = `
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#ddaa44">SPECIAL</div>
+                    <button class="ap-btn disabled">${SIM.character.specialAction.name.toUpperCase()} (${SIM.character.specialAction.cooldown}d)</button>
+                </div>
+            `;
+        }
 
         panel.innerHTML = `
-            <button class="qa-btn" id="qa-intel" ${intelDisabled ? 'disabled' : ''} style="${_btnStyle(intelDisabled)}">INTEL BRIEF ($20M)</button>
-            <button class="qa-btn" id="qa-press" ${pressDisabled ? 'disabled' : ''} style="${_btnStyle(pressDisabled)}">PRESS STATEMENT</button>
-            <button class="qa-btn" id="qa-emergency" ${emergencyDisabled ? 'disabled' : ''} style="${_btnStyle(emergencyDisabled)}">${emergencyLabel}</button>
-            <button class="qa-btn" id="qa-skip" ${skipDisabled ? 'disabled' : ''} style="${_btnStyle(skipDisabled)}">SKIP >></button>
+            <div class="ap-header">
+                <div class="ap-title">ACTIONS</div>
+                <div class="ap-points">AP: ${apDots}</div>
+                <div class="ap-budget">${budgetStr}</div>
+            </div>
+
+            <div class="ap-scroll">
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#44dd88">INTELLIGENCE</div>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 15 ? 'disabled' : ''}" data-action="gather-intel">GATHER INTEL <span class="ap-cost">$15M</span></button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="analyze-threats">ANALYZE THREATS</button>
+                </div>
+
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#4488dd">DIPLOMACY</div>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span></button>
+                </div>
+
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#dd4444">MILITARY</div>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="reposition-fleet">REPOSITION FLEET</button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="change-roe">CHANGE ROE <span class="ap-roe" style="color:${roeColor}">[${roeLabel}]</span></button>
+                </div>
+
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#aa88dd">DOMESTIC</div>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="press-conference">PRESS CONFERENCE</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 5 ? 'disabled' : ''}" data-action="brief-congress">BRIEF CONGRESS <span class="ap-cost">$5M</span></button>
+                </div>
+
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#ddaa44">ECONOMIC</div>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="adjust-sanctions">ADJUST SANCTIONS</button>
+                    <button class="ap-btn ${ap <= 0 || SIM.budget < 25 ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span></button>
+                </div>
+
+                ${specialHtml}
+            </div>
+
+            <div class="ap-footer">
+                <button class="ap-end-btn" data-action="end-day">[ END DAY ]</button>
+            </div>
         `;
 
-        // INTEL BRIEF
-        const intelBtn = panel.querySelector('#qa-intel');
-        if (intelBtn && !intelDisabled) {
-            intelBtn.addEventListener('click', () => {
-                _quickActionCooldowns.intel = true;
-                SIM.budget -= 20;
-                SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 5);
-                const snippet = _intelSnippets[Math.floor(Math.random() * _intelSnippets.length)];
-                showToast(snippet, 'good');
-                addHeadline('Intelligence brief requested.', 'normal');
-                renderButtons();
+        // Wire up buttons
+        panel.querySelectorAll('.ap-btn:not(.disabled)').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                if (!action) return;
+                _executeAction(action, renderPanel);
             });
-        }
+        });
 
-        // PRESS STATEMENT
-        const pressBtn = panel.querySelector('#qa-press');
-        if (pressBtn && !pressDisabled) {
-            pressBtn.addEventListener('click', () => {
-                _quickActionCooldowns.press = true;
-                SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 3);
-                SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 1);
-                showToast('Press statement issued. Domestic approval +3, Standing -1.', 'normal');
-                addHeadline('White House issues press statement on strait crisis.', 'normal');
-                renderButtons();
-            });
-        }
-
-        // EMERGENCY CALL
-        const emergencyBtn = panel.querySelector('#qa-emergency');
-        if (emergencyBtn && !emergencyDisabled) {
-            emergencyBtn.addEventListener('click', () => {
-                _quickActionCooldowns.emergency = true;
-                if (SIM.tension > 60) {
-                    SIM.tension = Math.max(0, SIM.tension - 5);
-                    SIM.iranAggression = Math.min(100, SIM.iranAggression + 2);
-                    showToast('Emergency call: Tension -5, Iran aggression +2.', 'warning');
-                    addHeadline('Emergency diplomatic channel activated.', 'normal');
-                } else if (SIM.oilFlow < 40) {
-                    SIM.oilFlow = Math.min(100, SIM.oilFlow + 5);
-                    showToast('Emergency call: Oil flow +5.', 'good');
-                    addHeadline('Emergency coordination restored partial oil flow.', 'normal');
-                } else {
-                    showToast('Emergency call placed. No immediate effect.', 'normal');
-                }
-                renderButtons();
-            });
-        }
-
-        // SKIP DAY
-        const skipBtn = panel.querySelector('#qa-skip');
-        if (skipBtn && !skipDisabled) {
-            skipBtn.addEventListener('click', () => {
-                _quickActionCooldowns.skip = true;
-                hideQuickActions();
-                advanceDay();
-            });
-        }
+        panel.querySelector('.ap-end-btn').addEventListener('click', () => {
+            _endDay();
+        });
     }
 
     document.body.appendChild(panel);
-    renderButtons();
+    renderPanel();
+
+    // Slide-in animation
+    requestAnimationFrame(() => {
+        panel.classList.add('visible');
+    });
 }
 
-function _btnStyle(disabled) {
-    if (disabled) {
-        return 'background:#1a1a2e;color:#555;border:1px solid #333;padding:6px 12px;font-family:inherit;font-size:11px;cursor:not-allowed;text-transform:uppercase;letter-spacing:1px;';
+function _executeAction(actionId, rerenderFn) {
+    if (SIM.actionPoints <= 0) return;
+
+    let toastMsg = '';
+    let toastLevel = 'normal';
+
+    switch (actionId) {
+        case 'gather-intel':
+            if (SIM.budget < 15) return;
+            SIM.budget -= 15;
+            SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 8);
+            showFloatingNumber('fogOfWar', -8);
+            showFloatingNumber('budget', -15);
+            const snippet = _intelSnippets[Math.floor(Math.random() * _intelSnippets.length)];
+            toastMsg = snippet;
+            toastLevel = 'good';
+            addHeadline('Intelligence gathering operation conducted.', 'normal');
+            break;
+
+        case 'analyze-threats':
+            if (SIM.fogOfWar < 50) {
+                // Useful info
+                const analyses = [
+                    'Analysis: Iran unlikely to escalate further this week.',
+                    'Analysis: IRGC supply lines vulnerable to interdiction.',
+                    'Analysis: Chinese mediation window closing.',
+                    'Analysis: Iran internal faction split detected — moderates gaining.',
+                    'Analysis: Proxy forces in Iraq repositioning.',
+                ];
+                toastMsg = analyses[Math.floor(Math.random() * analyses.length)];
+                toastLevel = 'good';
+                SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 3);
+                showFloatingNumber('fogOfWar', -3);
+            } else {
+                toastMsg = 'Too much fog \u2014 intel unclear';
+                toastLevel = 'warning';
+            }
+            addHeadline('Threat analysis conducted.', 'normal');
+            break;
+
+        case 'phone-call':
+            if (SIM.tension > 60) {
+                SIM.tension = Math.max(0, SIM.tension - 5);
+                SIM.iranAggression = Math.min(100, SIM.iranAggression + 2);
+                showFloatingNumber('tension', -5);
+                showFloatingNumber('iranAggression', 2);
+                toastMsg = 'De-escalation call placed';
+                toastLevel = 'good';
+            } else if (SIM.chinaRelations < 40) {
+                SIM.chinaRelations = Math.min(100, SIM.chinaRelations + 5);
+                showFloatingNumber('chinaRelations', 5);
+                toastMsg = 'Called Beijing';
+                toastLevel = 'good';
+            } else if (SIM.internationalStanding < 40) {
+                SIM.internationalStanding = Math.min(100, SIM.internationalStanding + 5);
+                showFloatingNumber('internationalStanding', 5);
+                toastMsg = 'Allied outreach';
+                toastLevel = 'good';
+            } else {
+                SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 3);
+                showFloatingNumber('diplomaticCapital', 3);
+                toastMsg = 'Routine diplomatic call';
+                toastLevel = 'normal';
+            }
+            addHeadline('Diplomatic phone call made.', 'normal');
+            break;
+
+        case 'draft-proposal':
+            if (SIM.budget < 10) return;
+            SIM.budget -= 10;
+            SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 5);
+            showFloatingNumber('diplomaticCapital', 5);
+            showFloatingNumber('budget', -10);
+            toastMsg = 'Diplomatic proposal drafted';
+            toastLevel = 'good';
+            addHeadline('Diplomatic proposal circulated to allies.', 'normal');
+            break;
+
+        case 'reposition-fleet':
+            SIM.tension = Math.min(100, SIM.tension + 2);
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 3);
+            showFloatingNumber('tension', 2);
+            showFloatingNumber('oilFlow', 3);
+            toastMsg = 'Fleet repositioned — show of strength';
+            toastLevel = 'normal';
+            addHeadline('Naval fleet repositioned in the strait.', 'normal');
+            break;
+
+        case 'change-roe': {
+            const roeOrder = ['defensive', 'moderate', 'aggressive'];
+            const currentIdx = roeOrder.indexOf(SIM.roe || 'defensive');
+            const nextIdx = (currentIdx + 1) % roeOrder.length;
+            SIM.roe = roeOrder[nextIdx];
+
+            if (SIM.roe === 'moderate') {
+                SIM.tension = Math.min(100, SIM.tension + 3);
+                SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 1);
+                showFloatingNumber('tension', 3);
+                showFloatingNumber('domesticApproval', 1);
+                toastMsg = 'ROE set to MODERATE \u2014 balanced posture';
+            } else if (SIM.roe === 'aggressive') {
+                SIM.tension = Math.min(100, SIM.tension + 5);
+                SIM.iranAggression = Math.max(0, SIM.iranAggression - 3);
+                SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 2);
+                showFloatingNumber('tension', 5);
+                showFloatingNumber('iranAggression', -3);
+                showFloatingNumber('internationalStanding', -2);
+                toastMsg = 'ROE set to AGGRESSIVE \u2014 Iran deterred, allies uneasy';
+            } else {
+                SIM.tension = Math.max(0, SIM.tension - 3);
+                SIM.internationalStanding = Math.min(100, SIM.internationalStanding + 2);
+                showFloatingNumber('tension', -3);
+                showFloatingNumber('internationalStanding', 2);
+                toastMsg = 'ROE set to DEFENSIVE \u2014 de-escalation';
+            }
+            toastLevel = 'normal';
+            addHeadline(`Rules of engagement changed to ${SIM.roe.toUpperCase()}.`, 'normal');
+            break;
+        }
+
+        case 'press-conference':
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 4);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 1);
+            SIM.polarization = Math.min(100, SIM.polarization + 1);
+            showFloatingNumber('domesticApproval', 4);
+            showFloatingNumber('internationalStanding', -1);
+            showFloatingNumber('polarization', 1);
+            toastMsg = 'Press conference held';
+            toastLevel = 'normal';
+            addHeadline('White House holds press conference on strait crisis.', 'normal');
+            break;
+
+        case 'brief-congress':
+            if (SIM.budget < 5) return;
+            SIM.budget -= 5;
+            SIM.polarization = Math.max(0, SIM.polarization - 3);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 2);
+            showFloatingNumber('polarization', -3);
+            showFloatingNumber('domesticApproval', 2);
+            showFloatingNumber('budget', -5);
+            toastMsg = 'Congressional briefing completed';
+            toastLevel = 'good';
+            addHeadline('Classified briefing delivered to Congress.', 'normal');
+            break;
+
+        case 'adjust-sanctions':
+            SIM.iranEconomy = Math.max(0, SIM.iranEconomy - 3);
+            SIM.chinaRelations = Math.max(0, SIM.chinaRelations - 2);
+            SIM.iranAggression = Math.min(100, SIM.iranAggression + 2);
+            showFloatingNumber('iranEconomy', -3);
+            showFloatingNumber('chinaRelations', -2);
+            showFloatingNumber('iranAggression', 2);
+            toastMsg = 'Sanctions tightened';
+            toastLevel = 'warning';
+            addHeadline('New sanctions imposed on Iranian entities.', 'normal');
+            break;
+
+        case 'market-intervention':
+            if (SIM.budget < 25) return;
+            SIM.budget -= 25;
+            SIM.oilPrice = Math.max(40, SIM.oilPrice - 5);
+            showFloatingNumber('oilPrice', -5);
+            showFloatingNumber('budget', -25);
+            toastMsg = 'Strategic reserve released \u2014 oil prices down';
+            toastLevel = 'good';
+            addHeadline('Strategic petroleum reserve release authorized.', 'normal');
+            break;
+
+        case 'special':
+            executeSpecialAction();
+            break;
+
+        default:
+            return;
     }
-    return 'background:#0a1a12;color:#44dd88;border:1px solid #44dd88;padding:6px 12px;font-family:inherit;font-size:11px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;';
+
+    // Spend AP
+    SIM.actionPoints = Math.max(0, SIM.actionPoints - 1);
+
+    if (toastMsg) showToast(toastMsg, toastLevel);
+    updateGauges();
+
+    // Check if AP exhausted
+    if (SIM.actionPoints <= 0) {
+        setTimeout(() => {
+            _endDay();
+        }, 600);
+        return;
+    }
+
+    // Random interrupt check (40% chance)
+    if (Math.random() < 0.4) {
+        setTimeout(() => {
+            showInterrupt(rerenderFn);
+        }, 400);
+    } else {
+        rerenderFn();
+    }
+}
+
+function _endDay() {
+    hideActionPanel();
+    advanceDay();
+}
+
+function showInterrupt(afterCallback) {
+    const panel = document.getElementById('action-panel');
+    if (!panel) { if (afterCallback) afterCallback(); return; }
+
+    const interrupt = INTERRUPTS[Math.floor(Math.random() * INTERRUPTS.length)];
+
+    // Create interrupt overlay inside the action panel
+    const overlay = document.createElement('div');
+    overlay.className = 'ap-interrupt';
+    overlay.innerHTML = `
+        <div class="ap-interrupt-flash">INCOMING</div>
+        <div class="ap-interrupt-text">${interrupt.text}</div>
+        <div class="ap-interrupt-choices">
+            ${interrupt.choices.map((c, i) => `
+                <button class="ap-interrupt-btn" data-choice="${i}">${c.label}</button>
+            `).join('')}
+        </div>
+    `;
+
+    panel.appendChild(overlay);
+
+    // Animate in
+    requestAnimationFrame(() => {
+        overlay.classList.add('visible');
+    });
+
+    overlay.querySelectorAll('.ap-interrupt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const choiceIdx = parseInt(btn.dataset.choice);
+            const choice = interrupt.choices[choiceIdx];
+
+            // Apply effects
+            _applyEffects(choice.effects);
+
+            // Toast the result
+            const effectStrs = Object.entries(choice.effects)
+                .filter(([k, v]) => v !== 0)
+                .map(([k, v]) => `${formatEffectName(k)} ${v > 0 ? '+' : ''}${v}`)
+                .join(', ');
+            if (effectStrs) {
+                showToast(`${choice.label}: ${effectStrs}`, 'normal');
+            }
+
+            addHeadline(`Interrupt: ${interrupt.text.substring(0, 40)}... \u2014 ${choice.label}`, 'normal');
+
+            // Remove overlay
+            overlay.classList.remove('visible');
+            setTimeout(() => {
+                overlay.remove();
+                if (afterCallback) afterCallback();
+            }, 300);
+        });
+    });
+}
+
+function hideActionPanel() {
+    const existing = document.getElementById('action-panel');
+    if (existing) existing.remove();
+
+    // Restore canvas width
+    const canvas = document.getElementById('game-canvas');
+    if (canvas) {
+        canvas.style.width = '100%';
+    }
+}
+
+/** Backward compat alias */
+function showQuickActions() {
+    showActionPanel();
 }
 
 function hideQuickActions() {
-    const existing = document.getElementById('quick-actions');
-    if (existing) existing.remove();
+    hideActionPanel();
+}
+
+// ======================== FLOATING NUMBERS ========================
+
+function showFloatingNumber(metricKey, value) {
+    if (value === 0) return;
+
+    const name = formatEffectName(metricKey);
+    const isPositive = value > 0;
+
+    // Determine if this metric going up is "good" or "bad"
+    const badIfUp = ['tension', 'iranAggression', 'conflictRisk', 'fogOfWar', 'polarization',
+                     'assassinationRisk', 'warPath', 'proxyThreat', 'exposure', 'oilPrice'];
+    const isGood = badIfUp.includes(metricKey) ? !isPositive : isPositive;
+
+    const text = `${isPositive ? '+' : ''}${value} ${name.toUpperCase()}`;
+    const color = isGood ? '#44dd88' : '#dd4444';
+
+    const el = document.createElement('div');
+    el.className = 'floating-number';
+    el.textContent = text;
+    el.style.color = color;
+    el.style.textShadow = `0 0 8px ${color}`;
+
+    // Stack offset
+    const stackOffset = _floatingNumberStack * 24;
+    _floatingNumberStack++;
+    setTimeout(() => { _floatingNumberStack = Math.max(0, _floatingNumberStack - 1); }, 600);
+
+    // Position near the action panel
+    el.style.right = '292px';
+    el.style.top = (120 + stackOffset) + 'px';
+
+    document.body.appendChild(el);
+
+    // Trigger animation
+    requestAnimationFrame(() => {
+        el.classList.add('animate');
+    });
+
+    // Remove after animation
+    setTimeout(() => {
+        el.remove();
+    }, 1500);
 }
 
 // ======================== DECISION EVENTS ========================
 
 function showDecisionEvent(event) {
-    hideQuickActions();
+    hideActionPanel();
     let countdown = event.countdown || 0;
     let countdownInterval = null;
 
@@ -836,7 +1267,7 @@ function generatePostMortem() {
 // ======================== GAME OVER ========================
 
 function showGameOverScreen() {
-    hideQuickActions();
+    hideActionPanel();
     const rating = calculateRating();
     const postMortem = generatePostMortem();
     const gradeClass = rating.score >= 60 ? 'good' : rating.score >= 35 ? 'warning' : 'danger';
@@ -880,7 +1311,7 @@ function showGameOverScreen() {
 
 function restartGame() {
     closeTerminal();
-    hideQuickActions();
+    hideActionPanel();
 
     const toastContainer = document.getElementById('toast-container');
     if (toastContainer) toastContainer.innerHTML = '';
@@ -891,7 +1322,7 @@ function restartGame() {
     SIM.weekDay = 1;
     SIM.speed = 2;
     SIM.phase = 'initial_pick';
-    SIM.dayPlayTimer = 0;
+    SIM.actionPoints = 3;
     SIM.stanceActivationDay = {};
     SIM.firedConsequences = [];
     SIM.pendingNews = [];
@@ -967,7 +1398,10 @@ function restartGame() {
         }
     }
 
-    resetQuickActions();
+    // Reset action points and ROE
+    resetActionPoints();
+    SIM.roe = 'defensive';
+
     initSimulation();
     updateGauges();
     showInitialPick();
@@ -999,6 +1433,297 @@ function formatEffectName(key) {
         blockadeLevel: 'Blockade', intelLevel: 'Intel Level', carrier: 'Carrier',
         politicalCapital: 'Political Capital', commandAuthority: 'Command Auth',
         credibility: 'Credibility', baseEnthusiasm: 'Base', exposure: 'Exposure',
+        oilFlow: 'Oil Flow', budget: 'Budget', interceptCount: 'Intercepts',
     };
     return names[key] || key;
+}
+
+// ======================== INJECT ACTION PANEL CSS ========================
+
+function _injectActionPanelStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* ======================== ACTION PANEL ======================== */
+
+        #action-panel {
+            position: fixed;
+            top: 70px;
+            right: 0;
+            width: 280px;
+            height: calc(100vh - 70px);
+            background: #0a0a0a;
+            border-left: 2px solid #1a3a2a;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Courier New', Courier, monospace;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        #action-panel.visible {
+            transform: translateX(0);
+        }
+
+        .ap-header {
+            padding: 12px 14px 10px;
+            border-bottom: 1px solid #1a3a2a;
+            flex-shrink: 0;
+        }
+
+        .ap-title {
+            font-size: 11px;
+            color: #2a6a4a;
+            letter-spacing: 4px;
+            margin-bottom: 6px;
+        }
+
+        .ap-points {
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .ap-dot.filled {
+            color: #44dd88;
+            text-shadow: 0 0 8px rgba(68, 221, 136, 0.5);
+        }
+
+        .ap-dot.empty {
+            color: #1a3a2a;
+        }
+
+        .ap-budget {
+            font-size: 11px;
+            color: #ddaa44;
+            letter-spacing: 1px;
+        }
+
+        .ap-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .ap-category {
+            padding: 0 14px;
+            margin-bottom: 10px;
+        }
+
+        .ap-cat-header {
+            font-size: 9px;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .ap-btn {
+            display: block;
+            width: 100%;
+            background: #0d1a10;
+            border: 1px solid #1a3a2a;
+            color: #44dd88;
+            padding: 7px 10px;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-align: left;
+            margin-bottom: 3px;
+            transition: all 0.15s ease;
+            border-radius: 0;
+            position: relative;
+        }
+
+        .ap-btn:hover {
+            border-color: #44dd88;
+            background: #0d2a15;
+            box-shadow: 0 0 8px rgba(68, 221, 136, 0.12);
+        }
+
+        .ap-btn:active {
+            background: #1a4a2a;
+            transform: scale(0.98);
+        }
+
+        .ap-btn.disabled {
+            color: #1a3a2a;
+            border-color: #111;
+            background: #080808;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .ap-btn.special {
+            border-color: #ddaa44;
+            color: #ddaa44;
+        }
+
+        .ap-btn.special:hover {
+            border-color: #ddaa44;
+            background: #1a1500;
+            box-shadow: 0 0 8px rgba(221, 170, 68, 0.15);
+        }
+
+        .ap-cost {
+            color: #2a6a4a;
+            font-size: 9px;
+            float: right;
+            margin-top: 1px;
+        }
+
+        .ap-roe {
+            font-size: 9px;
+            float: right;
+            margin-top: 1px;
+        }
+
+        .ap-footer {
+            padding: 10px 14px;
+            border-top: 1px solid #1a3a2a;
+            flex-shrink: 0;
+        }
+
+        .ap-end-btn {
+            display: block;
+            width: 100%;
+            background: transparent;
+            border: 2px solid #ddaa44;
+            color: #ddaa44;
+            padding: 10px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 0;
+            transition: all 0.15s ease;
+            text-shadow: 0 0 6px rgba(221, 170, 68, 0.3);
+        }
+
+        .ap-end-btn:hover {
+            background: #1a1500;
+            box-shadow: 0 0 12px rgba(221, 170, 68, 0.2);
+        }
+
+        /* ======================== INTERRUPT OVERLAY ======================== */
+
+        .ap-interrupt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 16px;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .ap-interrupt.visible {
+            opacity: 1;
+        }
+
+        .ap-interrupt-flash {
+            font-size: 10px;
+            color: #dd4444;
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+            animation: blink 0.8s infinite;
+            text-shadow: 0 0 8px rgba(221, 68, 68, 0.5);
+        }
+
+        .ap-interrupt-text {
+            font-size: 12px;
+            color: #44dd88;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            padding: 0 8px;
+            text-shadow: 0 0 4px rgba(68, 221, 136, 0.2);
+        }
+
+        .ap-interrupt-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .ap-interrupt-btn {
+            display: block;
+            width: 100%;
+            background: #0d1a10;
+            border: 2px solid #1a3a2a;
+            color: #44dd88;
+            padding: 12px 14px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 0;
+            transition: all 0.15s ease;
+        }
+
+        .ap-interrupt-btn:hover {
+            border-color: #44dd88;
+            background: #0d2a15;
+            box-shadow: 0 0 10px rgba(68, 221, 136, 0.2);
+        }
+
+        .ap-interrupt-btn:active {
+            background: #1a4a2a;
+        }
+
+        /* ======================== FLOATING NUMBERS ======================== */
+
+        .floating-number {
+            position: fixed;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            pointer-events: none;
+            z-index: 200;
+            opacity: 0;
+            transform: translateY(0);
+            white-space: nowrap;
+        }
+
+        .floating-number.animate {
+            animation: floatUp 1.4s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+            }
+            15% {
+                opacity: 1;
+                transform: translateY(0) scale(1.1);
+            }
+            30% {
+                transform: translateY(-5px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.9);
+            }
+        }
+
+        /* ======================== ACTION PANEL SCROLLBAR ======================== */
+
+        .ap-scroll::-webkit-scrollbar { width: 4px; }
+        .ap-scroll::-webkit-scrollbar-track { background: #0a0a0a; }
+        .ap-scroll::-webkit-scrollbar-thumb { background: #1a3a2a; }
+        .ap-scroll::-webkit-scrollbar-thumb:hover { background: #2a5a3a; }
+    `;
+    document.head.appendChild(style);
 }

@@ -710,17 +710,19 @@ function drawDayCounter(ctx, w, h) {
     ctx.textAlign = 'center';
     ctx.fillText(dayText, w * 0.5, 40);
 
-    // Hour progress bar
-    const barW = 120;
-    const barH = 3;
-    const barX = w * 0.5 - barW / 2;
-    const barY = 48;
-    const progress = SIM.dayPlayTimer ? Math.min(SIM.dayPlayTimer / 6000, 1) : 0;
-
-    ctx.fillStyle = 'rgba(26, 58, 42, 0.3)';
-    ctx.fillRect(barX, barY, barW, barH);
-    ctx.fillStyle = 'rgba(68, 221, 136, 0.3)';
-    ctx.fillRect(barX, barY, barW * progress, barH);
+    // AP indicator dots
+    const ap = SIM.actionPoints || 0;
+    const dotSize = 6;
+    const dotGap = 10;
+    const totalDotsW = 3 * dotSize + 2 * dotGap;
+    const dotsX = w * 0.5 - totalDotsW / 2;
+    const dotsY = 50;
+    for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = i < ap ? 'rgba(68, 221, 136, 0.6)' : 'rgba(26, 58, 42, 0.3)';
+        ctx.beginPath();
+        ctx.arc(dotsX + i * (dotSize + dotGap) + dotSize / 2, dotsY, dotSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
 
     ctx.restore();
 }

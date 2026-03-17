@@ -11,8 +11,11 @@ const SIM = {
     speed: 2,          // entity movement speed during dayplay
     phase: 'charselect', // charselect|lore|initial_pick|morning|dayplay|event|overnight|weekly_checkin|gameover
 
+    // Action Points
+    actionPoints: 3,
+    roe: 'defensive',       // rules of engagement: defensive/moderate/aggressive
+
     // Daily desk tracking
-    dayPlayTimer: 0,
     stanceActivationDay: {},  // {cardId: day} — when each stance was activated
     firedConsequences: [],    // consequence IDs already fired this game
     pendingNews: [],          // news items accumulated during a day
@@ -561,8 +564,9 @@ function dailyUpdate() {
 
     if (Math.random() < seizureChance && SIM.tankers.length > 0) {
         const blockadeLevel = getStanceMax('blockadeLevel');
-        // Intercept chance based on naval presence + blockade level
-        const interceptChance = Math.min(0.85, navalPresence * 0.15 + blockadeLevel * 0.15);
+        // Intercept chance based on naval presence + blockade level + ROE
+        const roeBonus = SIM.roe === 'aggressive' ? 0.25 : SIM.roe === 'moderate' ? 0.10 : 0;
+        const interceptChance = Math.min(0.85, navalPresence * 0.15 + blockadeLevel * 0.15 + roeBonus);
 
         if (Math.random() < interceptChance) {
             // Successful intercept
@@ -590,6 +594,18 @@ function dailyUpdate() {
                 addIncidentMarker(pos.x, pos.y, 'seizure', SIM.day);
                 if (!SIM.decisionEventActive) triggerSeizureDecision(tanker);
             }
+        }
+    }
+
+    // ROE effects
+    if (SIM.roe === 'moderate') {
+        SIM.tension = Math.min(100, SIM.tension + 1);
+    }
+    if (SIM.roe === 'aggressive') {
+        SIM.tension = Math.min(100, SIM.tension + 3);
+        if (Math.random() < 0.05) {
+            SIM.warPath++;
+            addHeadline('Aggressive ROE leads to dangerous confrontation', 'critical');
         }
     }
 
