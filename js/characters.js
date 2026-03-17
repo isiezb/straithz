@@ -1,14 +1,72 @@
 /**
- * Character Select Screen
+ * Character Select Screen — with unique passive abilities
  */
 
 const CHARACTERS = [
-    { id: 'trump', name: 'Donald Trump', title: '45th & 47th President', spriteKey: 'portrait_trump' },
-    { id: 'asmongold', name: 'Asmongold', title: 'Streamer & Analyst', spriteKey: 'portrait_asmongold' },
-    { id: 'fuentes', name: 'Nick Fuentes', title: 'Political Commentator', spriteKey: 'portrait_fuentes' },
-    { id: 'hegseth', name: 'Pete Hegseth', title: 'Secretary of Defense', spriteKey: 'portrait_hegseth' },
-    { id: 'kushner', name: 'Jared Kushner', title: 'Senior Advisor', spriteKey: 'portrait_kushner' },
+    {
+        id: 'trump', name: 'Donald Trump', title: '45th & 47th President',
+        spriteKey: 'portrait_trump',
+        ability: 'Maximum Pressure',
+        abilityDesc: 'Sanctions cost -30% and hit Iran economy harder.',
+        applyBonus(sim) {
+            // Applied in dailyUpdate
+        },
+    },
+    {
+        id: 'asmongold', name: 'Asmongold', title: 'Streamer & Analyst',
+        spriteKey: 'portrait_asmongold',
+        ability: 'Chat Reads Intel',
+        abilityDesc: 'Fog of War decreases 25% faster. Events reveal more info.',
+        applyBonus(sim) {},
+    },
+    {
+        id: 'fuentes', name: 'Nick Fuentes', title: 'Political Commentator',
+        spriteKey: 'portrait_fuentes',
+        ability: 'America First',
+        abilityDesc: 'Approval loss from military actions reduced by 40%.',
+        applyBonus(sim) {},
+    },
+    {
+        id: 'hegseth', name: 'Pete Hegseth', title: 'Secretary of Defense',
+        spriteKey: 'portrait_hegseth',
+        ability: 'Warrior Ethos',
+        abilityDesc: 'Navy ships intercept at longer range. +20% readiness.',
+        applyBonus(sim) {},
+    },
+    {
+        id: 'kushner', name: 'Jared Kushner', title: 'Senior Advisor',
+        spriteKey: 'portrait_kushner',
+        ability: 'Back-Channel Deals',
+        abilityDesc: 'Diplomacy cooldowns reduced by 3 days. +10 starting diplomatic capital.',
+        applyBonus(sim) {
+            sim.diplomaticCapital += 10;
+        },
+    },
 ];
+
+function getCharacterBonus(key) {
+    if (!SIM.character) return 0;
+    switch (SIM.character.id) {
+        case 'trump':
+            if (key === 'sanctionsCostMult') return 0.7;
+            if (key === 'sanctionsEconMult') return 1.5;
+            break;
+        case 'asmongold':
+            if (key === 'fogReduction') return 1.25;
+            break;
+        case 'fuentes':
+            if (key === 'approvalLossMult') return 0.6;
+            break;
+        case 'hegseth':
+            if (key === 'interceptRange') return 1.3;
+            if (key === 'readinessBonus') return 20;
+            break;
+        case 'kushner':
+            if (key === 'diplomacyCooldownReduction') return 3;
+            break;
+    }
+    return 0;
+}
 
 function showCharacterSelect() {
     return new Promise((resolve) => {
@@ -30,6 +88,7 @@ function showCharacterSelect() {
                                     <div class="char-name">${ch.name}</div>
                                     <div class="char-title">${ch.title}</div>
                                 </div>
+                                ${selectedIdx === i ? `<div class="char-ability"><span class="ability-name">${ch.ability}</span><span class="ability-desc">${ch.abilityDesc}</span></div>` : ''}
                             </div>
                         `).join('')}
                     </div>

@@ -486,7 +486,7 @@ body {
     padding: 12px 10px 10px;
     cursor: pointer;
     transition: all 0.15s ease;
-    width: 110px;
+    width: 120px;
     text-align: center;
 }
 
@@ -520,6 +520,32 @@ body {
     font-size: 8px;
     color: #2a6a4a;
     letter-spacing: 1px;
+}
+
+.char-ability {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #1a3a2a;
+}
+
+.char-ability .ability-name {
+    display: block;
+    font-size: 8px;
+    color: #ddaa44;
+    letter-spacing: 1px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.char-ability .ability-desc {
+    display: block;
+    font-size: 7px;
+    color: #2a6a4a;
+    line-height: 1.4;
+}
+
+.char-card.selected .char-ability .ability-desc {
+    color: #448866;
 }
 
 .begin-btn {
