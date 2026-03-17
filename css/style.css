@@ -476,6 +476,84 @@ body {
 .morning-news-item.warning { color: #ddaa44; }
 .morning-news-item.good { color: #44dd88; }
 
+/* Wire service format hierarchy */
+.wire-prefix { font-weight: bold; letter-spacing: 2px; margin-right: 4px; }
+.wire-flash { color: #dd4444; text-shadow: 0 0 6px rgba(221, 68, 68, 0.4); }
+.wire-urgent { color: #ddaa44; text-shadow: 0 0 4px rgba(221, 170, 68, 0.3); }
+.wire-bulletin { color: #44dd88; }
+.wire-sitrep { color: #88aa99; letter-spacing: 1px; }
+.wire-cable { color: #4488dd; }
+.wire-cia { color: #aa88dd; }
+.wire-classify { color: #2a6a4a; font-size: 9px; letter-spacing: 2px; }
+
+/* Intel confidence tags */
+.conf-high { color: #44dd88; font-weight: bold; }
+.conf-medium { color: #ddaa44; font-weight: bold; }
+.conf-low { color: #2a6a4a; font-weight: bold; }
+.conf-wrong { color: #2a6a4a; font-style: italic; }
+
+/* Pending orders in daily report */
+.pending-order {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 11px;
+    border-bottom: 1px solid #0d1a10;
+}
+.pending-order .po-name { color: #ddaa44; }
+.pending-order .po-eta { color: #2a6a4a; letter-spacing: 1px; }
+
+/* Crisis telephone event */
+.crisis-terminal .terminal-box {
+    border: 2px solid #dd4444;
+    box-shadow: 0 0 30px rgba(221, 68, 68, 0.3);
+    animation: crisisPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes crisisPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(221, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(221, 68, 68, 0.5); }
+}
+
+.crisis-header {
+    color: #dd4444;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 4px;
+    text-shadow: 0 0 8px rgba(221, 68, 68, 0.4);
+    animation: crisisBlink 0.8s ease-in-out infinite;
+}
+
+@keyframes crisisBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.crisis-choice {
+    display: block;
+    width: 100%;
+    background: #1a0808;
+    border: 2px solid #3a1a1a;
+    color: #dd8888;
+    padding: 12px;
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+    border-radius: 0;
+    margin-bottom: 6px;
+}
+.crisis-choice:hover {
+    border-color: #dd4444;
+    background: #2a0808;
+    box-shadow: 0 0 8px rgba(221, 68, 68, 0.15);
+}
+.crisis-choice .choice-text { color: #dd4444; }
+.crisis-choice .choice-effects .positive { color: #44dd88; }
+.crisis-choice .choice-effects .negative { color: #dd4444; }
+
 /* ======================== STRATEGY ADJUST ======================== */
 
 .adjust-card {

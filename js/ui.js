@@ -392,15 +392,8 @@ function showInitialPick() {
     render();
 }
 
-/** Apply selected stances to SIM */
+/** Apply selected stances to SIM — military activates fast, diplomacy/economics delayed */
 function applyStances(selected) {
-    SIM.activeStances = selected.map(s => ({ cardId: s.card.id, funding: s.funding }));
-    // Track activation day
-    for (const s of selected) {
-        if (!SIM.stanceActivationDay[s.card.id]) {
-            SIM.stanceActivationDay[s.card.id] = SIM.day;
-        }
-    }
     // Track exclusive cards
     for (const s of selected) {
         const isBonus = Object.values(CHARACTER_BONUS_CARDS).some(b => b.id === s.card.id);
@@ -419,8 +412,32 @@ function applyStances(selected) {
             }
         }
     }
+    // Track alignment shifts from card choices
     for (const s of selected) {
-        addHeadline(`Strategy deployed: ${s.card.name} (${s.funding})`, 'normal');
+        if (s.card.effects && s.card.effects[s.funding] && typeof shiftAlignment === 'function') {
+            shiftAlignment(s.card.effects[s.funding]);
+        }
+    }
+    // Queue effects with implementation delay
+    for (const s of selected) {
+        const delay = s.card.delayDays || (typeof CATEGORY_DELAY !== 'undefined' ? CATEGORY_DELAY[s.card.category] : 1) || 1;
+        if (delay <= 1) {
+            // Military: instant activation
+            if (!SIM.activeStances.find(st => st.cardId === s.card.id)) {
+                SIM.activeStances.push({ cardId: s.card.id, funding: s.funding });
+                SIM.stanceActivationDay[s.card.id] = SIM.day;
+            }
+            addHeadline(`SITREP: ${s.card.name} (${s.funding.toUpperCase()}) operational`, 'normal');
+        } else {
+            // Delayed activation
+            if (typeof queueCardEffects === 'function') {
+                queueCardEffects(s.card, s.funding);
+            } else {
+                SIM.activeStances.push({ cardId: s.card.id, funding: s.funding });
+                SIM.stanceActivationDay[s.card.id] = SIM.day;
+                addHeadline(`Strategy deployed: ${s.card.name} (${s.funding})`, 'normal');
+            }
+        }
     }
 }
 
@@ -447,13 +464,19 @@ function showDailyReport() {
         { label: 'INTEL', value: g.intel, delta: delta(g.intel, prev.intel) },
     ];
 
-    // Headlines for current day
+    // Headlines for current day — with wire service formatting
     const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day).slice(-5);
     let headlinesHtml;
     if (SIM.day === 1) {
-        headlinesHtml = '<div class="morning-news-item critical">US-Israel strikes killed Khamenei. Iran retaliating with 500+ missiles and 2,000 drones. Strait under siege.</div>';
+        headlinesHtml = '<div class="morning-news-item critical"><span class="wire-prefix wire-flash">AP FLASH:</span> US-Israel strikes killed Khamenei. Iran retaliating with 500+ missiles and 2,000 drones. Strait under siege.</div>';
     } else if (todayHeadlines.length > 0) {
-        headlinesHtml = todayHeadlines.map(h => `<div class="morning-news-item ${h.level}">${h.text}</div>`).join('');
+        headlinesHtml = todayHeadlines.map(h => {
+            const prefix = h.level === 'critical' ? '<span class="wire-prefix wire-flash">FLASH</span> '
+                         : h.level === 'warning' ? '<span class="wire-prefix wire-urgent">URGENT</span> '
+                         : h.level === 'good' ? '<span class="wire-prefix wire-bulletin">BULLETIN</span> '
+                         : '';
+            return `<div class="morning-news-item ${h.level}">${prefix}${h.text}</div>`;
+        }).join('');
     } else {
         headlinesHtml = '<div class="term-line dim">Nothing notable happened today.</div>';
     }
@@ -502,6 +525,27 @@ function showDailyReport() {
             <div class="term-section-label">ACTIVE STRATEGY</div>
             ${stanceHtml || '<div class="term-line dim">No active strategies.</div>'}
         </div>
+
+        ${SIM.pendingEffects.length > 0 ? `
+        <div class="term-section">
+            <div class="term-section-label">PENDING ORDERS</div>
+            ${SIM.pendingEffects.map(p => {
+                const eta = p.activateOnDay - SIM.day;
+                return `<div class="pending-order">
+                    <span class="po-name">${p.cardName} (${p.funding.toUpperCase()})</span>
+                    <span class="po-eta">ETA: ${eta === 1 ? 'TOMORROW' : eta + ' DAYS'}</span>
+                </div>`;
+            }).join('')}
+        </div>` : ''}
+
+        ${SIM.intelBriefings.length > 0 ? `
+        <div class="term-section">
+            <div class="term-section-label"><span class="wire-classify">TOP SECRET // SI // NOFORN</span> \u2014 INTEL SUMMARY</div>
+            ${SIM.intelBriefings.slice(-3).map(b => {
+                const confClass = b.confidence === 'HIGH' ? 'conf-high' : b.confidence === 'MEDIUM' ? 'conf-medium' : 'conf-low';
+                return `<div class="morning-news-item" style="font-size:11px"><span class="${confClass}">[${b.confidence}]</span> ${b.text}</div>`;
+            }).join('')}
+        </div>` : ''}
 
         <div class="term-section">
             <div class="term-section-label">STATUS</div>
@@ -1221,8 +1265,11 @@ function showDecisionEvent(event) {
     hideActionPanel();
     let countdown = event.countdown || 0;
     let countdownInterval = null;
+    const isCrisis = event.crisis === true;
 
     function renderEvent() {
+        const btnClass = isCrisis ? 'crisis-choice' : 'decision-choice';
+
         const choicesHtml = event.choices.map((choice, i) => {
             const hints = Object.entries(choice.effects).map(([key, val]) => {
                 if (val === 0) return '';
@@ -1233,27 +1280,37 @@ function showDecisionEvent(event) {
             }).filter(Boolean).join(' ');
 
             return `
-                <button class="decision-choice" data-idx="${i}">
+                <button class="${btnClass}" data-idx="${i}">
                     <span class="choice-text">${choice.text}</span>
                     <span class="choice-effects">${hints || 'No immediate effects'}</span>
                 </button>
             `;
         }).join('');
 
+        const crisisHeader = isCrisis ? '<div class="crisis-header">\u2588 CRISIS TELEPHONE \u2588</div>' : '';
+        const headerStyle = isCrisis ? 'color:#dd4444' : '';
+        const titleStyle = isCrisis ? 'color:#dd4444;text-shadow:0 0 10px rgba(221,68,68,0.4)' : '';
+
         openTerminal(`
+            ${crisisHeader}
             ${countdown > 0 ? `<div class="decision-timer">${countdown}s</div>` : ''}
-            <div class="term-header">DAY ${SIM.day} \u2014 DECISION REQUIRED</div>
-            <div class="term-title">${event.title}</div>
-            <div class="term-line" style="margin-bottom:16px">${event.description}</div>
+            <div class="term-header" style="${headerStyle}">DAY ${SIM.day} \u2014 ${isCrisis ? 'CRISIS' : 'DECISION REQUIRED'}</div>
+            <div class="term-title" style="${titleStyle}">${event.title}</div>
+            <div class="term-line" style="margin-bottom:16px${isCrisis ? ';color:#dd8888' : ''}">${event.description}</div>
             <div class="term-section">
-                <div class="term-section-label">OPTIONS</div>
+                <div class="term-section-label" ${isCrisis ? 'style="color:#dd4444"' : ''}>${isCrisis ? 'NO SAFE OPTIONS' : 'OPTIONS'}</div>
                 ${choicesHtml}
             </div>
         `);
 
-        TERMINAL.querySelectorAll('.decision-choice').forEach(btn => {
+        // Add crisis styling to terminal
+        if (isCrisis) TERMINAL.classList.add('crisis-terminal');
+        else TERMINAL.classList.remove('crisis-terminal');
+
+        TERMINAL.querySelectorAll('.' + btnClass).forEach(btn => {
             btn.addEventListener('click', () => {
                 if (countdownInterval) clearInterval(countdownInterval);
+                TERMINAL.classList.remove('crisis-terminal');
                 resolveDecision(event, parseInt(btn.dataset.idx));
             });
         });
@@ -1268,6 +1325,7 @@ function showDecisionEvent(event) {
             if (timerEl) timerEl.textContent = countdown > 0 ? `${countdown}s` : 'TIME UP';
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
+                TERMINAL.classList.remove('crisis-terminal');
                 resolveDecision(event, 0);
             }
         }, 1000);
@@ -1276,6 +1334,9 @@ function showDecisionEvent(event) {
 
 function resolveDecision(event, choiceIdx) {
     const choice = event.choices[choiceIdx];
+
+    // Track hidden alignment
+    if (typeof shiftAlignment === 'function') shiftAlignment(choice.effects);
 
     // Apply effects
     for (const [key, val] of Object.entries(choice.effects)) {
@@ -1520,43 +1581,42 @@ function updateTickers() {
     const intelEl = document.getElementById('intel-ticker-content');
     if (!publicEl || !intelEl) return;
 
-    // Public ticker: recent headlines (last 8)
+    // Public ticker: wire service format (last 8 non-normal)
     const publicNews = SIM.headlines
         .filter(h => h.level !== 'normal')
         .slice(-8)
-        .map(h => h.text)
-        .join('  ///  ');
+        .map(h => {
+            // Apply wire service prefix based on level
+            if (h.text.match(/^(AP |REUTERS |SITREP |STATE |CIA |EMBASSY |DIPNOTE|TREASURY|WHITE HOUSE)/)) return h.text;
+            if (h.level === 'critical') return 'AP FLASH: ' + h.text;
+            if (h.level === 'warning') return 'REUTERS URGENT: ' + h.text;
+            return 'AP BULLETIN: ' + h.text;
+        })
+        .join('  \u2502  ');
 
-    // Intel ticker: fog-dependent
+    // Intel ticker: confidence-tagged briefings
     let intelNews;
     if (SIM.fogOfWar > 70) {
-        intelNews = 'INTEL DEGRADED \u2014 INCREASE SURVEILLANCE ASSETS  ///  Signal clarity: LOW  ///  Multiple unverified contacts  ///  Assessment confidence: MINIMAL';
-    } else if (SIM.fogOfWar > 40) {
-        const intelItems = [
-            `Iran strategy: ${(SIM.iranStrategy || 'unknown').toUpperCase()}`,
-            `Iran aggression index: ${Math.round(SIM.iranAggression)}`,
-            `Proxy threat level: ${SIM.proxyThreat > 50 ? 'HIGH' : SIM.proxyThreat > 25 ? 'MODERATE' : 'LOW'}`,
-            `IRGC naval assets tracked: ${SIM.iranBoats.length}`,
-            `Active mines detected: ${SIM.mines.length}`,
-            `FOG: ${Math.round(SIM.fogOfWar)}% \u2014 partial picture`,
-        ];
-        intelNews = intelItems.join('  ///  ');
+        intelNews = 'TOP SECRET // SI // NOFORN \u2014 INTEL DEGRADED  \u2502  Signal clarity: LOW  \u2502  Multiple unverified contacts  \u2502  Assessment confidence: MINIMAL  \u2502  INCREASE SURVEILLANCE ASSETS';
     } else {
-        const intelItems = [
-            `Iran strategy: ${(SIM.iranStrategy || 'unknown').toUpperCase()}`,
-            `Aggression: ${Math.round(SIM.iranAggression)} | Economy: ${Math.round(SIM.iranEconomy)}`,
-            `IRGC boats: ${SIM.iranBoats.length} | Mines: ${SIM.mines.length}`,
-            `Proxy threat: ${Math.round(SIM.proxyThreat)} | China relations: ${Math.round(SIM.chinaRelations)}`,
-            `Nuclear risk: ${SIM.iranAggression > 70 ? 'ELEVATED' : 'BASELINE'}`,
-            `Escalation: ${_getEscalationName()}`,
-            `FOG: ${Math.round(SIM.fogOfWar)}% \u2014 good intel picture`,
+        const recentIntel = SIM.intelBriefings.slice(-5);
+        const statusItems = [
+            `Iran: ${(SIM.iranStrategy || 'unknown').toUpperCase()}`,
+            `IRGC assets: ${SIM.iranBoats.length}`,
+            `Mines: ${SIM.mines.length}`,
+            `Proxy: ${SIM.proxyThreat > 50 ? 'HIGH' : SIM.proxyThreat > 25 ? 'MOD' : 'LOW'}`,
         ];
-        intelNews = intelItems.join('  ///  ');
+        if (SIM.fogOfWar <= 40) {
+            statusItems.push(`Aggr: ${Math.round(SIM.iranAggression)}`);
+            statusItems.push(`Nuke: ${SIM.iranAggression > 70 ? 'ELEVATED' : 'BASELINE'}`);
+        }
+        const intelItems = recentIntel.map(b => `[${b.confidence}] ${b.text}`);
+        intelNews = [...statusItems, ...intelItems].join('  \u2502  ');
     }
 
     // Duplicate for seamless scroll
-    publicEl.innerHTML = publicNews ? `<span>${publicNews}  ///  ${publicNews}</span>` : '<span>No breaking news.</span>';
-    intelEl.innerHTML = `<span>${intelNews}  ///  ${intelNews}</span>`;
+    publicEl.innerHTML = publicNews ? `<span>${publicNews}  \u2502  ${publicNews}</span>` : '<span>No breaking news.</span>';
+    intelEl.innerHTML = `<span>${intelNews}  \u2502  ${intelNews}</span>`;
 }
 
 // ======================== HELPERS ========================

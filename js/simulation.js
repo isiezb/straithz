@@ -93,6 +93,17 @@ const SIM = {
     // Map incident markers
     incidentMarkers: [],
 
+    // Implementation delay queue
+    pendingEffects: [],  // [{cardId, cardName, category, funding, effects, activateOnDay}]
+
+    // Intel confidence system
+    intelBriefings: [],  // [{text, confidence, accurate, day}]
+
+    // Hidden alignment (Suzerain-style — player never sees these)
+    hawkDove: 50,           // 0=dove, 100=hawk
+    unilateralMultilateral: 50,  // 0=multilateral, 100=unilateral
+    escalationRestraint: 50,     // 0=restraint, 100=escalation
+
     // Character unique resource (copied from character on init)
     uniqueResource: 0,
     _leakCount: 0, // Kushner leak tracking
@@ -119,7 +130,8 @@ const SIM_DEFAULTS = {
     crisisLevel: 1, crisisTimer: 5, consecutiveProvocations: 3,
     interceptCount: 0, seizureCount: 0,
     decisionEventActive: false, decisionHistory: [], lastDecisionDay: 0,
-    metricHistory: [], incidentMarkers: [],
+    metricHistory: [], incidentMarkers: [], pendingEffects: [],
+    intelBriefings: [], hawkDove: 50, unilateralMultilateral: 50, escalationRestraint: 50,
     uniqueResource: 0, _leakCount: 0,
 };
 
@@ -332,6 +344,10 @@ function checkConsequenceEvents() {
     // Crisis escalation
     if (SIM.tension > 80 && Math.random() < 0.15) escalateCrisis();
 
+    // Check for crisis telephone events first (override normal events)
+    const crisisEvent = checkCrisisEvents();
+    if (crisisEvent) return crisisEvent;
+
     // Check for structured decision events
     const usedIds = SIM.decisionHistory.map(d => d.id);
     let allEvents = [...DECISION_EVENTS];
@@ -470,6 +486,12 @@ function addIncidentMarker(x, y, type, day) {
 // ======================== DAILY UPDATE ========================
 
 function dailyUpdate() {
+    // --- Process pending delayed effects ---
+    processPendingEffects();
+
+    // --- Generate daily intel briefing ---
+    if (Math.random() < 0.7) generateIntelItem();
+
     // --- Iran Strategy AI ---
     updateIranStrategy();
 
@@ -1882,6 +1904,248 @@ const DECISION_EVENTS = [
         ],
     },
 ];
+
+// ======================== IMPLEMENTATION DELAY SYSTEM ========================
+
+/** Delay in days by card category (Democracy-inspired) */
+const CATEGORY_DELAY = {
+    military: 1,
+    intelligence: 2,
+    domestic: 3,
+    diplomatic: 5,
+    economic: 10,
+};
+
+/** Queue a card's effects for delayed activation */
+function queueCardEffects(card, funding) {
+    const delay = card.delayDays || CATEGORY_DELAY[card.category] || 1;
+    const effects = card.effects[funding];
+    if (!effects) return;
+    SIM.pendingEffects.push({
+        cardId: card.id,
+        cardName: card.name,
+        category: card.category,
+        funding,
+        effects,
+        activateOnDay: SIM.day + delay,
+        queuedDay: SIM.day,
+    });
+    const delayLabel = delay === 1 ? 'tomorrow' : `in ${delay} days`;
+    addHeadline(formatWire(`${card.name} (${funding.toUpperCase()}) ordered — takes effect ${delayLabel}`, card.category, 'normal'), 'normal');
+}
+
+/** Process pending effects in dailyUpdate */
+function processPendingEffects() {
+    const ready = SIM.pendingEffects.filter(p => SIM.day >= p.activateOnDay);
+    const remaining = SIM.pendingEffects.filter(p => SIM.day < p.activateOnDay);
+    SIM.pendingEffects = remaining;
+
+    for (const p of ready) {
+        // Apply effects through stance system (add to active stances)
+        if (!SIM.activeStances.find(s => s.cardId === p.cardId)) {
+            SIM.activeStances.push({ cardId: p.cardId, funding: p.funding });
+            SIM.stanceActivationDay[p.cardId] = SIM.day;
+        }
+        const announcements = {
+            military: `SITREP ${_formatDTG()}: ${p.cardName} operational — all units report ready`,
+            diplomatic: `STATE CABLE // CONFIDENTIAL: ${p.cardName} initiative now active`,
+            economic: `TREASURY NOTICE: ${p.cardName} sanctions package in effect`,
+            intelligence: `CIA OPS NOTICE [TS//SI]: ${p.cardName} collection active`,
+            domestic: `WHITE HOUSE: ${p.cardName} program launched`,
+        };
+        addHeadline(announcements[p.category] || `${p.cardName} now active`, 'good');
+    }
+}
+
+// ======================== INTEL CONFIDENCE SYSTEM ========================
+
+/** Generate an intel briefing item with confidence tag */
+function generateIntelItem() {
+    // Confidence depends on fog of war
+    let confidence;
+    const roll = Math.random() * 100;
+    if (SIM.fogOfWar > 70) {
+        confidence = roll < 50 ? 'LOW' : roll < 85 ? 'MEDIUM' : 'HIGH';
+    } else if (SIM.fogOfWar > 40) {
+        confidence = roll < 20 ? 'LOW' : roll < 65 ? 'MEDIUM' : 'HIGH';
+    } else {
+        confidence = roll < 5 ? 'LOW' : roll < 30 ? 'MEDIUM' : 'HIGH';
+    }
+
+    // LOW confidence has 40% chance of being wrong
+    const accurate = confidence === 'LOW' ? Math.random() > 0.4 :
+                     confidence === 'MEDIUM' ? Math.random() > 0.1 : true;
+
+    let text;
+    if (accurate) {
+        text = _intelSnippets[Math.floor(Math.random() * _intelSnippets.length)];
+    } else {
+        text = _falseIntelSnippets[Math.floor(Math.random() * _falseIntelSnippets.length)];
+    }
+
+    const item = { text, confidence, accurate, day: SIM.day };
+    SIM.intelBriefings.push(item);
+    // Keep last 20
+    if (SIM.intelBriefings.length > 20) SIM.intelBriefings.shift();
+    return item;
+}
+
+/** False intel — plausible but wrong (information asymmetry) */
+const _falseIntelSnippets = [
+    'HUMINT: IRGC withdrawing fast boats from Larak Island — de-escalation signal.',
+    'SIGINT intercept: Iranian submarine returning to port — standing down.',
+    'Asset report: Mojtaba Khamenei seeking secret ceasefire through Turkey.',
+    'Satellite: Iran dismantling coastal missile batteries near Qeshm.',
+    'Intercepted comms: IRGC commanders expressing desire to negotiate.',
+    'HUMINT: Iranian moderates have won internal debate — expect de-escalation.',
+    'NSA intercept: China pressuring Iran to release all tankers immediately.',
+    'Satellite: No new mine-laying activity detected — threat declining.',
+    'Asset report: IRGC Quds Force recalling proxy advisors from Yemen.',
+    'SIGINT: Iranian air defenses powered down in coastal areas — possible goodwill gesture.',
+    'HUMINT: Russia cutting arms shipments to Iran — Moscow seeking distance.',
+    'Intercepted call: IRGC Navy ordered to avoid all contact with US vessels.',
+];
+
+// ======================== WIRE SERVICE FORMATTING ========================
+
+/** Format a headline in wire service / SITREP / cable style */
+function formatWire(text, category, level) {
+    // FLASH (critical) > URGENT (warning) > BULLETIN (normal/good)
+    if (level === 'critical') {
+        const services = ['AP FLASH', 'REUTERS FLASH', 'AP BREAKING'];
+        return services[Math.floor(Math.random() * services.length)] + ': ' + text;
+    }
+    if (level === 'warning') {
+        const services = ['AP URGENT', 'REUTERS URGENT', 'AP BULLETIN'];
+        return services[Math.floor(Math.random() * services.length)] + ': ' + text;
+    }
+    if (category === 'military' || (category && category.includes('military'))) {
+        return `SITREP ${_formatDTG()}: ` + text;
+    }
+    if (category === 'diplomatic') {
+        const cables = ['STATE CABLE', 'DIPNOTE', 'EMBASSY CABLE'];
+        return cables[Math.floor(Math.random() * cables.length)] + ': ' + text;
+    }
+    if (category === 'intelligence') {
+        return `CIA ASSESSMENT: ` + text;
+    }
+    return text;
+}
+
+/** Military date-time group: DDHHMMZmonYY */
+function _formatDTG() {
+    const startDate = new Date(2026, 1, 28);
+    const gameDate = new Date(startDate);
+    gameDate.setDate(gameDate.getDate() + SIM.day - 1);
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const dd = String(gameDate.getDate()).padStart(2, '0');
+    const hh = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    const mm = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    return `${dd}${hh}${mm}Z${months[gameDate.getMonth()]}26`;
+}
+
+// ======================== HIDDEN ALIGNMENT TRACKING ========================
+
+/** Shift alignment axes based on a decision choice's nature */
+function shiftAlignment(effects) {
+    if (!effects) return;
+    // Military actions push hawk + escalation
+    if (effects.warPath > 0) { SIM.hawkDove = Math.min(100, SIM.hawkDove + effects.warPath * 5); SIM.escalationRestraint = Math.min(100, SIM.escalationRestraint + effects.warPath * 5); }
+    if (effects.tension > 10) { SIM.hawkDove = Math.min(100, SIM.hawkDove + 3); SIM.escalationRestraint = Math.min(100, SIM.escalationRestraint + 3); }
+    // Diplomatic actions push dove + multilateral
+    if (effects.diplomaticCapital > 5) { SIM.hawkDove = Math.max(0, SIM.hawkDove - 4); SIM.unilateralMultilateral = Math.max(0, SIM.unilateralMultilateral - 4); }
+    if (effects.internationalStanding > 5) { SIM.unilateralMultilateral = Math.max(0, SIM.unilateralMultilateral - 3); }
+    // De-escalation pushes restraint
+    if (effects.tension < -5) { SIM.escalationRestraint = Math.max(0, SIM.escalationRestraint - 4); SIM.hawkDove = Math.max(0, SIM.hawkDove - 2); }
+    // Iran aggression reduction via military = hawk, via diplomacy = dove (handled by warPath/diplomaticCapital above)
+    // Unilateral indicators
+    if (effects.internationalStanding < -5) SIM.unilateralMultilateral = Math.min(100, SIM.unilateralMultilateral + 3);
+}
+
+// ======================== CRISIS TELEPHONE EVENTS ========================
+
+const CRISIS_EVENTS = [
+    {
+        id: 'nuclear_threshold', title: '[ NUCLEAR THRESHOLD ]',
+        description: 'IAEA reports Iran at 90% enrichment with 440kg stockpile. Israel is on the phone. "We strike in 12 hours unless you act." Russia warns any strike will be treated as aggression against their ally.',
+        countdown: 20, crisis: true,
+        minDay: 25, maxDay: 70,
+        condition: () => SIM.iranAggression > 60 && SIM.tension > 55,
+        choices: [
+            { text: 'Green-light Israeli strike', effects: { tension: 30, warPath: 2, iranAggression: 15, domesticApproval: -5, internationalStanding: -15, russiaRelations: -15 }, flavor: 'Israeli F-35s hit Fordow and Natanz. Iran vows "devastating retaliation." Russia recalls ambassador. The nuclear clock resets but the war clock accelerates.' },
+            { text: 'US strike — bunker busters on Fordow', effects: { tension: 25, warPath: 2, iranAggression: -10, domesticApproval: 10, internationalStanding: -12, budget: -60 }, flavor: 'B-2 bombers drop GBU-57 MOPs. The mountain facility is destroyed. You own this escalation now.' },
+            { text: 'Emergency UN session — buy time', effects: { tension: 8, diplomaticCapital: 15, internationalStanding: 10, iranAggression: 5 }, flavor: 'The Security Council convenes. Israel fumes. Iran enriches. You bought 72 hours — at most.' },
+            { text: 'Call Tehran directly', effects: { tension: -5, domesticApproval: -15, iranAggression: -8, diplomaticCapital: -10 }, flavor: 'A stunning phone call. Iran agrees to freeze enrichment for 30 days. Hawks call it "the worst deal since Munich." But the bombs stay in their bays.' },
+            { text: 'Do nothing — call the bluff', effects: { conflictRisk: 15, iranAggression: 8, domesticApproval: -8 }, flavor: 'Israel strikes alone 11 hours later. The fallout — literal and political — is now your problem without the credit.' },
+        ],
+    },
+    {
+        id: 'three_seizures', title: '[ MASS SEIZURE EVENT ]',
+        description: 'IRGC Navy seizes THREE tankers simultaneously — Norwegian, Japanese, and Greek-flagged. 67 hostages. This is not a provocation. This is a coordinated operation. The world is watching your response in real time.',
+        countdown: 15, crisis: true,
+        minDay: 10, maxDay: 60,
+        condition: () => SIM.iranAggression > 55 && SIM.iranBoats.length > 2,
+        choices: [
+            { text: 'Immediate military rescue operation', effects: { tension: 25, warPath: 2, domesticApproval: 12, conflictRisk: 15, iranAggression: -10 }, flavor: 'SEALs board two tankers. The third is too far. 4 hostages wounded, 1 killed. Iran calls it piracy. Fox News calls you a hero.' },
+            { text: 'Naval blockade of Iranian ports', effects: { tension: 20, warPath: 1, oilPrice: 15, iranEconomy: -15, internationalStanding: -8, iranAggression: -5 }, flavor: '"Nothing enters or leaves Iranian waters until our people are free." A classic escalation. Effective but the world economy shudders.' },
+            { text: 'Hostage negotiation through Oman', effects: { tension: 5, domesticApproval: -10, diplomaticCapital: -10, iranAggression: 3 }, flavor: 'Negotiations begin. Iran demands sanctions relief. Day 1 passes. Day 2. The families are on every channel. "WHERE ARE YOU?"' },
+            { text: 'Authorize "all necessary force"', effects: { tension: 30, warPath: 3, domesticApproval: 8, internationalStanding: -10, conflictRisk: 20 }, flavor: 'Congress grants authorization. The US is now legally at war with Iran in all but name.' },
+        ],
+    },
+    {
+        id: 'friendly_fire', title: '[ FRIENDLY FIRE INCIDENT ]',
+        description: 'USS Vella Gulf (CG-72) has engaged and destroyed a vessel in the strait. It was an Emirati coast guard cutter. 11 UAE personnel killed. The UAE ambassador is on the phone. Al Jazeera has the footage.',
+        countdown: 15, crisis: true,
+        minDay: 8, maxDay: 55,
+        condition: () => SIM.navyShips.length > 3 && SIM.tension > 50,
+        choices: [
+            { text: 'Immediate public apology + compensation', effects: { domesticApproval: -8, internationalStanding: -5, tension: -3 }, flavor: 'You own it immediately. $500M compensation. The UAE accepts but Al Udeid base access is "under review." Trust is damaged.' },
+            { text: 'Blame fog of war — express regret', effects: { domesticApproval: -3, internationalStanding: -10, diplomaticCapital: -8 }, flavor: '"In the fog of war, terrible mistakes happen." The UAE pulls their ambassador. Gulf coalition fractures.' },
+            { text: 'Classify the incident — suppress footage', effects: { internationalStanding: -15, domesticApproval: 3, polarization: 8, fogOfWar: 5 }, flavor: 'The cover-up lasts 36 hours before a sailor leaks the bridge recording. Now it\'s a scandal AND a tragedy.' },
+            { text: 'Stand down all operations for 48 hours', effects: { tension: -10, iranAggression: 8, oilFlow: -8, domesticApproval: -5 }, flavor: 'A full operational pause. Iran exploits the gap. But no more mistakes. The Navy resets its ROE.' },
+        ],
+    },
+    {
+        id: 'cascade_crisis', title: '[ CASCADE FAILURE ]',
+        description: 'Houthi anti-ship missile hits LNG tanker in Bab el-Mandeb. Tanker is on fire, crew abandoning ship. Simultaneously, IRGC mines detonate under a VLCC in Hormuz. AND Iraqi militias are rocketing Al Asad. Three theaters. One response.',
+        countdown: 12, crisis: true,
+        minDay: 15, maxDay: 65,
+        condition: () => SIM.proxyThreat > 40 && SIM.tension > 50 && SIM.iranAggression > 50,
+        choices: [
+            { text: 'Prioritize Hormuz — it\'s the jugular', effects: { tension: 10, oilFlow: 5, proxyThreat: 8, domesticApproval: -3, budget: -20 }, flavor: 'You save the VLCC crew and clear the mines. The LNG tanker burns. Al Asad takes hits. You can\'t be everywhere.' },
+            { text: 'Retaliate everywhere — show no weakness', effects: { tension: 25, warPath: 2, budget: -80, domesticApproval: 8, proxyThreat: -15, iranAggression: -10, internationalStanding: -10 }, flavor: 'Tomahawks hit all three fronts simultaneously. Iran\'s proxy network is degraded. Your budget is cratered. The region is on fire.' },
+            { text: 'Call emergency NATO Article 5', effects: { tension: 5, internationalStanding: 12, diplomaticCapital: 15, proxyThreat: -5 }, flavor: 'First Article 5 invocation since 9/11. NATO responds — eventually. The bureaucracy buys Iran 72 hours to dig in.' },
+            { text: 'Emergency ceasefire offer to Iran', effects: { tension: -8, domesticApproval: -12, iranAggression: -5, proxyThreat: 3, polarization: 8 }, flavor: 'You offer to stop all strikes if Iran reins in proxies. Iran says yes. Then the Houthis fire again the next day. "They don\'t control their own proxies."' },
+        ],
+    },
+    {
+        id: 'carrier_hit', title: '[ CARRIER UNDER ATTACK ]',
+        description: 'FLASH: USS Abraham Lincoln reports missile impact. Iranian anti-ship ballistic missile. Flight deck damaged. 23 casualties. The carrier is NOT sinking but air operations are suspended. This is the first hit on a US carrier since WWII.',
+        countdown: 15, crisis: true,
+        minDay: 12, maxDay: 70,
+        condition: () => SIM.carrier !== null && SIM.iranAggression > 65 && SIM.tension > 60,
+        choices: [
+            { text: 'Massive retaliation — destroy Iran\'s missile capability', effects: { tension: 30, warPath: 3, iranAggression: -20, domesticApproval: 15, internationalStanding: -12, budget: -100 }, flavor: '200 Tomahawks in a single salvo. Every known missile site hit. Iran\'s offensive capability is shattered. The war is now total.' },
+            { text: 'Proportional response — hit the launch site', effects: { tension: 15, warPath: 1, iranAggression: -8, domesticApproval: 8, internationalStanding: 3 }, flavor: 'Cruise missiles destroy the specific battery that fired. Measured. Professional. But 23 families want more.' },
+            { text: 'Withdraw the Lincoln — save the crew', effects: { tension: -5, domesticApproval: -15, iranAggression: 12, internationalStanding: -8 }, flavor: 'The Lincoln limps to Fujairah. Iran celebrates. "We drove the Americans from our waters." Your deterrence is in ruins.' },
+            { text: 'Invoke Article II — address the nation', effects: { tension: 10, domesticApproval: 10, polarization: -5, warPath: 1 }, flavor: '"23 Americans were attacked today. We will respond at a time and manner of our choosing." The nation rallies. Iran waits.' },
+        ],
+    },
+];
+
+/** Check if a crisis event should fire */
+function checkCrisisEvents() {
+    const usedIds = SIM.decisionHistory.map(d => d.id);
+    const eligible = CRISIS_EVENTS.filter(e =>
+        !usedIds.includes(e.id) &&
+        SIM.day >= (e.minDay || 1) && SIM.day <= (e.maxDay || 999) &&
+        (!e.condition || e.condition())
+    );
+    if (eligible.length === 0) return null;
+    // Crisis events are rarer — 8% chance per eligible day
+    if (Math.random() > 0.08) return null;
+    return eligible[Math.floor(Math.random() * eligible.length)];
+}
 
 // ======================== HELPERS ========================
 
