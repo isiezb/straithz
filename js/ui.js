@@ -697,8 +697,6 @@ function showActionPanel() {
     const canvas = document.getElementById('game-canvas');
     if (canvas) {
         canvas.style.width = 'calc(100% - 280px)';
-        // Force canvas resolution update after CSS reflow
-        setTimeout(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); }, 50);
     }
 
     const panel = document.createElement('div');
@@ -1105,7 +1103,6 @@ function hideActionPanel() {
     const canvas = document.getElementById('game-canvas');
     if (canvas) {
         canvas.style.width = '';
-        setTimeout(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); }, 50);
     }
 }
 

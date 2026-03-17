@@ -26,15 +26,22 @@ function initMap() {
 }
 
 function resizeCanvas() {
-    // Use the canvas element's CSS-computed size (not parent, which is full viewport)
     const rect = MAP.canvas.getBoundingClientRect();
-    MAP.width = Math.round(rect.width);
-    MAP.height = Math.round(rect.height);
-    MAP.canvas.width = MAP.width;
-    MAP.canvas.height = MAP.height;
+    const newW = Math.round(rect.width);
+    const newH = Math.round(rect.height);
+    // Only update if size actually changed (avoids clearing canvas every frame)
+    if (MAP.width !== newW || MAP.height !== newH) {
+        MAP.width = newW;
+        MAP.height = newH;
+        MAP.canvas.width = MAP.width;
+        MAP.canvas.height = MAP.height;
+    }
 }
 
 function renderMap() {
+    // Sync canvas resolution with CSS size every frame
+    resizeCanvas();
+
     const ctx = MAP.ctx;
     const w = MAP.width;
     const h = MAP.height;
