@@ -696,6 +696,8 @@ function showActionPanel() {
         canvas.style.width = 'calc(100% - 280px)';
         canvas.style.left = '0';
         canvas.style.transform = 'none';
+        // Update canvas resolution to match new CSS size
+        requestAnimationFrame(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); });
     }
 
     const panel = document.createElement('div');
@@ -1104,6 +1106,7 @@ function hideActionPanel() {
         canvas.style.width = '';
         canvas.style.left = '';
         canvas.style.transform = '';
+        requestAnimationFrame(() => { if (typeof resizeCanvas === 'function') resizeCanvas(); });
     }
 }
 
