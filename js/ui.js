@@ -260,6 +260,7 @@ function updateSituationPanel() {
             <div class="sit-label">PENDING ORDERS</div>
             ${pendingHtml}
         </div>` : ''}
+        ${_buildDecisionLogHtml()}
     `;
 }
 
@@ -1050,11 +1051,37 @@ function showActionPanel() {
             `;
         }
 
+        const esc = SIM.escalationLevel || 0;
+        const escInfo = ESCALATION_LADDER[Math.min(esc, 5)];
+        const escName = escInfo ? escInfo.name : 'UNKNOWN';
+        const escColor = escInfo ? escInfo.color : '#888';
+
+        // Helper: locked button if escalation too low
+        function milBtn(label, action, reqLevel, cost) {
+            const costStr = cost ? ` <span class="ap-cost">$${cost}M</span>` : '';
+            if (esc < reqLevel) {
+                const reqName = ESCALATION_LADDER[reqLevel].name;
+                return `<button class="ap-btn locked" title="Requires ${reqName}"><span class="ap-lock">\u25A0 LVL${reqLevel}</span> ${label}${costStr}</button>`;
+            }
+            const budgetOk = !cost || SIM.budget >= cost;
+            return `<button class="ap-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${action}">${label}${costStr}</button>`;
+        }
+
+        // Can escalate if not already at max and AP available
+        const canEscalate = esc < 5 && ap > 0;
+        const nextEsc = ESCALATION_LADDER[Math.min(esc + 1, 5)];
+
         panel.innerHTML = `
             <div class="ap-header">
                 <div class="ap-title">ACTIONS</div>
                 <div class="ap-points">AP: ${apDots}</div>
                 <div class="ap-budget">${budgetStr}</div>
+            </div>
+
+            <div class="ap-escalation-bar">
+                <span class="ap-esc-label">ESCALATION:</span>
+                <span class="ap-esc-level" style="color:${escColor}">${escName}</span>
+                <span class="ap-esc-pips">${Array.from({length: 6}, (_, i) => `<span class="ap-esc-pip ${i <= esc ? 'active' : ''}" style="${i <= esc ? 'background:' + ESCALATION_LADDER[i].color : ''}">${i}</span>`).join('')}</span>
             </div>
 
             <div class="ap-scroll">
@@ -1068,12 +1095,21 @@ function showActionPanel() {
                     <div class="ap-cat-header" style="color:#4488dd">DIPLOMACY</div>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL</button>
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span></button>
+                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="demand-un-session">DEMAND UN SESSION</button>
                 </div>
 
                 <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#dd4444">MILITARY</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="reposition-fleet">REPOSITION FLEET</button>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="change-roe">CHANGE ROE <span class="ap-roe" style="color:${roeColor}">[${roeLabel}]</span></button>
+                    <div class="ap-cat-header" style="color:#dd4444">MILITARY <span style="color:${escColor};font-size:8px">[${escName}]</span></div>
+                    ${milBtn('REPOSITION FLEET', 'reposition-fleet', 1, 0)}
+                    ${milBtn('CHANGE ROE <span class="ap-roe" style="color:' + roeColor + '">[' + roeLabel + ']</span>', 'change-roe', 1, 0)}
+                    ${milBtn('ESCORT TANKERS', 'escort-tankers', 1, 10)}
+                    ${milBtn('PRECISION STRIKE', 'precision-strike', 2, 30)}
+                    ${milBtn('SPECIAL OPS RAID', 'spec-ops-raid', 2, 25)}
+                    ${milBtn('LAUNCH AIR STRIKES', 'air-strikes', 3, 50)}
+                    ${milBtn('SUPPRESS AIR DEFENSES', 'sead-mission', 3, 40)}
+                    ${milBtn('DEPLOY GROUND FORCES', 'ground-troops', 4, 80)}
+                    ${milBtn('SEIZE IRANIAN ISLANDS', 'seize-islands', 4, 60)}
+                    ${milBtn('FULL MOBILIZATION', 'full-mobilization', 5, 100)}
                 </div>
 
                 <div class="ap-category">
@@ -1089,9 +1125,11 @@ function showActionPanel() {
                 </div>
 
                 <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#dd4444">CRISIS</div>
+                    <div class="ap-cat-header" style="color:#dd4444">ESCALATION</div>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="issue-ultimatum">ISSUE ULTIMATUM</button>
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 20 ? 'disabled' : ''}" data-action="emergency-coalition">EMERGENCY COALITION <span class="ap-cost">$20M</span></button>
+                    ${canEscalate ? `<button class="ap-btn escalate-btn" data-action="escalate" title="Move to: ${nextEsc.name}">ESCALATE \u25B2 <span style="color:${nextEsc.color}">${nextEsc.name}</span></button>` : ''}
+                    ${esc > 0 ? `<button class="ap-btn deescalate-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deescalate">DE-ESCALATE \u25BC</button>` : ''}
                 </div>
 
                 ${specialHtml}
@@ -1298,6 +1336,227 @@ function _executeAction(actionId, rerenderFn) {
             addHeadline('Strategic petroleum reserve release authorized.', 'normal');
             break;
 
+        case 'escort-tankers':
+            if (SIM.budget < 10 || SIM.escalationLevel < 1) return;
+            SIM.budget -= 10;
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 5);
+            SIM.tension = Math.min(100, SIM.tension + 2);
+            showFloatingNumber('oilFlow', 5);
+            showFloatingNumber('tension', 2);
+            showFloatingNumber('budget', -10);
+            SIM.tankers.filter(t => !t.seized && !t.escorted).slice(0, 2).forEach(t => t.escorted = true);
+            toastMsg = 'Navy escorts assigned to tanker convoy';
+            toastLevel = 'good';
+            addHeadline('USN begins tanker escort operations through Strait of Hormuz.', 'normal');
+            break;
+
+        case 'precision-strike':
+            if (SIM.budget < 30 || SIM.escalationLevel < 2) return;
+            SIM.budget -= 30;
+            SIM.tension = Math.min(100, SIM.tension + 12);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 8);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 5);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 3);
+            SIM.warPath = Math.min(5, SIM.warPath + 1);
+            showFloatingNumber('tension', 12);
+            showFloatingNumber('iranAggression', -8);
+            showFloatingNumber('internationalStanding', -5);
+            showFloatingNumber('domesticApproval', 3);
+            showFloatingNumber('warPath', 1);
+            showFloatingNumber('budget', -30);
+            if (SIM.iranBoats.length > 1) SIM.iranBoats.splice(0, Math.min(2, SIM.iranBoats.length - 1));
+            spawnEffect(0.45, 0.42, 'explosion');
+            toastMsg = 'Tomahawk strike on IRGC naval base';
+            toastLevel = 'warning';
+            addHeadline('BREAKING: US precision strike destroys IRGC fast boat pens at Bandar Abbas', 'critical');
+            break;
+
+        case 'spec-ops-raid':
+            if (SIM.budget < 25 || SIM.escalationLevel < 2) return;
+            SIM.budget -= 25;
+            SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 12);
+            SIM.tension = Math.min(100, SIM.tension + 6);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 4);
+            showFloatingNumber('fogOfWar', -12);
+            showFloatingNumber('tension', 6);
+            showFloatingNumber('iranAggression', -4);
+            showFloatingNumber('budget', -25);
+            if (SIM.mines.length > 0) SIM.mines.splice(0, Math.min(3, SIM.mines.length));
+            toastMsg = 'SEAL team neutralizes mine-laying operation';
+            toastLevel = 'good';
+            addHeadline('SOCOM: Special operations forces conduct raid on Iranian mining assets', 'normal');
+            break;
+
+        case 'air-strikes':
+            if (SIM.budget < 50 || SIM.escalationLevel < 3) return;
+            SIM.budget -= 50;
+            SIM.tension = Math.min(100, SIM.tension + 18);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 15);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 8);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 5);
+            SIM.conflictRisk = Math.min(100, SIM.conflictRisk + 10);
+            SIM.warPath = Math.min(5, SIM.warPath + 1);
+            showFloatingNumber('tension', 18);
+            showFloatingNumber('iranAggression', -15);
+            showFloatingNumber('internationalStanding', -8);
+            showFloatingNumber('domesticApproval', 5);
+            showFloatingNumber('conflictRisk', 10);
+            showFloatingNumber('warPath', 1);
+            showFloatingNumber('budget', -50);
+            SIM.iranBoats.splice(0, Math.floor(SIM.iranBoats.length * 0.6));
+            SIM.drones.splice(0, Math.floor(SIM.drones.length * 0.5));
+            spawnEffect(0.40, 0.35, 'explosion');
+            spawnEffect(0.50, 0.30, 'explosion');
+            toastMsg = 'Air campaign targets IRGC coastal installations';
+            toastLevel = 'critical';
+            addHeadline('FLASH: US launches sustained air strikes against Iranian military targets', 'critical');
+            break;
+
+        case 'sead-mission':
+            if (SIM.budget < 40 || SIM.escalationLevel < 3) return;
+            SIM.budget -= 40;
+            SIM.tension = Math.min(100, SIM.tension + 10);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 6);
+            SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 8);
+            showFloatingNumber('tension', 10);
+            showFloatingNumber('iranAggression', -6);
+            showFloatingNumber('fogOfWar', -8);
+            showFloatingNumber('budget', -40);
+            spawnEffect(0.48, 0.28, 'explosion');
+            toastMsg = 'SEAD mission suppresses Iranian radar and SAM sites';
+            toastLevel = 'warning';
+            addHeadline('US Wild Weasel missions knock out Iranian air defense network along coast', 'critical');
+            break;
+
+        case 'ground-troops':
+            if (SIM.budget < 80 || SIM.escalationLevel < 4) return;
+            SIM.budget -= 80;
+            SIM.tension = Math.min(100, SIM.tension + 25);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 20);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 15);
+            SIM.domesticApproval = Math.max(0, SIM.domesticApproval - 5);
+            SIM.polarization = Math.min(100, SIM.polarization + 10);
+            SIM.conflictRisk = Math.min(100, SIM.conflictRisk + 20);
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 10);
+            showFloatingNumber('tension', 25);
+            showFloatingNumber('iranAggression', -20);
+            showFloatingNumber('internationalStanding', -15);
+            showFloatingNumber('domesticApproval', -5);
+            showFloatingNumber('polarization', 10);
+            showFloatingNumber('conflictRisk', 20);
+            showFloatingNumber('oilFlow', 10);
+            showFloatingNumber('budget', -80);
+            toastMsg = 'USMC and Army deploy to secure strait coastline';
+            toastLevel = 'critical';
+            addHeadline('FLASH: US ground forces land on Iranian coast — Bandar Abbas secured', 'critical');
+            break;
+
+        case 'seize-islands':
+            if (SIM.budget < 60 || SIM.escalationLevel < 4) return;
+            SIM.budget -= 60;
+            SIM.tension = Math.min(100, SIM.tension + 15);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 12);
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 8);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 10);
+            showFloatingNumber('tension', 15);
+            showFloatingNumber('iranAggression', -12);
+            showFloatingNumber('oilFlow', 8);
+            showFloatingNumber('internationalStanding', -10);
+            showFloatingNumber('budget', -60);
+            SIM.mines = [];
+            spawnEffect(0.48, 0.36, 'explosion');
+            toastMsg = 'Marines seize Abu Musa and Tunb islands — mines cleared';
+            toastLevel = 'critical';
+            addHeadline('FLASH: USMC amphibious assault seizes Iranian-held islands in Strait of Hormuz', 'critical');
+            break;
+
+        case 'full-mobilization':
+            if (SIM.budget < 100 || SIM.escalationLevel < 5) return;
+            SIM.budget -= 100;
+            SIM.tension = 100;
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 30);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 20);
+            SIM.domesticApproval = Math.max(0, SIM.domesticApproval - 10);
+            SIM.polarization = Math.min(100, SIM.polarization + 20);
+            SIM.conflictRisk = 100;
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 15);
+            showFloatingNumber('tension', 100);
+            showFloatingNumber('iranAggression', -30);
+            showFloatingNumber('internationalStanding', -20);
+            showFloatingNumber('domesticApproval', -10);
+            showFloatingNumber('polarization', 20);
+            showFloatingNumber('oilFlow', 15);
+            showFloatingNumber('budget', -100);
+            SIM.iranBoats = [];
+            SIM.mines = [];
+            SIM.drones = [];
+            toastMsg = 'Total war footing — all reserves activated';
+            toastLevel = 'critical';
+            addHeadline('FLASH: President orders full military mobilization. Draft authorization sent to Congress.', 'critical');
+            break;
+
+        case 'demand-un-session':
+            SIM.internationalStanding = Math.min(100, SIM.internationalStanding + 3);
+            SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 4);
+            SIM.tension = Math.max(0, SIM.tension - 2);
+            showFloatingNumber('internationalStanding', 3);
+            showFloatingNumber('diplomaticCapital', 4);
+            showFloatingNumber('tension', -2);
+            toastMsg = 'Emergency UNSC session requested';
+            toastLevel = 'normal';
+            addHeadline('US demands emergency UN Security Council session on Strait of Hormuz.', 'normal');
+            break;
+
+        case 'escalate': {
+            if (SIM.escalationLevel >= 5) return;
+            SIM.warPath = Math.min(5, SIM.warPath + 1);
+            if (SIM.warPath <= 0) SIM.escalationLevel = 0;
+            else if (SIM.warPath === 1) SIM.escalationLevel = 1;
+            else if (SIM.warPath === 2) SIM.escalationLevel = 2;
+            else if (SIM.warPath === 3) SIM.escalationLevel = 3;
+            else if (SIM.warPath === 4) SIM.escalationLevel = 4;
+            else SIM.escalationLevel = 5;
+            const newEsc = ESCALATION_LADDER[SIM.escalationLevel];
+            SIM.tension = Math.min(100, SIM.tension + 8);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 3);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 4);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 3);
+            showFloatingNumber('warPath', 1);
+            showFloatingNumber('tension', 8);
+            showFloatingNumber('domesticApproval', 3);
+            showFloatingNumber('internationalStanding', -4);
+            showFloatingNumber('iranAggression', -3);
+            toastMsg = `Escalated to ${newEsc.name}`;
+            toastLevel = 'warning';
+            addHeadline(`ESCALATION: US military posture elevated to ${newEsc.name}`, 'critical');
+            break;
+        }
+
+        case 'deescalate': {
+            if (SIM.warPath <= 0) return;
+            SIM.warPath = Math.max(0, SIM.warPath - 1);
+            if (SIM.warPath <= 0) SIM.escalationLevel = 0;
+            else if (SIM.warPath === 1) SIM.escalationLevel = 1;
+            else if (SIM.warPath === 2) SIM.escalationLevel = 2;
+            else if (SIM.warPath === 3) SIM.escalationLevel = 3;
+            else if (SIM.warPath === 4) SIM.escalationLevel = 4;
+            else SIM.escalationLevel = 5;
+            const deEsc = ESCALATION_LADDER[SIM.escalationLevel];
+            SIM.tension = Math.max(0, SIM.tension - 5);
+            SIM.internationalStanding = Math.min(100, SIM.internationalStanding + 5);
+            SIM.domesticApproval = Math.max(0, SIM.domesticApproval - 3);
+            SIM.iranAggression = Math.min(100, SIM.iranAggression + 4);
+            showFloatingNumber('warPath', -1);
+            showFloatingNumber('tension', -5);
+            showFloatingNumber('internationalStanding', 5);
+            showFloatingNumber('domesticApproval', -3);
+            showFloatingNumber('iranAggression', 4);
+            toastMsg = `De-escalated to ${deEsc.name}`;
+            toastLevel = 'good';
+            addHeadline(`DE-ESCALATION: US military posture lowered to ${deEsc.name}`, 'normal');
+            break;
+        }
+
         case 'issue-ultimatum':
             SIM.tension = Math.min(100, SIM.tension + 8);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 5);
@@ -1394,9 +1653,23 @@ function showInterrupt(afterCallback) {
         btn.addEventListener('click', () => {
             const choiceIdx = parseInt(btn.dataset.choice);
             const choice = interrupt.choices[choiceIdx];
+            const gaugesBefore = calculateGauges();
 
             // Apply effects
             _applyEffects(choice.effects);
+
+            const gaugesAfter = calculateGauges();
+
+            // Log to decision log for situation panel
+            SIM.decisionLog.push({
+                title: interrupt.text.length > 50 ? interrupt.text.substring(0, 47) + '...' : interrupt.text,
+                choice: choice.label,
+                effects: { ...choice.effects },
+                gaugesBefore,
+                gaugesAfter,
+                day: SIM.day,
+                type: 'interrupt',
+            });
 
             // Toast the result
             const effectStrs = Object.entries(choice.effects)
@@ -1558,8 +1831,86 @@ function showDecisionEvent(event) {
     }
 }
 
+function _buildImpactSummary(effects, gaugesBefore, gaugesAfter) {
+    // Raw effect lines
+    const effectLines = Object.entries(effects)
+        .filter(([k, v]) => v !== 0)
+        .map(([k, v]) => {
+            const name = formatEffectName(k);
+            const badIfUp = ['tension', 'iranAggression', 'conflictRisk', 'fogOfWar', 'polarization',
+                             'assassinationRisk', 'warPath', 'proxyThreat', 'exposure', 'oilPrice'];
+            const isGood = badIfUp.includes(k) ? v < 0 : v > 0;
+            const color = isGood ? '#44dd88' : '#dd4444';
+            const sign = v > 0 ? '+' : '';
+            return `<span style="color:${color}">${name} ${sign}${v}</span>`;
+        });
+
+    // Gauge deltas
+    const gaugeNames = { stability: 'STABILITY', economy: 'ECONOMY', support: 'SUPPORT', intel: 'INTEL' };
+    const gaugeDeltaLines = [];
+    for (const [key, label] of Object.entries(gaugeNames)) {
+        const delta = gaugesAfter[key] - gaugesBefore[key];
+        if (delta !== 0) {
+            const color = delta > 0 ? '#44dd88' : '#dd4444';
+            const sign = delta > 0 ? '+' : '';
+            gaugeDeltaLines.push(`<span style="color:${color}">${label} ${sign}${delta}</span>`);
+        }
+    }
+
+    if (effectLines.length === 0 && gaugeDeltaLines.length === 0) return '';
+
+    let html = '<div class="impact-summary">';
+    html += '<div class="impact-label">IMMEDIATE IMPACT</div>';
+    if (effectLines.length > 0) {
+        html += '<div class="impact-effects">' + effectLines.join(' &middot; ') + '</div>';
+    }
+    if (gaugeDeltaLines.length > 0) {
+        html += '<div class="impact-gauges">' + gaugeDeltaLines.join(' &middot; ') + '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
+function _buildDecisionLogHtml() {
+    if (!SIM.decisionLog || SIM.decisionLog.length === 0) return '';
+    // Show last 5 decisions, newest first
+    const recent = SIM.decisionLog.slice(-5).reverse();
+    const entries = recent.map(entry => {
+        const typeIcon = entry.type === 'crisis' ? '<span style="color:#dd4444">\u26A0</span>'
+                       : entry.type === 'interrupt' ? '<span style="color:#ddaa44">\u26A1</span>'
+                       : '<span style="color:#44dd88">\u25B6</span>';
+
+        // Gauge deltas
+        const gaugeNames = { stability: 'STB', economy: 'ECO', support: 'SUP', intel: 'INT' };
+        const deltas = [];
+        for (const [key, label] of Object.entries(gaugeNames)) {
+            const delta = entry.gaugesAfter[key] - entry.gaugesBefore[key];
+            if (delta !== 0) {
+                const color = delta > 0 ? '#44dd88' : '#dd4444';
+                const sign = delta > 0 ? '+' : '';
+                deltas.push(`<span style="color:${color}">${label}${sign}${delta}</span>`);
+            }
+        }
+        const deltaStr = deltas.length > 0 ? deltas.join(' ') : '<span style="color:#2a6a4a">no gauge change</span>';
+
+        const title = entry.title.length > 35 ? entry.title.substring(0, 32) + '...' : entry.title;
+
+        return `<div class="sit-decision-entry">
+            <div class="sit-decision-header">${typeIcon} <span class="sit-decision-day">D${entry.day}</span> ${title}</div>
+            <div class="sit-decision-choice">\u2192 ${entry.choice}</div>
+            <div class="sit-decision-impact">${deltaStr}</div>
+        </div>`;
+    }).join('');
+
+    return `<div class="sit-section">
+        <div class="sit-label">DECISION LOG</div>
+        ${entries}
+    </div>`;
+}
+
 function resolveDecision(event, choiceIdx) {
     const choice = event.choices[choiceIdx];
+    const gaugesBefore = calculateGauges();
 
     // Track hidden alignment
     if (typeof shiftAlignment === 'function') shiftAlignment(choice.effects);
@@ -1579,6 +1930,19 @@ function resolveDecision(event, choiceIdx) {
         }
     }
 
+    const gaugesAfter = calculateGauges();
+
+    // Log to decision log for situation panel
+    SIM.decisionLog.push({
+        title: event.title,
+        choice: choice.text,
+        effects: { ...choice.effects },
+        gaugesBefore,
+        gaugesAfter,
+        day: SIM.day,
+        type: event.crisis ? 'crisis' : 'decision',
+    });
+
     addHeadline(`Decision: ${event.title} \u2014 ${choice.text}`, 'normal');
     if (choice.flavor) addHeadline(choice.flavor, 'good');
 
@@ -1587,11 +1951,15 @@ function resolveDecision(event, choiceIdx) {
         choiceText: choice.text, day: SIM.day,
     });
 
+    // Build impact summary for result screen
+    const impactHtml = _buildImpactSummary(choice.effects, gaugesBefore, gaugesAfter);
+
     // Show result
     openTerminal(`
         <div class="term-header">DECISION MADE</div>
         <div class="term-title">${choice.text.toUpperCase()}</div>
         <div class="term-line" style="margin-top:12px">${choice.flavor || ''}</div>
+        ${impactHtml}
         <div class="term-btn-row">
             <button class="term-btn" id="btn-decision-continue">[ CONTINUE ]</button>
         </div>

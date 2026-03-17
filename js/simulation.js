@@ -93,6 +93,9 @@ const SIM = {
     // Map incident markers
     incidentMarkers: [],
 
+    // Decision log for situation panel
+    decisionLog: [],  // [{title, choice, effects, gaugesBefore, gaugesAfter, day, type:'decision'|'interrupt'}]
+
     // Implementation delay queue
     pendingEffects: [],  // [{cardId, cardName, category, funding, effects, activateOnDay}]
 

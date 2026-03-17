@@ -59,8 +59,7 @@ function renderMap() {
 
     // --- Symbolic Overlays ---
     drawShippingLaneFlow(ctx, w, h);
-    drawNavyPresence(ctx, w, h);
-    drawIRGCThreatZone(ctx, w, h);
+    drawEntities(ctx, w, h);
     drawHazardMarkers(ctx, w, h);
     drawPlatforms(ctx, w, h);
     drawIncidentMarkers(ctx, w, h);
@@ -243,7 +242,278 @@ function drawShippingLaneFlow(ctx, w, h) {
     ctx.restore();
 }
 
-// --- Navy Presence Badge ---
+// --- Draw Entity Sprites ---
+
+function drawEntities(ctx, w, h) {
+    const time = Date.now();
+
+    // --- Tankers along shipping lanes ---
+    for (const t of SIM.tankers) {
+        const pos = getLanePosition(t.lane, t.progress);
+        const px = pos.x * w;
+        const py = pos.y * h;
+
+        // Get direction for rotation
+        const ahead = getLanePosition(t.lane, Math.min(t.progress + 0.02, 0.999));
+        const angle = Math.atan2((ahead.y - pos.y) * h, (ahead.x - pos.x) * w);
+
+        const sprite = t.seized ? SPRITES.tanker : (t.damaged ? SPRITES.tanker : (SPRITES.tankerLoaded || SPRITES.tanker));
+        if (!sprite) continue;
+
+        const scale = 0.28;
+        const sw = sprite.width * scale;
+        const sh = sprite.height * scale;
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(angle);
+
+        if (t.seized) {
+            // Red tint for seized
+            ctx.globalAlpha = 0.5 + Math.sin(time / 400) * 0.3;
+        } else if (t.damaged) {
+            ctx.globalAlpha = 0.6;
+        } else {
+            ctx.globalAlpha = 0.85;
+        }
+
+        ctx.drawImage(sprite, -sw / 2, -sh / 2, sw, sh);
+
+        // Seized indicator
+        if (t.seized) {
+            ctx.globalAlpha = Math.sin(time / 300) > 0 ? 1 : 0.4;
+            ctx.fillStyle = '#dd4444';
+            ctx.font = 'bold 7px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('SEIZED', 0, -sh / 2 - 3);
+        }
+
+        // Escort indicator
+        if (t.escorted) {
+            ctx.globalAlpha = 0.6;
+            ctx.strokeStyle = '#44dd88';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 3]);
+            ctx.beginPath();
+            ctx.arc(0, 0, sw / 2 + 4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+
+    // --- US Navy Ships ---
+    for (const ship of SIM.navyShips) {
+        const px = ship.x * w;
+        const py = ship.y * h;
+        const sprite = SPRITES.navy;
+        if (!sprite) continue;
+
+        const scale = 0.3;
+        const sw = sprite.width * scale;
+        const sh = sprite.height * scale;
+
+        // Face toward target
+        const angle = Math.atan2((ship.targetY - ship.y) * h, (ship.targetX - ship.x) * w);
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(angle);
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(sprite, -sw / 2, -sh / 2, sw, sh);
+        ctx.restore();
+
+        // Ship ID label
+        ctx.save();
+        ctx.font = '6px monospace';
+        ctx.fillStyle = 'rgba(68, 221, 136, 0.7)';
+        ctx.textAlign = 'center';
+        ctx.fillText(ship.id, px, py + sh / 2 + 8);
+        ctx.restore();
+
+        // Intercepting indicator
+        if (ship.intercepting) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(68, 221, 136, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.arc(px, py, sw / 2 + 6, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+        }
+    }
+
+    // --- IRGC Boats ---
+    for (const boat of SIM.iranBoats) {
+        const px = boat.x * w;
+        const py = boat.y * h;
+        const sprite = SPRITES.iranboat;
+        if (!sprite) continue;
+
+        const scale = 0.3;
+        const sw = sprite.width * scale;
+        const sh = sprite.height * scale;
+
+        const angle = Math.atan2((boat.targetY - boat.y) * h, (boat.targetX - boat.x) * w);
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(angle);
+        ctx.globalAlpha = boat.fleeing ? 0.5 : 0.85;
+        ctx.drawImage(sprite, -sw / 2, -sh / 2, sw, sh);
+        ctx.restore();
+
+        // Targeting indicator — pulsing red ring
+        if (boat.targeting) {
+            const pulse = Math.sin(time / 250) * 0.4 + 0.6;
+            ctx.save();
+            ctx.strokeStyle = `rgba(221, 68, 68, ${pulse})`;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(px, py, sw / 2 + 5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Aggressive posture — small red triangle above
+        if (boat.aggressive && !boat.fleeing) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(221, 68, 68, 0.6)';
+            ctx.beginPath();
+            ctx.moveTo(px, py - sh / 2 - 6);
+            ctx.lineTo(px + 3, py - sh / 2 - 2);
+            ctx.lineTo(px - 3, py - sh / 2 - 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // --- Carrier ---
+    if (SIM.carrier) {
+        const c = SIM.carrier;
+        const px = c.x * w;
+        const py = c.y * h;
+        const sprite = SPRITES.carrier;
+        if (sprite) {
+            const scale = 0.35;
+            const sw = sprite.width * scale;
+            const sh = sprite.height * scale;
+
+            const angle = Math.atan2((c.targetY - c.y) * h, (c.targetX - c.x) * w);
+
+            ctx.save();
+            ctx.translate(px, py);
+            ctx.rotate(angle);
+            ctx.globalAlpha = 0.9;
+            ctx.drawImage(sprite, -sw / 2, -sh / 2, sw, sh);
+            ctx.restore();
+
+            // Carrier label
+            ctx.save();
+            ctx.font = 'bold 7px monospace';
+            ctx.fillStyle = '#ddaa44';
+            ctx.textAlign = 'center';
+            ctx.fillText('CSG EISENHOWER', px, py + sh / 2 + 10);
+            ctx.restore();
+
+            // Carrier patrol zone ring
+            ctx.save();
+            ctx.strokeStyle = 'rgba(221, 170, 68, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 6]);
+            ctx.beginPath();
+            ctx.arc(px, py, 45, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+        }
+    }
+
+    // --- Drones (sprite version) ---
+    for (const drone of SIM.drones) {
+        const orbitAngle = time / 3000 + drone.x * 10;
+        const dx = (drone.x + Math.cos(orbitAngle) * 0.02) * w;
+        const dy = (drone.y + Math.sin(orbitAngle) * 0.02) * h;
+        const sprite = SPRITES.drone;
+        if (sprite) {
+            const scale = 0.35;
+            const sw = sprite.width * scale;
+            const sh = sprite.height * scale;
+            ctx.save();
+            ctx.translate(dx, dy);
+            ctx.rotate(orbitAngle + Math.PI / 2);
+            ctx.globalAlpha = 0.7;
+            ctx.drawImage(sprite, -sw / 2, -sh / 2, sw, sh);
+            ctx.restore();
+        }
+
+        // Orbit circle
+        ctx.save();
+        ctx.strokeStyle = 'rgba(68, 136, 221, 0.1)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 4]);
+        ctx.beginPath();
+        ctx.arc(drone.x * w, drone.y * h, drone.radius * Math.min(w, h), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+    }
+
+    // --- Mines (sprite version) ---
+    for (const mine of SIM.mines) {
+        const mx = mine.x * w;
+        const my = mine.y * h;
+        const sprite = SPRITES.mine;
+        if (sprite) {
+            const scale = 0.5;
+            const sw = sprite.width * scale;
+            const sh = sprite.height * scale;
+            const pulse = Math.sin(time / 400 + mx) * 0.2 + 0.7;
+            ctx.save();
+            ctx.globalAlpha = pulse;
+            ctx.drawImage(sprite, mx - sw / 2, my - sh / 2, sw, sh);
+            ctx.restore();
+        }
+
+        // Danger radius
+        ctx.save();
+        ctx.strokeStyle = `rgba(221, 68, 68, 0.15)`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(mx, my, 10, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // --- Summary counts (replacing old badge overlays) ---
+    ctx.save();
+    ctx.font = 'bold 8px monospace';
+    ctx.textAlign = 'left';
+
+    // Navy count
+    const ships = SIM.navyShips.length;
+    const hasCarrier = SIM.carrier !== null;
+    if (ships > 0 || hasCarrier) {
+        ctx.fillStyle = 'rgba(68, 221, 136, 0.5)';
+        ctx.fillText(`USN: ${ships}${hasCarrier ? ' +CSG' : ''}`, w * 0.82, h * 0.62);
+    }
+
+    // IRGC count
+    const boats = SIM.iranBoats.length;
+    if (boats > 0) {
+        const isAggressive = SIM.iranAggression > 50;
+        ctx.fillStyle = isAggressive ? 'rgba(221, 68, 68, 0.6)' : 'rgba(221, 136, 68, 0.5)';
+        ctx.fillText(`IRGC: ${boats}`, w * 0.82, h * 0.37);
+    }
+    ctx.restore();
+}
+
+// --- Navy Presence Badge (legacy — kept for reference) ---
 
 function drawNavyPresence(ctx, w, h) {
     const ships = SIM.navyShips.length;
@@ -361,27 +631,8 @@ function drawIRGCThreatZone(ctx, w, h) {
 // --- Hazard Markers ---
 
 function drawHazardMarkers(ctx, w, h) {
-    // Mines
+    // Hazard count labels (sprites drawn by drawEntities)
     if (SIM.mines.length > 0) {
-        for (const mine of SIM.mines) {
-            const mx = mine.x * w;
-            const my = mine.y * h;
-            const pulse = Math.sin(Date.now() / 400 + mx) * 0.2 + 0.6;
-            ctx.fillStyle = `rgba(221, 68, 68, ${pulse})`;
-            ctx.beginPath();
-            ctx.moveTo(mx, my - 6);
-            ctx.lineTo(mx + 5, my + 3);
-            ctx.lineTo(mx - 5, my + 3);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.strokeStyle = `rgba(221, 68, 68, ${pulse * 0.3})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(mx, my, 10, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-
         ctx.save();
         ctx.font = 'bold 8px monospace';
         ctx.fillStyle = '#dd4444';
@@ -389,25 +640,7 @@ function drawHazardMarkers(ctx, w, h) {
         ctx.restore();
     }
 
-    // Drones
     if (SIM.drones.length > 0) {
-        for (const drone of SIM.drones) {
-            const dx = drone.x * w;
-            const dy = drone.y * h;
-            ctx.strokeStyle = 'rgba(68, 136, 221, 0.12)';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([2, 4]);
-            ctx.beginPath();
-            ctx.arc(dx, dy, drone.radius * Math.min(w, h), 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            ctx.fillStyle = 'rgba(68, 136, 221, 0.6)';
-            ctx.beginPath();
-            ctx.arc(dx, dy, 3, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
         ctx.save();
         ctx.font = 'bold 8px monospace';
         ctx.fillStyle = '#4488dd';
