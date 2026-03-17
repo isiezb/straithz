@@ -65,20 +65,20 @@ body {
 #game-canvas {
     display: block;
     position: absolute;
-    top: 136px;  /* 70px gauge + 22px metrics + 44px tickers */
+    top: 52px;
     left: 0;
     width: 100%;
-    height: calc(100% - 114px);
+    height: calc(100% - 52px);
     image-rendering: pixelated;
 }
 
 /* Situation dashboard left panel */
 #situation-panel {
     position: absolute;
-    top: 114px;
+    top: 52px;
     left: 0;
     width: 320px;
-    height: calc(100% - 114px);
+    height: calc(100% - 52px);
     background: rgba(5, 5, 5, 0.95);
     border-right: 1px solid #1a3a2a;
     z-index: 8;
@@ -209,33 +209,38 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 70px;
+    height: 50px;
     display: flex;
     align-items: center;
     gap: 0;
     background: #0a0a0a;
     border-bottom: 2px solid #1a3a2a;
     z-index: 10;
-    padding: 0 12px;
+    padding: 0 8px;
 }
 
 .hud-day {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: bold;
     color: #44dd88;
-    letter-spacing: 3px;
-    padding: 0 16px 0 4px;
+    letter-spacing: 2px;
+    padding: 0 10px 0 4px;
     white-space: nowrap;
     text-shadow: 0 0 8px rgba(68, 221, 136, 0.4);
-    min-width: 90px;
+    min-width: 70px;
 }
 
 .gauge-item {
     flex: 1;
     text-align: center;
-    padding: 6px 10px;
+    padding: 4px 6px;
     border-left: 1px solid #1a3a2a;
     min-width: 0;
+}
+.gauge-item-small {
+    flex: 0 0 auto;
+    min-width: 65px;
+    max-width: 80px;
 }
 
 .gauge-label {
@@ -249,11 +254,14 @@ body {
 
 .gauge-value {
     display: block;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     letter-spacing: 1px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     line-height: 1;
+}
+.gauge-item-small .gauge-value {
+    font-size: 13px;
 }
 
 .gauge-value.good { color: #44dd88; text-shadow: 0 0 6px rgba(68, 221, 136, 0.3); }
@@ -480,10 +488,10 @@ body {
 }
 
 .hud-rating {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
-    letter-spacing: 2px;
-    padding: 0 12px;
+    letter-spacing: 1px;
+    padding: 0 8px;
     border-left: 1px solid #1a3a2a;
     text-shadow: 0 0 8px rgba(68, 221, 136, 0.4);
 }
@@ -508,40 +516,18 @@ body {
     50% { opacity: 0.6; }
 }
 
-/* Secondary metrics bar */
-#hud-metrics-bar {
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    height: 22px;
-    background: rgba(5, 15, 8, 0.85);
-    border-bottom: 1px solid #1a3a2a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 0 12px;
-    z-index: 99;
-    font-family: 'Courier New', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-}
-
-.hud-metric {
-    color: #2a6a4a;
-}
-.hud-metric.good { color: #44dd88; }
-.hud-metric.warning { color: #ddaa44; }
-.hud-metric.danger { color: #dd4444; font-weight: bold; }
-
+/* HUD warning (inline in gauge bar) */
 .hud-warning {
     color: #dd4444;
     font-weight: bold;
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 1px;
     animation: warnBlink 1s infinite;
-    margin-left: 8px;
+    margin-left: 4px;
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 @keyframes warnBlink {
     0%, 100% { opacity: 1; }
@@ -571,16 +557,8 @@ body {
     border-color: #111;
 }
 
-/* ======================== NEWS TICKERS ======================== */
-
-#news-tickers {
-    position: absolute;
-    top: 92px;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    background: #050505;
-}
+/* News tickers removed — feed moved to situation panel */
+#news-tickers { display: none; }
 
 .ticker {
     display: flex;
@@ -1840,10 +1818,10 @@ body {
 
 #action-panel {
     position: fixed;
-    top: 70px;
+    top: 52px;
     right: 0;
     width: 280px;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 52px);
     background: #0a0a0a;
     border-left: 2px solid #1a3a2a;
     z-index: 50;

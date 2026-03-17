@@ -434,42 +434,36 @@ function updateGauges() {
         ratingEl.className = 'hud-rating ' + (r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger');
     }
 
-    // Strait counter
-    const straitEl = document.getElementById('hud-strait');
-    if (straitEl) {
-        if (SIM.straitOpenDays > 0) {
-            straitEl.textContent = `STRAIT: ${SIM.straitOpenDays}/14 OPEN`;
-            straitEl.className = 'strait-counter active';
-        } else {
-            straitEl.textContent = 'STRAIT: CONTESTED';
-            straitEl.className = 'strait-counter';
+    // Strait counter moved to situation panel win progress
+
+    // --- Warpath gauge ---
+    const wpEl = document.getElementById('gauge-warpath');
+    if (wpEl) {
+        const wpVal = wpEl.querySelector('.gauge-value');
+        if (wpVal) {
+            wpVal.textContent = SIM.warPath + '/5';
+            wpVal.className = 'gauge-value ' + (SIM.warPath >= 4 ? 'danger' : SIM.warPath >= 3 ? 'warning' : 'good');
         }
     }
 
-    // --- Secondary metrics bar ---
-    const setMetric = (id, text, level) => {
-        const el = document.getElementById(id);
-        if (el) { el.textContent = text; el.className = 'hud-metric ' + level; }
-    };
-    const tLvl = SIM.tension > 70 ? 'danger' : SIM.tension > 45 ? 'warning' : 'good';
-    setMetric('hud-tension', `TENSION: ${Math.round(SIM.tension)}`, tLvl);
-    const oLvl = SIM.oilFlow < 30 ? 'danger' : SIM.oilFlow < 50 ? 'warning' : 'good';
-    setMetric('hud-oilflow', `OIL: ${Math.round(SIM.oilFlow)}%`, oLvl);
-    const wLvl = SIM.warPath >= 4 ? 'danger' : SIM.warPath >= 3 ? 'warning' : 'good';
-    setMetric('hud-warpath', `WARPATH: ${SIM.warPath}/5`, wLvl);
-    const aLvl = SIM.domesticApproval < 25 ? 'danger' : SIM.domesticApproval < 45 ? 'warning' : 'good';
-    setMetric('hud-approval', `APPROVAL: ${Math.round(SIM.domesticApproval)}`, aLvl);
-    const bLvl = SIM.budget < 200 ? 'danger' : SIM.budget < 500 ? 'warning' : 'good';
-    setMetric('hud-budget', `BUDGET: $${Math.round(SIM.budget)}M`, bLvl);
+    // --- Budget gauge ---
+    const bgEl = document.getElementById('gauge-budget');
+    if (bgEl) {
+        const bgVal = bgEl.querySelector('.gauge-value');
+        if (bgVal) {
+            bgVal.textContent = '$' + Math.round(SIM.budget) + 'M';
+            bgVal.className = 'gauge-value ' + (SIM.budget < 200 ? 'danger' : SIM.budget < 500 ? 'warning' : 'good');
+        }
+    }
 
     // --- Lose-condition warnings ---
     const warnEl = document.getElementById('hud-warning');
     if (warnEl) {
         let warn = '';
-        if (SIM.warPath >= 4) warn = '\u26A0 WAR IMMINENT — ONE MORE INCIDENT';
-        else if (SIM.domesticApproval <= 20) warn = '\u26A0 REMOVAL PROCEEDINGS LIKELY';
-        else if (SIM.internationalStanding <= 15) warn = '\u26A0 GLOBAL ISOLATION';
-        else if (SIM.polarization >= 75) warn = '\u26A0 CIVIL UNREST ESCALATING';
+        if (SIM.warPath >= 4) warn = '\u26A0 WAR IMMINENT';
+        else if (SIM.domesticApproval <= 20) warn = '\u26A0 REMOVAL LIKELY';
+        else if (SIM.internationalStanding <= 15) warn = '\u26A0 ISOLATION';
+        else if (SIM.polarization >= 75) warn = '\u26A0 UNREST';
         else if (SIM.budget < 100) warn = '\u26A0 BUDGET CRISIS';
         warnEl.textContent = warn;
         warnEl.style.display = warn ? '' : 'none';
@@ -1191,14 +1185,12 @@ function showActionPanel() {
     // Shrink all layout elements to make room for action panel
     const canvas = document.getElementById('game-canvas');
     const gaugeBar = document.getElementById('gauge-bar');
-    const tickers = document.getElementById('news-tickers');
     if (canvas) {
         canvas.classList.remove('with-sitpanel');
         canvas.classList.add('with-both');
         canvas.style.width = '';
     }
     if (gaugeBar) gaugeBar.style.right = '280px';
-    if (tickers) tickers.style.right = '280px';
 
     const panel = document.createElement('div');
     panel.id = 'action-panel';
@@ -2105,10 +2097,8 @@ function hideActionPanel() {
     // Restore layout widths
     const canvas = document.getElementById('game-canvas');
     const gaugeBar = document.getElementById('gauge-bar');
-    const tickers = document.getElementById('news-tickers');
     if (canvas) {
         canvas.classList.remove('with-both');
-        // Restore situation panel sizing if it's visible
         const sitPanel = document.getElementById('situation-panel');
         if (sitPanel && sitPanel.style.display !== 'none') {
             canvas.classList.add('with-sitpanel');
@@ -2116,7 +2106,6 @@ function hideActionPanel() {
         canvas.style.width = '';
     }
     if (gaugeBar) gaugeBar.style.right = '';
-    if (tickers) tickers.style.right = '';
 }
 
 

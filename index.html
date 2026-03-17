@@ -15,7 +15,7 @@
         <canvas id="game-canvas"></canvas>
 
         <div id="gauge-bar">
-            <button id="mute-btn" class="mute-btn" title="Toggle Music">♫</button>
+            <button id="mute-btn" class="mute-btn" title="Toggle Music">&#9835;</button>
             <div id="hud-day" class="hud-day">DAY 1</div>
             <div class="gauge-item" id="gauge-stability">
                 <span class="gauge-label">STABILITY</span>
@@ -41,27 +41,16 @@
                 <span class="gauge-trend"></span>
                 <div class="gauge-track"><div class="gauge-fill danger" style="width:18%"></div></div>
             </div>
+            <div class="gauge-item gauge-item-small" id="gauge-warpath">
+                <span class="gauge-label">WARPATH</span>
+                <span class="gauge-value warning">1/5</span>
+            </div>
+            <div class="gauge-item gauge-item-small" id="gauge-budget">
+                <span class="gauge-label">BUDGET</span>
+                <span class="gauge-value good">$900M</span>
+            </div>
             <div id="hud-rating" class="hud-rating">C</div>
-            <div id="hud-strait" class="strait-counter">STRAIT: CLOSED</div>
-        </div>
-        <div id="hud-metrics-bar">
-            <span class="hud-metric" id="hud-tension">TENSION: 65</span>
-            <span class="hud-metric" id="hud-oilflow">OIL FLOW: 40%</span>
-            <span class="hud-metric" id="hud-warpath">WARPATH: 1/5</span>
-            <span class="hud-metric" id="hud-approval">APPROVAL: 60</span>
-            <span class="hud-metric" id="hud-budget">BUDGET: $900M</span>
             <span id="hud-warning" class="hud-warning"></span>
-        </div>
-
-        <div id="news-tickers">
-            <div id="public-ticker" class="ticker">
-                <span class="ticker-label">NEWS</span>
-                <div class="ticker-content" id="public-ticker-content"></div>
-            </div>
-            <div id="intel-ticker" class="ticker intel">
-                <span class="ticker-label">INTEL</span>
-                <div class="ticker-content" id="intel-ticker-content"></div>
-            </div>
         </div>
 
         <div id="situation-panel" style="display:none"></div>
