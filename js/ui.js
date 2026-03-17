@@ -204,8 +204,8 @@ function updateSituationPanel() {
 
     function valClass(v) { return v >= 60 ? 'good' : v >= 35 ? 'warning' : 'danger'; }
 
-    // Recent headlines (last 4)
-    const recent = SIM.headlines.slice(-4);
+    // Recent headlines (last 6)
+    const recent = SIM.headlines.slice(-6);
     const headlinesHtml = recent.map(h => {
         const prefix = h.level === 'critical' ? '<span class="wire-prefix wire-flash">FLASH</span> '
                      : h.level === 'warning' ? '<span class="wire-prefix wire-urgent">URGENT</span> '
@@ -213,8 +213,8 @@ function updateSituationPanel() {
         return `<div class="sit-headline ${h.level}">${prefix}${h.text}</div>`;
     }).join('');
 
-    // Intel (last 2)
-    const intelHtml = SIM.intelBriefings.slice(-2).map(b => {
+    // Intel (last 3)
+    const intelHtml = SIM.intelBriefings.slice(-3).map(b => {
         const cls = b.confidence === 'HIGH' ? 'conf-high' : b.confidence === 'MEDIUM' ? 'conf-medium' : 'conf-low';
         return `<div class="sit-intel-item"><span class="${cls}">[${b.confidence}]</span> ${b.text}</div>`;
     }).join('') || '<div class="sit-intel-item" style="color:#2a6a4a">No current intel.</div>';
@@ -233,14 +233,34 @@ function updateSituationPanel() {
         return `<div class="sit-row"><span>${card.name}</span><span class="sit-val" style="color:${s.funding === 'high' ? '#dd4444' : s.funding === 'medium' ? '#ddaa44' : '#2a6a4a'}">${s.funding.toUpperCase()}</span></div>`;
     }).join('') || '<div class="sit-row" style="color:#2a6a4a">No active strategies</div>';
 
+    // Situation summary text
+    const tankerCount = SIM.tankers.filter(t => !t.seized).length;
+    const seizedCount = SIM.tankers.filter(t => t.seized).length;
+    const navyCount = SIM.navyShips.length;
+    const boatCount = SIM.iranBoats.length;
+    const mineCount = SIM.mines.length;
+    const roeLabel = SIM.roe === 'aggressive' ? 'AGGRESSIVE' : SIM.roe === 'moderate' ? 'MODERATE' : 'DEFENSIVE';
+    const roeColor = SIM.roe === 'aggressive' ? '#dd4444' : SIM.roe === 'moderate' ? '#ddaa44' : '#44dd88';
+
     panel.innerHTML = `
         <div class="sit-section">
-            <div class="sit-label">ESCALATION</div>
-            <div class="sit-row"><span style="color:${esc.color}">${esc.name}</span><span class="sit-val danger">${SIM.warPath}/5</span></div>
+            <div class="sit-label">SITUATION REPORT \u2014 DAY ${SIM.day}</div>
+            <div class="sit-row"><span style="color:${esc.color}">${esc.name}</span><span class="sit-val" style="color:${esc.color}">${SIM.warPath}/5</span></div>
+            <div class="sit-row"><span>ROE</span><span class="sit-val" style="color:${roeColor}">${roeLabel}</span></div>
             <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/14 OPEN' : 'CONTESTED'}</span></div>
             <div class="sit-row"><span>Budget</span><span class="sit-val ${SIM.budget > 500 ? 'good' : SIM.budget > 200 ? 'warning' : 'danger'}">$${Math.round(SIM.budget)}M</span></div>
-            <div class="sit-row"><span>Iran</span><span class="sit-val warning">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span></div>
             <div class="sit-row"><span>Rating</span><span class="sit-val ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
+        </div>
+        <div class="sit-section">
+            <div class="sit-label">FORCE DISPOSITION</div>
+            <div class="sit-row"><span>USN Ships</span><span class="sit-val ${navyCount > 0 ? 'good' : 'danger'}">${navyCount}${SIM.carrier ? ' +CSG' : ''}</span></div>
+            <div class="sit-row"><span>Tankers in transit</span><span class="sit-val">${tankerCount}</span></div>
+            ${seizedCount > 0 ? `<div class="sit-row"><span>Seized</span><span class="sit-val danger">${seizedCount}</span></div>` : ''}
+            <div class="sit-row"><span>IRGC boats</span><span class="sit-val ${boatCount > 3 ? 'danger' : boatCount > 0 ? 'warning' : 'good'}">${boatCount}</span></div>
+            ${mineCount > 0 ? `<div class="sit-row"><span>Sea mines</span><span class="sit-val danger">${mineCount}</span></div>` : ''}
+            ${SIM.drones.length > 0 ? `<div class="sit-row"><span>Drones</span><span class="sit-val warning">${SIM.drones.length}</span></div>` : ''}
+            <div class="sit-row"><span>Iran posture</span><span class="sit-val warning">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span></div>
+            <div class="sit-row"><span>Intercepts</span><span class="sit-val good">${SIM.interceptCount}</span></div>
         </div>
         <div class="sit-section">
             <div class="sit-label">WIRE FEED</div>

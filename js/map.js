@@ -57,44 +57,21 @@ function renderMap() {
         drawProceduralMap(ctx, w, h);
     }
 
-    // --- Symbolic Overlays ---
+    // --- Minimal overlays (text-based game, map is ambient) ---
     drawShippingLaneFlow(ctx, w, h);
-    drawEntities(ctx, w, h);
-    drawHazardMarkers(ctx, w, h);
-    drawPlatforms(ctx, w, h);
     drawIncidentMarkers(ctx, w, h);
-    drawStatusPanel(ctx, w, h);
 
-    // Day counter (large, center-top of canvas)
+    // Day counter
     drawDayCounter(ctx, w, h);
 
     // Event flash card
     drawEventFlash(ctx, w, h);
 
-    // Visual effects
-    for (const fx of SIM.effects) {
-        drawEffect(ctx, fx, w, h);
-    }
-
-    // Tension overlay
+    // Tension overlay — red tint as things heat up
     if (SIM.tension > 40) {
         const alpha = (SIM.tension - 40) / 200;
         ctx.fillStyle = `rgba(255, 30, 30, ${alpha})`;
         ctx.fillRect(0, 0, w, h);
-    }
-
-    // Fog of war
-    if (SIM.fogOfWar > 50) {
-        const fogAlpha = (SIM.fogOfWar - 50) / 300;
-        for (let i = 0; i < 8; i++) {
-            const fx = (Math.sin(Date.now() / 5000 + i * 2) * 0.15 + 0.5) * w;
-            const fy = (Math.cos(Date.now() / 7000 + i * 3) * 0.15 + 0.4) * h;
-            const grad = ctx.createRadialGradient(fx, fy, 0, fx, fy, 120);
-            grad.addColorStop(0, `rgba(0, 0, 0, ${fogAlpha})`);
-            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, w, h);
-        }
     }
 
     // Crisis border flash
@@ -104,13 +81,6 @@ function renderMap() {
         ctx.strokeStyle = `rgba(255, 30, 30, ${alpha})`;
         ctx.lineWidth = SIM.crisisLevel * 2;
         ctx.strokeRect(0, 0, w, h);
-    }
-
-    // Time-of-day tint based on week
-    const weekTint = (SIM.week % 4) / 4;
-    if (weekTint > 0.5) {
-        ctx.fillStyle = `rgba(20, 10, 40, ${(weekTint - 0.5) * 0.15})`;
-        ctx.fillRect(0, 0, w, h);
     }
 }
 
