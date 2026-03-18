@@ -258,115 +258,177 @@
   "loreScreen": {
     "proceedButton": "[ ENTER THE SITUATION ROOM ]"
   },
+  "idleAsides": {
+    "trump": [
+      "Did you see what CNN just said? They said 'crisis management' like it's a bad thing. Everything I do is crisis management. That's the job.",
+      "Hannity texted. He wants an exclusive from the Situation Room. I told him we'd think about it. We should do it.",
+      "Oil at $115. You know what that means? It means everyone with a truck in Texas is thinking about me right now. Not in a good way.",
+      "The Democrats are already talking impeachment. Impeachment! For defending American interests. These people would impeach Washington for crossing the Delaware.",
+      "Get me Hegseth on the phone. No — don't get me Hegseth. He'll want to bomb something. Get me the Fox producer instead.",
+      "Polymarket has me at 43% approval tomorrow. I've beaten Polymarket before. Remember 2024?",
+      "MBS sent a gift. A gold-plated model of an aircraft carrier. Subtle. Very subtle.",
+      "My Truth Social post about the tanker intercept got 4.2 million views. More than CNN's entire primetime combined. Think about that.",
+      "The Pentagon wants $2 billion more. For what? Missiles? We've got missiles. I want results, not invoices.",
+      "Someone tell the press pool to stop asking about Kushner's travel schedule. It's not relevant. It's a distraction."
+    ],
+    "hegseth": [
+      "The 0300 patrol report just came in. Clean sweep. That's three days running. The Navy is doing its job.",
+      "I used to be on the other side of that table — the guy getting sent, not the guy sending. I never forget that.",
+      "The Joint Chiefs think I'm reckless. Funny. I think they're cowards. Somewhere in between is probably correct.",
+      "CNN's running their 'inside the Pentagon' piece again. Every anonymous source in that article works for someone who wants my job.",
+      "Air wing sortie rate is at 94%. That's exceptional. Those pilots are the best in the world and they don't get enough credit.",
+      "Iron dome intercepted twelve incoming last night. Twelve. Without that system, we'd be counting casualties, not interceptions.",
+      "The IRGC commander — Tangsiri — he's good. Not a genius, but competent and brave, which is worse.",
+      "I keep this coin in my pocket. 3rd Battalion, Special Forces. Afghanistan, 2012. It reminds me that the people at the pointy end are real.",
+      "Someone in this building is leaking. I don't know who, and that's the part that keeps me up at night.",
+      "War is the extension of politics by other means. Clausewitz said that. But he didn't have to deal with Twitter."
+    ],
+    "kushner": [
+      "MBS just texted an emoji. A handshake emoji. That either means the deal is alive or he's being ironic. With MBS you never know.",
+      "My lawyer says the FARA filing isn't technically required because I'm a 'volunteer.' The word 'technically' is doing a lot of work there.",
+      "The Omani foreign minister is the most underrated diplomat in the world. He's kept this channel open for six weeks through sheer stubbornness.",
+      "Oil at $120 means Affinity Partners' Gulf portfolio is up another $80 million. I'm not supposed to think about that right now.",
+      "Araghchi sent a message through the Swiss. Just one word: 'patience.' Either he's playing for time or he's telling me something real.",
+      "ProPublica filed another FOIA. My travel logs, my phone records, my hotel bookings. They're building a case. Not legal — narrative.",
+      "The Senate Finance Committee wants me to testify. 'Voluntary.' Nothing is ever voluntary in Washington.",
+      "Every deal has a price nobody talks about. The Abraham Accords cost the Palestinians. This deal will cost someone too.",
+      "The $25 million management fee from PIF hits next month. I am acutely aware of how that looks.",
+      "There are three people in this room who know the full deal structure. Everyone else sees what we want them to see."
+    ],
+    "asmongold": [
+      "Chat just donated $500 with the message 'glass Iran.' I'm not reading that on stream but it's the top donation of the day.",
+      "My OSINT guys in the Discord found something interesting in the shipping AIS data. Might be nothing. Usually is.",
+      "Credibility is a weird currency. You spend years building it and one bad prediction destroys it overnight.",
+      "The New York Times called me an 'unconventional intelligence asset.' I screenshotted that and it's my new bio.",
+      "Someone in the Pentagon is watching my stream. I know because they corrected a ship identification in chat. Username: 'totally_not_an_admiral.'",
+      "Reddit is doing that thing where half the posts are genuine analysis and the other half are 'asmongold bald' memes. Par for the course.",
+      "My mod team is better than CNN's fact-checking department. That's not a joke, it's a verifiable claim.",
+      "Polymarket created a contract on whether my next prediction will be correct. I have never felt more simultaneously flattered and insulted.",
+      "Iran's state TV quoted my stream last night. They used a clip where I called the IRGC Navy 'surprisingly competent.' Thanks guys.",
+      "I need to eat something. I've been running on Monster Energy and existential dread for fourteen hours."
+    ],
+    "fuentes": [
+      "AIPAC spent $12 million on ads against us this week. $12 million. Where does that money come from? Follow the money.",
+      "Tucker just texted. 'Stay the course.' That's the most validation I've gotten from anyone outside the base in two weeks.",
+      "The European ambassadors won't return my calls. Good. When was the last time a European ambassador solved an American problem?",
+      "My Telegram channel hit 500,000 subscribers. Half of them are feds but the other half are real, and that's enough.",
+      "The military-industrial complex isn't a conspiracy theory. It's a line item in the federal budget. Look it up.",
+      "They call me an isolationist like it's an insult. America First isn't isolation. It's prioritization.",
+      "Gas prices are down because we're not burning a trillion dollars in the Gulf. Nobody on CNN will make that connection.",
+      "The Secret Service detail keeps getting bigger. Either the threats are real or they're trying to intimidate me. Either way, I'm not stopping.",
+      "Netanyahu called. I didn't pick up. He called again. I didn't pick up again. Some messages are better delivered through silence.",
+      "They want me to send American kids to die for Saudi oil profits. I'm the radical because I said no."
+    ]
+  },
   "cardReactions": {
     "trump": {
       "military": {
-        "positive": "[Trump nods approvingly] 'Now that's what I'm talking about. Strength. Real strength. They'll see this on every channel.'",
-        "reluctant": "[Trump waves his hand] 'Fine, fine. The generals want their toys. Just make sure it looks good on camera.'"
+        "positive": "Some ships, some planes — make sure they get the footage. I want Tomahawk launches on the evening news.",
+        "reluctant": "Everything. Send everything. I want Iran to wake up tomorrow and see the entire US Navy on their doorstep. That's how you negotiate."
       },
       "diplomatic": {
-        "positive": "[Trump leans forward] 'A deal. I love deals. Nobody makes deals like me. Let's see what they're offering.'",
-        "reluctant": "[Trump grimaces] 'Diplomacy. Boring word. But sometimes you gotta shake hands before you squeeze. Fine.'"
+        "positive": "A deal. I love deals. Nobody makes deals like me. Let's see what they're offering.",
+        "reluctant": "A summit? Sure, I'll do a summit. I did Singapore with Kim and that was beautiful. This could be bigger."
       },
       "economic": {
-        "positive": "[Trump taps the desk] 'Money talks. Always has. Hit them in the wallet and they come to the table begging.'",
-        "reluctant": "[Trump shrugs] 'The economists want to play their games. As long as the stock market doesn't crash, whatever.'"
+        "positive": "Sanctions. Easy. Squeeze them until they come to the table. This is what I do best.",
+        "reluctant": "Crush them. Sanctions on everything — oil, banking, shipping, the works. Make it hurt."
       },
       "intelligence": {
-        "positive": "[Trump squints] 'Intel. Sure. Just don't let the deep state types run the show. I want results I can see.'",
-        "reluctant": "[Trump crosses his arms] 'Spies. Never trusted them. But I guess someone has to watch the watchers.'"
+        "positive": "Intel. Good. I want to know what they're thinking before they think it.",
+        "reluctant": "Total surveillance. I want to read their emails. I want to know what Tangsiri had for breakfast."
       },
       "domestic": {
-        "positive": "[Trump grins widely] 'The American people. That's who matters. This plays great in the heartland — I can feel it.'",
-        "reluctant": "[Trump checks his phone] 'Congress wants attention again. Give them their briefing. Just make sure they know who's in charge.'"
+        "positive": "The American people. That's who matters. This plays great in the heartland — I can feel it.",
+        "reluctant": "Congress wants attention again. Give them their briefing. Just make sure they know who's in charge."
       }
     },
     "hegseth": {
       "military": {
-        "positive": "[Hegseth straightens up] 'Outstanding. This is the kind of decisive force projection that changes the calculus on the ground.'",
-        "reluctant": "[Hegseth nods slowly] 'Military assets deployed. Not my first choice of configuration, but the operators will make it work.'"
+        "positive": "Solid force package. Two carrier groups gives us strike capability and deterrence. This is how professionals do it.",
+        "reluctant": "Full war footing. I hope you understand what this means — there's no quiet way to undo a deployment this size."
       },
       "diplomatic": {
-        "positive": "[Hegseth considers carefully] 'Diplomacy backed by credible force. That's the only kind that works. I can support this.'",
-        "reluctant": "[Hegseth exhales] 'Talking. While our people are in harm's way. I'll defer to the process, but I want a military option ready.'"
+        "positive": "Diplomacy backed by credible force. That's the only kind that works. I can support this.",
+        "reluctant": "You're betting everything on a handshake with people who've broken every agreement they've ever signed. Your call."
       },
       "economic": {
-        "positive": "[Hegseth reviews the brief] 'Economic pressure can shape the battlespace before a shot is fired. Smart play.'",
-        "reluctant": "[Hegseth frowns] 'Sanctions and spreadsheets while the fleet is on station. I hope the economists know what they're doing.'"
+        "positive": "Economic warfare is warfare. I respect it. Just don't expect it to work fast.",
+        "reluctant": "Heavy sanctions drive desperate regimes to desperate actions. Be ready for Iran to lash out."
       },
       "intelligence": {
-        "positive": "[Hegseth marks the map] 'Good intel saves lives. Every recon asset we deploy makes our operators safer and more effective.'",
-        "reluctant": "[Hegseth taps the table] 'Intel collection is solid, but it's not a substitute for decisive action. Clock's ticking.'"
+        "positive": "Solid intel package. HUMINT plus SIGINT gives us the picture we need for targeting.",
+        "reluctant": "Full-spectrum intelligence dominance. We'll know where every fast boat, every missile, every mine is in real time."
       },
       "domestic": {
-        "positive": "[Hegseth pauses] 'The troops need to know the country has their back. Shoring up the home front supports the mission.'",
-        "reluctant": "[Hegseth stiffens] 'Politics. We're running a military operation and someone wants a press conference. Do what you have to.'"
+        "positive": "Public support matters for sustained operations. The military can't fight a war the country doesn't believe in.",
+        "reluctant": "I'm a military man, not a politician. But even I know you can't run a war without domestic support."
       }
     },
     "kushner": {
       "military": {
-        "positive": "[Kushner adjusts his cuffs] 'Military leverage. Not to use — to have. Every carrier group is a bargaining chip in the right negotiation.'",
-        "reluctant": "[Kushner checks his phone] 'The military option complicates three deals I have in progress. But I understand the optics. Proceed.'"
+        "positive": "Military presence has a diplomatic function. Iran will notice. More importantly, MBS will notice, and that helps the deal.",
+        "reluctant": "You're making diplomacy impossible. Every escalation narrows my options."
       },
       "diplomatic": {
-        "positive": "[Kushner's eyes light up] 'This is our lane. Every back-channel conversation compounds. The relationships are the strategy.'",
-        "reluctant": "[Kushner nods politely] 'Diplomatic channels, sure. Just make sure it doesn't step on the private conversations that are actually producing results.'"
+        "positive": "This is the architecture I need. Diplomatic capital, backchannel access, Gulf state buy-in. We can build something real.",
+        "reluctant": "Give me this and I'll get you a deal. A real one. Not a photo op — a framework that reshapes the Middle East."
       },
       "economic": {
-        "positive": "[Kushner leans in] 'Follow the money. The deal architecture depends on economic frameworks. This is foundational work.'",
-        "reluctant": "[Kushner glances at his watch] 'Economic levers are useful, but the real value is in the relationships behind the numbers. Don't lose sight of that.'"
+        "positive": "Targeted sanctions. Useful — but every sanction I add is a card MBS plays against us in the next call.",
+        "reluctant": "You're cratering their economy. That might sound good in a briefing but desperate economies make desperate governments."
       },
       "intelligence": {
-        "positive": "[Kushner lowers his voice] 'Information is currency. The more we know, the better our negotiating position. Smart investment.'",
-        "reluctant": "[Kushner shifts uncomfortably] 'Intelligence operations create paper trails. Paper trails create exposure. Be careful with this.'"
+        "positive": "The more we know, the better I can negotiate. Information is leverage.",
+        "reluctant": "Careful with cyber operations — if Iran detects the intrusion, the moderate faction loses the argument for diplomacy."
       },
       "domestic": {
-        "positive": "[Kushner considers] 'Domestic stability protects the deal pipeline. If Congress is calm, the back-channels stay quiet.'",
-        "reluctant": "[Kushner waves it off] 'Domestic politics is noise. The real work happens in private rooms. But fine, manage the noise.'"
+        "positive": "Managed press exposure is good — but be careful what you tell Congress. Everything leaks.",
+        "reluctant": "Domestic politics is noise. The deal gets done in private or it doesn't get done at all."
       }
     },
     "asmongold": {
       "military": {
-        "positive": "[Asmongold sits up] 'Dude, military content is insane engagement. Chat goes wild every time we move a carrier group. Let's go.'",
-        "reluctant": "[Asmongold rubs his neck] 'Military stuff is hype but also scary, man. Real people out there. Chat better understand what we're doing.'"
+        "positive": "Medium deployment. Two carrier groups means roughly 150 aircraft, 15 surface combatants, and several submarines we can't talk about.",
+        "reluctant": "Full send. We are officially in the 'this could escalate to a shooting war at any moment' zone. Mods, enable slow mode."
       },
       "diplomatic": {
-        "positive": "[Asmongold reads chat] 'Chat says diplomacy arc is actually kinda based. The analysis threads get crazy engagement. I'm in.'",
-        "reluctant": "[Asmongold yawns] 'Diplomacy content is... look, it's important, I get it. But chat's gonna zone out. We need to frame this right.'"
+        "positive": "Interesting move. The chat is split — hawks are mad, doves are relieved, and the centrists are doing the 'it depends' thing.",
+        "reluctant": "Full diplomatic commitment. This is either the Lincoln-level play or the Chamberlain-level play. History will decide."
       },
       "economic": {
-        "positive": "[Asmongold pulls up charts] 'OK the economic analysis is actually content gold if you know how to present it. Numbers don't lie, chat.'",
-        "reluctant": "[Asmongold squints at a spreadsheet] 'Economic policy. This is the part where half of chat goes to get food. But we'll make it work.'"
+        "positive": "Sanctions analysis incoming. Chat, pull up the OFAC SDN list — I'm going to show you who's actually getting sanctioned.",
+        "reluctant": "Maximum sanctions. Iran's rial just hit an all-time low. I'll do a stream breaking down the economic data."
       },
       "intelligence": {
-        "positive": "[Asmongold's eyes go wide] 'OSINT content is literally what we're built for. Chat, we're in our element. Crowd-source everything.'",
-        "reluctant": "[Asmongold nods] 'Intel stuff is cool but we gotta be careful what we show on stream. Don't want to get anyone in trouble.'"
+        "positive": "OSINT plus SIGINT. This is my literal wheelhouse. I'll correlate the classified feeds with open-source data on stream.",
+        "reluctant": "Full intelligence package. If I can cross-reference this with my OSINT network, we'll see things nobody else sees."
       },
       "domestic": {
-        "positive": "[Asmongold grins] 'Domestic engagement is our bread and butter. This is what chat cares about. Real talk, real impact.'",
-        "reluctant": "[Asmongold sighs] 'Domestic politics... chat's gonna be divided on this one. Mods, get ready for the paragraphs.'"
+        "positive": "Media blitz? I AM the media blitz. My stream reaches more people than a press conference.",
+        "reluctant": "Peak domestic engagement. The audience is the fourth branch of government and they're watching."
       }
     },
     "fuentes": {
       "military": {
-        "positive": "[Fuentes pounds the desk] 'American military power — for AMERICAN interests. Not for Israel, not for Saudi Arabia. For US. That's the difference.'",
-        "reluctant": "[Fuentes narrows his eyes] 'More military deployment. The defense contractors are celebrating. As long as this serves America First, fine.'"
+        "positive": "Fine. Minimal presence. Enough to protect Americans abroad but not enough to get sucked into another forever war.",
+        "reluctant": "Absolutely not. We're not deploying the full US military to protect Saudi oil tankers. The base didn't elect us for this."
       },
       "diplomatic": {
-        "positive": "[Fuentes considers] 'Bilateral talks, nation to nation. Not through the UN, not through the globalist framework. This I can support.'",
-        "reluctant": "[Fuentes scowls] 'Diplomacy. The establishment's favorite word for doing nothing while Americans pay the bill. Get it over with.'"
+        "positive": "If diplomacy means getting out of the Gulf faster, I'll take it. If it means new commitments, forget it.",
+        "reluctant": "Coalition building? Gulf partnerships? This is the globalist playbook with a different cover. Hard pass."
       },
       "economic": {
-        "positive": "[Fuentes nods firmly] 'Economic nationalism. Every dollar should benefit American workers first. This is the America First doctrine in action.'",
-        "reluctant": "[Fuentes crosses his arms] 'More economic games that benefit Wall Street and foreign banks. The base sees through this, but go ahead.'"
+        "positive": "Sanctions are fine. Cheap, effective, doesn't require American boots on the ground.",
+        "reluctant": "I'd rather sanction them into the ground than send a single American soldier to die in the Gulf."
       },
       "intelligence": {
-        "positive": "[Fuentes leans forward] 'Intel that protects Americans and exposes the establishment. As long as it's not turned inward, I'll take it.'",
-        "reluctant": "[Fuentes glares] 'The intelligence community. The same people who spy on their own citizens. Keep them on a very short leash.'"
+        "positive": "Intelligence gathering — fine. Knowing what's happening doesn't mean we have to do anything about it.",
+        "reluctant": "I'd rather spend money on intel than on carriers. Information doesn't come home in a body bag."
       },
       "domestic": {
-        "positive": "[Fuentes stands up, energized] 'THIS is what it's about. The American people first. The base. The movement. Everything else is secondary.'",
-        "reluctant": "[Fuentes shakes his head] 'Domestic optics for the establishment crowd. The base doesn't need spin — they need action. But fine, play the game.'"
+        "positive": "Rally the base. Simple. Direct. No intermediaries, no media filter.",
+        "reluctant": "Congressional briefing is a trap. They'll use it to build the case for intervention."
       }
     }
   },

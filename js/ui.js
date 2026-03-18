@@ -4260,9 +4260,26 @@ function _pushAmbientContent() {
         if (s.proxyThreat > 40 && sim.proxy_events) pool.push(...sim.proxy_events.map(t => ({type:'ambient', text:t})));
         if (s.domesticApproval < 40 && sim.approval_warnings) pool.push(...sim.approval_warnings.map(t => ({type:'ambient', text:t})));
         if (s.polarization > 60 && sim.polarization_warnings) pool.push(...sim.polarization_warnings.map(t => ({type:'ambient', text:t})));
+
+        // Tension-graded ambient cables
+        if (s.tension < 40 && sim.ambient_low_tension) pool.push(...sim.ambient_low_tension.map(t => ({type:'ambient', text:t})));
+        else if (s.tension < 70 && sim.ambient_medium_tension) pool.push(...sim.ambient_medium_tension.map(t => ({type:'ambient', text:t})));
+        else if (sim.ambient_high_tension) pool.push(...sim.ambient_high_tension.map(t => ({type:'ambient', text:t})));
+
+        // Polymarket headlines (always available, meta-satirical layer)
+        if (sim.polymarket && Math.random() < 0.3) pool.push(...sim.polymarket.map(t => ({type:'ambient', text:t})));
     }
 
     // Intel cables removed from ambient — delivered in morning briefing only
+
+    // Idle asides — character-specific flavor during quiet moments
+    if (SIM.character && DATA.dialogue && DATA.dialogue.idleAsides) {
+        const asides = DATA.dialogue.idleAsides[SIM.character.id];
+        if (asides && asides.length > 0 && Math.random() < 0.2) {
+            const aside = asides[Math.floor(Math.random() * asides.length)];
+            pool.push({type:'advisor', text: aside, speaker: SIM.character.name, portrait: SIM.character.id});
+        }
+    }
 
     // Advisor asides based on state thresholds
     // Advisor asides (skip if _maybeAdvisorReaction recently fired)

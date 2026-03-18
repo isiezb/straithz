@@ -321,6 +321,60 @@
               "flavor": "The world knows. Iran must respond publicly. Araghchi is burned."
             }
           ]
+        },
+        "K05_senate_subpoena": {
+          "title": "THE SUBPOENA",
+          "description": "The process server finds you in the West Wing hallway — between meetings, which is worse because there are witnesses. Senate Finance Committee. Mandatory testimony. 'Investigation into Financial Conflicts of Interest in US-Iran Diplomatic Negotiations.' Fourteen questions. Seven about Affinity Partners. Three about PIF management fees. Two about the Oman meetings. One about a phone call with MBS on February 26th — two days before the strikes began. The last one simply asks: 'Did your financial relationship with the Saudi government influence your advice to the President regarding military action against Iran?'",
+          "choices": [
+            {
+              "label": "Testify voluntarily — claim executive privilege on specifics",
+              "flavor": "You sit in the chair. You answer what you can. You invoke privilege on the rest. The senators are furious. But you controlled the narrative."
+            },
+            {
+              "label": "Challenge the subpoena — invoke volunteer status",
+              "flavor": "Your lawyers file the motion. 'Unpaid volunteer.' The legal argument is thin but the delay is real. Months of proceedings."
+            },
+            {
+              "label": "Leak the deal framework — reframe as peacemaker",
+              "flavor": "'Kushner was building peace while Congress played politics.' The headline writes itself. The exposure is enormous. But so is the story."
+            }
+          ]
+        },
+        "K06_pif_renegotiation": {
+          "title": "THE AUGUST CLAUSE",
+          "description": "Page 47, Section 12.3 of the Affinity Partners agreement: 'Investor Renegotiation Rights.' In August 2026, the Saudi PIF can renegotiate its $2 billion commitment or withdraw entirely. MBS has never mentioned this clause. Not once. If the deal succeeds — more money, billions more. If it fails — you lose everything. You are simultaneously the most important diplomat in the world and a man whose largest client has a contractual gun to his head.",
+          "choices": [
+            {
+              "label": "Disclose the August clause to the President",
+              "flavor": "Full transparency. The President stares at you for a long time. 'You should have told me sooner.' But he doesn't fire you. Not yet."
+            },
+            {
+              "label": "Accelerate the deal timeline — close before August",
+              "flavor": "Faster. Everything faster. The diplomats complain about rushed timelines. You don't care. August is coming."
+            },
+            {
+              "label": "Renegotiate the Affinity agreement — remove the clause",
+              "flavor": "You call your lawyers. Remove the clause. It costs you — the deal value drops significantly. But the leverage disappears. Finally."
+            }
+          ]
+        },
+        "K07_the_recording": {
+          "title": "THE RECORDING",
+          "description": "Your lawyer calls at 6am. 'There's a recording.' Someone in the Oman meeting — February 26th, two days before the strikes — was wearing a wire. For a journalist. Forty-three minutes. On tape, you say: 'The window for a deal is closing. If Tehran doesn't move, the military option becomes inevitable.' In context, a factual assessment. Out of context, it sounds like you told Iran war was coming before the President gave the order. The recording publishes in 72 hours. Your phone buzzes. MBS. A single emoji: 🤷",
+          "choices": [
+            {
+              "label": "Get ahead of it — press conference with full transcript",
+              "flavor": "You stand at the podium. You release everything. The full context. The journalists have their story but you wrote the headline."
+            },
+            {
+              "label": "Call MBS — the recording came from the Omani side",
+              "flavor": "One phone call. The recording disappears. You owe MBS now. More than money. The debt is measured in favors."
+            },
+            {
+              "label": "Go to the President directly — tell him everything first",
+              "flavor": "You sit across the Resolute desk. You tell him everything. Before CNN does. His face is unreadable. 'We'll deal with this,' he says."
+            }
+          ]
         }
       },
       "epilogues": {

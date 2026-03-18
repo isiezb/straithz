@@ -318,7 +318,67 @@
       "default": "{cardName} now active"
     },
     "card_queued": "{cardName} ({fundingLevel}) ordered — takes effect {delayLabel}",
-    "endgame_reason": "{reason}"
+    "endgame_reason": "{reason}",
+    "polymarket": [
+      "WIRE — Polymarket: 'Strait of Hormuz fully reopened by April 30' trading at 18 cents. Down from 34 cents last week.",
+      "WIRE — Polymarket: 'US-Iran ceasefire by June 30' at 56 cents. Highest-volume geopolitics market in platform history at $21M.",
+      "WIRE — Polymarket: 'Oil above $150 by March 31' surges to 68 cents after overnight IRGC threat. $38M in volume.",
+      "WIRE — Polymarket: 'US recession by December 2026' jumps to 42 cents from 24 cents at start of month.",
+      "WIRE — Polymarket: Six wallets flagged by onchain analysts for suspected insider trading on Iran strike timing. Combined profit: $1.2M.",
+      "WIRE — Polymarket creates market: 'Trump approval below 35% by April 15?' Currently trading at 29 cents.",
+      "WIRE — Polymarket: 'Iran regime change by December 2026' drops to 12 cents. Post-Khamenei succession appears stable.",
+      "WIRE — Polymarket: 'US ground invasion of Iran by June 2026' at 16 cents. Volume spiking after Hegseth's 15,000 targets claim.",
+      "ECON — Polymarket traders have wagered $529M on Iran-related contracts since Feb 28. Platform's largest-ever event.",
+      "WIRE — Polymarket: 'Joe Kent-style resignation within 30 days?' New market launches at 34 cents after NCTC director quits.",
+      "DOMESTIC — Polymarket: 'Trump impeachment proceedings by 2027' rises to 19 cents from 8 cents pre-war.",
+      "WIRE — Polymarket: 'Kushner financial scandal leads to investigation?' Trading at 41 cents. $7M in volume."
+    ],
+    "ambient_low_tension": [
+      "FLASH — UKMTO reports routine maritime traffic through Strait of Hormuz. 14 vessels transited in last 24 hours without incident.",
+      "WIRE — Lloyd's of London maintains Gulf war risk premium at 0.4% hull value. Market sources describe pricing as 'stabilizing but elevated.'",
+      "SIGINT — NSA intercept summary: IRGC Naval Command communications volume down 30% from 72-hour average. Assessment: reduced operational tempo.",
+      "HUMINT — CIA Station Muscat reports Omani foreign minister scheduled three calls with Tehran today. Source assesses 'diplomatic track is active.'",
+      "ECON — Brent crude trading at $98.40/barrel, down $3.20 from yesterday's close. Asian markets mixed on reduced threat assessment.",
+      "WIRE — AP: Saudi Aramco confirms 1.2 million barrels shipped through Strait of Hormuz overnight. 'Operations continue as normal,' spokesperson says.",
+      "DIPLO — State Department daily brief: No new incidents. European allies 'cautiously optimistic' about maritime security posture.",
+      "INTEL — NGA satellite pass 0340Z: Iranian fast boat pens at Bandar Abbas show 70% occupancy. Boats are in port. Assessment: non-threatening posture.",
+      "WIRE — Reuters: Insurance premiums for Gulf transit drop 15 basis points. Shipping industry sources describe 'cautious return to normalcy.'",
+      "DOMESTIC — Gallup daily tracking: Presidential approval at 54%. Issue focus shifting from Iran to domestic economy."
+    ],
+    "ambient_medium_tension": [
+      "FLASH — UKMTO Advisory 2026/034: Vessels advised exercise caution in eastern approach to Strait of Hormuz. Increased IRGC patrol activity observed.",
+      "WIRE — Oil futures spike $4.80 on reports of IRGC live-fire exercises near Qeshm Island. Brent at $112.30.",
+      "SIGINT — IRGC Naval encrypted burst transmission intercepted 0247Z. Decryption pending. Volume consistent with operational coordination.",
+      "HUMINT — Source CARDINAL reports internal IRGC debate between hardliner and moderate factions. Hardliners pushing for 'demonstrative action.' Confidence: MEDIUM.",
+      "ECON — GasBuddy national average: $4.23/gallon, up 8 cents from yesterday. Patrick De Haan estimates 80% chance of $5 by month end.",
+      "WIRE — Bloomberg: China's COSCO Shipping suspends new bookings for Gulf-bound vessels pending 'security reassessment.'",
+      "FLASH — Fifth Fleet reports Iranian drone observed conducting surveillance of USS Bataan escort group. Drone was not engaged.",
+      "INTEL — DIA assessment: Iran has repositioned three Noor anti-ship missile batteries to forward positions along the strait. Launchers are mobile, making targeting difficult.",
+      "DIPLO — UN Security Council emergency session requested by UK and France. Russia expected to veto any resolution authorizing maritime enforcement.",
+      "WIRE — FT: Polymarket odds on 'Strait of Hormuz fully reopened by April 30' drop to 22 cents from 31 cents.",
+      "DOMESTIC — Fox News poll: 58% of Americans support military action to protect shipping. 61% say gas prices are 'biggest concern.'",
+      "SIGINT — Intercepted IRGC voice communication: 'All units prepare for extended deployment. Rotation schedule cancelled.' Assessment: Iran is not standing down.",
+      "WIRE — Maersk diverts 12 container ships to Cape of Good Hope route. Transit time adds 14 days. Supply chain analysts warn of 'cascading delays.'",
+      "INTEL — Satellite imagery shows Iranian minelayer IRIS Hormuz departing Bandar Abbas. Assessment: potential mine-laying operation imminent.",
+      "ECON — Qatar Energy suspends LNG spot market sales. European natural gas futures up 18% in overnight trading."
+    ],
+    "ambient_high_tension": [
+      "FLASH — PRIORITY — UKMTO reports suspected anti-ship missile launch from Iranian coastline. No impact confirmed. All vessels advised to shelter.",
+      "FLASH — Three IRGC fast boats approaching commercial traffic at high speed in eastern lane. Fifth Fleet assets moving to intercept.",
+      "WIRE — EMERGENCY — Oil futures halted limit-up at $147/barrel after reports of mine detonation near Musandam Peninsula.",
+      "SIGINT — CRITIC — NSA reports massive spike in IRGC communications across all bands. Pattern consistent with pre-operational coordination.",
+      "FLASH — Iranian state TV broadcasting live from IRGC Naval Command: 'The Strait of Hormuz is closed. Any vessel that enters will be set ablaze.'",
+      "HUMINT — Source CARDINAL has gone dark. Last transmission 14 hours ago. Station unable to establish contact. Assessment: possible compromise.",
+      "WIRE — AP URGENT: Explosion reported near oil tanker in eastern approach to strait. Cause unknown. Fire visible from Omani coast.",
+      "ECON — Polymarket: 'Oil above $150 by March 31' trading at 68 cents. 'US recession by June' at 42 cents, up from 24 cents one week ago.",
+      "INTEL — IMMEDIATE — NGA confirms: at least four sea mines detected in shipping lane via synthetic aperture radar. Mine countermeasures requested.",
+      "FLASH — CENTCOM SITREP: Iranian ballistic missile launches detected from interior positions targeting Al Udeid Air Base, Qatar. THAAD engaging.",
+      "DIPLO — Swiss embassy Tehran reports Iranian foreign ministry 'unreachable' since 0200Z. All diplomatic channels silent.",
+      "WIRE — Reuters URGENT: Saudi Arabia and UAE place militaries on highest alert level. GCC joint statement calls situation 'existential threat to regional security.'",
+      "DOMESTIC — Mass protests reported in Houston, Los Angeles, and Chicago against military escalation. Counter-protests in Dallas and Nashville.",
+      "FLASH — GPS jamming reported across central strait. Multiple vessels reporting navigation equipment failures. USCG issues emergency advisory.",
+      "WIRE — Pentagon press secretary: 'We are aware of the situation. The Secretary of Defense will brief the President within the hour.'"
+    ]
   },
   "actions": {
     "gather_intel": [
