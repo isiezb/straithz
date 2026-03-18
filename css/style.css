@@ -25,35 +25,22 @@
     box-sizing: border-box;
 }
 
-html {
+html, body {
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     height: 100%;
     width: 100%;
-}
-
-body {
     background: #000;
     color: #44dd88;
     font-family: 'Courier New', Courier, monospace;
-    overflow: hidden;
-    height: 90vh;
-    height: 90dvh;
-    width: 100vw;
-    max-height: 90vh;
-    max-height: 90dvh;
     image-rendering: pixelated;
-    position: fixed;
-    top: 0;
-    left: 0;
 }
 
 #game-container {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100vw;
-    height: 90vh;
-    height: 90dvh;
+    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1244,8 +1231,7 @@ body {
     position: relative;
     max-width: 560px;
     width: 92%;
-    max-height: calc(88vh - 20px);
-    max-height: calc(88dvh - 20px);
+    max-height: calc(100dvh - 40px);
     overflow-y: auto;
     padding: 24px 20px;
     z-index: 1;
