@@ -13,45 +13,35 @@
     <div id="game-container">
         <div class="scanlines-global"></div>
 
-        <!-- TOP BAR: compact metrics -->
+        <!-- TOP BAR: minimal 30px -->
         <div id="gauge-bar">
             <button id="mute-btn" class="mute-btn" title="Toggle Music">&#9835;</button>
             <div id="hud-day" class="hud-day">DAY 1</div>
-            <div class="gauge-item" id="gauge-stability">
-                <span class="gauge-label">STAB</span>
-                <span class="gauge-value">20</span>
-                <span class="gauge-trend"></span>
-                <div class="gauge-track"><div class="gauge-fill danger" style="width:20%"></div></div>
-            </div>
-            <div class="gauge-item" id="gauge-economy">
-                <span class="gauge-label">ECON</span>
-                <span class="gauge-value">30</span>
-                <span class="gauge-trend"></span>
-                <div class="gauge-track"><div class="gauge-fill warning" style="width:30%"></div></div>
-            </div>
-            <div class="gauge-item" id="gauge-support">
-                <span class="gauge-label">SUPP</span>
-                <span class="gauge-value">45</span>
-                <span class="gauge-trend"></span>
-                <div class="gauge-track"><div class="gauge-fill warning" style="width:45%"></div></div>
-            </div>
-            <div class="gauge-item" id="gauge-intel">
-                <span class="gauge-label">INTL</span>
-                <span class="gauge-value">18</span>
-                <span class="gauge-trend"></span>
-                <div class="gauge-track"><div class="gauge-fill danger" style="width:18%"></div></div>
-            </div>
-            <div class="gauge-item gauge-item-small" id="gauge-warpath">
-                <span class="gauge-label">WAR</span>
-                <span class="gauge-value warning">1/5</span>
-            </div>
-            <div class="gauge-item gauge-item-small" id="gauge-budget">
-                <span class="gauge-label">$</span>
-                <span class="gauge-value good">$900M</span>
-            </div>
-            <div class="gauge-item gauge-item-small" id="gauge-hill">
-                <span class="gauge-label">HILL</span>
-                <span class="gauge-value warning">50</span>
+            <div class="gauge-group">
+                <div class="gauge-item" id="gauge-stability" title="Stability">
+                    <div class="gauge-track"><div class="gauge-fill danger" style="width:20%"></div></div>
+                    <span class="gauge-label">STAB</span>
+                    <span class="gauge-value">20</span>
+                    <span class="gauge-trend"></span>
+                </div>
+                <div class="gauge-item" id="gauge-economy" title="Economy">
+                    <div class="gauge-track"><div class="gauge-fill warning" style="width:30%"></div></div>
+                    <span class="gauge-label">ECON</span>
+                    <span class="gauge-value">30</span>
+                    <span class="gauge-trend"></span>
+                </div>
+                <div class="gauge-item" id="gauge-support" title="Support">
+                    <div class="gauge-track"><div class="gauge-fill warning" style="width:45%"></div></div>
+                    <span class="gauge-label">SUPP</span>
+                    <span class="gauge-value">45</span>
+                    <span class="gauge-trend"></span>
+                </div>
+                <div class="gauge-item" id="gauge-intel" title="Intel">
+                    <div class="gauge-track"><div class="gauge-fill danger" style="width:18%"></div></div>
+                    <span class="gauge-label">INTL</span>
+                    <span class="gauge-value">18</span>
+                    <span class="gauge-trend"></span>
+                </div>
             </div>
             <div id="hud-char" class="hud-char"></div>
             <div id="hud-ap" class="hud-ap"></div>
@@ -59,21 +49,33 @@
             <span id="hud-warning" class="hud-warning"></span>
         </div>
 
+        <!-- Hidden gauges for JS to update (budget, warpath, hill) -->
+        <div style="display:none">
+            <div id="gauge-warpath"><span class="gauge-value">1/5</span></div>
+            <div id="gauge-budget"><span class="gauge-value">$900M</span></div>
+            <div id="gauge-hill"><span class="gauge-value">50</span></div>
+        </div>
+
         <!-- MAIN: two-column narrative RPG layout -->
         <div id="main-layout">
-            <!-- LEFT: Narrative experience (60%) -->
+            <!-- LEFT: Narrative experience (65%) -->
             <div id="narrative-col">
                 <div id="scene-panel"></div>
                 <div id="narrative-feed"></div>
                 <div id="action-bar"></div>
             </div>
-            <!-- RIGHT: Strategic overview (40%) -->
+            <!-- RIGHT: Strategic overview (35%) -->
             <div id="strategy-col">
                 <div id="char-panel"></div>
                 <div id="map-sidebar">
                     <canvas id="game-canvas"></canvas>
+                    <div id="map-force-summary"></div>
                 </div>
                 <div id="cards-panel"></div>
+                <div id="intel-brief">
+                    <div id="intel-brief-toggle">&#9654; INTEL BRIEF</div>
+                    <div id="intel-brief-content"></div>
+                </div>
             </div>
         </div>
 

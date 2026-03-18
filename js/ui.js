@@ -461,9 +461,12 @@ function initUI() {
     _injectActionPanelStyles();
     initMusic();
     initSituationPanel();
+    initIntelBrief();
     updateCharPanel();
     updateCardsPanel();
     updateHudChar();
+    updateForceSummary();
+    updateIntelBrief();
 }
 
 // ======================== SITUATION PANEL (left sidebar) ========================
@@ -668,6 +671,56 @@ function updateCardsPanel() {
             <div class="card-compact-funding" style="color:${fundingColor}">${s.funding.toUpperCase()}</div>
         </div>`;
     }).join('');
+}
+
+// ======================== INTEL BRIEF (collapsible right column) ========================
+
+function updateIntelBrief() {
+    const content = document.getElementById('intel-brief-content');
+    if (!content) return;
+
+    function bar(label, val, max) {
+        max = max || 100;
+        const pct = Math.min(100, Math.max(0, (val / max) * 100));
+        const cls = pct >= 60 ? 'danger' : pct >= 35 ? 'warning' : 'good';
+        return `<div class="ib-row">
+            <span class="ib-label">${label}</span>
+            <div class="ib-track"><div class="ib-fill gauge-fill ${cls}" style="width:${pct}%"></div></div>
+            <span class="ib-val" style="color:${cls === 'danger' ? '#dd4444' : cls === 'warning' ? '#ddaa44' : '#44dd88'}">${Math.round(val)}</span>
+        </div>`;
+    }
+
+    content.innerHTML =
+        bar('TENSION', SIM.tension || 0) +
+        bar('IRAN AGGR', SIM.iranAggression || 0) +
+        bar('CONFLICT', SIM.conflictRisk || 0) +
+        bar('FOG OF WAR', SIM.fogOfWar || 0) +
+        bar('WARPATH', (SIM.warPath || 0) * 20, 100) +
+        bar('BUDGET', SIM.budget || 0, 1000);
+}
+
+function initIntelBrief() {
+    const toggle = document.getElementById('intel-brief-toggle');
+    const content = document.getElementById('intel-brief-content');
+    if (toggle && content) {
+        toggle.addEventListener('click', () => {
+            const expanded = content.classList.toggle('expanded');
+            toggle.innerHTML = (expanded ? '\u25BC' : '\u25B6') + ' INTEL BRIEF';
+            if (expanded) updateIntelBrief();
+        });
+    }
+}
+
+// ======================== MAP FORCE SUMMARY ========================
+
+function updateForceSummary() {
+    const el = document.getElementById('map-force-summary');
+    if (!el) return;
+    const ships = SIM.navyShips ? SIM.navyShips.length : 0;
+    const csg = SIM.carrier ? ' +CSG' : '';
+    const boats = SIM.iranBoats ? SIM.iranBoats.length : 0;
+    const flow = Math.round(SIM.oilFlow || 0);
+    el.textContent = `USN: ${ships} ships${csg} | IRGC: ${boats} boats | Flow: ${flow}%`;
 }
 
 // ======================== HUD CHARACTER / AP ========================
@@ -1638,19 +1691,9 @@ function showActionPanel() {
         // Determine if special action is available
         let specialHtml = '';
         if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown === 0) {
-            specialHtml = `
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#ddaa44">SPECIAL</div>
-                    <button class="ap-btn special" data-action="special">${SIM.character.specialAction.name.toUpperCase()}</button>
-                </div>
-            `;
+            specialHtml = `<div style="padding:4px 10px"><button class="ap-btn special" data-action="special" style="font-size:12px;padding:6px 10px">\u2605 ${SIM.character.specialAction.name.toUpperCase()}</button></div>`;
         } else if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown > 0) {
-            specialHtml = `
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#ddaa44">SPECIAL</div>
-                    <button class="ap-btn disabled">${SIM.character.specialAction.name.toUpperCase()} (${SIM.character.specialAction.cooldown}d)</button>
-                </div>
-            `;
+            specialHtml = `<div style="padding:4px 10px"><button class="ap-btn disabled" style="font-size:11px">\u2605 ${SIM.character.specialAction.name.toUpperCase()} (${SIM.character.specialAction.cooldown}d)</button></div>`;
         }
 
         const esc = SIM.warPath || 0;
@@ -1763,38 +1806,37 @@ function showActionPanel() {
                 ${_getBibleActionsHtml()}
         `;
 
+        // Compact 2x2 recommended grid (take first 4)
+        const gridRecs = recs.slice(0, 4);
+        const gridHtml = gridRecs.map(r => {
+            const costStr = r.cost ? ` $${r.cost}M` : '';
+            const budgetOk = !r.cost || SIM.budget >= r.cost;
+            return `<button class="ap-btn ap-recommended ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${r.action}">${r.label}${costStr}<span class="ap-reason">${r.reason}</span></button>`;
+        }).join('');
+
         panel.innerHTML = `
-            <div class="ap-header">
-                <div class="ap-title">ACTIONS</div>
-                <div class="ap-points">AP: ${apDots}</div>
-                <div class="ap-budget">${budgetStr}</div>
+            <div style="padding:4px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1a3a2a">
+                <span style="font-size:11px">AP: ${apDots}</span>
+                <span style="font-size:11px;color:#ddaa44">${budgetStr}</span>
+                <span style="font-size:9px;color:${escColor};margin-left:auto">${escName}</span>
             </div>
 
-            <div class="ap-escalation-bar">
-                <span class="ap-esc-label">ESCALATION:</span>
-                <span class="ap-esc-level" style="color:${escColor}">${escName}</span>
-                <span class="ap-esc-pips">${Array.from({length: 6}, (_, i) => `<span class="ap-esc-pip ${i <= esc ? 'active' : ''}" style="${i <= esc ? 'background:' + ESCALATION_LADDER[i].color : ''}">${i}</span>`).join('')}</span>
+            ${specialHtml}
+
+            <div style="padding:4px 10px;display:grid;grid-template-columns:1fr 1fr;gap:3px">
+                ${gridHtml}
             </div>
 
-            <div class="ap-scroll">
-                ${specialHtml}
-
-                <div class="ap-category">
-                    <div class="ap-rec-header">RECOMMENDED</div>
-                    ${recsHtml}
-                </div>
-
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#88ddaa;cursor:pointer" id="all-actions-toggle">\u25B6 ALL ACTIONS</div>
-                    <div id="all-actions-list" style="display:none">
-                        ${allActionsHtml}
-                    </div>
+            <div style="padding:2px 10px">
+                <span style="font-size:10px;color:#88ddaa;cursor:pointer;letter-spacing:1px" id="all-actions-toggle">\u25B6 ALL ACTIONS</span>
+                <div id="all-actions-list" style="display:none">
+                    ${allActionsHtml}
                 </div>
             </div>
 
-            <div class="ap-footer">
-                ${(SIM.swapsToday || 0) < 2 ? `<button class="ap-swap-btn" id="btn-swap-card">[ SWAP CARD \u2022 ${2 - (SIM.swapsToday || 0)} left ]</button>` : ''}
-                <button class="ap-end-btn" data-action="end-day">[ END DAY ]</button>
+            <div style="padding:4px 10px;display:flex;gap:4px;border-top:1px solid #1a3a2a">
+                ${(SIM.swapsToday || 0) < 2 ? `<button class="ap-swap-btn" id="btn-swap-card" style="flex:1">SWAP</button>` : '<div style="flex:1"></div>'}
+                <button class="ap-end-btn" data-action="end-day" style="flex:1">END DAY</button>
             </div>
         `;
 

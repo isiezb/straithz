@@ -51,6 +51,8 @@
                         _cpUpdateTimer = 0;
                         if (typeof updateCharPanel === 'function') updateCharPanel();
                         if (typeof updateCardsPanel === 'function') updateCardsPanel();
+                        if (typeof updateForceSummary === 'function') updateForceSummary();
+                        if (typeof updateIntelBrief === 'function') updateIntelBrief();
                     }
                 }
 

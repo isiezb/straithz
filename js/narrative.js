@@ -182,12 +182,12 @@ function _renderEntry(entry) {
     switch (entry.type) {
         case 'scene':
             el.innerHTML = portraitHtml
-                + `<div class="nf-text-body"><span class="nf-time">${timestamp}</span><span class="nf-scene-text">${entry.text}</span></div>`;
+                + `<div class="nf-text-body"><span class="nf-scene-text">${entry.text}</span></div>`;
             break;
 
         case 'dialogue':
             el.innerHTML = portraitHtml
-                + `<div class="nf-text-body"><span class="nf-time">${timestamp}</span>`
+                + `<div class="nf-text-body">`
                 + `<span class="nf-speaker">${entry.speaker || 'UNKNOWN'}:</span> `
                 + `<span class="nf-dialogue-text">\u201C${entry.text}\u201D</span></div>`;
             break;
@@ -196,18 +196,11 @@ function _renderEntry(entry) {
             const cls = entry.level === 'critical' ? 'nf-alert-critical'
                       : entry.level === 'warning' ? 'nf-alert-warning'
                       : 'nf-alert-good';
-            const prefix = entry.level === 'critical' ? '\u25A0 FLASH'
-                         : entry.level === 'warning' ? '\u25B2 ALERT'
-                         : '\u2713 UPDATE';
             if (hasPortrait) {
                 el.innerHTML = portraitHtml
-                    + `<div class="nf-text-body"><span class="nf-time">${timestamp}</span>`
-                    + `<span class="nf-alert-prefix ${cls}">${prefix}</span> `
-                    + `<span class="${cls}">${entry.text}</span></div>`;
+                    + `<div class="nf-text-body"><span class="${cls}">${entry.text}</span></div>`;
             } else {
-                el.innerHTML = `<span class="nf-time">${timestamp}</span>`
-                    + `<span class="nf-alert-prefix ${cls}">${prefix}</span> `
-                    + `<span class="${cls}">${entry.text}</span>`;
+                el.innerHTML = `<span class="${cls}">${entry.text}</span>`;
             }
             break;
         }
@@ -224,12 +217,11 @@ function _renderEntry(entry) {
         }
 
         case 'headline':
-            el.innerHTML = `<span class="nf-time">${timestamp}</span>`
-                + `<span class="nf-headline-text">${entry.text}</span>`;
+            el.innerHTML = `<span class="nf-headline-text">${entry.text}</span>`;
             break;
 
         default:
-            el.innerHTML = `<span class="nf-time">${timestamp}</span>${entry.text}`;
+            el.innerHTML = entry.text;
     }
 
     return el;
