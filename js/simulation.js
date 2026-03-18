@@ -116,6 +116,11 @@ const SIM = {
     // Character unique resource (copied from character on init)
     uniqueResource: 0,
     _leakCount: 0, // Kushner leak tracking
+
+    // Story system
+    storyFlags: {},           // narrative flags set by event choices, checked by follow-ups
+    scheduledEvents: [],      // [{eventId, triggerDay, sourceEvent}] - chain follow-ups
+    storyArc: 'aftermath',    // current narrative phase
 };
 
 /** Default values for SIM reset — used by restartGame() */
@@ -148,6 +153,7 @@ const SIM_DEFAULTS = {
     roe: 'defensive',
     _guideSeen: false,
     highPolarizationDays: 0,
+    storyFlags: {}, scheduledEvents: [], storyArc: 'aftermath',
 };
 
 const ESCALATION_LADDER = [
@@ -168,6 +174,38 @@ const IRAN_ESCALATION = [
     { level: 4, name: 'NUCLEAR LEVERAGE', triggers: 'aggression 80-90, breakout threats, enrichment acceleration' },
     { level: 5, name: 'ALL-OUT', triggers: 'aggression > 90, mass missile/drone swarm, suicide boats' },
 ];
+
+// Story Arc Phases — gives each week narrative meaning
+const STORY_ARCS = [
+    { id: 'aftermath',     name: 'THE AFTERMATH',      startDay: 1,  endDay: 7,
+      brief: 'Khamenei is dead. Iran burns. The strait is closing. You have days to act.',
+      color: '#dd4444' },
+    { id: 'escalation',    name: 'ESCALATION',         startDay: 8,  endDay: 14,
+      brief: 'Both sides are testing limits. Every move draws a counter-move.',
+      color: '#dd6644' },
+    { id: 'fog_of_war',    name: 'FOG OF WAR',         startDay: 15, endDay: 21,
+      brief: 'Intelligence is unreliable. Proxies are moving. Trust nothing.',
+      color: '#ddaa44' },
+    { id: 'proxy_front',   name: 'THE PROXY FRONT',    startDay: 22, endDay: 28,
+      brief: 'Houthis, Hezbollah, Iraqi militias — Iran fights through others.',
+      color: '#dd8844' },
+    { id: 'nuclear_shadow', name: 'NUCLEAR SHADOW',    startDay: 29, endDay: 35,
+      brief: 'Iran\'s nuclear program becomes the central question.',
+      color: '#aa44dd' },
+    { id: 'tipping_point', name: 'TIPPING POINT',      startDay: 36, endDay: 49,
+      brief: 'The world holds its breath. One wrong move changes everything.',
+      color: '#dd4488' },
+    { id: 'endgame',       name: 'ENDGAME',            startDay: 50, endDay: 70,
+      brief: 'History is being written. Your choices echo forward.',
+      color: '#4488dd' },
+    { id: 'aftermath_late', name: 'THE LONG GAME',     startDay: 71, endDay: 999,
+      brief: 'You\'ve survived this long. But can you end it?',
+      color: '#44dd88' },
+];
+
+function getCurrentStoryArc() {
+    return STORY_ARCS.find(a => SIM.day >= a.startDay && SIM.day <= a.endDay) || STORY_ARCS[0];
+}
 
 // 4 Composite Gauges (0-100)
 function calculateGauges() {
@@ -331,6 +369,18 @@ function tickSimulation() {
  * Returns an event object or null. Called from game.js advanceDay().
  */
 function checkConsequenceEvents() {
+    // Check scheduled chain events first — these always fire on their day
+    if (SIM.scheduledEvents && SIM.scheduledEvents.length > 0) {
+        const dueIdx = SIM.scheduledEvents.findIndex(se => SIM.day >= se.triggerDay);
+        if (dueIdx !== -1) {
+            const scheduled = SIM.scheduledEvents.splice(dueIdx, 1)[0];
+            // Look up event by ID from all event pools
+            const allPools = [...DECISION_EVENTS, ...(typeof CRISIS_EVENTS !== 'undefined' ? CRISIS_EVENTS : [])];
+            const chainEvent = allPools.find(e => e.id === scheduled.eventId);
+            if (chainEvent) return chainEvent;
+        }
+    }
+
     if (!SIM.activeStances || SIM.activeStances.length === 0) return null;
 
     // Three-act pacing: event frequency varies by day (reduced for less chaos)
@@ -769,6 +819,13 @@ function dailyUpdate() {
 
     // Clean old seizure days
     SIM.recentSeizureDays = SIM.recentSeizureDays.filter(d => SIM.day - d <= 3);
+
+    // Update story arc
+    const arc = getCurrentStoryArc();
+    if (arc && SIM.storyArc !== arc.id) {
+        SIM.storyArc = arc.id;
+        addHeadline(`\u2501\u2501\u2501 ${arc.name} \u2501\u2501\u2501`, 'critical');
+    }
 
     // Metric snapshot
     SIM.metricHistory.push({
@@ -1371,9 +1428,16 @@ const DECISION_EVENTS = [
         minDay: 5, maxDay: 40,
         condition: () => SIM.tension > 25 && SIM.diplomaticCapital > 20,
         choices: [
-            { text: 'Accept the talks', effects: { tension: -12, domesticApproval: -5, diplomaticCapital: 15, iranAggression: -8 }, flavor: 'The back-channel opens. Both sides agree to a cooling-off period.' },
-            { text: 'Reject — too risky', effects: { tension: 3, iranAggression: 5 }, flavor: 'The opportunity passes. Iranian hardliners use the rejection as propaganda.' },
-            { text: 'Leak it to the press', effects: { domesticApproval: 8, tension: 6, diplomaticCapital: -15 }, flavor: 'You gain public credit but burn the diplomatic bridge.' },
+            { text: 'Accept the talks', effects: { tension: -12, domesticApproval: -5, diplomaticCapital: 15, iranAggression: -8 },
+              setFlags: { backchannel_accepted: true }, chainEvent: 'backchannel_progress', chainDelay: 4,
+              chainHint: 'The Omani intermediary will report back in a few days...',
+              flavor: 'The back-channel opens. Both sides agree to a cooling-off period.' },
+            { text: 'Reject — too risky', effects: { tension: 3, iranAggression: 5 },
+              setFlags: { backchannel_rejected: true },
+              flavor: 'The opportunity passes. Iranian hardliners use the rejection as propaganda.' },
+            { text: 'Leak it to the press', effects: { domesticApproval: 8, tension: 6, diplomaticCapital: -15 },
+              setFlags: { backchannel_leaked: true },
+              flavor: 'You gain public credit but burn the diplomatic bridge.' },
         ],
     },
     {
@@ -1491,9 +1555,15 @@ const DECISION_EVENTS = [
         minDay: 10, maxDay: 75,
         condition: () => SIM.seizureCount > 0,
         choices: [
-            { text: 'Negotiate release', effects: { domesticApproval: 8, tension: -5, diplomaticCapital: -10 }, flavor: 'After tense negotiations, the crew is released at Muscat airport.' },
-            { text: 'Demand unconditional release', effects: { tension: 8, domesticApproval: 3, iranAggression: 5, warPath: 1 }, flavor: 'You increase pressure. International opinion turns against Iran.' },
-            { text: 'Offer quiet concession', effects: { tension: -8, domesticApproval: -5, iranAggression: -3 }, flavor: 'A minor sanctions waiver. The crew comes home. Nobody talks about the price.' },
+            { text: 'Negotiate release', effects: { domesticApproval: 8, tension: -5, diplomaticCapital: -10 },
+              setFlags: { hostage_negotiating: true }, chainEvent: 'hostage_situation_escalates', chainDelay: 3,
+              chainHint: 'Negotiations are underway. This will take days...',
+              flavor: 'You open a channel through Swiss intermediaries. The crew is alive but scared.' },
+            { text: 'Demand unconditional release', effects: { tension: 8, domesticApproval: 3, iranAggression: 5, warPath: 1 },
+              setFlags: { hostage_hardline: true },
+              flavor: 'You increase pressure. International opinion turns against Iran.' },
+            { text: 'Offer quiet concession', effects: { tension: -8, domesticApproval: -5, iranAggression: -3 },
+              flavor: 'A minor sanctions waiver. The crew comes home. Nobody talks about the price.' },
         ],
     },
     {
@@ -1645,9 +1715,16 @@ const DECISION_EVENTS = [
         minDay: 20, maxDay: 70,
         condition: () => SIM.iranAggression > 50 && SIM.tension > 40,
         choices: [
-            { text: 'Strike Fordow — bunker busters', effects: { tension: 30, warPath: 2, iranAggression: 15, internationalStanding: -15, domesticApproval: 10 }, flavor: 'B-2 bombers drop GBU-57 MOPs on the mountain facility. Iran vows "devastating retaliation." The nuclear clock resets.' },
-            { text: 'Emergency UN session', effects: { tension: 5, internationalStanding: 10, diplomaticCapital: 15, iranAggression: 3 }, flavor: 'The Security Council convenes. Russia and China abstain rather than veto. New inspections demanded.' },
-            { text: 'Offer down-blend deal', effects: { tension: -10, iranAggression: -8, domesticApproval: -10, diplomaticCapital: 10 }, flavor: 'You offer sanctions relief in exchange for down-blending to 3.67%. Hawks call it appeasement. Iran considers it.' },
+            { text: 'Strike Fordow — bunker busters', effects: { tension: 30, warPath: 2, iranAggression: 15, internationalStanding: -15, domesticApproval: 10 },
+              setFlags: { fordow_struck: true },
+              flavor: 'B-2 bombers drop GBU-57 MOPs on the mountain facility. Iran vows "devastating retaliation." The nuclear clock resets.' },
+            { text: 'Emergency UN session — demand inspections', effects: { tension: 5, internationalStanding: 10, diplomaticCapital: 15, iranAggression: 3 },
+              setFlags: { nuclear_inspectors_sent: true }, chainEvent: 'nuclear_inspection_crisis', chainDelay: 4,
+              chainHint: 'The IAEA team will arrive at Fordow in days...',
+              flavor: 'The Security Council convenes. Russia and China abstain rather than veto. New inspections demanded.' },
+            { text: 'Offer down-blend deal', effects: { tension: -10, iranAggression: -8, domesticApproval: -10, diplomaticCapital: 10 },
+              setFlags: { nuclear_deal_proposed: true },
+              flavor: 'You offer sanctions relief in exchange for down-blending to 3.67%. Hawks call it appeasement. Iran considers it.' },
         ],
     },
     {
@@ -1856,9 +1933,14 @@ const DECISION_EVENTS = [
         minDay: 5, maxDay: 45,
         condition: () => SIM.iranAggression > 40,
         choices: [
-            { text: 'Covert ops to empower moderates', effects: { iranAggression: -12, tension: -5, fogOfWar: 8, diplomaticCapital: -8 }, flavor: 'CIA channels support Raisi-faction moderates. The succession battle intensifies. IRGC is distracted.' },
-            { text: 'Publicly demand democratic transition', effects: { internationalStanding: 8, domesticApproval: 5, iranAggression: 10, tension: 5 }, flavor: 'Your call for democracy rallies Western opinion but unites Iranian factions against external meddling.' },
-            { text: 'Exploit the chaos — escalate strikes', effects: { tension: 15, warPath: 1, iranAggression: -10, domesticApproval: 3, internationalStanding: -10 }, flavor: 'You hit command centers while leadership is in disarray. Effective but brutal. The world recoils.' },
+            { text: 'Covert ops to empower moderates', effects: { iranAggression: -12, tension: -5, fogOfWar: 8, diplomaticCapital: -8 },
+              setFlags: { mojtaba_watched: true }, chainEvent: 'mojtaba_power_play', chainDelay: 5,
+              chainHint: 'Your intelligence assets in Tehran will report back...',
+              flavor: 'CIA channels support Raisi-faction moderates. The succession battle intensifies. IRGC is distracted.' },
+            { text: 'Publicly demand democratic transition', effects: { internationalStanding: 8, domesticApproval: 5, iranAggression: 10, tension: 5 },
+              flavor: 'Your call for democracy rallies Western opinion but unites Iranian factions against external meddling.' },
+            { text: 'Exploit the chaos — escalate strikes', effects: { tension: 15, warPath: 1, iranAggression: -10, domesticApproval: 3, internationalStanding: -10 },
+              flavor: 'You hit command centers while leadership is in disarray. Effective but brutal. The world recoils.' },
         ],
     },
     {
@@ -2069,6 +2151,183 @@ const DECISION_EVENTS = [
             { text: 'Bilateral with the UK — bypass NATO', effects: { internationalStanding: -8, domesticApproval: 5, diplomaticCapital: -5 }, flavor: 'The "special relationship" holds. But NATO is weaker than it\'s been since Suez.' },
             { text: 'Offer Europe a seat at the negotiating table', effects: { internationalStanding: 10, tension: -5, domesticApproval: -3 }, flavor: 'Macron gets his summit. NATO cohesion is preserved. The diplomatic path opens wider.' },
             { text: 'Publicly shame France', effects: { domesticApproval: 8, internationalStanding: -12, polarization: 3 }, flavor: '"Freedom fries" is trending. The base loves it. Diplomats are horrified.' },
+        ],
+    },
+    // ======================== CHAIN FOLLOW-UP EVENTS ========================
+    // These events are scheduled by choices in parent events via chainEvent/chainDelay.
+    // They have minDay/maxDay set wide — they only fire when explicitly scheduled.
+
+    // --- BACK-CHANNEL CHAIN (follows secret_talks) ---
+    {
+        id: 'backchannel_progress', title: 'BACK-CHANNEL UPDATE',
+        description: 'Your Omani intermediary reports back. The Iranian delegation showed up — a significant signal. They presented a list of demands: sanctions relief on medical supplies, return of frozen assets, and a public statement acknowledging Iranian sovereignty. In exchange, they offer a 48-hour shipping ceasefire and the release of 4 detained crew members.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.backchannel_accepted,
+        choices: [
+            { text: 'Accept the ceasefire deal', effects: { tension: -15, iranAggression: -10, oilFlow: 8, domesticApproval: -5, diplomaticCapital: 10 },
+              setFlags: { ceasefire_accepted: true }, chainEvent: 'backchannel_ceasefire_test', chainDelay: 3,
+              chainHint: 'The ceasefire will be tested in the coming days...',
+              flavor: 'Both sides stand down. For the first time in weeks, the strait is quiet. But hawks on both sides are furious.' },
+            { text: 'Counter-offer: ceasefire first, then talks', effects: { tension: -5, diplomaticCapital: 5, iranAggression: 2 },
+              setFlags: { backchannel_counteroffered: true }, chainEvent: 'backchannel_counteroffer_response', chainDelay: 4,
+              chainHint: 'Iran is deliberating your counter-proposal...',
+              flavor: 'A reasonable position. The Omanis carry it back. Now you wait.' },
+            { text: 'Reject — these terms are weakness', effects: { tension: 5, domesticApproval: 5, iranAggression: 5, diplomaticCapital: -8 },
+              setFlags: { backchannel_collapsed: true },
+              flavor: 'The channel goes dark. Iran\'s moderates lose face. The hardliners say "we told you so."' },
+        ],
+    },
+    {
+        id: 'backchannel_ceasefire_test', title: 'CEASEFIRE UNDER PRESSURE',
+        description: 'Day two of the ceasefire. IRGC fast boats are still patrolling — technically not a violation, but provocative. Then: an IRGC commander\'s nephew is caught planting a limpet mine on a Kuwaiti-flagged tanker. Iran claims he acted alone. Your military advisors want to respond. The Omani mediator begs you not to.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.ceasefire_accepted,
+        choices: [
+            { text: 'Hold the ceasefire — accept Iran\'s explanation', effects: { tension: -8, domesticApproval: -8, internationalStanding: 5, iranAggression: -5, diplomaticCapital: 8 },
+              setFlags: { ceasefire_held: true },
+              flavor: 'You absorb the political cost. But the ceasefire holds. Oil begins to flow. The Omanis call it "a brave choice."' },
+            { text: 'Demand Iran arrest the commander publicly', effects: { tension: 5, diplomaticCapital: -5, iranAggression: 3 },
+              setFlags: { ceasefire_strained: true },
+              flavor: 'Iran refuses. The ceasefire technically holds but trust is damaged. Both sides are watching for the next provocation.' },
+            { text: 'Strike the IRGC base — ceasefire is over', effects: { tension: 20, warPath: 1, domesticApproval: 5, iranAggression: 15, diplomaticCapital: -15 },
+              setFlags: { ceasefire_broken: true },
+              flavor: 'Tomahawks hit Bandar Abbas. The ceasefire is dead. Iran\'s moderates are silenced for a generation.' },
+        ],
+    },
+    {
+        id: 'backchannel_counteroffer_response', title: 'IRAN\'S RESPONSE',
+        description: 'The Omani intermediary returns. Iran\'s counter-counter-proposal: they\'ll reduce IRGC patrols by 50% for 72 hours as a "gesture of goodwill," but no formal ceasefire. They want reciprocity — pull one carrier group back to show good faith. The moderates are sticking their necks out. This is their last offer.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.backchannel_counteroffered,
+        choices: [
+            { text: 'Accept — pull a carrier back', effects: { tension: -12, iranAggression: -8, internationalStanding: 3, domesticApproval: -6 },
+              setFlags: { carrier_pullback: true },
+              flavor: 'USS Truman moves to the Arabian Sea. IRGC boats thin out. A fragile de-escalation begins.' },
+            { text: 'Agree to patrol reduction but keep carriers', effects: { tension: -5, iranAggression: -3, diplomaticCapital: 3 },
+              flavor: 'A half-measure that satisfies neither side fully. But the shooting stops, for now.' },
+            { text: 'Reject — Iran must concede first', effects: { tension: 8, iranAggression: 8, diplomaticCapital: -10 },
+              setFlags: { backchannel_dead: true },
+              flavor: 'The channel collapses. The Omani ambassador says "we tried." Iran\'s moderates won\'t recover from this.' },
+        ],
+    },
+
+    // --- HOSTAGE CHAIN (follows hostage event) ---
+    {
+        id: 'hostage_situation_escalates', title: 'HOSTAGE CRISIS DEEPENS',
+        description: 'Three of the 12 detained crew members appear on Iranian state TV, reading prepared statements calling for America to "stop its aggression." Intelligence suggests they\'re being held at Evin Prison, not a military facility — a signal Iran wants to negotiate. The families are on CNN demanding action. A retired admiral is calling for a rescue operation on Fox News.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.hostage_negotiating,
+        choices: [
+            { text: 'Send a private envoy to Tehran', effects: { tension: -5, diplomaticCapital: -8, domesticApproval: -3, iranAggression: -3 },
+              setFlags: { envoy_sent: true }, chainEvent: 'hostage_envoy_result', chainDelay: 5,
+              chainHint: 'The envoy will reach Tehran in a few days...',
+              flavor: 'A former diplomat boards a flight to Muscat, then Tehran. Total media blackout. If this leaks, it\'s a political disaster.' },
+            { text: 'Authorize a rescue operation', effects: { tension: 15, warPath: 1, domesticApproval: 8, iranAggression: 10 },
+              setFlags: { rescue_attempted: true }, chainEvent: 'hostage_rescue_result', chainDelay: 2,
+              chainHint: 'SEAL Team 6 is spinning up...',
+              flavor: 'Delta Force operators begin mission planning. The risk is enormous. If it fails, you own it.' },
+            { text: 'Impose personal sanctions on IRGC commanders', effects: { tension: 3, domesticApproval: 3, iranAggression: 3, internationalStanding: 2 },
+              flavor: 'A measured response that satisfies nobody fully. The families are disappointed. Iran is unmoved.' },
+        ],
+    },
+    {
+        id: 'hostage_envoy_result', title: 'THE ENVOY REPORTS',
+        description: 'Your envoy spent 72 hours in Tehran. The news is mixed. Iran will release 8 of the 12 crew — but they\'re keeping 4 "for investigation into espionage." The price: unfreeze $2 billion in Iranian assets and issue a joint statement about "mutual respect for maritime sovereignty." The envoy says the moderates were sincere but scared. The IRGC was listening to every word.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.envoy_sent,
+        choices: [
+            { text: 'Accept the partial release', effects: { tension: -10, budget: -40, domesticApproval: 5, diplomaticCapital: 8, internationalStanding: 5 },
+              setFlags: { hostages_partially_freed: true },
+              flavor: '8 crew members land at Ramstein. The families cry on camera. But 4 remain. The opposition calls it "paying ransom."' },
+            { text: 'All 12 or no deal', effects: { tension: 8, domesticApproval: 3, iranAggression: 5 },
+              setFlags: { hostage_hardline: true },
+              flavor: 'You draw the line. Iran goes silent. The 4 are moved to an unknown location.' },
+        ],
+    },
+    {
+        id: 'hostage_rescue_result', title: 'OPERATION EAGLE CLAW II',
+        description: 'The rescue force launched at 0200 local time. Two MH-60 Black Hawks, 24 operators, supported by AC-130 gunships. They reached Evin Prison and breached the facility. But Iranian intelligence was waiting.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.rescue_attempted,
+        choices: [
+            { text: 'Read the after-action report', effects: { tension: 20, warPath: 1, domesticApproval: -5, iranAggression: 15, internationalStanding: -10, budget: -30 },
+              flavor: '3 operators KIA. 2 hostages killed in crossfire. 6 rescued. Iran parades the wreckage on TV. The world recoils. This is your Desert One.' },
+        ],
+    },
+
+    // --- MOJTABA SUCCESSION CHAIN (follows mojtaba_succession) ---
+    {
+        id: 'mojtaba_power_play', title: 'MOJTABA CONSOLIDATES',
+        description: 'Mojtaba Khamenei has purged three senior IRGC commanders who opposed his succession. Satellite imagery shows Republican Guard units redeploying to Tehran — not to the Gulf. Intelligence suggests he\'s more afraid of internal rivals than of you. A CIA source inside the Guardian Council reports he might be open to a deal if it helps him consolidate power.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.mojtaba_watched,
+        choices: [
+            { text: 'Reach out through CIA channels', effects: { tension: -8, fogOfWar: -10, diplomaticCapital: 8, iranAggression: -5 },
+              setFlags: { mojtaba_channel_open: true }, chainEvent: 'mojtaba_secret_deal', chainDelay: 5,
+              chainHint: 'A dangerous game. If this becomes public...',
+              flavor: 'Your message reaches Mojtaba through three cutouts. He doesn\'t respond — but he doesn\'t shut it down either.' },
+            { text: 'Exploit the chaos — increase pressure', effects: { tension: 10, iranAggression: -8, iranEconomy: -5, warPath: 1 },
+              setFlags: { mojtaba_pressured: true },
+              flavor: 'While Iran fights itself, you tighten the noose. Sanctions hit harder when the government is distracted.' },
+            { text: 'Publicly support Iranian moderates', effects: { tension: 5, domesticApproval: -3, internationalStanding: 8, iranAggression: 8 },
+              flavor: 'Your speech is played on BBC Persian. Iranian moderates are now accused of being American agents. You meant well.' },
+        ],
+    },
+    {
+        id: 'mojtaba_secret_deal', title: 'THE SUPREME LEADER\'S OFFER',
+        description: 'Mojtaba\'s people made contact. The proposal is extraordinary: Iran will reopen the strait and halt enrichment above 20% — permanently. In exchange, they want recognition of the new Supreme Leader, removal of all personal sanctions on Mojtaba, and a secret $5 billion reconstruction fund. The CIA says he\'s genuine. The risk: if Congress finds out, it\'s Iran-Contra 2.0.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.mojtaba_channel_open,
+        choices: [
+            { text: 'Accept the grand bargain', effects: { tension: -25, iranAggression: -20, oilFlow: 15, budget: -80, domesticApproval: -10, diplomaticCapital: 15 },
+              setFlags: { grand_bargain: true },
+              flavor: 'You make a deal with the devil you don\'t know. The strait opens. Oil flows. But the secret eats at you. One leak and it\'s over.' },
+            { text: 'Accept partially — strait for sanctions relief only', effects: { tension: -15, iranAggression: -12, oilFlow: 8, internationalStanding: 5 },
+              setFlags: { partial_deal: true },
+              flavor: 'Mojtaba gets less than he wanted but more than he had. The strait reopens gradually. Both sides claim victory.' },
+            { text: 'Report to Congress and decline', effects: { tension: 5, domesticApproval: 8, internationalStanding: 5, diplomaticCapital: -10, iranAggression: 10 },
+              flavor: 'You do the right thing. Congress applauds your transparency. Iran\'s moderates collapse. Mojtaba becomes a hardliner overnight.' },
+        ],
+    },
+
+    // --- NUCLEAR CHAIN (follows nuclear_breakout) ---
+    {
+        id: 'nuclear_inspection_crisis', title: 'IAEA DEMANDS ACCESS',
+        description: 'Following your push for international inspection, the IAEA team arrived at Fordow — and was turned away. Iran claims "construction" prevents access. Satellite imagery shows new tunneling activity. The IAEA chief calls you directly: "They\'re 2-3 weeks from enough material for a device. Maybe less." Israel is moving Jericho missiles to launch positions.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        condition: () => SIM.storyFlags.nuclear_inspectors_sent,
+        choices: [
+            { text: 'Coordinate strikes with Israel on Fordow', effects: { tension: 30, warPath: 2, iranAggression: 15, domesticApproval: 3, internationalStanding: -15, budget: -50 },
+              setFlags: { fordow_struck: true },
+              flavor: 'Bunker busters penetrate 80 meters of rock. Fordow is destroyed. Iran vows revenge "for a thousand years." The nuclear program is set back 5 years — or 5 months.' },
+            { text: 'Threaten strikes unless Iran admits inspectors', effects: { tension: 15, iranAggression: -5, diplomaticCapital: -8, internationalStanding: 3 },
+              chainEvent: 'nuclear_ultimatum_response', chainDelay: 3,
+              chainHint: 'Iran has 72 hours to respond...',
+              flavor: 'An ultimatum with teeth. The world watches.' },
+            { text: 'Propose a new deal — enrichment caps for sanctions relief', effects: { tension: -5, iranAggression: -3, domesticApproval: -8, internationalStanding: 8, diplomaticCapital: 10 },
+              setFlags: { nuclear_deal_proposed: true },
+              flavor: 'Critics call it "JCPOA 2.0." Supporters call it "the only path that doesn\'t end in mushroom clouds."' },
+        ],
+    },
+    {
+        id: 'nuclear_ultimatum_response', title: 'IRAN\'S 72-HOUR RESPONSE',
+        description: 'The deadline passes. Iran\'s response comes not through diplomats but through actions: they move centrifuge cascades to a new, unknown facility. Meanwhile, Mojtaba appears on television and says, "Iran will never bow to nuclear blackmail — we seek peaceful energy, and we will defend our rights." The IAEA says they\'ve lost track of 8kg of enriched uranium.',
+        image: 'assets/event-placeholder.png',
+        minDay: 1, maxDay: 999,
+        choices: [
+            { text: 'Launch strikes on all known nuclear sites', effects: { tension: 35, warPath: 2, budget: -60, domesticApproval: 5, internationalStanding: -20, iranAggression: 20 },
+              flavor: 'Operation Olympic Games. B-2s from Whiteman, Tomahawks from the Gulf. 47 targets in one night. The region will never be the same.' },
+            { text: 'Accept the new reality — contain and deter', effects: { tension: 5, domesticApproval: -10, internationalStanding: -5, diplomaticCapital: 5 },
+              flavor: 'You choose containment over war. History will judge whether this was wisdom or cowardice.' },
         ],
     },
 ];

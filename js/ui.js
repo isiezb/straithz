@@ -956,7 +956,13 @@ function showDailyReport() {
         specialActionHtml = `<button class="term-btn" id="btn-special-action">[ ${SIM.character.specialAction.name.toUpperCase()} ]</button>`;
     }
 
+    // Story arc header
+    const arc = typeof getCurrentStoryArc === 'function' ? getCurrentStoryArc() : null;
+    const arcHtml = arc ? `<div class="story-arc-header" style="color:${arc.color}; font-size:9px; letter-spacing:3px; margin-bottom:2px">\u2501 ${arc.name} \u2501</div>
+        <div class="term-line dim" style="font-size:10px; margin-bottom:8px; font-style:italic">${arc.brief}</div>` : '';
+
     openTerminal(`
+        ${arcHtml}
         <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
         <div class="term-line dim" style="margin:4px 0">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
         <div class="term-line ${hlClass}" style="margin:4px 0">${topHeadline.text}</div>
@@ -2394,6 +2400,22 @@ function resolveDecision(event, choiceIdx) {
     }
     showEffectSummary(choice.effects);
 
+    // Set story flags from choice
+    if (choice.setFlags) {
+        for (const [flag, val] of Object.entries(choice.setFlags)) {
+            SIM.storyFlags[flag] = val;
+        }
+    }
+
+    // Schedule chain follow-up event
+    if (choice.chainEvent && choice.chainDelay) {
+        SIM.scheduledEvents.push({
+            eventId: choice.chainEvent,
+            triggerDay: SIM.day + choice.chainDelay,
+            sourceEvent: event.id,
+        });
+    }
+
     // Contact trust effects (Kushner)
     if (choice.contactEffect && SIM.character.contacts) {
         const contact = SIM.character.contacts.find(c => c.id === choice.contactEffect.id);
@@ -2427,12 +2449,16 @@ function resolveDecision(event, choiceIdx) {
     // Build impact summary for result screen
     const impactHtml = _buildImpactSummary(choice.effects, gaugesBefore, gaugesAfter);
 
+    // Chain event hint
+    const chainHint = choice.chainEvent ? `<div class="term-line dim" style="margin-top:8px; font-style:italic; color:#ddaa44">${choice.chainHint || 'This decision will have consequences...'}</div>` : '';
+
     // Show result
     openTerminal(`
         <div class="term-header">DECISION MADE</div>
         <div class="term-title">${choice.text.toUpperCase()}</div>
         <div class="term-line" style="margin-top:12px">${choice.flavor || ''}</div>
         ${impactHtml}
+        ${chainHint}
         <div class="term-btn-row">
             <button class="term-btn" id="btn-decision-continue">[ CONTINUE ]</button>
         </div>
@@ -2760,6 +2786,8 @@ function _getReactionImage(context) {
 
 function _getEventCategoryImage(event) {
     if (!event) return '';
+    // Per-event image override (for story events with unique art)
+    if (event.image) return event.image;
     // Determine category from event content
     const title = (event.title || '').toLowerCase();
     const desc = (event.description || '').toLowerCase();
