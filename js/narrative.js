@@ -398,8 +398,11 @@ function getAmbientSceneImage() {
     if (typeof SIM === 'undefined') return null;
     const char = SIM.character ? SIM.character.id : null;
 
-    // Crisis overrides everything
-    if (SIM.warPath >= 4) return 'assets/scene-total-war.png';
+    // Crisis overrides everything — graduated warPath escalation
+    if (SIM.warPath >= 4) return 'assets/scene-escalation-total-war.png';
+    if (SIM.warPath >= 3) return 'assets/scene-escalation-air-campaign.png';
+    if (SIM.warPath >= 2) return 'assets/scene-escalation-strikes.png';
+    if (SIM.warPath >= 1 && SIM.tension > 50) return 'assets/scene-escalation-standoff.png';
     if (SIM.crisisLevel >= 2) return 'assets/situation-room-crisis.png';
 
     // Character-specific ambient states

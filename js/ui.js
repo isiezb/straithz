@@ -237,8 +237,8 @@ const BIBLE_ACTIONS = [
             const success = SIM.diplomaticCapital > 30 && SIM.iranFactionBalance > 40;
             if (success) {
                 _applyEffects({ tension: -8, domesticApproval: 10, diplomaticCapital: -8, iranAggression: -5 });
-                addHeadline('', 'good');
-                showToast('', 'good');
+                addHeadline(this.headline || '','good');
+                showToast(this.toast || '','good');
             } else {
                 _applyEffects({ tension: 3, diplomaticCapital: -5 });
                 addHeadline('Prisoner exchange talks collapse — Iran demands more concessions', 'bad');
@@ -256,8 +256,8 @@ const BIBLE_ACTIONS = [
             const success = Math.random() < 0.7;
             if (success) {
                 _applyEffects({ iranAggression: -10, fogOfWar: -15, tension: 5, conflictRisk: 3 });
-                addHeadline('', 'neutral');
-                showToast('', 'good');
+                addHeadline(this.headline || '','neutral');
+                showToast(this.toast || '','good');
             } else {
                 _applyEffects({ tension: 15, internationalStanding: -10, iranAggression: 10, fogOfWar: 5 });
                 addHeadline('Iran claims to have captured US special operations personnel', 'critical');
@@ -275,8 +275,8 @@ const BIBLE_ACTIONS = [
             const success = SIM.domesticApproval > 40;
             if (success) {
                 _applyEffects({ budget: 200, domesticApproval: -3, polarization: 3 });
-                addHeadline('', 'good');
-                showToast('', 'good');
+                addHeadline(this.headline || '','good');
+                showToast(this.toast || '','good');
             } else {
                 _applyEffects({ budget: 50, domesticApproval: -5, polarization: 5 });
                 addHeadline('Congress slashes emergency budget request — only $50M approved', 'bad');
@@ -292,8 +292,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.fogOfWar > 60,
         execute: function() {
             _applyEffects({ fogOfWar: -8, domesticApproval: 5, internationalStanding: 3, polarization: -2 });
-            addHeadline('', 'neutral');
-            showToast('', 'good');
+            addHeadline(this.headline || '','neutral');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -304,8 +304,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.storyFlags?.backchannel_accepted || SIM.diplomaticCapital > 20,
         execute: function() {
             _applyEffects({ tension: -3, diplomaticCapital: -2, iranAggression: -2 });
-            addHeadline('', 'neutral');
-            showToast('', 'good');
+            addHeadline(this.headline || '','neutral');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -316,8 +316,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.internationalStanding > 30,
         execute: function() {
             _applyEffects({ internationalStanding: 3, diplomaticCapital: 3 });
-            addHeadline('', 'good');
-            showToast('', 'good');
+            addHeadline(this.headline || '','good');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -333,8 +333,8 @@ const BIBLE_ACTIONS = [
                 effects: { iranEconomy: -5, iranAggression: -3 },
                 activateOnDay: SIM.day + 3,
             });
-            addHeadline('', 'neutral');
-            showToast('', 'good');
+            addHeadline(this.headline || '','neutral');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -345,8 +345,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.fogOfWar < 40 && SIM.internationalStanding > 30,
         execute: function() {
             _applyEffects({ internationalStanding: 5, diplomaticCapital: 3, fogOfWar: 3 });
-            addHeadline('', 'good');
-            showToast('', 'good');
+            addHeadline(this.headline || '','good');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -357,8 +357,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.warPath >= 2,
         execute: function() {
             _applyEffects({ internationalStanding: 10, tension: -3, domesticApproval: 3, oilFlow: 5 });
-            addHeadline('', 'good');
-            showToast('', 'good');
+            addHeadline(this.headline || '','good');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -369,8 +369,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.oilPrice > 120,
         execute: function() {
             _applyEffects({ domesticApproval: 8, oilPrice: -5, budget: -30 });
-            addHeadline('', 'good');
-            showToast('', 'good');
+            addHeadline(this.headline || '','good');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -387,8 +387,8 @@ const BIBLE_ACTIONS = [
                 addHeadline('NSA cyber reconnaissance reveals Iranian naval operation plans', 'good');
                 showToast('Major intelligence breakthrough!', 'good');
             } else {
-                addHeadline('', 'neutral');
-                showToast('', 'good');
+                addHeadline(this.headline || '','neutral');
+                showToast(this.toast || '','good');
             }
         },
     },
@@ -401,8 +401,8 @@ const BIBLE_ACTIONS = [
         execute: function() {
             _applyEffects({ domesticApproval: 3, polarization: -3, internationalStanding: 3 });
             SIM.storyFlags.war_powers_briefed = true;
-            addHeadline('', 'neutral');
-            showToast('', 'good');
+            addHeadline(this.headline || '','neutral');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -413,8 +413,8 @@ const BIBLE_ACTIONS = [
         condition: () => true,
         execute: function() {
             _applyEffects({ tension: 5, iranAggression: -5, domesticApproval: 3, internationalStanding: -2 });
-            addHeadline('', 'neutral');
-            showToast('', 'good');
+            addHeadline(this.headline || '','neutral');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -426,8 +426,8 @@ const BIBLE_ACTIONS = [
         execute: function() {
             _applyEffects({ diplomaticCapital: -10, internationalStanding: 8, tension: -5, domesticApproval: 3 });
             SIM.storyFlags.summit_proposed = true;
-            addHeadline('', 'good');
-            showToast('', 'good');
+            addHeadline(this.headline || '','good');
+            showToast(this.toast || '','good');
         },
     },
     {
@@ -438,8 +438,8 @@ const BIBLE_ACTIONS = [
         condition: () => SIM.fogOfWar > 50,
         execute: function() {
             _applyEffects({ fogOfWar: -5, domesticApproval: -2, polarization: 2 });
-            addHeadline('', 'neutral');
-            showToast('', 'good');
+            addHeadline(this.headline || '','neutral');
+            showToast(this.toast || '','good');
         },
     },
 ];
@@ -3316,7 +3316,7 @@ function showPredictionPicker() {
         {
             topic: 'seizure_week',
             label: 'Seizure this week',
-            condition: () => SIM.iranStrategy === 'probing' || SIM.iranStrategy === 'escalatory' || SIM.iranStrategy === 'confrontational',
+            condition: () => SIM.iranStrategy !== 'restrained',
             resolveDays: 5,
         },
         {
@@ -3495,28 +3495,38 @@ function _writeDayEndScene() {
         trump: {
             confident: 'assets/scene-trump-victory.png',
             triumphant: 'assets/scene-trump-victory.png',
+            neutral: 'assets/scene-trump-night.png',
+            reflective: 'assets/scene-trump-night.png',
             desperate: 'assets/event-trump-rally.png',
             tense: 'assets/situation-room-crisis.png',
         },
         kushner: {
             confident: 'assets/scene-muscat-meeting.png',
+            neutral: 'assets/scene-kushner-night.png',
+            reflective: 'assets/scene-kushner-night.png',
             desperate: 'assets/scene-kushner-exposure.png',
             tense: 'assets/scene-kushner-exposure.png',
         },
         asmongold: {
             triumphant: 'assets/scene-asmongold-viral.png',
             confident: 'assets/scene-asmongold-viral.png',
+            neutral: 'assets/scene-asmongold-night.png',
+            reflective: 'assets/scene-asmongold-night.png',
             desperate: 'assets/event-asmongold-disinfo.png',
         },
         hegseth: {
             confident: 'assets/scene-hegseth-carrier.png',
             triumphant: 'assets/scene-hegseth-carrier.png',
+            neutral: 'assets/scene-hegseth-night.png',
+            reflective: 'assets/scene-hegseth-night.png',
             desperate: 'assets/event-hegseth-battle.png',
             grim: 'assets/event-crisis-friendly-fire.png',
         },
         fuentes: {
             confident: 'assets/event-fuentes-base.png',
             triumphant: 'assets/event-fuentes-withdraw.png',
+            neutral: 'assets/scene-fuentes-night.png',
+            reflective: 'assets/scene-fuentes-night.png',
             desperate: 'assets/event-fuentes-isolation.png',
             grim: 'assets/event-fuentes-pariah.png',
         },
@@ -4339,6 +4349,7 @@ function _pushAmbientContent() {
 // ======================== TOAST NOTIFICATIONS ========================
 
 function showToast(text, level) {
+    if (!text) return; // Skip empty toasts gracefully
     const container = document.getElementById('toast-container');
     if (!container) return;
 
@@ -4710,6 +4721,8 @@ const CHARACTER_EVENT_IMAGES = {
         congress_pressure: 'assets/event-trump-rally.png',
         truth_social_armada: 'assets/event-trump-truth-social.png',
         war_powers_vote: 'assets/event-trump-rally.png',
+        iran_ultimatum: 'assets/event-e19-ultimatum.png',
+        cyber_attack_decision: 'assets/event-cyber-war.png',
     },
     hegseth: {
         carrier_incident: 'assets/event-hegseth-carrier.png',
@@ -4748,6 +4761,7 @@ const CHARACTER_EVENT_IMAGES = {
         domestic_unrest: 'assets/event-fuentes-base.png',
         donor_ultimatum: 'assets/event-donor-ultimatum.png',
         oil_markets_panic: 'assets/event-oil-chaos.png',
+        iran_ultimatum: 'assets/event-e19-ultimatum.png',
     }
 };
 
@@ -4784,7 +4798,9 @@ function _getEventCategoryImage(event) {
         return 'assets/event-diplomatic.png';
     if (text.match(/oil|sanction|econom|price|gas|trade|insur|budget|barrel|reserve|bank|fund/))
         return 'assets/event-economic.png';
-    if (text.match(/intel|spy|cyber|drone|surveil|sigint|humint|leak|defect|source|classified/))
+    if (text.match(/cyber/))
+        return 'assets/event-cyber-war.png';
+    if (text.match(/intel|spy|drone|surveil|sigint|humint|leak|defect|source|classified/))
         return 'assets/event-intel.png';
     return 'assets/event-military.png';
 }

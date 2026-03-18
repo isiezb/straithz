@@ -19,7 +19,9 @@
       "default": "assets/event-e06-seizure.png"
     },
     "iran_ultimatum": {
-      "default": "assets/event-e07-iran-doubles.png"
+      "default": "assets/event-e07-iran-doubles.png",
+      "trump": "assets/event-e19-ultimatum.png",
+      "fuentes": "assets/event-e19-ultimatum.png"
     },
     "oil_markets_panic": {
       "default": "assets/event-e08-oil-panic.png"
@@ -55,7 +57,8 @@
       "default": "assets/event-e21-intel-breakthrough.png"
     },
     "cyber_attack_decision": {
-      "default": "assets/event-e23-cyber.png"
+      "default": "assets/event-e23-cyber.png",
+      "trump": "assets/event-cyber-war.png"
     },
     "nuclear_threshold": {
       "default": "assets/event-crisis-nuclear.png"
@@ -153,7 +156,10 @@
   },
   "ambientScenes": {
     "crisis_high": "assets/situation-room-crisis.png",
-    "total_war": "assets/scene-total-war.png",
+    "total_war": "assets/scene-escalation-total-war.png",
+    "escalation_standoff": "assets/scene-escalation-standoff.png",
+    "escalation_strikes": "assets/scene-escalation-strikes.png",
+    "escalation_air_campaign": "assets/scene-escalation-air-campaign.png",
     "trump_victory": "assets/scene-trump-victory.png",
     "kushner_exposed": "assets/scene-kushner-exposure.png",
     "asmongold_viral": "assets/scene-asmongold-viral.png",

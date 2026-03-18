@@ -457,7 +457,9 @@ function checkConsequenceEvents() {
     }
 
     // Iran provocations during day
-    const provRate = SIM.iranStrategy === 'confrontational' ? 0.35 :
+    const provRate = SIM.iranStrategy === 'total' ? 0.50 :
+                     SIM.iranStrategy === 'aggressive' ? 0.40 :
+                     SIM.iranStrategy === 'confrontational' ? 0.35 :
                      SIM.iranStrategy === 'escalatory' ? 0.20 :
                      SIM.iranStrategy === 'probing' ? 0.08 : 0.02;
     if (Math.random() < provRate) triggerIranProvocation();
@@ -596,6 +598,7 @@ function spawnEffect(x, y, type) {
 }
 
 function addHeadline(text, level) {
+    if (!text) return; // Skip empty headlines gracefully
     SIM.headlines.push({ text, level, day: SIM.day, hour: SIM.hour, time: Date.now() });
     SIM.eventLog.push({ text, level, day: SIM.day, hour: SIM.hour });
     // Show toast for critical/good headlines (suppressed during init)
@@ -807,7 +810,8 @@ function dailyUpdate() {
     while (SIM.navyShips.length > actualTargetShips) SIM.navyShips.pop();
 
     // Iran boats scale with strategy
-    const boatMult = SIM.iranStrategy === 'confrontational' ? 1.5 : SIM.iranStrategy === 'escalatory' ? 1.2 : 1;
+    const boatMult = SIM.iranStrategy === 'total' ? 2.0 : SIM.iranStrategy === 'aggressive' ? 1.8 :
+                     SIM.iranStrategy === 'confrontational' ? 1.5 : SIM.iranStrategy === 'escalatory' ? 1.2 : 1;
     const targetBoats = Math.floor(SIM.iranAggression / 12 * boatMult);
     while (SIM.iranBoats.length < targetBoats) spawnIranBoat(0.4 + Math.random() * 0.2, 0.30 + Math.random() * 0.15);
     while (SIM.iranBoats.length > targetBoats) SIM.iranBoats.pop();
@@ -827,7 +831,9 @@ function dailyUpdate() {
 
     // --- Statistical Seizure/Intercept Model (P2) ---
     // Seizure chance based on Iran aggression + strategy, reduced by naval presence
-    const seizureBase = SIM.iranStrategy === 'confrontational' ? 0.12 :
+    const seizureBase = SIM.iranStrategy === 'total' ? 0.25 :
+                        SIM.iranStrategy === 'aggressive' ? 0.18 :
+                        SIM.iranStrategy === 'confrontational' ? 0.12 :
                         SIM.iranStrategy === 'escalatory' ? 0.06 :
                         SIM.iranStrategy === 'probing' ? 0.02 : 0.005;
     const navalDeterrence = Math.min(0.10, navalPresence * 0.04);
@@ -1220,11 +1226,13 @@ function dailyUpdate() {
 // ======================== IRAN STRATEGY AI ========================
 
 function updateIranStrategy() {
-    // Determine strategy mode
-    if (SIM.iranAggression < 25) SIM.iranStrategy = 'restrained';
-    else if (SIM.iranAggression < 50) SIM.iranStrategy = 'probing';
-    else if (SIM.iranAggression < 75) SIM.iranStrategy = 'escalatory';
-    else SIM.iranStrategy = 'confrontational';
+    // Determine strategy mode (6 levels matching IRAN_ESCALATION)
+    if (SIM.iranAggression < 20) SIM.iranStrategy = 'restrained';
+    else if (SIM.iranAggression < 40) SIM.iranStrategy = 'probing';
+    else if (SIM.iranAggression < 55) SIM.iranStrategy = 'escalatory';
+    else if (SIM.iranAggression < 70) SIM.iranStrategy = 'confrontational';
+    else if (SIM.iranAggression < 85) SIM.iranStrategy = 'aggressive';
+    else SIM.iranStrategy = 'total';
 
     // Iran responds to player's card combination
     const hasHeavySanctions = getStanceEffect('iranEconomy') < -15;
