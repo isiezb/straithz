@@ -2,7 +2,7 @@
 STRAIT OF HORMUZ - POLICY SIMULATOR
 EXHAUSTIVE GAME STATE DOCUMENTATION
 ================================================================================
-Generated: 2026-03-18
+Generated: 2026-03-18 (updated)
 Source: Full codebase analysis
 
 ================================================================================
@@ -45,20 +45,23 @@ TABLE OF CONTENTS
 ================================================================================
 
 CHANGELOG:
-- 2026-03-18: Updated with narrative.js (682 lines), sound.js, data/loader.js,
-  ambient cable system, action narration system, layout corrections
+- 2026-03-18: Updated with narrative.js (838 lines), sound.js (206 lines),
+  data/loader.js, ambient cable system, action narration system, layout corrections,
+  Kushner conspiracy arc (K05-K07), warPath clamping fix, win condition update,
+  ambient scene images, arc transitions, async restart flow, mute button fix
 
 Files and load order (from index.html script tags):
-1. data/loader.js (17 lines) - Async loads 12 JSON files into global DATA object
-2. js/sound.js (168 lines) - Web Audio API procedural sound effects (SFX object)
-3. js/policies.js - Strategy cards, card dealing, stance effects, synergies, progression
-4. js/simulation.js - SIM state, entities, daily update, Iran AI, events, win/lose
-5. js/map.js - Canvas tactical map rendering
-6. js/narrative.js (682 lines) - Narrative feed system, scene panel, morning briefings
-7. js/characters.js - 5 playable characters, title/select/lore screens
-8. js/ui.js (4327 lines) - All UI: action panel, events, interrupts, gauges, terminal,
+1. data/loader.js - Async loads 12 JSON files into global DATA object
+2. js/sound.js (~206 lines) - Web Audio API procedural sound effects (SFX object)
+3. js/policies.js (~691 lines) - Strategy cards, card dealing, stance effects, synergies, progression
+4. js/simulation.js (~3442 lines) - SIM state, entities, daily update, Iran AI, events, win/lose
+5. js/map.js (~857 lines) - Canvas tactical map rendering
+6. js/narrative.js (~838 lines) - Narrative feed system, scene panel, morning briefings,
+   state-driven ambient images
+7. js/characters.js (~1175 lines) - 5 playable characters, title/select/lore screens
+8. js/ui.js (~4822 lines) - All UI: action panel, events, interrupts, gauges, terminal,
    game over, ambient cable traffic, action narration
-9. js/game.js (138 lines) - Entry point, game loop, phase transitions
+9. js/game.js (~151 lines) - Entry point, game loop, phase transitions, arc transition detection
 
 Data files loaded by loader.js:
   cards.json, events.json, interrupts.json, intel.json, characters.json,
@@ -91,6 +94,9 @@ Phases: charselect -> lore -> morning -> dayplay -> event -> overnight -> mornin
    _ambientTimer accumulates frame delta during dayplay. When it exceeds 4000ms
    and no decision event is active, fires _pushAmbientContent() then resets.
 
+   Arc transition detection: advanceToMorning() in game.js detects story arc
+   changes and calls showArcTransition() for full-screen chapter splash overlays.
+
 3. Morning phase: showDailyReport() displays morning briefing with gauges,
    headlines, strategy status. Player reads and clicks to enter dayplay.
 
@@ -108,7 +114,8 @@ Phases: charselect -> lore -> morning -> dayplay -> event -> overnight -> mornin
 
 7. advanceToMorning(): Increments day/week, adds daybreak separator to narrative
    feed (nf-day-break element with "--- DAY N ---"), updates narrative header,
-   shows next daily report.
+   detects story arc changes and calls showArcTransition() for full-screen
+   chapter splash overlays, then shows next daily report.
 
 ================================================================================
 3. SIM OBJECT - ALL PROPERTIES WITH DEFAULTS
@@ -153,7 +160,7 @@ GEOPOLITICS:
   polarization: 20           (0-100)
   aipacPressure: 50          (per-character aipacStart overrides this)
   assassinationRisk: 0       (0-100)
-  warPath: 1                 (0-5, escalation level)
+  warPath: 1                 (0-5, escalation level, clamped with Math.min(5,...) at all 6 increment locations)
 
 WIN/LOSE TRACKING:
   straitOpenDays: 0          (consecutive days strait is open)
@@ -470,8 +477,8 @@ WIN CONDITIONS:
    - Fuentes: warPath=0 + navyShips<=1 + budget>=600 +
      internationalStanding>=35
 
-2. Generic win: Strait open 7 consecutive days
-   (oilFlow>55, tension<45, no seizures in 3 days, crisisLevel=0)
+2. Generic win: Strait open 14 consecutive days
+   (oilFlow>60, tension<45, no seizures in 3 days, crisisLevel=0)
    Grace mechanic: losing stability only reduces progress by 2 days
    instead of full reset
 
@@ -930,8 +937,10 @@ KUSHNER (id: 'kushner')
   Win: dealValue>=300 + iranAggression<=25 + exposure<50 (sustained 3 days)
   Lose: exposure>=90 for 3 days, dealValue=0 after day 30
   Abraham Accords II card gives +5 dealValue/day when active
-  Events: K01_mbs_calls, K02_exposure_spikes, K03_riyadh_summit (+$100M deal),
-          K04_araghchi_gambit + chains
+  Events (8): K01_mbs_calls, K02_exposure_spikes, K03_riyadh_summit (+$100M deal),
+          K04_araghchi_gambit, K04_framework,
+          K05_senate_subpoena, K06_pif_renegotiation, K07_the_recording
+          K05-K07 form a conspiracy arc chain (senate subpoena -> PIF renegotiation -> recording leak)
 
 ----------
 ASMONGOLD (id: 'asmongold')
@@ -1089,7 +1098,7 @@ AIPAC EVENTS (4):
   donor_ultimatum: d30-60, pressure<25
 
 ================================================================================
-19. NARRATIVE SYSTEM (js/narrative.js, 682 lines)
+19. NARRATIVE SYSTEM (js/narrative.js, ~838 lines)
 ================================================================================
 
 The game uses a TEXT-FIRST interactive fiction interface. The narrative feed is
@@ -1148,6 +1157,12 @@ SCENE PANEL:
   showSceneAmbient() — shows current story arc image at 0.4 opacity
   clearSceneImage() — fades out to idle state
 
+STATE-DRIVEN AMBIENT IMAGES:
+  getAmbientSceneImage() in narrative.js selects ambient scene art based on
+  game state priority chain:
+    warPath >= 4 -> crisis >= 2 -> character-specific state ->
+    straitOpenDays -> budget -> tension -> story arc fallback
+
 STAT ENTRY PAIRING:
   Stat entries must follow a scene. If an orphan stat entry is added,
   _generateStatContext() auto-generates a generic context scene based on the
@@ -1183,8 +1198,8 @@ Current DOM structure (from index.html):
 
 #game-container (100dvh, flex column)
 +-- .scanlines-global (z-index:999, pointer-events:none)
++-- #mute-btn (position:fixed, z-index:9999, visible on all screens including title/character select)
 +-- #gauge-bar (48px fixed, flex-shrink:0, z-index:10)
-|   +-- #mute-btn
 |   +-- #hud-day ("DAY 1")
 |   +-- .gauge-group (STAB/ECON/SUPP/INTL)
 |   +-- #hud-char (character name)
@@ -1232,7 +1247,7 @@ KEY LAYOUT NOTES:
 BACKGROUND MUSIC:
   bgmusic.mp3: ~11 minute loop, plays at 0.3 volume from title screen click
 
-SFX OBJECT (js/sound.js, 168 lines, all procedural via Web Audio API):
+SFX OBJECT (js/sound.js, ~206 lines, all procedural via Web Audio API):
   SFX.init()         — creates AudioContext (called on first user interaction)
   SFX.mute(bool)     — toggle mute
   SFX._volume: 0.15  — master volume
@@ -1377,14 +1392,16 @@ AIPAC EVENTS (4):
   aipac_attack_ad:   d20-50, aipac<35
   donor_ultimatum:   d30-60, aipac<25
 
-CHARACTER EVENTS (per character, 4-5 each + chains, ~25 total):
+CHARACTER EVENTS (per character, 4-8 each + chains, ~30 total):
 
   Trump:    T01_fox_news_call, T02_deal_on_table, T03_political_capital_crisis,
             T04_iran_backchannel, T02_deal_response (chains)
   Hegseth:  H01_pentagon_power_play, H02_leak_from_within, H03_shock_and_awe,
             H04_troop_morale + chains
-  Kushner:  K01_mbs_calls, K02_exposure_spikes, K03_riyadh_summit,
-            K04_araghchi_gambit + chains
+  Kushner (8):  K01_mbs_calls, K02_exposure_spikes, K03_riyadh_summit,
+            K04_araghchi_gambit, K04_framework,
+            K05_senate_subpoena, K06_pif_renegotiation, K07_the_recording
+            (K05-K07 conspiracy arc chain)
   Asmongold: A01_osint_discovery, A02_disinfo_attack, A03_credibility_test,
             A04_chat_demands_action + chains
   Fuentes:  F01_base_demands_blood, F02_international_pariah,
@@ -1403,6 +1420,19 @@ CHAIN EVENT SEQUENCES:
 _pushAmbientContent() fires every 4 seconds during idle dayplay (controlled by
 _ambientTimer in the game loop, which accumulates frame delta and resets at
 4000ms). Only fires when no decision event is active.
+
+TENSION-GRADED CABLES:
+  - ambient_low_tension: 10 cables for low-tension periods
+  - ambient_medium_tension: 15 cables for medium-tension periods
+  - ambient_high_tension: 15 cables for high-tension periods
+
+POLYMARKET HEADLINES:
+  12 Polymarket-style prediction market headlines, appearing with 30% chance
+  per ambient tick.
+
+IDLE ASIDES:
+  50 character-specific idle lines (10 per character), appearing with 20% chance
+  per ambient tick.
 
 STATE-BASED HEADLINE POOLS:
   From DATA.headlines.simulation:
@@ -1427,6 +1457,8 @@ ADVISOR ASIDES:
     - tension>75: highTension reaction
     - approval<30: lowApproval reaction
 
+All ambient content is wired into _pushAmbientContent() in ui.js.
+
 DEDUPLICATION:
   _lastAmbientIdx tracks last-selected pool index to avoid immediate repeats.
   SIM._lastAdvisorReaction prevents duplicate advisor reactions between ambient
@@ -1435,6 +1467,17 @@ DEDUPLICATION:
 ================================================================================
 30. KNOWN ISSUES AND INCONSISTENCIES
 ================================================================================
+
+FIXED:
+  - warPath clamping: Now properly clamped to 0-5 with Math.min(5, SIM.warPath + 1)
+    at all 6 increment locations throughout the codebase.
+  - Duplicate image properties: Resolved (e.g., oman_talks no longer has image set
+    twice).
+  - Win condition: Updated to 14 consecutive days with oilFlow > 60 (was 7 days / >55).
+  - Restart flow: restartGame() is now async, goes through title -> character select ->
+    lore screen flow instead of restarting with same character.
+
+REMAINING ISSUES:
 
 1.  tickSimulation() is NOT called from game loop -- entity movement is dead
     code. Entities still spawn/despawn in dailyUpdate but never animate.
@@ -1448,43 +1491,40 @@ DEDUPLICATION:
 4.  IRAN_ESCALATION has 6 levels but updateIranStrategy only uses 4 thresholds
     (<25, <50, <75, >=75). Levels 4-5 are never set.
 
-5.  Some events have duplicate image properties (e.g., oman_talks has image
-    set twice, second overwrites first).
-
-6.  iris_dena_aftermath appears twice in DECISION_EVENTS with different
+5.  iris_dena_aftermath appears twice in DECISION_EVENTS with different
     conditions and day ranges.
 
-7.  war_crimes_tribunal appears both as a strategy card AND a decision event ID.
+6.  war_crimes_tribunal appears both as a strategy card AND a decision event ID.
 
-8.  dialogue.json and reactions.json contain identical content -- one is
+7.  dialogue.json and reactions.json contain identical content -- one is
     redundant.
 
-9.  SIM.hillSupport property referenced in HTML (gauge-hill) but never defined
+8.  SIM.hillSupport property referenced in HTML (gauge-hill) but never defined
     in SIM object or updated.
 
-10. drawDayCounter() is a no-op in map.js.
+9.  drawDayCounter() is a no-op in map.js.
 
-11. sprites.js was deleted but map.js still has empty drawEntities() /
+10. sprites.js was deleted but map.js still has empty drawEntities() /
     drawPlatforms() stubs.
 
-12. SIM_DEFAULTS has different starting values than SIM initial state (e.g.,
+11. SIM_DEFAULTS has different starting values than SIM initial state (e.g.,
     SIM.oilFlow=50 vs potentially different values if character overrides
     aren't applied).
 
-13. Some events reference effects like 'politicalCapital' and 'credibility'
+12. Some events reference effects like 'politicalCapital' and 'credibility'
     that aren't direct SIM properties -- they go through character-specific
     handling.
 
-14. Card names/descriptions/hints are empty strings in JS -- hydrated from
+13. Card names/descriptions/hints are empty strings in JS -- hydrated from
     cards.json at runtime. If JSON fails to load, all cards have no visible
     text.
 
-15. Empty BIBLE_ACTIONS headlines: The headline property is hydrated from
+14. Empty BIBLE_ACTIONS headlines: The headline property is hydrated from
     data but never used in execute closures. BIBLE_ACTIONS[i].headline is
     set at hydration time (ui.js line 4317) but the execute functions that
     generate headlines use hardcoded strings or action-scenes.json instead.
 
-16. epilogue-peace-crt.png has a space in filename ("epilogue-peace-crt.png .png")
+15. epilogue-peace-crt.png has a space in filename ("epilogue-peace-crt.png .png")
     causing broken asset references.
 
 ================================================================================

@@ -13,13 +13,13 @@ Right now, Strait of Hormuz plays like a spreadsheet that occasionally shows you
 
 ---
 
-## 1. The "Route" Feeling — Each Character Is a Different Game
+## 1. The "Route" Feeling — Each Character Is a Different Game [IMPLEMENTED]
 
 ### What Dating Sims Do
 In dating sims, picking a character at the start doesn't just change your stats. It changes the ENTIRE STORY. Different events fire. Different characters appear. The tone shifts. Picking Makoto's route in Persona 5 is a completely different emotional experience from picking Ann's route. You replay the game to see the other stories.
 
 ### What You Have
-You already have the bones of this. Each character has:
+Each character has:
 - 4-5 unique decision events with chain follow-ups
 - Unique resource with custom update logic
 - Character-specific action variants in action-scenes.json
@@ -28,8 +28,12 @@ You already have the bones of this. Each character has:
 - Morning brief variants per character
 - Day-end reflections keyed to character × mood (105 total)
 - Advisor dialogue with 11 reaction types per character
+- **Character-voiced morning briefings** with 50 tension-tiered entries (10 per character)
+- **Per-character overnight scenes** with mood-specific images (desperate/tense/neutral/confident)
+- **Per-character event and action images** via CHARACTER_EVENT_IMAGES and CHARACTER_ACTION_IMAGES
+- **Ambient scene images** driven by character state, crisis level, tension, and budget via getAmbientSceneImage()
 
-That's a LOT of character-specific content. But the player doesn't feel it because it's all delivered the same flat way regardless of who you're playing.
+The route differentiation is now strongly felt through voice, visuals, and narrative atmosphere across all game phases.
 
 ### What to Change
 
@@ -65,11 +69,11 @@ Stream's live. Everyone's watching."
 
 Same underlying data (approval=58, oil=112, AP=3). Completely different experience. The player feels like they ARE that person.
 
-**You already have character briefing variants in briefings.json** (`characterBriefing` with 5 character entries). Use them as the primary voice, not a sidebar flavor.
+**Status:** characterOpenings in briefings.json now has 50 tension-tiered briefings (10 per character with highTension, lowApproval, budgetCrisis, etc. keys). These feed into the morning briefing system as the primary character voice.
 
 ---
 
-## 2. Affinity / Trust as Emotional Core — Not Just a Number
+## 2. Affinity / Trust as Emotional Core — Not Just a Number [PARTIAL]
 
 ### What Dating Sims Do
 The relationship stat in a dating sim isn't just a threshold check. It changes how the character TALKS to you. At low affinity, they're cold or formal. At medium, they open up. At high, they're vulnerable, they confide in you, they show a side nobody else sees. The stat change is invisible — you only know it changed because the dialogue shifted.
@@ -104,11 +108,11 @@ them I have your full backing. Can you do that?'"
 
 Same character. Same game state. But the player FEELS the resource dropping because the character's behavior changed. They didn't check a number — they read a scene and thought "oh no, Pete's losing it."
 
-**Implementation:** In `dialogue.json`, you already have `uniqueResourceLow` and `uniqueResourceCritical` reactions. Expand this to 4-5 tiers per character so the dialogue smoothly degrades (or improves) as the resource moves. Trigger these during morning briefings and after actions.
+**Current status:** advisorReactions in dialogue.json has per-character lines for highTension, lowApproval, seizure, diplomatic, victory, lowBudget, highProxy, uniqueResourceLow, and uniqueResourceCritical. This gives 2 tiers for the unique resource (low and critical). Expanding to 4-5 tiers per character would make the dialogue degrade/improve more smoothly as the resource moves.
 
 ---
 
-## 3. The "Common Route vs. Character Route" Structure
+## 3. The "Common Route vs. Character Route" Structure [PARTIAL]
 
 ### What Visual Novels Do
 Most VNs have a "common route" — shared events everyone sees early on — that branches into "character routes" as your choices accumulate. The branching isn't one decision. It's the SUM of your decisions pulling you toward a specific narrative path. You don't choose a route. You drift into one.
@@ -141,11 +145,11 @@ The player doesn't see these labels. They just notice that the events are shifti
 
 This is what makes VN players say "I need to replay this" — the sense that there's a completely different story hiding behind different choices.
 
-**You already have the event infrastructure for this.** Decision events have day ranges and condition checks. You just need to skew the conditions so that certain clusters of events become much more likely based on cumulative playstyle, rather than having every event equally available to every player.
+**Current status:** Story flags exist for branching and arc transitions fire full-screen chapter overlays, but the arcs don't yet fork based on cumulative hawk/diplomat/dove tendency. The event infrastructure supports condition checks; the remaining work is skewing event conditions so that certain clusters become much more likely based on playstyle.
 
 ---
 
-## 4. Confession Scenes / Peak Emotional Moments
+## 4. Confession Scenes / Peak Emotional Moments [PARTIAL]
 
 ### What Dating Sims Do
 Every route has a "confession scene" — a peak emotional moment where the relationship crystalizes. Everything before it was building to this. Everything after it flows from this. In Persona, it's the moment a Confidant reaches Rank 10. In Ace Attorney, it's the final OBJECTION that breaks the case open. These scenes are LONG. They're full of text. They take 5-10 minutes to read. And they're the reason people remember the game.
@@ -184,11 +188,11 @@ persona. Lean into the character or break the fourth wall.
 
 These scenes should be the LONGEST text in the game. 500-800 words minimum. The player should spend 2-3 minutes reading. No timers. No countdown. Just text and a choice that matters.
 
-**In event-scenes.json, the character events currently have the same scene/consequence structure as generic events.** These peak scenes need their own expanded format — multiple paragraphs, internal monologue, environmental description, and a choice that feels heavy because of everything you just read.
+**Current status:** Kushner's K05-K07 conspiracy arc is the closest to a full "confession scene" with multi-part narrative buildup. Other characters don't yet have equivalent deep story chains. The event-scenes.json character events still use the same scene/consequence structure as generic events — peak scenes need their own expanded format with multiple paragraphs, internal monologue, environmental description, and heavy choices.
 
 ---
 
-## 5. Slice-of-Life Moments Between Crises
+## 5. Slice-of-Life Moments Between Crises [IMPLEMENTED]
 
 ### What Japanese Games Do
 Persona doesn't go from dungeon to dungeon without breaks. Between palace infiltrations, you go to school, eat ramen, study in the library, hang out on the roof. These quiet moments make the intense moments hit harder. They also make the world feel real — you're not just a crisis manager, you're a person who exists in a world.
@@ -221,11 +225,11 @@ half. You heat up leftover pizza and open a private browser tab to
 check if anyone noticed the prediction was wrong yet. They noticed."
 ```
 
-**You already have day-endings.json with 105 character × mood reflections.** These need to be expanded from single-line reactions into full atmospheric paragraphs. Even 3-4 sentences per reflection would transform the overnight transition from a gauge screen into a moment the player looks forward to.
+**Current status:** Overnight scenes are now fully expanded. CHAR_OVERNIGHT in ui.js has mood-specific images (desperate/tense/neutral/confident) for all 5 characters. day-endings.json has expanded reflections keyed by character. getAmbientSceneImage() in narrative.js provides state-driven contextual images during these transitions based on crisis level, character state, tension, and budget.
 
 ---
 
-## 6. The "Affection Gift" Mechanic → Strategic Card Dedication
+## 6. The "Affection Gift" Mechanic → Strategic Card Dedication [IMPLEMENTED]
 
 ### What Dating Sims Do
 Giving gifts to a character isn't just "increase stat." The character reacts. They say something. If it's the right gift, they light up. If it's wrong, they're disappointed. The feedback is TEXTUAL and EMOTIONAL, not numerical.
@@ -255,11 +259,11 @@ we add is a card MBS plays against us in the next call. I'll support
 it. Just... know what it costs on the other side of the table.'"
 ```
 
-**Implementation:** Add a `cardReactions` section to `dialogue.json` or `characters.json` — one reaction per card category (military, diplomatic, economic, intelligence, domestic) per character, at 2-3 intensity levels. That's 5 categories × 3 levels × 5 characters = 75 short reactions. When a card is selected, show the reaction in the narrative feed before the card activates.
+**Current status:** cardReactions in dialogue.json has been updated with 75 lines (5 characters × 5 categories × positive/reluctant variants). When a card is selected, the character reacts in voice before the card activates.
 
 ---
 
-## 7. The Save/Replay Hook — "What If I Had..."
+## 7. The Save/Replay Hook — "What If I Had..." [TODO]
 
 ### What Visual Novels Do
 VNs make you want to replay by showing you WHAT YOU MISSED. After an ending, many VNs show a route completion percentage, unlocked CG gallery entries, or a flowchart showing branches you didn't take. This creates the "what if I had picked the other option" feeling that drives replays.
@@ -300,9 +304,11 @@ OTHER ENDINGS: 2 of 6 unlocked
 
 The "Roads Not Taken" section is the key VN mechanic — showing the player that a completely different story existed based on choices they didn't make. This transforms a single playthrough into a reason to play again as a different character or with a different strategy.
 
+**Current status:** Not yet implemented. The epilogue shows character epilogue text and campaign stats, but does not yet surface missed branches, hidden endings, or alternative paths.
+
 ---
 
-## 8. Silence as a Design Tool
+## 8. Silence as a Design Tool [IMPLEMENTED]
 
 ### What Japanese Games Do
 In Ace Attorney, after a critical revelation, the music stops. The screen holds. No text advances for 2-3 seconds. Then the next line hits.
@@ -336,6 +342,8 @@ When a crisis event fires (nuclear_threshold, carrier_hit, friendly_fire, etc.),
 
 The silence makes the crisis land harder than any amount of red flashing UI chrome. The player was reading, then the reading stopped, then something terrible appeared one line at a time. That's how VNs create tension — by controlling the PACE of text delivery.
 
+**Current status:** Idle asides are implemented — 50 idle asides (10 per character) are wired into _pushAmbientContent() at 20% chance during quiet moments, creating those "silence before the storm" beats. Full crisis-moment silence sequences (music fade, feed pause, line-by-line text delivery) are not yet implemented for major events.
+
 ---
 
 ## 9. Implementation Priority
@@ -343,33 +351,40 @@ The silence makes the crisis land harder than any amount of red flashing UI chro
 Ordered by how much each change transforms the player experience:
 
 ### Tier 1 — Changes Everything
-1. **Character-voiced morning briefings** — Rewrite morning brief generation to speak in character voice, not neutral report voice. Uses existing briefings.json data + characterBriefing variants.
-2. **Resource-based dialogue shifts** — Advisor tone changes based on unique resource level. Expand uniqueResourceLow/Critical to 4-5 tiers with distinct personality shifts.
-3. **Peak character scenes** — Expand the T03/K03/A03/H03/F03 events into long, atmospheric, multi-paragraph narrative moments. These are your "confession scenes."
+1. **Character-voiced morning briefings** [IMPLEMENTED] — characterOpenings in briefings.json has 50 tension-tiered briefings (10 per character with highTension, lowApproval, budgetCrisis, etc. keys). These feed into the morning briefing system as the primary character voice.
+2. **Resource-based dialogue shifts** [PARTIAL] — advisorReactions in dialogue.json has per-character lines for 11 reaction types including uniqueResourceLow and uniqueResourceCritical. Currently 2 tiers; expanding to 4-5 tiers would make the degradation/improvement smoother.
+3. **Peak character scenes** [PARTIAL] — Kushner's K05-K07 conspiracy arc is the closest to a full confession scene. Other characters' T03/A03/H03/F03 events still need expansion into long-form atmospheric narrative moments.
 
 ### Tier 2 — Creates Replay Value
-4. **Playstyle-branching arcs** — Fork story arcs after day 21 based on cumulative hawk/diplomat/dove tendency. Skew event conditions to cluster thematically.
-5. **Overnight scenes** — Expand day-ending reflections from one-liners to 3-5 sentence atmospheric moments. Character doing human things between crises.
-6. **Epilogue "Roads Not Taken"** — Post-game summary showing what you missed, what other endings exist, what branches you didn't explore.
+4. **Playstyle-branching arcs** [PARTIAL] — Story flags and arc transition splashes (full-screen chapter overlays) exist, but arcs don't yet fork based on cumulative hawk/diplomat/dove tendency.
+5. **Overnight scenes** [IMPLEMENTED] — CHAR_OVERNIGHT in ui.js has mood-specific images (desperate/tense/neutral/confident) for all 5 characters. day-endings.json has expanded reflections keyed by character. getAmbientSceneImage() provides state-driven contextual images.
+6. **Epilogue "Roads Not Taken"** [TODO] — Not yet implemented. Post-game does not yet surface missed branches, hidden endings, or alternative paths.
 
 ### Tier 3 — Polish and Immersion
-7. **Card selection reactions** — Character comments on strategy card choices based on their worldview. 75 short reactions.
-8. **Silence before storms** — Implement pacing control for crisis events: fade music, pause feed, deliver text line-by-line with delays.
-9. **Restriction as character voice** — When a player tries to access a restricted card or action, don't just grey it out. Have the character REFUSE in voice, explaining why it's off-limits to who they are.
+7. **Card selection reactions** [IMPLEMENTED] — cardReactions in dialogue.json updated with 75 lines (5 chars × 5 categories × positive/reluctant variants).
+8. **Silence before storms** [IMPLEMENTED] — 50 idle asides (10 per character) wired into _pushAmbientContent() at 20% chance during quiet moments. Full crisis-moment silence sequences (music fade, line-by-line delivery) for major events are not yet implemented.
+9. **Restriction as character voice** [TODO] — Restricted cards are still greyed out mechanically. Characters don't yet refuse narratively in their own voice.
+10. **Scene panel atmosphere** [IMPLEMENTED] — getAmbientSceneImage() in narrative.js is state-driven, showing contextual images based on crisis level, character state, tension, budget, etc.
+11. **Arc transition splashes** [IMPLEMENTED] — Full-screen chapter overlays fire when story arc changes.
+12. **Character-specific event/action images** [IMPLEMENTED] — CHARACTER_EVENT_IMAGES and CHARACTER_ACTION_IMAGES provide per-character visual identity throughout gameplay.
 
 ---
 
 ## Content Needs
 
-| Content Type | Exists | Need | Priority |
-|-------------|--------|------|----------|
-| Character-voiced morning briefs (5 chars × 10 situations × 1 para each) | Partial (characterBriefing in briefings.json) | ~50 paragraphs | Tier 1 |
-| Resource-tier dialogue (5 chars × 4 tiers) | Partial (2 tiers exist) | ~10 new passages | Tier 1 |
-| Peak character scenes (5 chars × 1 scene each) | Exists as short events | 5 long-form scenes (500-800 words each) | Tier 1 |
-| Overnight atmosphere scenes (5 chars × 7 moods) | 105 one-liners exist | Expand each to 3-5 sentences | Tier 2 |
-| Card selection reactions (5 cats × 3 levels × 5 chars) | None | 75 short reactions | Tier 3 |
-| Card restriction refusals (per char restricted cards) | None | ~15-20 short voice lines | Tier 3 |
-| Post-game "Roads Not Taken" hints | None | ~30 conditional hint texts | Tier 2 |
+| Content Type | Status | Remaining Work | Priority |
+|-------------|--------|----------------|----------|
+| Character-voiced morning briefs (5 chars × 10 situations) | ✅ DONE — 50 tension-tiered briefings in briefings.json | — | Tier 1 |
+| Resource-tier dialogue (5 chars × 4 tiers) | PARTIAL — 2 tiers exist (low, critical) | ~10 new passages for 4-5 tier coverage | Tier 1 |
+| Peak character scenes (5 chars × 1 scene each) | PARTIAL — Kushner K05-K07 done | 4 long-form scenes (500-800 words each) for other chars | Tier 1 |
+| Overnight atmosphere scenes (5 chars × moods) | ✅ DONE — mood-specific images + expanded reflections | — | Tier 2 |
+| Card selection reactions (5 cats × 5 chars × variants) | ✅ DONE — 75 lines in dialogue.json | — | Tier 3 |
+| Card restriction refusals (per char restricted cards) | Not started | ~15-20 short voice lines | Tier 3 |
+| Post-game "Roads Not Taken" hints | Not started | ~30 conditional hint texts | Tier 2 |
+| Idle asides (10 per character) | ✅ DONE — 50 asides in _pushAmbientContent() | — | Tier 3 |
+| Scene panel atmosphere images | ✅ DONE — getAmbientSceneImage() state-driven | — | Tier 3 |
+| Character event/action images | ✅ DONE — CHARACTER_EVENT_IMAGES + CHARACTER_ACTION_IMAGES | — | Tier 3 |
+| Arc transition splashes | ✅ DONE — full-screen chapter overlays | — | Tier 2 |
 
 ---
 

@@ -107,9 +107,11 @@ js/policies.js      — Strategy cards, card dealing, stance effects (UNTOUCHED)
 js/simulation.js    — SIM state object, entities, daily update, AI, win/lose
 js/sprites.js       — Procedural pixel art sprite generation (UNTOUCHED)
 js/map.js           — Canvas rendering (disabled during gameplay phases)
-js/characters.js    — 5 playable characters with abilities/lore (UNTOUCHED)
-js/ui.js            — Terminal UI, action panel, events, narrative pipeline (_narrateAction, _maybeAdvisorReaction)
-js/game.js          — Entry point, game loop, phase transitions (renderMap guard added)
+js/characters.js    — 5 playable characters with abilities/lore (~1175 lines, Kushner K05-K07 events added)
+js/ui.js            — Terminal UI, action panel, events, narrative pipeline (~4822 lines)
+js/narrative.js     — Narrative data, ambient content, dialogue tables (~838 lines)
+js/game.js          — Entry point, game loop, phase transitions (~151 lines, renderMap guard added)
+js/sound.js         — Audio management, mute toggle (206 lines)
 ```
 
 ### Narrative Feed Pipeline
@@ -131,6 +133,13 @@ Decision event resolves
     → apply choice effects to SIM
     → echo character flavor text to feed
     → consequence text to feed
+
+During dayplay (every ~4s idle)
+  → _pushAmbientContent()
+    → tension-graded cables from DATA.headlines.simulation
+    → Polymarket headlines (30% chance)
+    → idle asides from DATA.dialogue.idleAsides (20% chance)
+    → advisor reactions based on state thresholds
 ```
 
 ### Layout Hierarchy
@@ -140,13 +149,14 @@ Decision event resolves
   ├── #gauge-bar (48px fixed top bar)
   └── #main-layout (fills remaining height)
        ├── #narrative-col (flex: 1)
-       │    ├── #scene-panel (80px, shrinkable)
+       │    ├── #scene-panel (80px, shrinkable, hosts state-driven ambient images via getAmbientSceneImage())
        │    ├── #narrative-feed > .nf-feed (scrollable feed)
        │    └── #action-bar (auto height, max 45%, scrollable)
        └── #strategy-col (280px fixed)
             ├── character panel (compact, 120px max)
             ├── strategy card pills
             └── intel brief
+  #mute-btn (position: fixed, z-index: 9999, visible on all screens, outside normal layout flow)
 ```
 
 ---
@@ -159,6 +169,10 @@ Decision event resolves
 ### Edge Cases
 - **Extreme viewport sizes:** The flex layout handles standard laptop/desktop resolutions well but may still overflow or leave dead space at very small (<900px height) or very large (4K+) viewports. The `flex-shrink: 10` on `#scene-panel` helps but is not a complete solution.
 - **Right sidebar text legibility:** On some displays the 280px column results in text that feels cramped. Could benefit from responsive font sizing or a slightly wider minimum.
+
+### Fixed Issues
+- **Mute button visibility:** Now `position: fixed` with `z-index: 9999`, visible on all screens including character select and lore. No longer lost behind overlays.
+- **Restart flow:** `restartGame()` is now async and follows the correct sequence: title → character select → lore. Previously could leave stale state.
 
 ### Future Considerations
 - The tactical map canvas is hidden but still in the DOM. It could be repurposed as a mini-map toggle, a full-screen strategic view, or removed entirely to simplify the codebase.
