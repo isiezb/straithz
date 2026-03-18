@@ -3773,33 +3773,23 @@ function resolveDecision(event, choiceIdx, customScene) {
 
     // Write consequence to narrative feed
     if (typeof addNarrative === 'function') {
-        addNarrative('scene', consequenceText, { portrait: _getEventPortrait(event) });
+        addNarrative('consequence', consequenceText, { portrait: _getEventPortrait(event) });
         // Stat changes as subtle indicators
         for (const [key, val] of Object.entries(choice.effects)) {
             if (val !== 0) {
                 addNarrative('stat', '', { metric: key, delta: val });
             }
         }
-    }
-
-    // Echo event scene + character flavor + consequence to narrative feed
-    const eventScenes = DATA['event-scenes'];
-    if (eventScenes && eventScenes.scenes && eventScenes.scenes[event.id]) {
-        const sceneData = eventScenes.scenes[event.id];
-        // Scene description
-        if (sceneData.scene) {
-            addNarrative('scene', sceneData.scene);
-        }
-        // Character flavor
-        if (sceneData.characterFlavor && SIM.character && sceneData.characterFlavor[SIM.character.id]) {
-            addNarrative('advisor', sceneData.characterFlavor[SIM.character.id], {
-                speaker: SIM.character.name,
-                portrait: SIM.character.id
-            });
-        }
-        // Consequence text for chosen option
-        if (sceneData.consequences && sceneData.consequences[choiceIdx]) {
-            addNarrative('consequence', sceneData.consequences[choiceIdx]);
+        // Character flavor from event-scenes data
+        const eventScenes = DATA['event-scenes'];
+        if (eventScenes && eventScenes.scenes && eventScenes.scenes[event.id]) {
+            const sceneData = eventScenes.scenes[event.id];
+            if (sceneData.characterFlavor && SIM.character && sceneData.characterFlavor[SIM.character.id]) {
+                addNarrative('advisor', sceneData.characterFlavor[SIM.character.id], {
+                    speaker: SIM.character.name,
+                    portrait: SIM.character.id
+                });
+            }
         }
     }
 
@@ -3867,7 +3857,8 @@ function _pushAmbientContent() {
     }
 
     // Advisor asides based on state thresholds
-    if (SIM.character && DATA.dialogue && DATA.dialogue.advisorReactions) {
+    // Advisor asides (skip if _maybeAdvisorReaction recently fired)
+    if (SIM.character && DATA.dialogue && DATA.dialogue.advisorReactions && !SIM._lastAdvisorReaction) {
         const charReactions = DATA.dialogue.advisorReactions[SIM.character.id];
         if (charReactions) {
             if (s.tension > 75 && charReactions.highTension && Math.random() < 0.15) {
