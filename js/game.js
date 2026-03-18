@@ -24,6 +24,9 @@
         SIM.phase = 'morning';
         showDailyReport();
 
+        // Verify all event image references resolve to real files
+        if (typeof verifyEventAssets === 'function') verifyEventAssets();
+
         let lastFrame = 0;
         let _cpUpdateTimer = 0;
 

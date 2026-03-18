@@ -2859,7 +2859,7 @@ function showDecisionEvent(event) {
 
         openTerminal(`
             ${crisisHeader}
-            ${eventImg ? `<img src="${eventImg}" class="event-category-art" alt="Event">` : ''}
+            ${eventImg ? `<img src="${eventImg}" class="event-category-art" alt="Event" onerror="if(typeof SPRITES!=='undefined'&&SPRITES.eventPlaceholder)this.src=SPRITES.eventPlaceholder;else this.style.display='none'">` : ''}
             ${countdown > 0 ? `<div class="decision-timer">${countdown}s</div>` : ''}
             <div class="term-header" style="${headerStyle}">DAY ${SIM.day} \u2014 ${isCrisis ? 'CRISIS' : 'DECISION REQUIRED'}</div>
             <div class="term-title" style="${titleStyle}">${event.title}</div>
@@ -3171,7 +3171,10 @@ function showGameOverScreen() {
         const ep = SIM.character.epilogues;
         if (SIM.gameWon && SIM.warPath <= 1 && ep.diplomatic) {
             epilogueText = ep.diplomatic;
-            epilogueImg = 'assets/epilogue-diplomatic.png';
+            epilogueImg = 'assets/epilogue-peace.png';
+        } else if (SIM.gameWon && SIM.warPath >= 4 && ep.military) {
+            epilogueText = ep.military;
+            epilogueImg = 'assets/epilogue-war.png';
         } else if (SIM.gameWon && SIM.warPath >= 2 && ep.military) {
             epilogueText = ep.military;
             epilogueImg = 'assets/epilogue-military.png';

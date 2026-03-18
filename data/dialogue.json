@@ -108,7 +108,7 @@
   },
   "titleScreen": {
     "imageAlt": "Strait Out of Hormuz",
-    "imageSrc": "assets/title screen.png",
+    "imageSrc": "assets/title-screen.png",
     "prompt": "PRESS ANY KEY OR CLICK TO START"
   },
   "characterSelect": {

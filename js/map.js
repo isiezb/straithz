@@ -19,6 +19,17 @@ function initMap() {
     }
     // Canvas is hidden — map is now DOM-based via center panel
     // initMap kept for sprite system and getLanePosition()
+
+    // Load map background and situation room images
+    function loadMapAsset(key, src) {
+        const img = new Image();
+        img.onload = function () { MAP.assets[key] = img; };
+        img.onerror = function () { console.warn('Map asset not found: ' + src); };
+        img.src = src;
+    }
+    loadMapAsset('mapBg', 'assets/map-bg.png');
+    loadMapAsset('straitMap', 'assets/strait-map.png');
+    loadMapAsset('sitRoom', 'assets/situation-room.png');
 }
 
 function resizeCanvas() {
@@ -92,6 +103,12 @@ function renderMap() {
         ctx.globalAlpha = 1;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.fillRect(mapX, 0, mapW, mapH);
+        // Overlay strait detail map if available
+        if (MAP.assets.straitMap) {
+            ctx.globalAlpha = 0.3;
+            ctx.drawImage(MAP.assets.straitMap, mapX, 0, mapW, mapH);
+            ctx.globalAlpha = 1;
+        }
     } else {
         // Procedural map in center
         ctx.save();

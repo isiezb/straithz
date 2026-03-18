@@ -439,7 +439,7 @@ const CHARACTERS = [
                 ],
             },
             {
-                id: 'K03_riyadh_summit', title: '', image: 'assets/event-kushner-summi.png',
+                id: 'K03_riyadh_summit', title: '', image: 'assets/event-kushner-summit.png',
                 description: '',
                 minDay: 15, maxDay: 30,
                 condition: () => SIM.storyFlags?.riyadh_summit_proposed,
@@ -456,7 +456,7 @@ const CHARACTERS = [
                 ],
             },
             {
-                id: 'K04_araghchi_gambit', title: '', image: 'assets/vent-kushner-zarif.png',
+                id: 'K04_araghchi_gambit', title: '', image: 'assets/event-kushner-zarif.png',
                 description: '',
                 minDay: 35, maxDay: 55,
                 condition: () => {
@@ -587,7 +587,7 @@ const CHARACTERS = [
 
         uniqueEvents: [
             {
-                id: 'A01_osint_discovery', title: '', image: 'assets/vent-asmongold-osint.png',
+                id: 'A01_osint_discovery', title: '', image: 'assets/event-asmongold-osint.png',
                 description: '',
                 minDay: 3, maxDay: 8,
                 condition: () => true,

@@ -27,6 +27,107 @@ function initSprites() {
     SPRITES.portrait_fuentes = createPortraitSprite('fuentes');
     SPRITES.portrait_hegseth = createPortraitSprite('hegseth');
     SPRITES.portrait_kushner = createPortraitSprite('kushner');
+
+    // Generate procedural event-placeholder.png as a data URL
+    SPRITES.eventPlaceholder = createEventPlaceholder();
+}
+
+/**
+ * Procedural CRT-style "CLASSIFIED" placeholder for events missing artwork.
+ * Returns a data URL string usable as an img src.
+ */
+function createEventPlaceholder() {
+    const w = 1536, h = 1024;
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+
+    // Dark background
+    ctx.fillStyle = '#060a06';
+    ctx.fillRect(0, 0, w, h);
+
+    // CRT grid pattern
+    ctx.strokeStyle = 'rgba(68, 221, 136, 0.06)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 4) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 4) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    // Scanline overlay
+    for (let y = 0; y < h; y += 2) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(0, y, w, 1);
+    }
+
+    // Subtle vignette
+    const grad = ctx.createRadialGradient(w / 2, h / 2, h * 0.25, w / 2, h / 2, h * 0.75);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.6)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // "CLASSIFIED" text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = 'bold 96px monospace';
+    ctx.fillStyle = 'rgba(68, 221, 136, 0.35)';
+    ctx.fillText('CLASSIFIED', w / 2, h / 2);
+
+    // Horizontal line accents
+    ctx.strokeStyle = 'rgba(68, 221, 136, 0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(w * 0.25, h / 2 - 70); ctx.lineTo(w * 0.75, h / 2 - 70); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w * 0.25, h / 2 + 70); ctx.lineTo(w * 0.75, h / 2 + 70); ctx.stroke();
+
+    return c.toDataURL('image/png');
+}
+
+/**
+ * Verify all event image references resolve to actual files.
+ * Logs mismatches to console after a short delay (lets images attempt to load).
+ */
+function verifyEventAssets() {
+    const allImages = new Set();
+
+    // Collect from DECISION_EVENTS
+    if (typeof DECISION_EVENTS !== 'undefined') {
+        DECISION_EVENTS.forEach(function (ev) {
+            if (ev.image) allImages.add(ev.image);
+        });
+    }
+
+    // Collect from character unique events
+    if (typeof CHARACTERS !== 'undefined') {
+        CHARACTERS.forEach(function (ch) {
+            if (ch.uniqueEvents) {
+                ch.uniqueEvents.forEach(function (ev) {
+                    if (ev.image) allImages.add(ev.image);
+                });
+            }
+        });
+    }
+
+    // Test each image
+    let mismatches = 0;
+    allImages.forEach(function (src) {
+        const img = new Image();
+        img.onerror = function () {
+            mismatches++;
+            console.warn('[ASSET MISSING] ' + src);
+        };
+        img.src = src;
+    });
+
+    setTimeout(function () {
+        if (mismatches > 0) {
+            console.warn('[ASSET AUDIT] ' + mismatches + ' broken image reference(s) — see warnings above');
+        } else {
+            console.log('[ASSET AUDIT] All ' + allImages.size + ' event image references verified OK');
+        }
+    }, 5000);
 }
 
 function makeCanvas(w, h) {

@@ -1727,7 +1727,7 @@ const DECISION_EVENTS = [
     {
         id: 'iran_ultimatum', title: '',
         description: '',
-        image: 'assets/event-e19-ultimatum.png',
+        image: 'assets/event-e07-iran-doubles.png',
         minDay: 38, maxDay: 42,
         countdown: 15,
         choices: [
@@ -1779,7 +1779,7 @@ const DECISION_EVENTS = [
     {
         id: 'carrier_incident', title: '',
         description: '',
-        image: 'assets/event-e09-carrier-incident.png',
+        image: 'assets/event-hegseth-carrier.png',
         minDay: 10, maxDay: 999,
         condition: () => SIM.storyFlags.tanker_military || SIM.warPath >= 2,
         choices: [
@@ -2109,7 +2109,7 @@ const DECISION_EVENTS = [
     {
         id: 'nuclear_breakout', title: '',
         description: '',
-        image: 'assets/event-fordow-strike.png',
+        image: 'assets/event-crisis-nuclear.png',
         minDay: 20, maxDay: 70,
         condition: () => SIM.iranAggression > 50 && SIM.tension > 40,
         choices: [
@@ -2597,7 +2597,7 @@ const DECISION_EVENTS = [
     {
         id: 'backchannel_progress', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-e10-shirazi.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.backchannel_accepted,
         choices: [
@@ -2617,7 +2617,7 @@ const DECISION_EVENTS = [
     {
         id: 'backchannel_ceasefire_test', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-ceasefire-test.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.ceasefire_accepted,
         choices: [
@@ -2635,7 +2635,7 @@ const DECISION_EVENTS = [
     {
         id: 'backchannel_counteroffer_response', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-e20-muscat.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.backchannel_counteroffered,
         choices: [
@@ -2654,7 +2654,7 @@ const DECISION_EVENTS = [
     {
         id: 'hostage_situation_escalates', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-hostage-escalates.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.hostage_negotiating,
         choices: [
@@ -2673,7 +2673,7 @@ const DECISION_EVENTS = [
     {
         id: 'hostage_envoy_result', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-envoy.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.envoy_sent,
         choices: [
@@ -2688,7 +2688,7 @@ const DECISION_EVENTS = [
     {
         id: 'hostage_rescue_result', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-rescue-op.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.rescue_attempted,
         choices: [
@@ -2738,7 +2738,7 @@ const DECISION_EVENTS = [
     {
         id: 'nuclear_inspection_crisis', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-nuclear-inspection.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.nuclear_inspectors_sent,
         choices: [
@@ -2757,7 +2757,7 @@ const DECISION_EVENTS = [
     {
         id: 'nuclear_ultimatum_response', title: '',
         description: '',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/event-fordow-strike.png',
         minDay: 1, maxDay: 999,
         choices: [
             { text: '', effects: { tension: 35, warPath: 2, budget: -60, domesticApproval: 5, internationalStanding: -20, iranAggression: 20 },
