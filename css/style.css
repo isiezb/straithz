@@ -76,30 +76,56 @@ body {
     z-index: 999;
 }
 
-/* ======================== CANVAS (hidden — kept for sprite generation) ======================== */
+/* ======================== MAIN LAYOUT ======================== */
+
+#main-layout {
+    position: fixed;
+    top: 38px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    overflow: hidden;
+}
+
+#narrative-area {
+    flex: 0 0 58%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+}
+
+#map-sidebar {
+    flex: 1;
+    position: relative;
+    border-left: 1px solid #1a3a2a;
+    overflow: hidden;
+    background: #050505;
+}
+
+/* ======================== CANVAS (tactical map sidebar) ======================== */
 
 #game-canvas {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-    visibility: hidden !important;
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 /* ======================== CENTER PANEL (situation room) ======================== */
 
 #center-panel {
-    position: fixed;
-    top: 52px;
-    left: 320px;
-    right: 280px;
-    bottom: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    flex: 1;
+    overflow: hidden;
     background: #050505;
     background-image: url('../assets/situation-room.png');
     background-size: cover;
     background-position: center;
-    z-index: 5;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 #center-panel::before {
@@ -259,7 +285,7 @@ body {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 10;
-    max-height: 320px;
+    max-height: 280px;
     background: #020402;
     border-bottom: 1px solid var(--border);
     overflow: hidden;
@@ -349,7 +375,7 @@ body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 150px;
+    min-height: 200px;
     overflow: hidden;
 }
 .nf-header {
@@ -552,10 +578,10 @@ body {
     margin-bottom: 14px;
 }
 
-/* Center panel adjustments when panels hidden */
-#center-panel.no-sitpanel { left: 0; }
-#center-panel.no-actpanel { right: 0; }
-#center-panel.no-sitpanel.no-actpanel { left: 0; right: 0; }
+/* Center panel adjustments (legacy classes — no longer needed with flexbox layout) */
+#center-panel.no-sitpanel { }
+#center-panel.no-actpanel { }
+#center-panel.no-sitpanel.no-actpanel { }
 
 /* Situation dashboard left panel */
 #situation-panel {
@@ -660,60 +686,84 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 50px;
+    height: 36px;
     display: flex;
     align-items: center;
     gap: 0;
     background: #0a0a0a;
-    border-bottom: 2px solid #1a3a2a;
+    border-bottom: 1px solid #1a3a2a;
     z-index: 10;
-    padding: 0 8px;
+    padding: 0 6px;
     overflow: hidden;
 }
 
 .hud-day {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
     color: #44dd88;
     letter-spacing: 2px;
-    padding: 0 10px 0 4px;
+    padding: 0 8px 0 2px;
     white-space: nowrap;
     text-shadow: 0 0 8px rgba(68, 221, 136, 0.4);
-    min-width: 70px;
+    min-width: 60px;
 }
 
 .gauge-item {
     flex: 1;
     text-align: center;
-    padding: 4px 6px;
+    padding: 2px 6px;
     border-left: 1px solid #1a3a2a;
     min-width: 0;
+    position: relative;
 }
 .gauge-item-small {
     flex: 0 0 auto;
-    min-width: 65px;
-    max-width: 80px;
+    min-width: 50px;
+    max-width: 65px;
 }
 
 .gauge-label {
     display: block;
-    font-size: 9px;
+    font-size: 7px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     color: #2a6a4a;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
+    line-height: 1;
 }
 
 .gauge-value {
-    display: block;
-    font-size: 16px;
+    display: none;
+    font-size: 12px;
     font-weight: bold;
     letter-spacing: 1px;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     line-height: 1;
 }
+/* Show values on hover */
+.gauge-item:hover .gauge-value {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0a0a0a;
+    border: 1px solid #1a3a2a;
+    padding: 2px 6px;
+    z-index: 20;
+    white-space: nowrap;
+    font-size: 11px;
+}
 .gauge-item-small .gauge-value {
-    font-size: 13px;
+    display: block;
+    font-size: 10px;
+}
+.gauge-item-small:hover .gauge-value {
+    position: static;
+    transform: none;
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 .gauge-value.good { color: #44dd88; text-shadow: 0 0 6px rgba(68, 221, 136, 0.3); }
@@ -722,7 +772,7 @@ body {
 
 .gauge-track {
     width: 100%;
-    height: 6px;
+    height: 5px;
     background: #0d1a10;
     border: 1px solid #1a3a2a;
 }
@@ -947,10 +997,10 @@ body {
 }
 
 .hud-rating {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     letter-spacing: 1px;
-    padding: 0 8px;
+    padding: 0 6px;
     border-left: 1px solid #1a3a2a;
     text-shadow: 0 0 8px rgba(68, 221, 136, 0.4);
 }
@@ -2270,9 +2320,10 @@ body {
 
 #toast-container {
     position: fixed;
-    top: 60px;
-    right: 290px;  /* Clear the action panel */
-    width: 280px;
+    top: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -2360,24 +2411,21 @@ body {
 /* ======================== ACTION PANEL ======================== */
 
 #action-panel {
-    position: fixed;
-    top: 52px;
-    right: 0;
-    bottom: 0;
-    width: 280px;
     background: #0a0a0a;
-    border-left: 2px solid #1a3a2a;
+    border-top: 2px solid #1a3a2a;
     z-index: 50;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     font-family: 'Courier New', Courier, monospace;
-    transform: translateX(100%);
+    max-height: 45vh;
+    flex-shrink: 0;
+    transform: translateY(100%);
     transition: transform 0.3s ease;
 }
 
 #action-panel.visible {
-    transform: translateX(0);
+    transform: translateY(0);
 }
 
 .ap-header {
@@ -2628,9 +2676,8 @@ body {
 .ap-btn .ap-tooltip {
     display: none;
     position: absolute;
-    left: -220px;
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: 100%;
+    left: 0;
     width: 200px;
     background: #0a0a0a;
     border: 1px solid #2a6a4a;
@@ -2869,35 +2916,25 @@ body {
 
 /* Responsive: smaller screens */
 @media (max-width: 900px) {
-    #situation-panel { width: 240px; }
-    #action-panel { width: 240px; }
-    #center-panel { left: 240px; right: 240px; }
-    #toast-container { right: 250px; }
+    #narrative-area { flex: 0 0 55%; }
+    #toast-container { width: 260px; }
 }
 
 @media (max-width: 700px) {
-    #situation-panel { width: 200px; font-size: 10px; padding: 6px 8px; }
-    #action-panel { width: 200px; }
-    #center-panel { left: 200px; right: 200px; }
-    #toast-container { right: 210px; width: 220px; }
-    .gauge-item { padding: 2px 4px; }
-    .gauge-value { font-size: 13px; }
-    .gauge-label { font-size: 7px; letter-spacing: 1px; }
-    #gauge-bar { height: 44px; padding: 0 4px; }
-    #situation-panel { top: 44px; }
-    #action-panel { top: 44px; }
-    #center-panel { top: 44px; }
+    #main-layout { flex-direction: column; }
+    #narrative-area { flex: 1; }
+    #map-sidebar { flex: 0 0 200px; border-left: none; border-top: 1px solid #1a3a2a; }
+    .gauge-item { padding: 1px 3px; }
+    .gauge-label { font-size: 6px; letter-spacing: 1px; }
+    #gauge-bar { height: 32px; padding: 0 4px; }
+    #main-layout { top: 34px; }
     .cp-forces { grid-template-columns: 1fr; }
-    #narrative-feed { max-height: 35vh; }
     .nf-entry { font-size: 10px; }
 }
 
 @media (max-height: 600px) {
-    #gauge-bar { height: 40px; }
-    .gauge-value { font-size: 12px; }
-    .gauge-track { height: 4px; }
-    #situation-panel { top: 40px; }
-    #action-panel { top: 40px; }
-    #center-panel { top: 40px; }
+    #gauge-bar { height: 30px; }
+    .gauge-track { height: 3px; }
+    #main-layout { top: 32px; }
     .terminal-box { max-height: 85vh; padding: 16px 14px; }
 }

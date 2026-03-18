@@ -7,7 +7,14 @@
         { "label": "Demand release through official channels", "flavor": "You follow process. The world sees restraint. Iran sees an opening." },
         { "label": "Send a destroyer to loiter outside Bandar Abbas", "flavor": "You say nothing. The image speaks. IRGC commanders take note." },
         { "label": "Call the flag-state directly — propose a joint response", "flavor": "Shared burden, shared credit. The coalition option opens." }
-      ]
+      ],
+      "characterFlavor": {
+        "trump": "Another crisis for the media to obsess over — but crises are ratings, and ratings are power.",
+        "hegseth": "IRGC fast-boats operating with impunity against commercial shipping — this demands a proportional military response.",
+        "kushner": "The seizure creates leverage with Gulf partners who need protection — time to call MBS.",
+        "fuentes": "An American-crewed ship seized because we're policing waters six thousand miles from home. Bring them home.",
+        "asmongold": "Chat, this is exactly the scenario I flagged in my Day 1 analysis — if my prediction holds, credibility surges."
+      }
     },
     "predecessors_ghost": {
       "title": "THE PREDECESSOR'S GHOST",
@@ -51,7 +58,14 @@
         { "label": "Scramble jets — verbal warning over radio", "flavor": "70% chance the seizure is deterred. Standard procedure. If it fails, you own the failure." },
         { "label": "Authorize warning shots across the bow", "flavor": "The world watches nervously. 90% chance Iran backs down. But escalation is real." },
         { "label": "Let it happen — document everything for the UN", "flavor": "The tanker is seized. It's painful. But the footage at the UN will be devastating for Iran." }
-      ]
+      ],
+      "characterFlavor": {
+        "trump": "If we stop the seizure, it's the greatest naval interception in history. If we don't, the media eats us alive.",
+        "hegseth": "This is a direct provocation against commercial shipping under US Navy protection. Rules of engagement are clear — respond with force.",
+        "kushner": "A seizure attempt changes the insurance calculus — Gulf states will pay premium for protection arrangements.",
+        "fuentes": "They're attacking tankers because American forces are still there to shoot at. No presence, no provocation.",
+        "asmongold": "Real-time seizure attempt on stream — chat is going absolutely insane. This is the content that makes or breaks a prediction."
+      }
     },
     "oil_markets_panic": {
       "title": "OIL MARKETS PANIC",
@@ -96,7 +110,14 @@
         { "label": "Testify personally — face the music", "flavor": "You came prepared. The viral clip is you calmly dismantling the chairman's argument with classified data." },
         { "label": "Send your deputy — you're managing a crisis", "flavor": "Congress is insulted. Future funding requests just got harder." },
         { "label": "Testify AND declassify satellite imagery live on camera", "flavor": "The room gasps. Iran scrambles. The Pentagon is furious about the declassification. But the public is with you." }
-      ]
+      ],
+      "characterFlavor": {
+        "trump": "Congress is TV, and TV is my medium. Three hours of free airtime to control the narrative.",
+        "hegseth": "The Armed Services Committee wants operational briefings — fine. The military record speaks for itself.",
+        "kushner": "Congressional hearings expose back-channel work. Every minute on camera is a minute of exposure risk.",
+        "fuentes": "The same people who voted for every war since 2001 are now lecturing me about spending. The base sees the hypocrisy.",
+        "asmongold": "Congressional hearing on stream — this is S-tier content. Chat's engagement metrics will be through the roof."
+      }
     },
     "iran_ultimatum": {
       "title": "IRAN'S ULTIMATUM",
@@ -105,7 +126,14 @@
         { "label": "Call the bluff publicly — \"America does not respond to threats\"", "flavor": "If Iran follows through, this gets catastrophic. If they back down, you win the crisis." },
         { "label": "Counter-propose through channels — mutual step-down", "flavor": "50% Iran accepts. Araghchi is pushing for it internally. Tangsiri wants blood." },
         { "label": "Prepare quietly — move assets, brief allies, say nothing", "flavor": "Iran is uncertain. Their own internal debate intensifies. Sometimes silence is the loudest response." }
-      ]
+      ],
+      "characterFlavor": {
+        "trump": "Iran just gave us the greatest TV moment since 'Mission Accomplished.' The question is how we spin the response.",
+        "hegseth": "Ultimatums require military credibility to back them up. Our force posture needs to be unambiguous.",
+        "kushner": "An ultimatum from Tehran opens a negotiation window — they wouldn't issue demands if they didn't want a deal.",
+        "fuentes": "Iran is desperate because sanctions are working. We don't need to escalate — we need to leave and let the pressure do its job.",
+        "asmongold": "Seventy-two hour timer just started, chat. This is the boss fight. Everything I've predicted about Iran's strategy is about to be tested."
+      }
     },
     "intel_breakthrough": {
       "title": "THE INTELLIGENCE BREAKTHROUGH",
@@ -114,7 +142,14 @@
         { "label": "Share with allies — build a coalition response", "flavor": "Allies are galvanized. But your intelligence methods are exposed. Future intel quality degrades." },
         { "label": "Keep it classified — act unilaterally", "flavor": "You know something nobody else does. That's power. But allies will feel blindsided later." },
         { "label": "Leak to a trusted journalist — shape the narrative", "flavor": "The public needs to know. Iran changes plans. The intelligence becomes partly obsolete. But public pressure on Iran surges." }
-      ]
+      ],
+      "characterFlavor": {
+        "trump": "This is the kind of intelligence win that plays beautifully on camera — if we can declassify the right parts.",
+        "hegseth": "Actionable intelligence on Iran's true objectives — this changes the entire force planning calculus.",
+        "kushner": "Understanding Iran's real endgame means understanding what they'll trade for. This intel is deal-making gold.",
+        "fuentes": "So Iran's real goal was never the strait — it was regional hegemony. More proof that staying in the Middle East serves THEIR interests, not ours.",
+        "asmongold": "Dude. The intel just confirmed what I said on stream three days ago. If chat clipped that prediction, my credibility goes to the moon."
+      }
     },
     "journalist_returns": {
       "title": "THE JOURNALIST RETURNS",

@@ -17,8 +17,6 @@ function initMap() {
     if (MAP.canvas) {
         MAP.ctx = MAP.canvas.getContext('2d');
     }
-    // Canvas is hidden — map is now DOM-based via center panel
-    // initMap kept for sprite system and getLanePosition()
 
     // Load map background and situation room images
     function loadMapAsset(key, src) {
@@ -80,16 +78,10 @@ function renderMap() {
         ctx.fillRect(0, 0, w, h);
     }
 
-    // Draw the strategic map in the center area (between panels)
-    const sitPanel = document.getElementById('situation-panel');
-    const actPanel = document.getElementById('action-panel');
-    const hasSitPanel = sitPanel && sitPanel.style.display !== 'none';
-    const hasActPanel = actPanel && actPanel.classList.contains('visible');
-    const mapLeft = hasSitPanel ? 320 : 0;
-    const mapRight = hasActPanel ? 280 : 0;
-    const mapW = Math.max(200, w - mapLeft - mapRight);
+    // Map fills the entire sidebar canvas
+    const mapW = w;
     const mapH = h;
-    const mapX = mapLeft;
+    const mapX = 0;
 
     ctx.save();
     ctx.beginPath();
@@ -117,10 +109,11 @@ function renderMap() {
         ctx.restore();
     }
 
-    // Shipping lanes and markers in center area
+    // Shipping lanes, entities, and markers in center area
     ctx.save();
     ctx.translate(mapX, 0);
     drawShippingLaneFlow(ctx, mapW, mapH);
+    drawEntities(ctx, mapW, mapH);
     drawIncidentMarkers(ctx, mapW, mapH);
     ctx.restore();
 
@@ -133,20 +126,54 @@ function renderMap() {
 
     // "TACTICAL DISPLAY" label at top of map area
     ctx.save();
-    ctx.font = '9px monospace';
-    ctx.fillStyle = 'rgba(42, 106, 74, 0.5)';
+    ctx.font = '8px monospace';
+    ctx.fillStyle = 'rgba(42, 106, 74, 0.6)';
     ctx.textAlign = 'center';
-    ctx.fillText('TACTICAL DISPLAY', mapX + mapW / 2, 14);
+    ctx.fillText('TACTICAL DISPLAY', mapX + mapW / 2, 12);
 
-    // Status info in bottom of map area
+    // Day and date
+    const startDate = new Date(2026, 1, 28);
+    const gameDate = new Date(startDate);
+    gameDate.setDate(gameDate.getDate() + (SIM.day || 1) - 1);
+    const dateStr = gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    ctx.font = 'bold 9px monospace';
+    ctx.fillStyle = 'rgba(68, 221, 136, 0.7)';
+    ctx.textAlign = 'left';
+    ctx.fillText(`DAY ${SIM.day}  ${dateStr}`, mapX + 6, 12);
+
+    // Status panel overlay at bottom
+    const seizedN = SIM.tankers.filter(t => t.seized).length;
+    const esc = typeof ESCALATION_LADDER !== 'undefined' ? ESCALATION_LADDER[Math.min(SIM.warPath || 0, 5)] : null;
+
+    // Background for status area
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(mapX, mapH - 52, mapW, 52);
+    ctx.strokeStyle = 'rgba(26, 58, 42, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(mapX, mapH - 52);
+    ctx.lineTo(mapX + mapW, mapH - 52);
+    ctx.stroke();
+
     ctx.font = '8px monospace';
     ctx.textAlign = 'left';
-    ctx.fillStyle = 'rgba(42, 106, 74, 0.4)';
-    const statusY = mapH - 12;
-    const seizedN = SIM.tankers.filter(t => t.seized).length;
-    ctx.fillText(`USN: ${SIM.navyShips.length}${SIM.carrier ? ' +CSG' : ''}  |  IRGC: ${SIM.iranBoats.length}  |  MINES: ${SIM.mines.length}  |  SEIZED: ${seizedN}`, mapX + 8, statusY);
+    ctx.fillStyle = 'rgba(68, 221, 136, 0.7)';
+    ctx.fillText(`USN: ${SIM.navyShips.length}${SIM.carrier ? ' +CSG' : ''}`, mapX + 6, mapH - 38);
+    ctx.fillStyle = 'rgba(221, 68, 68, 0.7)';
+    ctx.fillText(`IRGC: ${SIM.iranBoats.length}`, mapX + 6, mapH - 26);
+    ctx.fillStyle = seizedN > 0 ? 'rgba(221, 68, 68, 0.8)' : 'rgba(42, 106, 74, 0.5)';
+    ctx.fillText(`SEIZED: ${seizedN}  MINES: ${SIM.mines.length}`, mapX + 6, mapH - 14);
+
     ctx.textAlign = 'right';
-    ctx.fillText(`FLOW: ${Math.round(SIM.oilFlow)}%  |  TENSION: ${Math.round(SIM.tension)}`, mapX + mapW - 8, statusY);
+    const flowColor = SIM.oilFlow >= 60 ? 'rgba(68, 221, 136, 0.8)' : SIM.oilFlow >= 35 ? 'rgba(221, 170, 68, 0.8)' : 'rgba(221, 68, 68, 0.8)';
+    ctx.fillStyle = flowColor;
+    ctx.fillText(`FLOW: ${Math.round(SIM.oilFlow)}%`, mapX + mapW - 6, mapH - 38);
+    ctx.fillStyle = SIM.tension > 60 ? 'rgba(221, 68, 68, 0.8)' : 'rgba(221, 170, 68, 0.7)';
+    ctx.fillText(`TENSION: ${Math.round(SIM.tension)}`, mapX + mapW - 6, mapH - 26);
+    if (esc) {
+        ctx.fillStyle = esc.color || 'rgba(42, 106, 74, 0.5)';
+        ctx.fillText(esc.name, mapX + mapW - 6, mapH - 14);
+    }
     ctx.restore();
 
     // Vignette effect

@@ -41,6 +41,7 @@ const SIM = {
     proxyThreat: 25,
     chinaRelations: 50,
     polarization: 20,
+    aipacPressure: 50,
     assassinationRisk: 0,
     warPath: 1,
 
@@ -128,6 +129,24 @@ const SIM = {
     // Reputation tracks
     reputation: { reliability: 50, proportionality: 50, creativity: 50 },
     memoryTags: [],  // decision memory tags for consequence system
+    // Trump: Victory Narrative
+    victoryNarrative: 0,
+    lastPublicWinDay: -99,
+    publicWinType: '',
+    _prevInterceptCount: 0,
+    _prevSeizureCount: 0,
+    _prevIranAggression: 45,
+    _prevOilPrice: 95,
+    // Hegseth: Battle Reports
+    _dayStartWarPath: 1,
+    // Kushner: Deal Value
+    dealValue: 0,
+    // Fuentes: Withdrawal
+    withdrawalProgress: 0,
+    withdrawalLocked: false,
+    // Asmongold: Predictions
+    predictions: [],
+    audience: 50,
 };
 
 /** Default values for SIM reset — used by restartGame() */
@@ -139,7 +158,7 @@ const SIM_DEFAULTS = {
     internationalStanding: 50, conflictRisk: 35, budget: 900,
     iranAggression: 45, iranEconomy: 35, iranStrategy: 'probing',
     fogOfWar: 70, diplomaticCapital: 35, proxyThreat: 25,
-    chinaRelations: 50, polarization: 20,
+    chinaRelations: 50, polarization: 20, aipacPressure: 50,
     assassinationRisk: 0, warPath: 1,
     straitOpenDays: 0, lowApprovalDays: 0, lowStandingDays: 0,
     recentSeizureDays: [],
@@ -164,6 +183,28 @@ const SIM_DEFAULTS = {
     iranFactionBalance: 50, iranVisibleMoves: [],
     reputation: { reliability: 50, proportionality: 50, creativity: 50 },
     memoryTags: [],
+    // Trump: Victory Narrative
+    victoryNarrative: 0,
+    lastPublicWinDay: -99,
+    publicWinType: '',
+    _prevInterceptCount: 0,
+    _prevSeizureCount: 0,
+    _prevIranAggression: 45,
+    _prevOilPrice: 95,
+    // Hegseth: Battle Reports
+    _dayStartWarPath: 1,
+    // Kushner: Deal Value
+    dealValue: 0,
+    // Fuentes: Withdrawal
+    withdrawalProgress: 0,
+    withdrawalLocked: false,
+    // Asmongold: Predictions
+    predictions: [],
+    audience: 50,
+    // AIPAC tracking
+    _aipacApprovalPenaltyDays: 0,
+    _aipacDiplomaticRestrictionDays: 0,
+    _proxyIgnoredDays: 0,
 };
 
 const ESCALATION_LADDER = [
@@ -590,6 +631,9 @@ function dailyUpdate() {
     // --- Domestic Politics ---
     updateDomesticPolitics();
 
+    // --- AIPAC / Hill Support ---
+    updateAIPAC();
+
     // --- Core Metrics (with playerDelta preservation) ---
     // playerDeltas accumulate from AP actions, decisions, and interrupts.
     // They decay 12% per day so effects last ~8 days at meaningful strength.
@@ -621,7 +665,11 @@ function dailyUpdate() {
     const coalitionIncome = (SIM.internationalStanding / 100) * 5; // up to $5M/day from allies
     const oilRevenue = (SIM.oilFlow / 100) * 4; // up to $4M/day from flowing oil
     const baseFunding = 3; // $3M/day congressional baseline
-    SIM.budget += coalitionIncome + oilRevenue + baseFunding;
+    // AIPAC influence on congressional funding
+    let congressFundingMult = 1.0;
+    if (SIM.aipacPressure > 70) congressFundingMult = 1.2;
+    else if (SIM.aipacPressure < 30) congressFundingMult = 0.8;
+    SIM.budget += coalitionIncome + oilRevenue + baseFunding * congressFundingMult;
 
     // Tension — card stances set baseline drift, playerDeltas shift the target (0.3x like other metrics)
     const dipBonus = (SIM.diplomaticCapital - 50) * 0.08;
@@ -734,6 +782,11 @@ function dailyUpdate() {
     if (SIM.day > 1 && SIM.day % 7 === 0 && SIM.warPath > 0 && SIM.tension < 60) {
         SIM.warPath = Math.max(0, SIM.warPath - 1);
         addHeadline((DATA.headlines.simulation.weekly_cooldown || [])[0] || '', 'good');
+    }
+
+    // AIPAC reacts to warPath changes
+    if (SIM.warPath > (SIM._dayStartWarPath || 0)) {
+        SIM.aipacPressure = Math.min(100, SIM.aipacPressure + 3 * (SIM.warPath - (SIM._dayStartWarPath || 0)));
     }
 
     // Decay all player deltas (retain 85% per day)
@@ -1003,6 +1056,130 @@ function dailyUpdate() {
     // --- Trump: apply effect multiplier to stance effects ---
     // (Handled in getStanceEffect via effectMultiplier)
 
+    // --- Trump: Public Win Detection ---
+    if (SIM.character && SIM.character.id === 'trump') {
+        // Intercept increased
+        if (SIM.interceptCount > SIM._prevInterceptCount) {
+            SIM.lastPublicWinDay = SIM.day;
+            SIM.publicWinType = 'intercept';
+        }
+        // Seized tankers decreased (reversed)
+        const curSeized = SIM.tankers.filter(t => t.seized).length;
+        if (SIM._prevSeizureCount > 0 && curSeized < SIM._prevSeizureCount) {
+            SIM.lastPublicWinDay = SIM.day;
+            SIM.publicWinType = 'seizure_reversed';
+        }
+        // Deal announced (storyFlags changed with deal-related flags)
+        const dealFlags = ['grand_deal_proposed', 'abraham_accords_2', 'araghchi_meeting', 'summit_proposed'];
+        for (const flag of dealFlags) {
+            if (SIM.storyFlags[flag] && !SIM._prevStoryFlags?.[flag]) {
+                SIM.lastPublicWinDay = SIM.day;
+                SIM.publicWinType = 'deal_announced';
+                break;
+            }
+        }
+        // Military strike drops iranAggression by 10+ in one day
+        if (SIM._prevIranAggression - SIM.iranAggression >= 10) {
+            SIM.lastPublicWinDay = SIM.day;
+            SIM.publicWinType = 'military_strike';
+        }
+        // Oil price drops 10+ in one day
+        if (SIM._prevOilPrice - SIM.oilPrice >= 10) {
+            SIM.lastPublicWinDay = SIM.day;
+            SIM.publicWinType = 'oil_price_drop';
+        }
+        // Snapshot for next day
+        SIM._prevInterceptCount = SIM.interceptCount;
+        SIM._prevSeizureCount = SIM.tankers.filter(t => t.seized).length;
+        SIM._prevIranAggression = SIM.iranAggression;
+        SIM._prevOilPrice = SIM.oilPrice;
+        SIM._prevStoryFlags = Object.assign({}, SIM.storyFlags);
+    }
+
+    // --- Fuentes: Withdrawal Lock Enforcement ---
+    if (SIM.withdrawalLocked) {
+        SIM.warPath = 0;
+    }
+
+    // --- Fuentes: Withdrawal Progress ---
+    if (SIM.character && SIM.character.id === 'fuentes') {
+        const hasMilitaryStance = SIM.activeStances.some(s => {
+            const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS)];
+            const card = allCards.find(c => c.id === s.cardId);
+            return card && card.category === 'military';
+        });
+        if (SIM.warPath === 0 && !hasMilitaryStance) {
+            SIM.withdrawalProgress = Math.min(5, SIM.withdrawalProgress + 1);
+            if (SIM.withdrawalProgress === 3) {
+                addHeadline('Partial troop withdrawal underway — America First policy taking shape', 'good');
+                if (typeof addNarrative === 'function') {
+                    addNarrative('alert', 'Military advisors confirm partial withdrawal from Persian Gulf region. The base is energized.', { level: 'good' });
+                }
+            }
+        }
+    }
+
+    // --- Asmongold: Prediction Resolution ---
+    if (SIM.predictions && SIM.predictions.length > 0) {
+        for (const pred of SIM.predictions) {
+            if (pred.resolved) continue;
+            if (SIM.day >= pred.resolveDay) {
+                pred.resolved = true;
+                let correct = false;
+                switch (pred.topic) {
+                    case 'iran_escalate':
+                        correct = SIM.warPath > pred._startWarPath;
+                        break;
+                    case 'oil_below_100':
+                        correct = SIM.oilPrice < 100;
+                        break;
+                    case 'seizure_week':
+                        correct = SIM.seizureCount > pred._startSeizureCount;
+                        break;
+                    case 'diplomatic_breakthrough':
+                        correct = SIM.tension <= pred._startTension - 15;
+                        break;
+                    case 'iran_backs_down':
+                        correct = SIM.iranAggression <= pred._startIranAggression - 20;
+                        break;
+                    case 'oil_crisis_worsens':
+                        correct = SIM.oilFlow <= pred._startOilFlow - 10;
+                        break;
+                    case 'military_escalation':
+                        correct = SIM.warPath > pred._startWarPath;
+                        break;
+                    case 'approval_surge':
+                        correct = SIM.domesticApproval >= pred._startApproval + 10;
+                        break;
+                }
+                pred.correct = correct;
+                if (correct) {
+                    SIM.audience = Math.min(100, SIM.audience + 15);
+                    SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 10);
+                    SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 5);
+                    addHeadline(`PREDICTION CORRECT: "${pred.label}" — audience surges!`, 'good');
+                    if (typeof showToast === 'function') showToast('Prediction correct! Audience +15, Credibility +10', 'good');
+                } else {
+                    SIM.audience = Math.max(0, SIM.audience - 10);
+                    SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 8);
+                    addHeadline(`PREDICTION WRONG: "${pred.label}" — credibility hit`, 'warning');
+                    if (typeof showToast === 'function') showToast('Prediction wrong! Audience -10, Credibility -8', 'bad');
+                }
+            }
+        }
+    }
+
+    // --- Hegseth: Track day start warPath ---
+    SIM._dayStartWarPath = SIM.warPath;
+
+    // --- Kushner: Abraham Accords II dealValue bonus ---
+    if (SIM.character && SIM.character.id === 'kushner') {
+        const hasAccords = SIM.activeStances.some(s => s.cardId === 'abraham_accords');
+        if (hasAccords) {
+            SIM.dealValue = (SIM.dealValue || 0) + 5;
+        }
+    }
+
 }
 
 // ======================== IRAN STRATEGY AI ========================
@@ -1129,6 +1306,91 @@ function updateDomesticPolitics() {
     }
     if (SIM.internationalStanding < 20 && SIM.internationalStanding > 18) {
         addHeadline((DATA.headlines.simulation.international_standing_warning || [])[0] || '', 'warning');
+    }
+}
+
+// ======================== AIPAC / HILL SUPPORT ========================
+
+function updateAIPAC() {
+    if (typeof SIM.aipacPressure === 'undefined') return;
+
+    // --- Natural drift: lobby always pushes toward hawkishness ---
+    SIM.aipacPressure += 0.3;
+
+    // --- Hawkish actions increase pressure ---
+    // Active military cards with tension effects > 10
+    const hasMilitaryTension = SIM.activeStances.some(s => {
+        const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS)];
+        const card = allCards.find(c => c.id === s.cardId);
+        if (!card || card.category !== 'military') return false;
+        const eff = card.effects[s.funding];
+        return eff && (eff.tension || 0) > 10;
+    });
+    if (hasMilitaryTension) SIM.aipacPressure += 0.5;
+
+    // Sanctions against Iran active
+    const hasSanctions = SIM.activeStances.some(s => s.cardId === 'targeted_sanctions' || s.cardId === 'maximum_pressure');
+    if (hasSanctions) SIM.aipacPressure += 0.3;
+
+    // --- Dovish actions decrease pressure ---
+    // Back-channel talks active
+    const hasBackChannel = SIM.activeStances.some(s => s.cardId === 'back_channel');
+    if (hasBackChannel) SIM.aipacPressure -= 0.5;
+
+    // Humanitarian corridor active
+    const hasHumanitarian = SIM.activeStances.some(s => s.cardId === 'humanitarian_corridor');
+    if (hasHumanitarian) SIM.aipacPressure -= 0.3;
+
+    // Trade incentives to Iran active
+    const hasTradeIncentives = SIM.activeStances.some(s => s.cardId === 'trade_incentives');
+    if (hasTradeIncentives) SIM.aipacPressure -= 0.3;
+
+    // --- Contextual shifts ---
+    // Ignoring proxy threats for 5+ days
+    if (SIM.proxyThreat > 40 && !SIM.activeStances.some(s => {
+        const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS)];
+        const card = allCards.find(c => c.id === s.cardId);
+        return card && card.category === 'military';
+    })) {
+        SIM._proxyIgnoredDays = (SIM._proxyIgnoredDays || 0) + 1;
+    } else {
+        SIM._proxyIgnoredDays = 0;
+    }
+    if (SIM._proxyIgnoredDays >= 5) SIM.aipacPressure -= 0.3;
+
+    // China relations above 60 (seen as hedging)
+    if (SIM.chinaRelations > 60) SIM.aipacPressure -= 0.2;
+
+    // --- AIPAC effects on gameplay ---
+    if (SIM.aipacPressure > 70) {
+        // High pressure: boosting you in media
+        SIM.domesticApproval += 0.3;
+    } else if (SIM.aipacPressure < 30) {
+        // Low pressure: running attack ads
+        SIM.domesticApproval -= 0.5;
+        SIM.polarization += 0.2;
+    }
+
+    // Process ongoing AIPAC attack ad effect (approval -8 over 3 days = -2.67/day)
+    if (SIM._aipacApprovalPenaltyDays > 0) {
+        SIM.domesticApproval -= 2.67;
+        SIM._aipacApprovalPenaltyDays--;
+    }
+
+    // Process diplomatic restriction (track only, enforcement in UI)
+    if (SIM._aipacDiplomaticRestrictionDays > 0) {
+        SIM._aipacDiplomaticRestrictionDays--;
+    }
+
+    // Clamp
+    SIM.aipacPressure = Math.max(0, Math.min(100, SIM.aipacPressure));
+
+    // --- Headlines at extreme values ---
+    if (SIM.aipacPressure > 85 && SIM.aipacPressure <= 87) {
+        addHeadline('Congressional hawks rally behind administration — strong Hill support', 'good');
+    }
+    if (SIM.aipacPressure < 20 && SIM.aipacPressure >= 18) {
+        addHeadline('Political headwinds on the Hill — donor class restless', 'warning');
     }
 }
 
@@ -2782,6 +3044,75 @@ const DECISION_EVENTS = [
               flavor: '' },
             { text: '', effects: { tension: 5, domesticApproval: -10, internationalStanding: -5, diplomaticCapital: 5 },
               flavor: '' },
+        ],
+    },
+    // ======================== AIPAC / HILL SUPPORT EVENTS ========================
+    {
+        id: 'aipac_delegation', title: 'AIPAC Delegation',
+        description: 'A Congressional delegation allied with pro-Israel lobbying groups requests a meeting to discuss your Iran policy.',
+        image: 'assets/event-e11-un-showdown.png',
+        minDay: 5, maxDay: 15,
+        condition: () => !SIM.firedConsequences.includes('aipac_delegation'),
+        choices: [
+            { text: 'Take the meeting — commit to no Iran talks', effects: { aipacPressure: 10, domesticApproval: 5, diplomaticCapital: -5 },
+              flavor: 'The delegation leaves satisfied. Your diplomatic flexibility just narrowed.',
+              setFlags: { aipac_meeting_committed: true } },
+            { text: 'Take the meeting — make no promises', effects: { aipacPressure: 3 },
+              flavor: 'Polite smiles. They\'ll be watching closely.' },
+            { text: 'Decline the meeting', effects: { aipacPressure: -8, domesticApproval: -3, credibility: 3 },
+              flavor: 'The snub makes the rounds on the Hill. You\'ve made a statement.' },
+        ],
+    },
+    {
+        id: 'netanyahu_call', title: 'The Netanyahu Call',
+        description: 'Israel\'s Prime Minister is on the secure line. He wants intelligence sharing on Iran\'s nuclear program and a commitment to act.',
+        image: 'assets/event-e05-british-pm.png',
+        minDay: 15, maxDay: 30,
+        condition: () => SIM.aipacPressure > 40,
+        choices: [
+            { text: 'Full intelligence sharing', effects: { aipacPressure: 12, fogOfWar: -10, tension: 5 },
+              flavor: 'Mossad\'s intelligence fills critical gaps. The hawks are thrilled. Tehran notices.',
+              setFlags: { netanyahu_full_sharing: true } },
+            { text: 'Limited sharing — need-to-know basis', effects: { aipacPressure: 5, fogOfWar: -5 },
+              flavor: 'Netanyahu is disappointed but understands. Professional cooperation continues.' },
+            { text: 'Decline — maintain independence', effects: { aipacPressure: -10, internationalStanding: 3 },
+              flavor: 'Netanyahu hangs up cold. The world notes your independence.' },
+        ],
+    },
+    {
+        id: 'aipac_attack_ad', title: 'AIPAC Attack Ad',
+        description: 'A major pro-Israel PAC is running television ads criticizing your Iran policy as "weak" and "dangerous for American security."',
+        image: 'assets/event-e04-journalist.png',
+        minDay: 20, maxDay: 50,
+        condition: () => SIM.aipacPressure < 35,
+        choices: [
+            { text: 'Counter with your own ads', effects: { budget: -15, domesticApproval: 5, aipacPressure: 5 },
+              flavor: 'Your counter-narrative blunts the attack, but it cost you.' },
+            { text: 'Ignore it', effects: { _aipacApprovalPenaltyDays: 3 },
+              flavor: 'The ads run unanswered for days. Your numbers dip.' },
+            { text: 'Publicly call out the lobby', effects: { credibility: 5, aipacPressure: -10, polarization: 5 },
+              flavor: 'You go on the offensive. The base loves it. The donor class is furious.',
+              characterEffect: { fuentes: { baseEnthusiasm: 10 } } },
+        ],
+    },
+    {
+        id: 'donor_ultimatum', title: 'The Donor Ultimatum',
+        description: 'Major political donors, coordinated through pro-Israel networks, threaten to pull all campaign funding unless you harden your Iran stance.',
+        image: 'assets/event-e08-oil-panic.png',
+        minDay: 30, maxDay: 60,
+        condition: () => SIM.aipacPressure < 25,
+        choices: [
+            { text: 'Capitulate — adjust Iran policy', effects: { aipacPressure: 15, credibility: -5 },
+              flavor: 'You cave. Credibility takes a hit. But the money flows again.',
+              setFlags: { aipac_capitulated: true },
+              specialEffect: function() { SIM._aipacDiplomaticRestrictionDays = 5; } },
+            { text: 'Hold firm', effects: { domesticApproval: -5, budget: -30, credibility: 5 },
+              flavor: 'The donors pull out. $30M in promised funding evaporates. But you kept your word.' },
+            { text: 'Negotiate a private arrangement',
+              condition: () => SIM.character && SIM.character.id === 'kushner',
+              effects: { aipacPressure: 10, exposure: 8 },
+              flavor: 'A quiet dinner. A handshake. Everyone gets something. Nobody talks about it.',
+              specialEffect: function() { SIM.dealValue = (SIM.dealValue || 0) + 50; } },
         ],
     },
 ];

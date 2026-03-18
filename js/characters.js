@@ -39,6 +39,7 @@ const CHARACTERS = [
 
         // Unique resource
         uniqueResource: { id: 'politicalCapital', name: 'POLITICAL CAPITAL', value: 80, max: 100, color: '#ddaa44' },
+        aipacStart: 70,
 
         // Card pool rules
         cardPool: {
@@ -50,6 +51,33 @@ const CHARACTERS = [
         },
 
         // Unique lose conditions
+        // Special action: CLAIM VICTORY
+        specialAction: {
+            name: 'CLAIM VICTORY',
+            description: 'Claim credit for a public win. Requires a recent win event (within 1 day). Costs 15 Political Capital.',
+            cost: { politicalCapital: 15 },
+            cooldown: 0,
+            cooldownMax: 3,
+            execute: function(sim) {
+                if (sim.day - sim.lastPublicWinDay > 1) {
+                    if (typeof showToast === 'function') showToast('No recent public win to claim!', 'warning');
+                    return;
+                }
+                if (sim.uniqueResource < 15) {
+                    if (typeof showToast === 'function') showToast('Not enough Political Capital!', 'warning');
+                    return;
+                }
+                sim.uniqueResource = Math.max(0, sim.uniqueResource - 15);
+                sim.victoryNarrative = (sim.victoryNarrative || 0) + 1;
+                sim.domesticApproval = Math.min(100, sim.domesticApproval + 8);
+                sim.tension = Math.min(100, sim.tension + 3);
+                addHeadline(`"TREMENDOUS WIN!" — Trump claims victory #${sim.victoryNarrative}: ${sim.publicWinType.replace(/_/g, ' ')}`, 'good');
+                if (typeof addNarrative === 'function') {
+                    addNarrative('dialogue', `"Nobody could have done this. Nobody. Victory number ${sim.victoryNarrative}. We're winning like never before."`, { speaker: 'Trump', portrait: 'trump' });
+                }
+            },
+        },
+
         scenario: {
             loseConditions: [
                 {
@@ -67,9 +95,10 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'win_big',
-                    check: (sim) => sim.domesticApproval >= 75 && sim.oilFlow >= 70 && sim.tension < 35 && sim.day >= 14,
-                    message: 'AMERICA WINS BIG. Oil is flowing, the base is ecstatic, and the world knows who solved the crisis. ' +
-                        'The polls are through the roof. Trump rallies sell out coast to coast. "Nobody could have done what I did. Nobody."',
+                    check: (sim) => sim.victoryNarrative >= 3 && sim.domesticApproval >= 60 && sim.oilFlow >= 55,
+                    message: 'THE NARRATIVE IS SET. Three public victories. The polls are through the roof. Oil is flowing. ' +
+                        'Every network leads with your success. "I told you — nobody handles pressure like Trump. Nobody." ' +
+                        'Rallies sell out coast to coast. The history books are being written in real time.',
                 },
             ],
         },
@@ -195,6 +224,7 @@ const CHARACTERS = [
         lore: [],
 
         uniqueResource: { id: 'commandAuthority', name: 'COMMAND AUTH', value: 60, max: 100, color: '#dd4444' },
+        aipacStart: 55,
 
         cardPool: {
             allCards: false,
@@ -241,8 +271,8 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'total_war_victory',
-                    check: (sim) => sim.warPath >= 4 && sim.domesticApproval >= 55 && sim.iranAggression < 30 && sim.day >= 14,
-                    message: 'TOTAL VICTORY. Iran\'s military capability is shattered. The American public stands behind the mission. ' +
+                    check: (sim) => sim.warPath >= 3 && sim.iranAggression <= 25 && sim.domesticApproval >= 55,
+                    message: 'MILITARY DOMINANCE ACHIEVED. Iran\'s aggression is crushed. The American public stands behind the mission. ' +
                         'Pentagon brass call it "the most decisive military campaign since Desert Storm." Secretary Hegseth\'s war doctrine becomes textbook.',
                 },
             ],
@@ -323,8 +353,17 @@ const CHARACTERS = [
         ],
 
         updateResource: function(sim) {
-            // Authority regenerates slowly
-            sim.uniqueResource += 0.5;
+            // Military Authority decay based on warPath
+            if (sim.warPath <= 1) {
+                // Peacetime: authority decays
+                sim.uniqueResource -= 1;
+            } else if (sim.warPath >= 3) {
+                // Active conflict: authority grows
+                sim.uniqueResource += 1;
+            } else {
+                // Moderate: slow regen
+                sim.uniqueResource += 0.5;
+            }
             // Military actions without results drain authority
             if (sim.tension > 50 && sim.interceptCount === 0 && sim.seizureCount > 0) sim.uniqueResource -= 1;
             // Successful intercepts boost authority
@@ -361,6 +400,7 @@ const CHARACTERS = [
         lore: [],
 
         uniqueResource: { id: 'exposure', name: 'EXPOSURE', value: 10, max: 100, color: '#aa44dd', inverted: true },
+        aipacStart: 85,
 
         // Contacts system
         contacts: [
@@ -396,8 +436,8 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'kushner_enrichment',
-                    check: (sim) => sim.uniqueResource >= 55 && sim.diplomaticCapital >= 50 && sim.budget >= 400 && sim.day >= 14,
-                    message: 'THE ART OF THE DEAL (FAMILY EDITION). Your back-channel relationships delivered a ceasefire — and a portfolio of Gulf state investments. ' +
+                    check: (sim) => sim.dealValue >= 300 && sim.iranAggression <= 25 && sim.uniqueResource < 50,
+                    message: 'THE ART OF THE DEAL (FAMILY EDITION). Deal value: $' + '300M+. Iran\'s aggression is neutralized. Your exposure stayed under control. ' +
                         'Kushner Industries quietly signs a $2B development deal with Saudi Arabia. "It was never about the money," you tell reporters. It was always about the money.',
                 },
             ],
@@ -499,6 +539,11 @@ const CHARACTERS = [
             // Decays slightly when quiet
             if (sim.tension < 30) sim.uniqueResource -= 0.2;
             sim.uniqueResource = Math.max(0, Math.min(100, sim.uniqueResource));
+            // Deal value passive growth from active contacts
+            if (sim.character && sim.character.contacts) {
+                const highTrustContacts = sim.character.contacts.filter(c => c.trust >= 50).length;
+                if (highTrustContacts > 0) sim.dealValue = (sim.dealValue || 0) + highTrustContacts;
+            }
         },
 
         reactions: {
@@ -529,6 +574,7 @@ const CHARACTERS = [
         lore: [],
 
         uniqueResource: { id: 'credibility', name: 'CREDIBILITY', value: 50, max: 100, color: '#4488dd' },
+        aipacStart: 40,
 
         // Intel Feed templates (populated each week)
         intelTemplates: {
@@ -564,6 +610,20 @@ const CHARACTERS = [
             exclusiveIds: ['osint_flood'],
         },
 
+        // Special action: MAKE PREDICTION
+        specialAction: {
+            name: 'MAKE PREDICTION',
+            description: 'Make a public prediction about what happens next. Correct = audience surge. Wrong = credibility hit.',
+            cooldown: 0,
+            cooldownMax: 5,
+            execute: function(sim) {
+                // This is handled by showPredictionPicker() in ui.js
+                if (typeof showPredictionPicker === 'function') {
+                    showPredictionPicker();
+                }
+            },
+        },
+
         scenario: {
             loseConditions: [
                 {
@@ -578,8 +638,8 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'called_it',
-                    check: (sim) => sim.uniqueResource >= 70 && sim.domesticApproval >= 60 && sim.fogOfWar < 40 && sim.day >= 14,
-                    message: 'ASMONGOLD WAS RIGHT. Every prediction landed. Chat clipped every call. The mainstream media is seething. ' +
+                    check: (sim) => sim.audience >= 90 && sim.uniqueResource >= 65 && (sim.predictions || []).filter(p => p.resolved && p.correct).length >= 3,
+                    message: 'ASMONGOLD WAS RIGHT. Three or more predictions landed. Audience is at peak. Chat clipped every call. The mainstream media is seething. ' +
                         'Viewer count hits 500K as world leaders tune in for your post-crisis analysis. "I literally told you guys this would happen on day one." GG EZ.',
                 },
             ],
@@ -698,6 +758,7 @@ const CHARACTERS = [
         lore: [],
 
         uniqueResource: { id: 'baseEnthusiasm', name: 'BASE', value: 85, max: 100, color: '#ff6644' },
+        aipacStart: 15,
 
         // Track consecutive weeks of "America First" policy
         _withdrawalStreak: 0,
@@ -748,9 +809,9 @@ const CHARACTERS = [
             winConditions: [
                 {
                     id: 'america_first_victory',
-                    check: (sim) => sim.warPath <= 1 && sim.internationalStanding >= 40 && sim.uniqueResource >= 60 && sim.day >= 14,
-                    message: 'AMERICA FIRST WINS. The troops are coming home. Iran backed down without a single American casualty. ' +
-                        'Global power intact, base ecstatic. The establishment is speechless. "We did it without their wars, without their deals, without their permission."',
+                    check: (sim) => sim.warPath === 0 && sim.navyShips.length <= 1 && sim.budget >= 600 && sim.internationalStanding >= 35,
+                    message: 'AMERICA FIRST WINS. The troops are home. The navy is withdrawn. Budget is strong. International standing holds. ' +
+                        'Iran backed down without a single American casualty. The establishment is speechless. "We did it without their wars, without their deals, without their permission."',
                 },
             ],
         },

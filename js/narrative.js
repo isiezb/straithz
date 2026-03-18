@@ -487,7 +487,46 @@ function generateMorningBriefing() {
     const g = typeof calculateGauges === 'function' ? calculateGauges() : { stability: 50, economy: 50, support: 50, intel: 50 };
     const r = typeof calculateRating === 'function' ? calculateRating() : { grade: 'C', score: 50 };
 
-    return { advisor, opening, iranIntel, closer, gauges: g, rating: r };
+    // --- Character-specific briefing line ---
+    const characterNote = _pickCharacterBriefingLine(b.characterBriefing);
+
+    return { advisor, opening, iranIntel, closer, characterNote, gauges: g, rating: r };
+}
+
+function _pickCharacterBriefingLine(charBriefings) {
+    if (!charBriefings || !SIM.character) return null;
+    const cb = charBriefings[SIM.character.id];
+    if (!cb) return null;
+
+    // Pick the most relevant line based on game state
+    let pool = null;
+    let advisorName = cb.advisor || 'Your advisor';
+
+    if (SIM.domesticApproval > 60 && cb.highApproval) pool = cb.highApproval;
+    else if (SIM.domesticApproval < 35 && cb.lowApproval) pool = cb.lowApproval;
+    else if (SIM.budget < 200 && cb.budgetCrisis) pool = cb.budgetCrisis;
+    else if (SIM.tension > 70 && cb.highTension) pool = cb.highTension;
+    // Character-specific checks
+    else if (SIM.character.id === 'kushner' && SIM.uniqueResource > 50 && cb.exposureRisk) pool = cb.exposureRisk;
+    else if (SIM.character.id === 'asmongold' && cb.predictionTracker) pool = cb.predictionTracker;
+    else if (SIM.character.id === 'fuentes' && cb.troopCount) pool = cb.troopCount;
+    else if (SIM.character.id === 'hegseth' && cb.casualtyReport) pool = cb.casualtyReport;
+    // Win available check
+    else if (cb.winAvailable && _checkWinProximity()) pool = cb.winAvailable;
+    else if (cb.noWin) pool = cb.noWin;
+
+    if (!pool || pool.length === 0) return null;
+    const line = pool[Math.floor(Math.random() * pool.length)];
+    return { advisor: advisorName, text: line };
+}
+
+function _checkWinProximity() {
+    if (!SIM.character || !SIM.character.scenario || !SIM.character.scenario.winConditions) return false;
+    // Rough check: are any win conditions close to being met?
+    for (const wc of SIM.character.scenario.winConditions) {
+        if (wc.check && wc._days && wc._days > 0) return true;
+    }
+    return false;
 }
 
 function _evaluateBriefingConditions() {

@@ -247,5 +247,216 @@
     "military": ["Admiral Reeves", "General Kovic", "Colonel Vance"],
     "diplomatic": ["Ambassador Chen", "Secretary Marsh", "Deputy Secretary Falk"],
     "domestic": ["Chief of Staff Brennan", "Press Secretary Diaz"]
+  },
+  "characterBriefing": {
+    "trump": {
+      "advisor": "Dan Scavino",
+      "highApproval": [
+        "Sir, you're trending number one again — Fox ran three segments on your strait strategy and the coverage was overwhelmingly positive.",
+        "Media hits are through the roof this morning. Even the hostile networks are grudgingly admitting the polling looks strong.",
+        "Social media engagement is up 40% overnight. The base is fired up and the narrative is completely in your favor right now.",
+        "Sir, every cable hit this morning led with your approval numbers. The story is you're winning, and that story sells itself."
+      ],
+      "lowApproval": [
+        "Sir, the cable numbers are bad — CNN and MSNBC ran wall-to-wall negative coverage and it's bleeding into Fox's panel segments.",
+        "You're trending, but for the wrong reasons. We need a media win today or the narrative hardens against us.",
+        "The morning shows are running with the 'crisis of confidence' framing. We need to get ahead of this before the evening cycle.",
+        "Sir, the press pool is circling. Approval is cratering and every reporter in the briefing room smells blood in the water."
+      ],
+      "winAvailable": [
+        "Sir, there's a public win you can claim today — the networks will eat it up.",
+        "The setup is perfect for a Rose Garden moment. One good announcement and we dominate the cycle.",
+        "Sir, this is your moment — the cameras are ready and the story writes itself. Time to take a victory lap."
+      ],
+      "noWin": [
+        "Nothing to claim right now, sir. We need to create a narrative today.",
+        "The story cupboard is bare this morning. We need to manufacture a headline or someone else will write one for us.",
+        "No easy wins on the board, sir. We're playing defense today unless we make something happen."
+      ],
+      "highTension": [
+        "The drama is playing huge on cable — every network has split-screen coverage and your name is in every chyron.",
+        "Sir, the tension is a double-edged sword. The ratings are incredible but the framing could go either way fast.",
+        "Fox is running the crisis as strong leadership, but the other networks are pushing the reckless angle. We need to control the narrative.",
+        "The whole country is watching. High tension means high stakes coverage — this is either your finest hour or your biggest liability."
+      ],
+      "budgetCrisis": [
+        "Sir, the spending optics are terrible. Congress is asking questions on camera and the deficit hawks are circling.",
+        "Budget numbers leaked to the Post overnight. Expect hostile questions at every briefing until we get a handle on the spending story.",
+        "The fiscal hawks are cutting ads already. We need a cost-containment narrative or this becomes the story of the week.",
+        "Sir, three committee chairs sent letters demanding a spending accounting. The cameras will be rolling when they release them."
+      ]
+    },
+    "hegseth": {
+      "advisor": "Mark Esper",
+      "highApproval": [
+        "Force readiness report is positive across all theater commands. Morale is high and retention numbers are holding.",
+        "Sir, troops morale is solid. The service members see the public support and it makes a real difference on the ground.",
+        "CENTCOM readiness assessment came in green across the board. Your people are trained, equipped, and confident in the mission.",
+        "The joint readiness review is the strongest we've seen this quarter. Our forces are sharp and the chain of command is tight."
+      ],
+      "lowApproval": [
+        "The home front is wavering, sir. Troops need to see public support — declining approval affects morale in theater.",
+        "Our service members watch the news too. Falling domestic support undermines unit cohesion and mission confidence.",
+        "Sir, military families are feeling the political pressure back home. That filters down to the warfighter faster than people think.",
+        "Force morale reports flagged a dip correlating with the public polling. The troops need to know the country is behind them."
+      ],
+      "winAvailable": [
+        "Sir, Iranian military posture is weakening — the Joint Chiefs see it too.",
+        "Intelligence assessments confirm a deterioration in Iranian operational readiness. There's a military win to be claimed here.",
+        "Our force posture is producing measurable results. The brass sees an opportunity to lock in gains today."
+      ],
+      "noWin": [
+        "No clear military progress to report. We need to show the brass results.",
+        "The Joint Chiefs are looking for measurable outcomes and we don't have them yet. Today needs to move the needle.",
+        "Operational progress has stalled. Without demonstrable results, the next CENTCOM review will raise hard questions."
+      ],
+      "highTension": [
+        "Iranian force disposition is concerning — IRGC Navy assets are mobilizing from Bandar Abbas and Jask simultaneously.",
+        "Multiple Iranian military assets are repositioning along the coast. Operational readiness status has been elevated across the theater.",
+        "Sir, the threat board is active. Iranian fast-attack craft, coastal defense systems, and submarine movements all indicate escalating posture.",
+        "Our intelligence picture shows a broad Iranian military mobilization. Every asset they have is either moving or preparing to move."
+      ],
+      "budgetCrisis": [
+        "Operations are being constrained by the budget situation. We need supplemental funding or we start making hard choices about force posture.",
+        "Sir, maintenance schedules are slipping because of funding gaps. Readiness degrades fast when you defer upkeep on warships.",
+        "The budget crunch is hitting logistics hardest — fuel, munitions, and spare parts allocations are all below required levels.",
+        "CENTCOM submitted an urgent supplemental funding request. Without it, we're looking at reduced patrol cycles within the week."
+      ],
+      "casualtyReport": [
+        "No American casualties to report. All personnel accounted for across theater commands.",
+        "Casualty report is clean — zero friendly losses in the last 24 hours. Force protection measures are holding.",
+        "All hands accounted for. Medical readiness remains high and forward surgical teams report no combat trauma cases.",
+        "Sir, no casualties. Our people are performing with discipline and professionalism under difficult conditions."
+      ]
+    },
+    "kushner": {
+      "advisor": "Avi Berkowitz",
+      "highApproval": [
+        "Political cover is solid right now — strong approval gives us room for back-channel work without media scrutiny.",
+        "Your domestic numbers buy us credibility with Gulf partners. High approval means they take our commitments seriously.",
+        "The political landscape is favorable for quiet diplomacy. Nobody's looking too closely at our meetings right now.",
+        "Sir, strong approval means our partners trust we can deliver. That's the currency that makes back-channel deals possible."
+      ],
+      "lowApproval": [
+        "Low approval is making the Gulf partners nervous. They watch our domestic polls closer than you'd think.",
+        "Sir, Abu Dhabi called twice yesterday asking about the political situation. Low numbers make them hedge their bets.",
+        "Our contacts are recalculating. When your approval drops, their willingness to take risks on a deal drops with it.",
+        "Gulf capitals are reading the polling and getting cold feet. We need domestic stability to keep the deal pipeline moving."
+      ],
+      "winAvailable": [
+        "The deal pipeline is showing results — contacts are producing actionable intelligence and the framework is holding.",
+        "Sir, back-channel investments are paying off. There's a deliverable ready to claim if you want to surface it.",
+        "Trust levels across multiple contacts have crossed the threshold. We have a genuine win to show for the relationship work."
+      ],
+      "noWin": [
+        "Contact trust levels are plateauing. We need to invest more in the relationships before they produce results.",
+        "The deal pipeline is dry right now. Building trust takes time and we haven't put in enough yet.",
+        "Sir, the contacts are willing but cautious. We need another round of engagement before anything materializes."
+      ],
+      "highTension": [
+        "The contacts are nervous, but nervous people make deals. High tension creates urgency that works in our favor.",
+        "Sir, regional partners are scared and scared partners are motivated partners. There's leverage here if we use it carefully.",
+        "Back-channel activity is actually increasing with the tension. Everyone wants a way out and they're looking to us to build one.",
+        "Gulf contacts are reaching out proactively for the first time. The tension is doing our recruitment work for us."
+      ],
+      "budgetCrisis": [
+        "This is a Gulf cost-sharing opportunity, sir. MBS will take the call — he's been looking for a way to demonstrate partnership.",
+        "Budget pressure creates natural openings for burden-sharing agreements. Our Gulf partners have deep pockets and motivation to help.",
+        "Sir, the Emiratis floated a co-financing framework last week. The budget crisis gives us cover to accept without looking weak.",
+        "Financial pressure is actually useful right now. It gives us a credible reason to deepen Gulf financial partnerships."
+      ],
+      "exposureRisk": [
+        "Sir, exposure is climbing. We need to be careful about the next move.",
+        "The back-channels are holding but every call adds risk. We're approaching the point where one leak unravels everything.",
+        "Our operational security is being tested. Two contacts flagged potential surveillance on their end.",
+        "Exposure levels are elevated. I'd recommend limiting new outreach until we've secured the existing channels."
+      ]
+    },
+    "fuentes": {
+      "advisor": "Policy Advisor",
+      "highApproval": [
+        "The base is rock solid. Congressional opposition is crumbling because they know the people are with us.",
+        "Approval numbers prove the America First message is resonating. The establishment can't ignore these numbers.",
+        "Sir, the movement is stronger than ever. High approval gives us the mandate to push harder on withdrawal.",
+        "Public support is overwhelming. Every politician who opposed us is scrambling to get on the right side of history."
+      ],
+      "lowApproval": [
+        "The media is running hit pieces around the clock, but the base sees through it. Our core supporters haven't moved.",
+        "Low approval is a media fabrication — the polls oversample the coasts. Real America is still with us.",
+        "Sir, the establishment media wants you to panic over approval numbers. The base knows what's really happening.",
+        "They're cooking the numbers to demoralize us. Every rally we hold proves the real support is there."
+      ],
+      "winAvailable": [
+        "Withdrawal timeline is on track. The troops are closer to coming home.",
+        "Sir, there's a real opportunity to bring forces home today. The base has been waiting for this moment.",
+        "The conditions are right to announce a drawdown. This is what the movement elected us to do."
+      ],
+      "noWin": [
+        "We're stuck — too many troops still deployed. The base is getting impatient.",
+        "No progress on the withdrawal front today. Every day boots stay on foreign soil, we lose credibility with our people.",
+        "The establishment is slow-rolling the drawdown. We need to force the issue or the base will hold us accountable."
+      ],
+      "highTension": [
+        "The establishment created this crisis and now they want us to fix it with more intervention. That's exactly the trap.",
+        "High tension in the strait proves our point — decades of interventionism created this mess. Withdrawal is the only answer.",
+        "Sir, the war hawks are using the tension to argue for escalation. This is the perfect moment to make the case for pulling out.",
+        "Every spike in tension validates the America First position. We never should have been this entangled in the first place."
+      ],
+      "budgetCrisis": [
+        "Overseas spending is proving the America First point better than any speech could. Every dollar spent there is stolen from Americans.",
+        "The budget crisis is our best argument. Show the people what foreign adventurism actually costs their families.",
+        "Sir, this is the fiscal reckoning we warned about. Endless overseas commitments have a price and Americans are paying it.",
+        "Use the budget numbers in every public statement. Nothing converts fence-sitters faster than seeing the bill for foreign wars."
+      ],
+      "troopCount": [
+        "Still too many ships deployed in theater. The base wants that number at zero.",
+        "Every vessel in the Gulf is a broken promise. We told the people we'd bring the troops home.",
+        "Force deployment numbers are going in the wrong direction. The base is tracking every ship and every soldier.",
+        "Sir, the deployment count is the only number that matters to our supporters. It needs to go down."
+      ]
+    },
+    "asmongold": {
+      "advisor": "Senior Analyst",
+      "highApproval": [
+        "Audience is growing fast — stream numbers are up 25% and the engagement metrics look incredible.",
+        "Chat is loving the content right now. Viewer retention is at an all-time high and new subs are flooding in.",
+        "Sir, the numbers don't lie — your approval ratings are translating directly into viewership. The audience trusts your calls.",
+        "Community sentiment is overwhelmingly positive. The Reddit threads are supportive and even Twitter is on our side for once."
+      ],
+      "lowApproval": [
+        "Viewer count is dropping and chat is turning. We need content or we're going to lose the audience.",
+        "Sir, engagement is way down. The chat is full of 'ResidentSleeper' and people are tuning out.",
+        "The community is fracturing — losing approval means losing viewers, and losing viewers means losing influence.",
+        "We're hemorrhaging subs. Low approval is boring content, and boring content kills channels."
+      ],
+      "winAvailable": [
+        "A prediction is close to resolving — if it lands, credibility surges across the board.",
+        "Sir, one of your earlier calls is about to pay off. When chat sees the prediction hit, the hype will be massive.",
+        "The analytics show a verifiable win incoming. Time to clip it and let the content speak for itself."
+      ],
+      "noWin": [
+        "No predictions in play. Chat is getting bored. We need to make a call.",
+        "The content pipeline is empty and chat knows it. Without a bold prediction, engagement keeps sliding.",
+        "Sir, we're in a content drought. The audience wants to see you make a play, not sit on the sidelines."
+      ],
+      "highTension": [
+        "This is incredible content — engagement metrics are spiking across every platform. Chat is glued to the screen.",
+        "High tension is a content goldmine. The audience loves drama and the geopolitical stakes are delivering.",
+        "Sir, viewer numbers always spike with tension. The chat is active, clips are going viral, and the algorithm is feeding us traffic.",
+        "Peak content hours right now. The tension is generating the kind of engagement money can't buy."
+      ],
+      "budgetCrisis": [
+        "The budget crisis is actually a great resource management content angle. Chat loves watching you optimize under constraints.",
+        "Sir, budget pressure creates the kind of min-max gameplay the audience lives for. Lean into the resource management narrative.",
+        "Financial constraints make for better content than unlimited budgets. The audience respects efficient play.",
+        "The budget squeeze is content. Show chat how you handle resource scarcity — that's the gameplay they want to see."
+      ],
+      "predictionTracker": [
+        "Chat wants another prediction — they're hungry for content and the prediction meta is what keeps them engaged.",
+        "The prediction tracker is the single biggest engagement driver we have. Every resolved prediction generates clips and highlights.",
+        "Sir, the community lives for the prediction scorecard. A new call today would dominate the content cycle.",
+        "Prediction content outperforms everything else by 3x. The audience wants you making calls, not playing it safe."
+      ]
+    }
   }
 }

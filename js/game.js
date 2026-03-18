@@ -16,6 +16,10 @@
         await showLoreScreen(character);
 
         SIM.character = character;
+        // Set character-specific AIPAC starting value
+        if (character.aipacStart !== undefined) {
+            SIM.aipacPressure = character.aipacStart;
+        }
         initMap();
         initSimulation();
         initUI();
@@ -49,6 +53,11 @@
                         if (typeof updateCenterPanel === 'function') updateCenterPanel();
                         if (typeof updateSituationPanel === 'function') updateSituationPanel();
                     }
+                }
+
+                // Render tactical map in sidebar
+                if (typeof renderMap === 'function' && MAP.canvas && MAP.canvas.offsetParent !== null) {
+                    renderMap();
                 }
 
                 SIM.effects = SIM.effects.filter(fx => {
@@ -109,6 +118,9 @@ function startDayPlay() {
     SIM.phase = 'dayplay';
     SIM.actionPoints = 3;
     SIM.prevGauges = calculateGauges();
+    // Track day-start values for character mechanics
+    SIM._dayStartWarPath = SIM.warPath;
+    SIM._prevOilFlow = SIM.oilFlow;
     if (typeof showActionPanel === 'function') showActionPanel();
     if (typeof updateCenterPanel === 'function') updateCenterPanel();
     // Show current story arc as ambient art during dayplay

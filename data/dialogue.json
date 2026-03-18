@@ -2,108 +2,108 @@
   "advisorReactions": {
     "trump": {
       "weekStart": [
-        "Let's make some deals. Big deals.",
-        "Nobody handles pressure like me. Nobody.",
-        "Iran is weak. They know it. We know it."
+        "The ratings are through the roof. Every network is covering us. Let's give them something to talk about.",
+        "Nobody handles a crisis like Trump. The media knows it. The polls know it. Let's make news.",
+        "Fox ran our strait coverage for three hours last night. That's free airtime. Let's keep the momentum."
       ],
       "morningBrief": [
-        "Mr. President, here's your Presidential Daily Brief for today.",
-        "Good morning, Mr. President. The overnight situation report.",
-        "Sir, your morning intelligence brief is ready."
+        "Mr. President, Dan Scavino has your media digest and the overnight approval tracking.",
+        "Good morning, Mr. President. The networks are running your footage from yesterday. Here's how it's playing.",
+        "Sir, Scavino flagged the morning cable coverage. Here's what they're saying about you."
       ],
-      "highTension": "This is where we separate the winners from the losers. Stay strong.",
-      "lowApproval": "The fake news is killing our numbers. We need a win, and fast.",
-      "seizure": "They seized our tanker? That's an act of war. Hit them back. Hard.",
-      "diplomatic": "Talk is cheap. But sometimes you gotta talk before you deal.",
-      "victory": "We won. Biggest win in the history of the strait. Maybe ever.",
-      "lowBudget": "We're spending too much. Get the Gulf states to pay. They can afford it.",
-      "highProxy": "These proxy groups are Iran's puppets. Cut the strings.",
-      "uniqueResourceLow": "We're losing political capital fast. Congress is circling. Need a win.",
-      "uniqueResourceCritical": "Congress is about to pull the plug. Do something NOW."
+      "highTension": "The tension is trending everywhere. This is prime time — the whole world is watching you handle it.",
+      "lowApproval": "The fake news is running hit pieces. The polls dipped. We need a public win to claim, and fast.",
+      "seizure": "They seized our tanker and every camera in the world is rolling. This is either a disaster or a hero moment — your call.",
+      "diplomatic": "The diplomatic angle plays well — looks presidential. The donors love it when you're on the phone with world leaders.",
+      "victory": "This is the biggest win since the Abraham Accords. Maybe bigger. The networks can't ignore this one.",
+      "lowBudget": "The spending numbers look terrible on camera. Congress is using them for attack ads. Get the Gulf states to pay.",
+      "highProxy": "Proxy attacks make great crisis footage. Hit them back on camera and approval spikes.",
+      "uniqueResourceLow": "Political capital is draining. The donor calls are getting shorter. We need a win the media can't spin away.",
+      "uniqueResourceCritical": "Congress is drafting articles. The donors are pulling out. One more public win or it's over."
     },
     "hegseth": {
       "weekStart": [
-        "Good morning, sir. Here's the tactical picture.",
-        "Our forces are ready. Waiting on your orders.",
-        "Let's review our options and make a decision."
+        "Good morning, sir. Force disposition report and overnight BDA on your desk.",
+        "Our operators are locked in. Iranian naval posture shifted overnight — here's the tactical picture.",
+        "The Joint Chiefs reviewed your last call. Here's their assessment and the updated force readiness report."
       ],
       "morningBrief": [
-        "Good morning, Mr. Secretary. Overnight SITREP on your desk.",
-        "Sir, CENTCOM's morning operational update is in.",
-        "Daily force readiness report, Mr. Secretary."
+        "Good morning, Mr. Secretary. Mark Esper has the overnight SITREP and force readiness update.",
+        "Sir, CENTCOM's morning operational brief. Iranian aggression metrics and casualty status.",
+        "Daily force readiness report. No American casualties. Here's where Iran's military posture stands."
       ],
-      "highTension": "Tension is high but our forces are disciplined. We've trained for this.",
-      "lowApproval": "Sir, the politics will sort themselves. Focus on the mission.",
-      "seizure": "That's a hostile act against commercial shipping. Rules of engagement are clear.",
-      "diplomatic": "I defer to State on diplomacy. But we keep our forces ready.",
-      "victory": "Mission accomplished, sir. The strait is secure. Outstanding work by our troops.",
-      "lowBudget": "We need to be smart about resource allocation. Prioritize force protection.",
-      "highProxy": "The proxy networks are a force multiplier for Iran. We need to degrade them.",
-      "uniqueResourceLow": "The brass is losing confidence. I need to show them results, fast.",
-      "uniqueResourceCritical": "The Joint Chiefs want my resignation. One more mistake and it's over."
+      "highTension": "Force posture is solid. Our operators are trained for exactly this level of tension. The brass is watching your calls.",
+      "lowApproval": "The home front needs to understand what we're doing out here. The troops deserve their support.",
+      "seizure": "Direct provocation against commercial shipping under our protection. The ROE is clear — proportional military response.",
+      "diplomatic": "State can handle the talking. Our forces stay at ready posture. The brass expects military credibility behind every word.",
+      "victory": "Outstanding execution by our forces. The Joint Chiefs are impressed. This is the doctrine working as designed.",
+      "lowBudget": "Troops in theater without proper funding — that's a failure of Congress, not command. Writing the supplemental tonight.",
+      "highProxy": "Proxy networks are Iran's asymmetric force multiplier. We need to degrade their capability before they escalate.",
+      "uniqueResourceLow": "The brass is questioning my judgment. I need clean operations and visible results to rebuild command authority.",
+      "uniqueResourceCritical": "The Joint Chiefs have lost confidence. One more clean operation or they ask for my stars."
     },
     "kushner": {
       "weekStart": [
-        "I've been on the phone with Riyadh and Abu Dhabi. Here's where things stand.",
-        "The key is relationships. Let me tell you what I'm hearing.",
-        "There's an opportunity here if we play it right."
+        "MBS called twice last night. The deal pipeline is active. Here's where our contacts stand.",
+        "The key is relationships — and ours are producing. Avi has the overnight diplomatic traffic.",
+        "There's a deal taking shape here. The contacts are responding. Let me walk you through the numbers."
       ],
       "morningBrief": [
-        "Your overnight diplomatic traffic summary, sir.",
-        "Three missed calls from Gulf capitals. Here's the brief.",
-        "Back-channel status update and morning intelligence digest."
+        "Avi Berkowitz has your contact status report and deal pipeline update.",
+        "Three missed calls from Gulf capitals. Deal value is tracking. Here's the exposure assessment.",
+        "Back-channel status: contacts are active, deal pipeline is moving, exposure is manageable."
       ],
-      "highTension": "High tension, but I have a back-channel that might help. Let me work it.",
-      "lowApproval": "The numbers aren't great, but a diplomatic win would turn this around fast.",
-      "seizure": "This is a provocation. But it's also leverage. Let's use it at the table.",
-      "diplomatic": "This is where we shine. I know these people. They'll listen.",
-      "victory": "The relationships we built made this possible. This is just the beginning.",
-      "lowBudget": "MBS owes us a favor. Let me make a call about cost-sharing.",
-      "highProxy": "The Saudis can handle the Houthis if we give them the right incentives.",
-      "uniqueResourceLow": "We're flying under the radar. Good. Keep it that way.",
-      "uniqueResourceCritical": "Someone is leaking. If my exposure gets any higher, this all falls apart."
+      "highTension": "Tension makes Gulf partners nervous — and nervous partners make concessions. Time to work the phones.",
+      "lowApproval": "Low approval makes our Gulf partners watch American polls. They need to see political stability or the deals stall.",
+      "seizure": "The seizure is a provocation, but it's also leverage. Every crisis reprices the protection premium our partners will pay.",
+      "diplomatic": "This is our element. The contacts are producing. Every call compounds — that's how the Abraham Accords started.",
+      "victory": "The relationships we built made this possible. The deal value just jumped. This is just the beginning.",
+      "lowBudget": "MBS owes us a favor. The Gulf cost-sharing framework is ready — one call and the money flows.",
+      "highProxy": "The Saudis will handle the Houthis if we structure the right incentive package. I have the framework drafted.",
+      "uniqueResourceLow": "Exposure is low. Good. The back-channels work best when nobody's watching.",
+      "uniqueResourceCritical": "Someone is leaking. Exposure is critical. If the back-channels get exposed, every deal collapses."
     },
     "asmongold": {
       "weekStart": [
-        "Alright chat, let's see what we're working with this week.",
-        "Dude, this geopolitics stuff is actually insane.",
-        "OK so basically Iran is malding right now. Let me explain."
+        "Chat, the prediction tracker just updated. Let's see what resolved overnight.",
+        "Dude, the audience numbers are insane this week. Engagement is through the roof. Let's keep it going.",
+        "OK so the overnight analysis feed dropped and chat was right about two things. Let me break it down."
       ],
       "morningBrief": [
-        "Chat, the overnight mod-curated intel feed just dropped.",
-        "OK dude, the mods flagged the important stuff from last night.",
-        "Morning intel digest — crowd-sourced and verified by the community."
+        "Chat, the overnight mod-curated intel feed and prediction tracker are in.",
+        "Morning digest — crowd-sourced and verified. Also, check the prediction scorecard.",
+        "Analyst has the morning brief. Prediction tracker, audience metrics, and credibility assessment."
       ],
-      "highTension": "Chat, the tension is actually insane right now. We need to chill.",
-      "lowApproval": "Guys, our approval is in the gutter. We're getting ratio'd by Congress.",
-      "seizure": "They just took our tanker. This is actually a bruh moment.",
-      "diplomatic": "Diplomacy arc? Let's see if Iran wants to talk or if they're just baiting.",
-      "victory": "GG EZ. Chat, we actually saved the strait. Let's go.",
-      "lowBudget": "We're literally going broke. Budget diff is real.",
-      "highProxy": "The proxy stuff is getting out of hand. We need to address it.",
-      "uniqueResourceLow": "Chat, our credibility is tanking. Nobody trusts our analysis anymore.",
-      "uniqueResourceCritical": "Dude, if credibility hits zero we're literally done. We need good intel NOW."
+      "highTension": "Chat, tension is through the roof and viewer engagement is spiking. If my prediction lands now, credibility surges.",
+      "lowApproval": "Approval is tanking — we're losing the audience. Need a correct prediction or a big content moment to turn this around.",
+      "seizure": "They just took a tanker. This is the exact scenario I flagged — if chat clipped that prediction, credibility goes to the moon.",
+      "diplomatic": "Diplomacy arc. Chat thinks it's boring content, but the analytics say this is where the smart plays happen.",
+      "victory": "GG EZ. Chat, we called it. The predictions landed. The audience saw it happen in real time.",
+      "lowBudget": "Budget diff is actually content. Poverty run angle — chat loves watching us optimize with nothing.",
+      "highProxy": "Proxy escalation is trending. If I predicted this, credibility surges. If I didn't — we need to make a new call fast.",
+      "uniqueResourceLow": "Chat, credibility is dropping. Our analysis isn't landing. We need a correct prediction or we lose the audience.",
+      "uniqueResourceCritical": "Credibility is almost gone. One wrong call and nobody trusts us. We need a verified prediction NOW."
     },
     "fuentes": {
       "weekStart": [
-        "The American people come first. Always.",
-        "The establishment wants us to play their game. We won't.",
-        "Let's focus on what matters — American interests."
+        "The establishment wants more ships, more spending, more war. We're giving them the opposite.",
+        "Withdrawal timeline update: how many troops are still deployed? The base wants a number.",
+        "The American people come first. Not the defense contractors. Not the Gulf monarchies. Americans."
       ],
       "morningBrief": [
-        "Morning brief from our team. The establishment doesn't want you to see this.",
-        "Here's what really happened overnight — not the media spin.",
-        "Your advisors compiled the real intelligence. No filter."
+        "Morning brief from our team. The establishment media is spinning hard — here's the real picture.",
+        "Here's what really happened overnight. Ships still deployed, withdrawal progress, base sentiment.",
+        "Your advisors compiled the real numbers. Troop count, spending rate, base loyalty index."
       ],
-      "highTension": "High tension? Good. Let them know we're not backing down.",
-      "lowApproval": "Our base is solid. The silent majority sees through the media lies.",
-      "seizure": "Iran thinks they can push us around? Wrong. America doesn't negotiate with thugs.",
-      "diplomatic": "Diplomacy is a tool of the globalists. But sometimes you use the enemy's tools.",
-      "victory": "America First wins again. The establishment said it couldn't be done.",
-      "lowBudget": "We're spending American money on foreign wars. Bring the troops home.",
-      "highProxy": "Iran's proxies are attacking us because we're still in the Middle East. Think about it.",
-      "uniqueResourceLow": "The base is losing faith. We need to show them we're still fighting for THEM.",
-      "uniqueResourceCritical": "If we lose the base, we lose everything. Address the nation. NOW."
+      "highTension": "The neocons created this tension with fifty years of intervention. The base sees through it — bring the troops home.",
+      "lowApproval": "The media polls are rigged against us. The real numbers are in the rallies. The base is solid.",
+      "seizure": "They're attacking our ships because we're still there to be attacked. No presence, no provocation. The base gets it.",
+      "diplomatic": "Talking instead of fighting — that's not weakness, that's the America First doctrine. The hawks hate it.",
+      "victory": "America First wins. The establishment said withdrawal was impossible. The troops are coming home.",
+      "lowBudget": "Every dollar spent overseas is stolen from Americans. This is exactly why we're fighting for withdrawal.",
+      "highProxy": "Iran's proxies attack us because we're in THEIR neighborhood. The base has been saying this for years.",
+      "uniqueResourceLow": "The base is getting impatient. They need to see troops coming home, not more deployments.",
+      "uniqueResourceCritical": "We're losing the base. If they stop showing up to rallies, Congress smells blood. Address the nation NOW."
     }
   },
   "titleScreen": {

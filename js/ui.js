@@ -467,10 +467,9 @@ function initUI() {
 // ======================== SITUATION PANEL (left sidebar) ========================
 
 function initSituationPanel() {
+    // Situation panel is deprecated — info now shown in center panel and map sidebar
     const panel = document.getElementById('situation-panel');
-    if (!panel) return;
-    panel.style.display = '';
-    updateSituationPanel();
+    if (panel) panel.style.display = 'none';
 }
 
 function updateSituationPanel() {
@@ -593,125 +592,13 @@ function showSituationPanel() {
 // ======================== CENTER PANEL (Situation Room) ========================
 
 function updateCenterPanel() {
-    const panel = document.getElementById('center-panel');
-    if (!panel) return;
-
-    const flow = Math.round(SIM.oilFlow);
-    const flowCls = flow >= 60 ? 'good' : flow >= 35 ? 'warning' : flow < 20 ? 'blocked' : 'danger';
-    const flowPctCls = flow >= 60 ? '' : flow >= 35 ? 'warning' : 'danger';
-
-    const navyCount = SIM.navyShips.length;
-    const boatCount = SIM.iranBoats.length;
-    const seizedCount = SIM.tankers.filter(t => t.seized).length;
-    const tankerCount = SIM.tankers.filter(t => !t.seized).length;
-    const mineCount = SIM.mines.length;
-    const droneCount = SIM.drones.length;
-    const esc = ESCALATION_LADDER[Math.min(SIM.warPath, 5)];
-
-    // AP dots
-    const ap = SIM.actionPoints || 0;
-    const apDots = Array.from({ length: 3 }, (_, i) => i < ap
-        ? '<span class="ap-dot filled">\u25CF</span>'
-        : '<span class="ap-dot empty">\u25CB</span>'
-    ).join('');
-
-    // Game date
-    const startDate = new Date(2026, 1, 28); // Feb 28, 2026
-    const gameDate = new Date(startDate);
-    gameDate.setDate(gameDate.getDate() + SIM.day - 1);
-    const dateStr = gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-    // Recent headlines (last 8)
-    const recent = SIM.headlines.slice(-8);
-    const feedHtml = recent.map(h => {
-        const prefix = h.level === 'critical' ? '<span class="feed-time">FLASH</span>'
-                     : h.level === 'warning' ? '<span class="feed-time">ALERT</span>'
-                     : '<span class="feed-time">WIRE</span>';
-        return `<div class="cp-feed-item ${h.level}">${prefix} ${h.text}</div>`;
-    }).reverse().join('');
-
-    // Threat meters
-    const threats = [
-        { label: 'TENSION', val: Math.round(SIM.tension), max: 100 },
-        { label: 'IRAN AGGR', val: Math.round(SIM.iranAggression), max: 100 },
-        { label: 'CONFLICT', val: Math.round(SIM.conflictRisk), max: 100 },
-        { label: 'FOG OF WAR', val: Math.round(SIM.fogOfWar), max: 100 },
-    ];
-    const threatHtml = threats.map(t => {
-        const pct = Math.round((t.val / t.max) * 100);
-        const cls = t.val >= 70 ? 'danger' : t.val >= 40 ? 'warning' : 'good';
-        return `<div class="cp-threat-row">
-            <span class="cp-threat-label">${t.label}</span>
-            <div class="cp-threat-bar"><div class="cp-threat-fill gauge-fill ${cls}" style="width:${pct}%"></div></div>
-            <span class="cp-threat-val ${cls}">${t.val}</span>
-        </div>`;
-    }).join('');
-
-    // Iran strategy display
-    const iranColors = { restrained: '#44dd88', probing: '#ddaa44', escalatory: '#dd8844', confrontational: '#dd4444' };
-    const iranColor = iranColors[SIM.iranStrategy] || '#88aa99';
-
-    // Win progress
-    const winHtml = typeof _getWinProgress === 'function' ? _getWinProgress() : '';
-
-    panel.innerHTML = `<div class="cp-content">
-        <div class="cp-header">
-            <div class="cp-header-label">SITUATION ROOM</div>
-            <div class="cp-day">DAY ${SIM.day}</div>
-            <div class="cp-date">${dateStr}</div>
-            <div class="cp-ap">ACTION POINTS: ${apDots}</div>
-        </div>
-
-        <div class="cp-oil-flow">
-            <div class="cp-oil-label">STRAIT OIL FLOW</div>
-            <div class="cp-oil-bar"><div class="cp-oil-fill ${flowCls}" style="width:${flow}%"></div></div>
-            <div class="cp-oil-pct ${flowPctCls}">${flow}%</div>
-            <div class="cp-oil-detail">${tankerCount} tankers in transit${seizedCount > 0 ? ` \u2022 <span style="color:#dd4444">${seizedCount} SEIZED</span>` : ''} \u2022 $${Math.round(SIM.oilPrice)}/bbl</div>
-        </div>
-
-        <div class="cp-forces">
-            <div class="cp-force-card">
-                <div class="cp-force-label">US NAVAL FORCES</div>
-                <div class="cp-force-val">${navyCount} SHIPS</div>
-                <div class="cp-force-sub">${SIM.carrier ? 'CSG EISENHOWER deployed' : 'No carrier group'}${droneCount > 0 ? ` \u2022 ${droneCount} drones` : ''}</div>
-            </div>
-            <div class="cp-force-card threat">
-                <div class="cp-force-label">IRGC NAVAL FORCES</div>
-                <div class="cp-force-val ${boatCount > 4 ? 'danger' : boatCount > 2 ? 'warning' : ''}">${boatCount} BOATS</div>
-                <div class="cp-force-sub">Posture: <span style="color:${iranColor}">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span>${mineCount > 0 ? ` \u2022 <span style="color:#dd4444">${mineCount} mines</span>` : ''}</div>
-            </div>
-            <div class="cp-force-card">
-                <div class="cp-force-label">ESCALATION LEVEL</div>
-                <div class="cp-force-val" style="color:${esc.color};font-size:14px">${esc.name}</div>
-                <div class="cp-force-sub">${esc.description}</div>
-            </div>
-            <div class="cp-force-card">
-                <div class="cp-force-label">INTERCEPTS / SEIZURES</div>
-                <div class="cp-force-val" style="font-size:14px"><span style="color:#44dd88">${SIM.interceptCount}</span> / <span style="color:#dd4444">${SIM.seizureCount}</span></div>
-                <div class="cp-force-sub">Crisis level: ${['NONE', 'ELEVATED', 'MAJOR', 'CRITICAL'][Math.min(SIM.crisisLevel, 3)]}</div>
-            </div>
-        </div>
-
-        <div class="cp-threat">
-            <div class="cp-feed-label">THREAT ASSESSMENT</div>
-            ${threatHtml}
-        </div>
-
-        <div class="cp-win-tracker">
-            ${winHtml}
-        </div>
-
-        <div class="cp-feed">
-            <div class="cp-feed-label">LIVE WIRE FEED</div>
-            ${feedHtml || '<div class="cp-feed-item" style="color:#2a6a4a">No current reports.</div>'}
-        </div>
-    </div>`;
+    // Tactical overview is now rendered on the map canvas sidebar.
+    // Center panel contains scene panel + narrative feed — do not overwrite.
 }
 
 function showCenterPanel() {
     const panel = document.getElementById('center-panel');
     if (panel) panel.style.display = '';
-    updateCenterPanel();
 }
 
 function hideCenterPanel() {
@@ -821,6 +708,17 @@ function updateGauges() {
         if (bgVal) {
             bgVal.textContent = '$' + Math.round(SIM.budget) + 'M';
             bgVal.className = 'gauge-value ' + (SIM.budget < 200 ? 'danger' : SIM.budget < 500 ? 'warning' : 'good');
+        }
+    }
+
+    // --- Hill Support (AIPAC) indicator ---
+    const hsEl = document.getElementById('gauge-hill');
+    if (hsEl) {
+        const hsVal = hsEl.querySelector('.gauge-value');
+        if (hsVal) {
+            const ap = Math.round(SIM.aipacPressure || 50);
+            hsVal.textContent = ap;
+            hsVal.className = 'gauge-value ' + (ap >= 60 ? 'good' : ap >= 30 ? 'warning' : 'danger');
         }
     }
 
@@ -1241,6 +1139,33 @@ function showDailyReport() {
     const iranIntel = briefing ? briefing.iranIntel : '';
     const closerText = briefing ? briefing.closer : '';
 
+    // Character-specific briefing line
+    let charBriefHtml = '';
+    if (briefing && briefing.characterNote) {
+        const cn = briefing.characterNote;
+        charBriefHtml = `<div class="mb-iran-intel"><span class="mb-intel-prefix" style="color:#88aa66">\u25B6 ${cn.advisor.toUpperCase()}</span> ${cn.text}</div>`;
+    }
+
+    // AIPAC / Hill Support status at extremes
+    let aipacHtml = '';
+    if (SIM.aipacPressure < 25) {
+        const charNote = SIM.character.id === 'trump' ? 'Donors are calling. They\'re not happy.' :
+                         SIM.character.id === 'kushner' ? 'Your AIPAC contacts are going cold. The normalization angle needs attention.' :
+                         SIM.character.id === 'fuentes' ? 'The establishment is mobilizing against you. Your base sees it as validation.' :
+                         SIM.character.id === 'hegseth' ? 'Pentagon advisors note Congressional hawks are no longer aligned with your strategy.' :
+                         SIM.character.id === 'asmongold' ? 'Chat is split on the lobby dynamics — risky content either way.' :
+                         'Political headwinds on the Hill are intensifying.';
+        aipacHtml = `<div class="mb-iran-intel"><span class="mb-intel-prefix" style="color:#dd4444">\u26A0 HILL</span> ${charNote}</div>`;
+    } else if (SIM.aipacPressure > 80) {
+        const charNote = SIM.character.id === 'trump' ? 'The donors love what you\'re doing. Tremendous support.' :
+                         SIM.character.id === 'kushner' ? 'AIPAC connections are strong. MBS trust-building aligns with Israel-Saudi normalization.' :
+                         SIM.character.id === 'fuentes' ? 'Congressional backing is strong, but your base is suspicious of the establishment embrace.' :
+                         SIM.character.id === 'hegseth' ? 'Congressional hawks are fully aligned. Military budgets will sail through.' :
+                         SIM.character.id === 'asmongold' ? 'Chat is calling you a shill. High Hill support comes with credibility risk.' :
+                         'Strong Congressional backing on your Iran strategy.';
+        aipacHtml = `<div class="mb-iran-intel"><span class="mb-intel-prefix" style="color:#44dd88">\u25B2 HILL</span> ${charNote}</div>`;
+    }
+
     openTerminal(`
         ${arcHtml}
         <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
@@ -1249,6 +1174,7 @@ function showDailyReport() {
             <div class="mb-advisor-line"><span class="mb-advisor-name">${advisorName}</span> steps to the podium:</div>
             <div class="mb-prose">${openingText}</div>
             ${iranIntel ? `<div class="mb-iran-intel"><span class="mb-intel-prefix">\u26A0 IRAN</span> ${iranIntel}</div>` : ''}
+            ${charBriefHtml}
         </div>
 
         <div class="mb-gauges-row">
@@ -1260,6 +1186,8 @@ function showDailyReport() {
         </div>
 
         ${synergyHtml}
+
+        ${aipacHtml}
 
         <div class="mb-closer">\u25B6 ${closerText}</div>
 
@@ -1301,9 +1229,29 @@ function showDailyReport() {
 // ======================== CHARACTER SPECIAL ACTION ========================
 
 function executeSpecialAction() {
-    if (!SIM.character.specialAction || SIM.character.specialAction.cooldown > 0) return;
+    if (!SIM.character.specialAction || SIM.character.specialAction.cooldown > 0) return false;
 
     const action = SIM.character.specialAction;
+
+    // Trump: CLAIM VICTORY — check conditions before executing
+    if (SIM.character.id === 'trump') {
+        if (SIM.day - SIM.lastPublicWinDay > 1) {
+            showToast('No recent public win to claim! Need a win within 1 day.', 'warning');
+            return false;
+        }
+        if (SIM.uniqueResource < 15) {
+            showToast('Not enough Political Capital! Need 15.', 'warning');
+            return false;
+        }
+    }
+
+    // Asmongold: MAKE PREDICTION — opens picker UI, don't set cooldown here
+    if (SIM.character.id === 'asmongold') {
+        if (typeof showPredictionPicker === 'function') {
+            showPredictionPicker();
+        }
+        return false; // AP not spent here — handled by prediction picker
+    }
 
     // Execute the action's effect if it has one
     if (typeof action.execute === 'function') {
@@ -1321,6 +1269,7 @@ function executeSpecialAction() {
 
     addHeadline(`Special action: ${action.name}`, 'good');
     showToast(`${action.name} activated!`, 'good');
+    return true;
 }
 
 // ======================== ADJUST STRATEGY ========================
@@ -1483,6 +1432,9 @@ function resetActionPoints() {
 
 function _applyEffect(key, val, multiplier) {
     if (multiplier) val = Math.round(val * multiplier * 10) / 10;
+    if (key === '_aipacApprovalPenaltyDays') { SIM._aipacApprovalPenaltyDays = val; return; }
+    if (key === '_aipacDiplomaticRestrictionDays') { SIM._aipacDiplomaticRestrictionDays = val; return; }
+    if (key === 'aipacPressure') { SIM.aipacPressure = Math.max(0, Math.min(100, (SIM.aipacPressure || 50) + val)); return; }
     // Apply the immediate effect
     if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
     else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
@@ -1538,12 +1490,6 @@ function _getROEColor() {
 
 function showActionPanel() {
     hideActionPanel();
-
-    // Update layout for action panel
-    const centerPanel = document.getElementById('center-panel');
-    const gaugeBar = document.getElementById('gauge-bar');
-    if (centerPanel) centerPanel.classList.remove('no-actpanel');
-    if (gaugeBar) gaugeBar.style.right = '280px';
 
     const panel = document.createElement('div');
     panel.id = 'action-panel';
@@ -1637,7 +1583,10 @@ function showActionPanel() {
                 <div class="ap-title">ACTIONS</div>
                 <div class="ap-points">AP: ${apDots}</div>
                 <div class="ap-budget">${budgetStr}</div>
-                ${SIM.character?.id === 'trump' ? `<div class="ap-budget" style="color:#ddaa44">PC: ${Math.round(SIM.uniqueResource)} (-3/action)</div>` : ''}
+                ${SIM.character?.id === 'trump' ? `<div class="ap-budget" style="color:#ddaa44">PC: ${Math.round(SIM.uniqueResource)} | Wins: ${SIM.victoryNarrative}/3</div>` : ''}
+                ${SIM.character?.id === 'kushner' ? `<div class="ap-budget" style="color:#aa44dd">Deal: $${Math.round(SIM.dealValue || 0)}M</div>` : ''}
+                ${SIM.character?.id === 'asmongold' ? `<div class="ap-budget" style="color:#4488dd">Audience: ${Math.round(SIM.audience || 50)}</div>` : ''}
+                ${SIM.character?.id === 'fuentes' && SIM.withdrawalLocked ? `<div class="ap-budget" style="color:#44dd88">WITHDRAWAL ACTIVE</div>` : ''}
             </div>
 
             <div class="ap-escalation-bar">
@@ -1744,7 +1693,13 @@ function showActionPanel() {
         }
     }
 
-    document.body.appendChild(panel);
+    // Append to narrative-area (bottom of narrative column) instead of body
+    const narrativeArea = document.getElementById('narrative-area');
+    if (narrativeArea) {
+        narrativeArea.appendChild(panel);
+    } else {
+        document.body.appendChild(panel);
+    }
     panel._renderFn = renderPanel;
     renderPanel();
 
@@ -1867,10 +1822,17 @@ function _getCharacterActions(ap) {
         </div>`;
     }
     if (charId === 'fuentes') {
+        let withdrawalBtn = '';
+        if (SIM.withdrawalProgress >= 5 && !SIM.withdrawalLocked) {
+            withdrawalBtn = `<button class="ap-btn special ${ap < 2 ? 'disabled' : ''}" data-action="announce-withdrawal">ANNOUNCE WITHDRAWAL <span class="ap-cost">2AP</span></button>`;
+        }
+        const wpBar = SIM.withdrawalProgress > 0 ? `<div style="font-size:9px;color:#ff6644;margin-top:2px">Withdrawal: ${SIM.withdrawalProgress}/5</div>` : '';
         return `<div class="ap-category">
             <div class="ap-cat-header" style="color:#ff6644">AMERICA FIRST</div>
             <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="rally-base">RALLY THE BASE</button>
             <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="media-blitz">MEDIA BLITZ</button>
+            ${withdrawalBtn}
+            ${wpBar}
         </div>`;
     }
     if (charId === 'kushner' && SIM.character.contacts) {
@@ -1878,12 +1840,30 @@ function _getCharacterActions(ap) {
             .filter(c => c.trust >= 10)
             .map(c => `<button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="call-contact-${c.id}">CALL ${c.name.split('(')[0].trim()} <span class="ap-cost">$10M</span></button>`)
             .join('');
+        const dealInfo = `<div style="font-size:9px;color:#aa44dd;margin-top:2px">Deal Value: $${Math.round(SIM.dealValue || 0)}M</div>`;
         if (contactBtns) {
             return `<div class="ap-category">
                 <div class="ap-cat-header" style="color:#aa44dd">CONTACTS</div>
                 ${contactBtns}
+                ${dealInfo}
             </div>`;
         }
+    }
+    if (charId === 'trump') {
+        const canClaim = SIM.day - SIM.lastPublicWinDay <= 1;
+        return `<div class="ap-category">
+            <div class="ap-cat-header" style="color:#ddaa44">VICTORY NARRATIVE</div>
+            <div style="font-size:9px;color:#ddaa44;margin-bottom:4px">Victories claimed: ${SIM.victoryNarrative || 0}/3 ${canClaim ? '| <span style="color:#44dd88">WIN AVAILABLE!</span>' : ''}</div>
+        </div>`;
+    }
+    if (charId === 'asmongold') {
+        const correctPreds = (SIM.predictions || []).filter(p => p.resolved && p.correct).length;
+        const totalPreds = (SIM.predictions || []).filter(p => p.resolved).length;
+        const pendingPreds = (SIM.predictions || []).filter(p => !p.resolved).length;
+        return `<div class="ap-category">
+            <div class="ap-cat-header" style="color:#4488dd">STREAM STATS</div>
+            <div style="font-size:9px;color:#4488dd;margin-bottom:2px">Audience: ${Math.round(SIM.audience || 50)} | Correct: ${correctPreds}/${totalPreds} | Pending: ${pendingPreds}</div>
+        </div>`;
     }
     return '';
 }
@@ -1961,6 +1941,15 @@ function _narrateAction(actionId, snap, scaledKeys) {
 
     if (!pool || pool.length === 0) return;
 
+    // Check for character-specific variant
+    let charVariantText = null;
+    if (SIM.character && scenes.characterVariants) {
+        const cv = scenes.characterVariants[SIM.character.id];
+        if (cv && cv[actionId]) {
+            charVariantText = cv[actionId];
+        }
+    }
+
     // Pick a variant, avoiding the last-used index
     let idx;
     if (pool.length === 1) {
@@ -1971,9 +1960,10 @@ function _narrateAction(actionId, snap, scaledKeys) {
     }
     _sceneHistory[sceneKey] = idx;
 
-    // Write the scene with player character portrait
+    // Write the scene with player character portrait — use character variant 50% of the time if available
     const _actPortrait = SIM.character ? SIM.character.id : null;
-    addNarrative('scene', pool[idx], { portrait: _actPortrait });
+    const sceneText = (charVariantText && Math.random() < 0.5) ? charVariantText : pool[idx];
+    addNarrative('scene', sceneText, { portrait: _actPortrait });
 
     // Write stat changes beneath the scene
     for (const k of scaledKeys) {
@@ -2212,6 +2202,7 @@ function _executeAction(actionId, rerenderFn) {
             toastMsg = 'Tomahawk strike on IRGC naval base';
             toastLevel = 'warning';
             addHeadline('BREAKING: US precision strike destroys IRGC fast boat pens at Bandar Abbas', 'critical');
+            if (SIM.character?.id === 'hegseth') _checkBattleReport();
             break;
 
         case 'spec-ops-raid':
@@ -2228,6 +2219,7 @@ function _executeAction(actionId, rerenderFn) {
             toastMsg = 'SEAL team neutralizes mine-laying operation';
             toastLevel = 'good';
             addHeadline('SOCOM: Special operations forces conduct raid on Iranian mining assets', 'normal');
+            if (SIM.character?.id === 'hegseth') _checkBattleReport();
             break;
 
         case 'air-strikes':
@@ -2253,6 +2245,7 @@ function _executeAction(actionId, rerenderFn) {
             toastMsg = 'Air campaign targets IRGC coastal installations';
             toastLevel = 'critical';
             addHeadline('FLASH: US launches sustained air strikes against Iranian military targets', 'critical');
+            if (SIM.character?.id === 'hegseth') _checkBattleReport();
             break;
 
         case 'sead-mission':
@@ -2382,6 +2375,12 @@ function _executeAction(actionId, rerenderFn) {
             showFloatingNumber('internationalStanding', 5);
             showFloatingNumber('domesticApproval', -3);
             showFloatingNumber('iranAggression', 4);
+            // AIPAC penalty for dovish action
+            if (SIM.aipacPressure > 70) {
+                SIM.domesticApproval = Math.max(0, SIM.domesticApproval - 3);
+                showFloatingNumber('domesticApproval', -3);
+                if (typeof addNarrative === 'function') addNarrative('scene', 'Pro-Israel groups blast the de-escalation as "emboldening Iran."', { level: 'warning' });
+            }
             toastMsg = `De-escalated to ${deEsc.name}`;
             toastLevel = 'good';
             addHeadline(`DE-ESCALATION: US military posture lowered to ${deEsc.name}`, 'normal');
@@ -2417,9 +2416,11 @@ function _executeAction(actionId, rerenderFn) {
             addHeadline('Emergency coalition meeting convened on strait crisis.', 'normal');
             break;
 
-        case 'special':
-            executeSpecialAction();
+        case 'special': {
+            const specialSuccess = executeSpecialAction();
+            if (!specialSuccess) return; // Don't spend AP if special action failed/cancelled
             break;
+        }
 
         // === Hegseth exclusive actions ===
         case 'deploy-marines':
@@ -2427,9 +2428,16 @@ function _executeAction(actionId, rerenderFn) {
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 6);
             SIM.oilFlow = Math.min(100, SIM.oilFlow + 4);
             SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 8);
+            // Hegseth: deploy marines also escalates if warPath < 3
+            if (SIM.character?.id === 'hegseth' && SIM.warPath < 3) {
+                SIM.warPath = Math.min(5, SIM.warPath + 1);
+                showFloatingNumber('warPath', 1);
+            }
             toastMsg = 'Marines deployed — securing key chokepoints';
             toastLevel = 'normal';
             addHeadline('US Marines deployed to secure strait positions.', 'warning');
+            // Hegseth: check for battle report
+            if (SIM.character?.id === 'hegseth') _checkBattleReport();
             break;
 
         case 'combat-air-patrol':
@@ -2441,6 +2449,8 @@ function _executeAction(actionId, rerenderFn) {
             toastMsg = 'F/A-18s on station — full air dominance';
             toastLevel = 'good';
             addHeadline('Combat air patrols established over the strait.', 'normal');
+            // Hegseth: check for battle report
+            if (SIM.character?.id === 'hegseth') _checkBattleReport();
             break;
 
         // === Fuentes exclusive actions ===
@@ -2449,9 +2459,35 @@ function _executeAction(actionId, rerenderFn) {
             SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 3);
             SIM.polarization = Math.min(100, SIM.polarization + 4);
             SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 2);
-            toastMsg = '"America First!" — base enthusiasm surges';
+            // Fuentes: rally removes a navy ship if warPath is 0
+            if (SIM.warPath === 0 && SIM.navyShips.length > 0) {
+                SIM.navyShips.pop();
+                showFloatingNumber('navyShips', -1);
+                toastMsg = '"America First! Bring them home!" — one ship withdrawn';
+            } else {
+                toastMsg = '"America First!" — base enthusiasm surges';
+            }
             toastLevel = 'good';
             addHeadline('Populist rally energizes the base.', 'normal');
+            break;
+
+        case 'announce-withdrawal':
+            if (SIM.actionPoints < 2) return;
+            SIM.actionPoints = Math.max(0, SIM.actionPoints - 1); // extra AP cost (1 more subtracted below)
+            SIM.withdrawalLocked = true;
+            SIM.warPath = 0;
+            SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 15);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 10);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 10);
+            showFloatingNumber('uniqueResource', 15);
+            showFloatingNumber('domesticApproval', 10);
+            showFloatingNumber('internationalStanding', -10);
+            toastMsg = 'FULL WITHDRAWAL ANNOUNCED — warPath locked at 0';
+            toastLevel = 'good';
+            addHeadline('BREAKING: Full military withdrawal from Persian Gulf announced. "America First — America Always."', 'good');
+            if (typeof addNarrative === 'function') {
+                addNarrative('alert', 'The withdrawal is official. Military escalation is now impossible. The base is ecstatic.', { level: 'good' });
+            }
             break;
 
         case 'media-blitz':
@@ -2494,9 +2530,21 @@ function _executeAction(actionId, rerenderFn) {
                 contact.trust = Math.min(100, contact.trust + 8);
                 SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 4);
                 SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 5);
-                toastMsg = `Called ${contact.name} — trust +8, now ${contact.trust}`;
+                // 30% chance of deal opportunity
+                if (Math.random() < 0.3) {
+                    const dealGain = Math.floor(Math.random() * 41) + 10; // 10-50
+                    SIM.dealValue = (SIM.dealValue || 0) + dealGain;
+                    toastMsg = `Called ${contact.name} — trust +8, deal opportunity +$${dealGain}M!`;
+                } else {
+                    toastMsg = `Called ${contact.name} — trust +8, now ${contact.trust}`;
+                }
                 toastLevel = 'good';
                 addHeadline(`Back-channel call to ${contact.name.split('(')[0].trim()}.`, 'normal');
+                // Add mini-choice buttons in narrative feed
+                if (typeof addNarrative === 'function') {
+                    addNarrative('scene', `Call with ${contact.name.split('(')[0].trim()} connected. What do you focus on?`, { portrait: 'kushner' });
+                    _showContactMiniChoice(contact);
+                }
                 break;
             }
             return;
@@ -2547,6 +2595,224 @@ function _executeAction(actionId, rerenderFn) {
     } else {
         rerenderFn();
     }
+}
+
+// ======================== HEGSETH: BATTLE REPORT ========================
+
+function _checkBattleReport() {
+    if (Math.random() >= 0.4) return; // 40% chance
+    const iranAggrDropped = SIM.iranAggression < (SIM._prevIranAggression || SIM.iranAggression);
+    const warPathSurge = SIM.warPath - (SIM._dayStartWarPath || 0) >= 2;
+    const highTension = SIM.tension > 80;
+
+    if (iranAggrDropped && !highTension) {
+        // Positive battle report
+        SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 5);
+        SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 5);
+        showFloatingNumber('domesticApproval', 5);
+        showFloatingNumber('uniqueResource', 5);
+        addHeadline('BATTLE REPORT: Operation successful — enemy capabilities degraded', 'good');
+        showToast('Positive battle report! Approval +5, Authority +5', 'good');
+    } else if (highTension || warPathSurge) {
+        // Negative battle report
+        SIM.domesticApproval = Math.max(0, SIM.domesticApproval - 5);
+        SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 3);
+        showFloatingNumber('domesticApproval', -5);
+        showFloatingNumber('uniqueResource', -3);
+        addHeadline('BATTLE REPORT: Civilian casualties reported — international backlash', 'warning');
+        showToast('Negative battle report! Approval -5, Authority -3', 'bad');
+    }
+}
+
+// ======================== KUSHNER: CONTACT MINI-CHOICE ========================
+
+function _showContactMiniChoice(contact) {
+    if (typeof addNarrative !== 'function') return;
+
+    // Create inline choice buttons in the narrative feed
+    const choiceDiv = document.createElement('div');
+    choiceDiv.className = 'narrative-mini-choice';
+    choiceDiv.style.cssText = 'display:flex;gap:8px;padding:6px 12px;';
+
+    const btnSecurity = document.createElement('button');
+    btnSecurity.textContent = 'Discuss security';
+    btnSecurity.className = 'ap-btn';
+    btnSecurity.style.cssText = 'font-size:10px;padding:4px 8px;flex:1;';
+
+    const btnBusiness = document.createElement('button');
+    btnBusiness.textContent = 'Discuss business';
+    btnBusiness.className = 'ap-btn';
+    btnBusiness.style.cssText = 'font-size:10px;padding:4px 8px;flex:1;';
+
+    btnSecurity.addEventListener('click', () => {
+        SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 4);
+        showFloatingNumber('diplomaticCapital', 4);
+        showToast('Security discussion: diplomaticCapital +4', 'good');
+        addNarrative('scene', `"Let us coordinate on maritime security..." — productive security dialogue with ${contact.name.split('(')[0].trim()}.`, { portrait: 'kushner' });
+        choiceDiv.remove();
+    });
+
+    btnBusiness.addEventListener('click', () => {
+        SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 2);
+        const dealGain = Math.floor(Math.random() * 11) + 15; // 15-25
+        SIM.dealValue = (SIM.dealValue || 0) + dealGain;
+        SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 3); // exposure +3
+        showFloatingNumber('diplomaticCapital', 2);
+        showFloatingNumber('dealValue', dealGain);
+        showToast(`Business deal: dealValue +$${dealGain}M, exposure +3`, 'good');
+        addNarrative('scene', `"There are investment opportunities here..." — business ties deepened. Deal value +$${dealGain}M.`, { portrait: 'kushner' });
+        choiceDiv.remove();
+    });
+
+    choiceDiv.appendChild(btnSecurity);
+    choiceDiv.appendChild(btnBusiness);
+
+    // Append to the narrative feed
+    const feed = document.getElementById('narrative-feed');
+    if (feed) feed.appendChild(choiceDiv);
+}
+
+// ======================== ASMONGOLD: PREDICTION PICKER ========================
+
+function showPredictionPicker() {
+    // Build prediction options based on current game state
+    const allOptions = [
+        {
+            topic: 'iran_escalate',
+            label: 'Iran will escalate within 3 days',
+            condition: () => SIM.iranAggression > 50,
+            resolveDays: 3,
+        },
+        {
+            topic: 'oil_below_100',
+            label: 'Oil drops below $100',
+            condition: () => SIM.oilFlow > (SIM._prevOilFlow || SIM.oilFlow),
+            resolveDays: 5,
+        },
+        {
+            topic: 'seizure_week',
+            label: 'Seizure this week',
+            condition: () => SIM.iranStrategy === 'probing' || SIM.iranStrategy === 'escalatory' || SIM.iranStrategy === 'confrontational',
+            resolveDays: 5,
+        },
+        {
+            topic: 'diplomatic_breakthrough',
+            label: 'Diplomatic breakthrough',
+            condition: () => SIM.diplomaticCapital > 40 && SIM.tension < (SIM._prevTensionBracket || SIM.tension),
+            resolveDays: 5,
+        },
+        {
+            topic: 'iran_backs_down',
+            label: 'Iran backs down',
+            condition: () => SIM.iranAggression > 40,
+            resolveDays: 5,
+        },
+        {
+            topic: 'oil_crisis_worsens',
+            label: 'Oil crisis worsens',
+            condition: () => SIM.oilFlow < 50,
+            resolveDays: 5,
+        },
+        {
+            topic: 'military_escalation',
+            label: 'Military escalation incoming',
+            condition: () => SIM.tension > 60,
+            resolveDays: 3,
+        },
+        {
+            topic: 'approval_surge',
+            label: 'Approval rating surge',
+            condition: () => SIM.domesticApproval < 50,
+            resolveDays: 5,
+        },
+    ];
+
+    // Filter to applicable options and pick 3-4
+    const applicable = allOptions.filter(o => {
+        try { return o.condition(); } catch(e) { return false; }
+    });
+    // Also filter out topics with pending predictions
+    const pendingTopics = (SIM.predictions || []).filter(p => !p.resolved).map(p => p.topic);
+    const available = applicable.filter(o => !pendingTopics.includes(o.topic));
+
+    if (available.length === 0) {
+        showToast('No predictions available right now', 'warning');
+        return;
+    }
+
+    // Shuffle and pick 3-4
+    const shuffled = available.sort(() => Math.random() - 0.5);
+    const options = shuffled.slice(0, Math.min(4, shuffled.length));
+
+    openTerminal(`
+        <div class="term-header">MAKE PREDICTION</div>
+        <div class="term-title">What do you think happens next, chat?</div>
+        <div class="term-line">Pick a prediction. If correct: Audience +15, Credibility +10. If wrong: Audience -10, Credibility -8.</div>
+        <div class="term-line dim">Pending predictions: ${(SIM.predictions || []).filter(p => !p.resolved).length}</div>
+
+        <div class="term-section">
+            ${options.map((opt, i) => `
+                <div class="adjust-card" data-pred="${i}" style="cursor:pointer;margin:6px 0;padding:8px 12px;">
+                    <div class="adjust-card-name" style="color:#4488dd">${opt.label}</div>
+                    <div class="adjust-card-desc" style="font-size:9px;color:#888">Resolves in ${opt.resolveDays} days</div>
+                </div>
+            `).join('')}
+        </div>
+
+        <div class="term-btn-row">
+            <button class="term-btn" id="btn-cancel-pred">[ CANCEL ]</button>
+        </div>
+    `);
+
+    fadeInButtons(TERMINAL, 200);
+
+    // Wire up prediction choices
+    TERMINAL.querySelectorAll('[data-pred]').forEach(el => {
+        el.addEventListener('click', () => {
+            const idx = parseInt(el.dataset.pred);
+            const opt = options[idx];
+
+            // Create prediction
+            if (!SIM.predictions) SIM.predictions = [];
+            SIM.predictions.push({
+                topic: opt.topic,
+                label: opt.label,
+                predictedDay: SIM.day,
+                resolveDay: SIM.day + opt.resolveDays,
+                resolved: false,
+                correct: false,
+                _startWarPath: SIM.warPath,
+                _startSeizureCount: SIM.seizureCount,
+                _startTension: SIM.tension,
+                _startIranAggression: SIM.iranAggression,
+                _startOilFlow: SIM.oilFlow,
+                _startApproval: SIM.domesticApproval,
+            });
+
+            // Set cooldown on special action and spend AP
+            if (SIM.character && SIM.character.specialAction) {
+                SIM.character.specialAction.cooldown = SIM.character.specialAction.cooldownMax || 5;
+            }
+            SIM.actionPoints = Math.max(0, SIM.actionPoints - 1);
+
+            addHeadline(`PREDICTION: "${opt.label}" — resolves in ${opt.resolveDays} days`, 'normal');
+            showToast(`Prediction made: "${opt.label}"`, 'good');
+
+            if (typeof addNarrative === 'function') {
+                addNarrative('dialogue', `"Chat, I'm calling it now: ${opt.label}. Mark it. Clip it. We'll see in ${opt.resolveDays} days."`, { speaker: 'Asmongold', portrait: 'asmongold' });
+            }
+
+            closeTerminal();
+            if (typeof showActionPanel === 'function') showActionPanel();
+        });
+    });
+
+    // Cancel
+    const cancelBtn = document.getElementById('btn-cancel-pred');
+    if (cancelBtn) cancelBtn.addEventListener('click', () => {
+        closeTerminal();
+        if (typeof showActionPanel === 'function') showActionPanel();
+    });
 }
 
 function _endDay() {
@@ -2688,10 +2954,53 @@ function _getWinProgress() {
     const wplChar = DATA.intel.winProgressLabels;
     const label = wplChar[charId] || 'Complete your objective';
 
+    // Character-specific checklist
+    let checksHtml = '';
+    if (charId === 'trump') {
+        const canClaim = SIM.day - SIM.lastPublicWinDay <= 1;
+        const checks = [
+            { label: `Victories: ${SIM.victoryNarrative}/3`, ok: SIM.victoryNarrative >= 3 },
+            { label: `Approval: ${Math.round(SIM.domesticApproval)} >= 60`, ok: SIM.domesticApproval >= 60 },
+            { label: `Oil flow: ${Math.round(SIM.oilFlow)} >= 55`, ok: SIM.oilFlow >= 55 },
+        ];
+        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
+    } else if (charId === 'hegseth') {
+        const checks = [
+            { label: `WarPath: ${SIM.warPath} >= 3`, ok: SIM.warPath >= 3 },
+            { label: `Iran aggr: ${Math.round(SIM.iranAggression)} <= 25`, ok: SIM.iranAggression <= 25 },
+            { label: `Approval: ${Math.round(SIM.domesticApproval)} >= 55`, ok: SIM.domesticApproval >= 55 },
+        ];
+        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
+    } else if (charId === 'kushner') {
+        const checks = [
+            { label: `Deal: $${Math.round(SIM.dealValue || 0)}M >= 300`, ok: (SIM.dealValue || 0) >= 300 },
+            { label: `Iran aggr: ${Math.round(SIM.iranAggression)} <= 25`, ok: SIM.iranAggression <= 25 },
+            { label: `Exposure: ${Math.round(SIM.uniqueResource)} < 50`, ok: SIM.uniqueResource < 50 },
+        ];
+        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
+    } else if (charId === 'fuentes') {
+        const checks = [
+            { label: `WarPath: ${SIM.warPath} = 0`, ok: SIM.warPath === 0 },
+            { label: `Ships: ${SIM.navyShips.length} <= 1`, ok: SIM.navyShips.length <= 1 },
+            { label: `Budget: $${Math.round(SIM.budget)}M >= 600`, ok: SIM.budget >= 600 },
+            { label: `Standing: ${Math.round(SIM.internationalStanding)} >= 35`, ok: SIM.internationalStanding >= 35 },
+        ];
+        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
+    } else if (charId === 'asmongold') {
+        const correctPreds = (SIM.predictions || []).filter(p => p.resolved && p.correct).length;
+        const checks = [
+            { label: `Audience: ${Math.round(SIM.audience)} >= 90`, ok: SIM.audience >= 90 },
+            { label: `Credibility: ${Math.round(SIM.uniqueResource)} >= 65`, ok: SIM.uniqueResource >= 65 },
+            { label: `Correct predictions: ${correctPreds} >= 3`, ok: correctPreds >= 3 },
+        ];
+        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
+    }
+
     return `<div class="win-progress">
         <div class="win-progress-label">${label}</div>
         <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%;${met ? '' : 'background:#ddaa44;box-shadow:0 0 4px rgba(221,170,68,0.3)'}"></div></div>
         <div class="win-progress-text">${met ? sustained + '/3 days sustained' : 'Conditions not yet met'}</div>
+        ${checksHtml}
     </div>`;
 }
 
@@ -2815,12 +3124,6 @@ function showInterrupt(afterCallback) {
 function hideActionPanel() {
     const existing = document.getElementById('action-panel');
     if (existing) existing.remove();
-
-    // Restore layout widths
-    const centerPanel = document.getElementById('center-panel');
-    const gaugeBar = document.getElementById('gauge-bar');
-    if (centerPanel) centerPanel.classList.add('no-actpanel');
-    if (gaugeBar) gaugeBar.style.right = '';
 }
 
 
@@ -2932,6 +3235,7 @@ function showDecisionEvent(event) {
             <div class="term-header" style="${headerStyle}">DAY ${SIM.day} \u2014 ${isCrisis ? 'CRISIS' : 'DECISION REQUIRED'}</div>
             <div class="term-title" style="${titleStyle}">${event.title}</div>
             <div class="de-scene-prose">${sceneText}</div>
+            ${_getCharacterFlavorHtml(event, customScene)}
             ${urgencyHtml}
             <div class="term-section">
                 <div class="term-section-label" ${isCrisis ? 'style="color:#dd4444"' : ''}>${isCrisis ? 'NO SAFE OPTIONS' : 'WHAT DO YOU DO?'}</div>
@@ -2991,6 +3295,24 @@ function _buildEventScene(event, customScene, eventScenes) {
     return prefix + (event.description || '');
 }
 
+function _getCharacterFlavorHtml(event, customScene) {
+    if (!SIM.character || !SIM.character.id) return '';
+    const charId = SIM.character.id;
+    // Check event-scenes data first, then events data
+    let flavor = '';
+    if (customScene && customScene.characterFlavor && customScene.characterFlavor[charId]) {
+        flavor = customScene.characterFlavor[charId];
+    } else {
+        const eventsData = DATA.events || {};
+        const evtData = eventsData.decisionEvents && eventsData.decisionEvents[event.id];
+        if (evtData && evtData.characterFlavor && evtData.characterFlavor[charId]) {
+            flavor = evtData.characterFlavor[charId];
+        }
+    }
+    if (!flavor) return '';
+    return `<div class="de-character-flavor" style="color:#88aa66;font-style:italic;margin:6px 0;font-size:11px;border-left:2px solid #2a4a3a;padding-left:8px">${flavor}</div>`;
+}
+
 function _buildDecisionLogHtml() {
     if (!SIM.decisionLog || SIM.decisionLog.length === 0) return '';
     // Show last 5 decisions, newest first
@@ -3046,6 +3368,21 @@ function resolveDecision(event, choiceIdx, customScene) {
     }
     showEffectSummary(choice.effects);
 
+    // Execute specialEffect callback if present
+    if (choice.specialEffect && typeof choice.specialEffect === 'function') {
+        choice.specialEffect();
+    }
+    // Character-specific effects
+    if (choice.characterEffect && SIM.character) {
+        const charFx = choice.characterEffect[SIM.character.id];
+        if (charFx) {
+            for (const [key, val] of Object.entries(charFx)) {
+                if (key === 'baseEnthusiasm') SIM.uniqueResource = Math.min(100, SIM.uniqueResource + val);
+                else if (SIM[key] !== undefined) SIM[key] += val;
+            }
+        }
+    }
+
     // Set story flags from choice
     if (choice.setFlags) {
         for (const [flag, val] of Object.entries(choice.setFlags)) {
@@ -3069,6 +3406,13 @@ function resolveDecision(event, choiceIdx, customScene) {
             contact.trust = Math.max(0, Math.min(100, contact.trust + choice.contactEffect.trust));
             if (choice.contactEffect.trust > 0) addHeadline(`${contact.name}: trust increased to ${contact.trust}`, 'good');
         }
+    }
+
+    // Kushner: K03_riyadh_summit deal value bonus
+    if (event.id === 'K03_riyadh_summit' && SIM.character?.id === 'kushner') {
+        SIM.dealValue = (SIM.dealValue || 0) + 100;
+        addHeadline('Riyadh Summit: Major deal value secured — $100M in agreements', 'good');
+        if (typeof showToast === 'function') showToast('Summit bonus: Deal Value +$100M!', 'good');
     }
 
     const gaugesAfter = calculateGauges();
@@ -3328,6 +3672,21 @@ function restartGame() {
     for (const [key, val] of Object.entries(SIM_DEFAULTS)) {
         SIM[key] = Array.isArray(val) ? [] : (typeof val === 'object' && val !== null) ? {} : val;
     }
+
+    // Reset new character mechanic properties
+    SIM.victoryNarrative = 0;
+    SIM.lastPublicWinDay = -99;
+    SIM.publicWinType = '';
+    SIM._prevInterceptCount = 0;
+    SIM._prevSeizureCount = 0;
+    SIM._prevIranAggression = 45;
+    SIM._prevOilPrice = 95;
+    SIM._dayStartWarPath = 1;
+    SIM.dealValue = 0;
+    SIM.withdrawalProgress = 0;
+    SIM.withdrawalLocked = false;
+    SIM.predictions = [];
+    SIM.audience = 50;
 
     // Reset character-specific state
     if (SIM.character) {
