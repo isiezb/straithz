@@ -880,7 +880,7 @@ function dailyUpdate() {
     if (SIM.roe === 'aggressive') {
         SIM.tension = Math.min(100, SIM.tension + 3);
         if (Math.random() < 0.05) {
-            SIM.warPath++;
+            SIM.warPath = Math.min(5, SIM.warPath + 1);
             addHeadline((DATA.headlines.simulation.roe_aggressive || [])[0] || '', 'critical');
             if (typeof showSceneImage === 'function') showSceneImage('assets/scene-total-war.png', { duration: 4000, caption: 'ESCALATION' });
         }
@@ -1449,16 +1449,16 @@ function checkWinLose() {
         }
     }
 
-    // --- Win 2: Strait open 10 consecutive days (generic fallback) ---
+    // --- Win 2: Strait open 14 consecutive days with oilFlow > 60 ---
     const recentSeizures = SIM.recentSeizureDays.filter(d => SIM.day - d <= 3).length;
-    const straitOpen = SIM.oilFlow > 55 && SIM.tension < 45 && recentSeizures === 0 && SIM.crisisLevel === 0;
+    const straitOpen = SIM.oilFlow > 60 && SIM.tension < 45 && recentSeizures === 0 && SIM.crisisLevel === 0;
 
     if (straitOpen) {
         SIM.straitOpenDays++;
-        if (SIM.straitOpenDays >= 5) {
-            addHeadline(`STRAIT STABLE ${SIM.straitOpenDays}/7 DAYS — maintain course!`, 'good');
-        }
         if (SIM.straitOpenDays >= 7) {
+            addHeadline(`STRAIT STABLE ${SIM.straitOpenDays}/14 DAYS — maintain course!`, 'good');
+        }
+        if (SIM.straitOpenDays >= 14) {
             const _wlr = DATA.events.winLoseReasons || {};
             const _suffix = SIM.diplomaticCapital > 60 ? 'masterful diplomacy.' : SIM.domesticApproval > 70 ? 'strong leadership.' : 'persistent strategy.';
             endGame(true, (_wlr.win_strait_open || '').replace('[masterful diplomacy / strong leadership / persistent strategy].', _suffix));
@@ -1469,7 +1469,7 @@ function checkWinLose() {
         if (SIM.straitOpenDays > 0) {
             const lost = Math.min(2, SIM.straitOpenDays);
             SIM.straitOpenDays = Math.max(0, SIM.straitOpenDays - lost);
-            addHeadline(`Strait stability disrupted — progress ${SIM.straitOpenDays > 0 ? 'reduced to ' + SIM.straitOpenDays + '/7' : 'lost'}`, 'warning');
+            addHeadline(`Strait stability disrupted — progress ${SIM.straitOpenDays > 0 ? 'reduced to ' + SIM.straitOpenDays + '/14' : 'lost'}`, 'warning');
         }
     }
 
@@ -1617,12 +1617,12 @@ const CARD_CONSEQUENCES = {
         { text: 'USS destroyer escorts tanker through strait — insurance companies take notice', effect: () => { SIM.oilFlow = Math.min(100, SIM.oilFlow + 4); SIM.oilPrice -= 3; }, level: 'good', funding: 'high' },
     ],
     active_intercept: [
-        { text: 'Aggressive ROE triggers near-miss with Iranian vessel', effect: () => { SIM.tension += 10; SIM.warPath++; }, level: 'critical', funding: 'high' },
+        { text: 'Aggressive ROE triggers near-miss with Iranian vessel', effect: () => { SIM.tension += 10; SIM.warPath = Math.min(5, SIM.warPath + 1); }, level: 'critical', funding: 'high' },
         { text: 'Active intercept prevents tanker seizure', effect: () => { SIM.interceptCount++; SIM.domesticApproval += 2; }, level: 'good', funding: 'any' },
     ],
     missile_strike: [
         { text: 'Precision strike footage goes viral — world holds its breath', effect: () => { SIM.tension += 15; SIM.domesticApproval += 5; SIM.internationalStanding -= 8; }, level: 'critical', funding: 'any' },
-        { text: 'Iran vows retaliation for strikes on sovereign territory', effect: () => { SIM.iranAggression += 10; SIM.warPath++; }, level: 'critical', funding: 'high' },
+        { text: 'Iran vows retaliation for strikes on sovereign territory', effect: () => { SIM.iranAggression += 10; SIM.warPath = Math.min(5, SIM.warPath + 1); }, level: 'critical', funding: 'high' },
     ],
     regional_deterrence: [
         { text: 'Joint ops degrade Houthi launch capabilities', effect: () => { SIM.proxyThreat = Math.max(0, SIM.proxyThreat - 5); }, level: 'good', funding: 'medium' },
@@ -1651,7 +1651,7 @@ const CARD_CONSEQUENCES = {
     ],
     // ECONOMIC
     targeted_sanctions: [
-        { text: 'Sanctioned IRGC commander vows revenge — Iran seizes a tanker', effect: () => { SIM.tension += 10; SIM.seizureCount++; SIM.recentSeizureDays.push(SIM.day); SIM.warPath++; }, level: 'critical', funding: 'medium' },
+        { text: 'Sanctioned IRGC commander vows revenge — Iran seizes a tanker', effect: () => { SIM.tension += 10; SIM.seizureCount++; SIM.recentSeizureDays.push(SIM.day); SIM.warPath = Math.min(5, SIM.warPath + 1); }, level: 'critical', funding: 'medium' },
         { text: 'Sanctions bite — Iranian economy contracts further', effect: () => { SIM.iranEconomy -= 3; }, level: 'good', funding: 'any' },
         { text: 'China quietly increases Iranian oil purchases to circumvent sanctions', effect: () => { SIM.chinaRelations -= 3; SIM.iranEconomy += 2; }, level: 'warning', funding: 'high' },
         { text: 'Dark fleet tanker caught doing ship-to-ship transfer of Iranian oil', effect: () => { SIM.iranEconomy -= 5; SIM.fogOfWar -= 3; }, level: 'good', funding: 'high' },
@@ -1683,7 +1683,7 @@ const CARD_CONSEQUENCES = {
     ],
     drone_surveillance: [
         { text: 'Drone reveals Iranian military buildup at Bandar Abbas', effect: () => { SIM.fogOfWar -= 8; SIM.tension += 3; }, level: 'warning', funding: 'any' },
-        { text: 'Iran shoots down a surveillance drone', effect: () => { SIM.tension += 8; SIM.warPath++; }, level: 'critical', funding: 'high' },
+        { text: 'Iran shoots down a surveillance drone', effect: () => { SIM.tension += 8; SIM.warPath = Math.min(5, SIM.warPath + 1); }, level: 'critical', funding: 'high' },
         { text: 'MQ-9 Reaper tracks Iranian minelayer — coordinates shared with minesweepers', effect: () => { SIM.fogOfWar -= 10; SIM.oilFlow = Math.min(100, SIM.oilFlow + 3); }, level: 'good', funding: 'medium' },
     ],
     // DOMESTIC
@@ -1706,7 +1706,7 @@ const CARD_CONSEQUENCES = {
     ],
     submarine_warfare: [
         { text: 'US submarine tracks Iranian Kilo-class sub for 72 hours — full pattern of life', effect: () => { SIM.fogOfWar -= 12; SIM.iranAggression -= 3; }, level: 'good', funding: 'medium' },
-        { text: 'Near-collision between US and Iranian submarines in shallow waters', effect: () => { SIM.tension += 10; SIM.warPath++; }, level: 'critical', funding: 'high' },
+        { text: 'Near-collision between US and Iranian submarines in shallow waters', effect: () => { SIM.tension += 10; SIM.warPath = Math.min(5, SIM.warPath + 1); }, level: 'critical', funding: 'high' },
         { text: 'Submarine intelligence reveals IRGC coastal battery locations', effect: () => { SIM.fogOfWar -= 8; SIM.conflictRisk -= 3; }, level: 'good', funding: 'any' },
     ],
     ballistic_missile_defense: [
@@ -2501,7 +2501,7 @@ const DECISION_EVENTS = [
         ],
     },
     {
-        id: 'oman_talks', title: '', image: 'assets/iran-araghchi.png',
+        id: 'oman_talks', title: '',
         description: '',
         image: 'assets/event-e20-muscat.png',
         minDay: 8, maxDay: 45,
@@ -2597,7 +2597,7 @@ const DECISION_EVENTS = [
         ],
     },
     {
-        id: 'iran_internal_struggle', title: '', image: 'assets/iran-tangsiri.png',
+        id: 'iran_internal_struggle', title: '',
         description: '',
         image: 'assets/event-e07-iran-doubles.png',
         minDay: 18, maxDay: 70,
@@ -2659,7 +2659,7 @@ const DECISION_EVENTS = [
         ],
     },
     {
-        id: 'mojtaba_succession', title: '', image: 'assets/iran-mojtaba.png',
+        id: 'mojtaba_succession', title: '',
         description: '',
         image: 'assets/event-mojtaba.png',
         minDay: 5, maxDay: 45,
@@ -2809,7 +2809,7 @@ const DECISION_EVENTS = [
     },
     // === NEW EVENTS: Post-strikes escalation scenarios ===
     {
-        id: 'mojtaba_consolidation', title: '', image: 'assets/iran-mojtaba.png',
+        id: 'mojtaba_consolidation', title: '',
         description: '',
         image: 'assets/event-mojtaba.png',
         minDay: 5, maxDay: 30,

@@ -3060,6 +3060,9 @@ function _executeAction(actionId, rerenderFn) {
             SIM.tension = Math.min(100, SIM.tension + 5);
             SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 10);
             SIM.iranAggression = Math.max(0, SIM.iranAggression - 4);
+            showFloatingNumber('budget', -20);
+            showFloatingNumber('fogOfWar', -10);
+            showFloatingNumber('iranAggression', -4);
             toastMsg = 'F/A-18s on station — full air dominance';
             toastLevel = 'good';
             addHeadline('Combat air patrols established over the strait.', 'normal');
@@ -3108,6 +3111,9 @@ function _executeAction(actionId, rerenderFn) {
             SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 5);
             SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 3);
             SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 3);
+            showFloatingNumber('domesticApproval', 5);
+            showFloatingNumber('uniqueResource', 3);
+            showFloatingNumber('internationalStanding', -3);
             toastMsg = 'Media blitz — controlling the narrative';
             toastLevel = 'normal';
             addHeadline('Media blitz pushes America First messaging.', 'normal');
