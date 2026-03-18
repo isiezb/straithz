@@ -236,7 +236,7 @@ const STORY_ARCS = [
       color: '#dd6644', image: 'assets/arc-escalation.png' },
     { id: 'diplomatic_window', name: '', startDay: 15, endDay: 21,
       brief: '',
-      color: '#ddaa44', image: 'assets/event-diplomatic.png' },
+      color: '#ddaa44', image: 'assets/event-diplomatic-win.png' },
     { id: 'false_dawn',     name: '',     startDay: 22, endDay: 28,
       brief: '',
       color: '#dd8844', image: 'assets/arc-fog-of-war.png' },
@@ -882,6 +882,7 @@ function dailyUpdate() {
         if (Math.random() < 0.05) {
             SIM.warPath++;
             addHeadline((DATA.headlines.simulation.roe_aggressive || [])[0] || '', 'critical');
+            if (typeof showSceneImage === 'function') showSceneImage('assets/scene-total-war.png', { duration: 4000, caption: 'ESCALATION' });
         }
     }
 
@@ -890,6 +891,7 @@ function dailyUpdate() {
     if (hasCarrier && !SIM.carrier) {
         SIM.carrier = { x: 0.85, y: 0.75, targetX: 0.70, targetY: 0.65, id: 'USS-EISENHOWER' };
         addHeadline((DATA.headlines.simulation.carrier_deploy || [])[0] || '', 'warning');
+        if (typeof showSceneImage === 'function') showSceneImage('assets/scene-hegseth-carrier.png', { duration: 5000, caption: 'CARRIER STRIKE GROUP DEPLOYED' });
     } else if (!hasCarrier && SIM.carrier) {
         addHeadline((DATA.headlines.simulation.carrier_withdraw || [])[0] || '', 'normal');
         SIM.carrier = null;
@@ -898,7 +900,10 @@ function dailyUpdate() {
     // Mines during crisis
     if (SIM.crisisLevel >= 2 && SIM.mines.length < 5 && Math.random() < 0.3) {
         SIM.mines.push({ x: 0.38 + Math.random() * 0.22, y: 0.44 + Math.random() * 0.12, detonated: false });
-        if (SIM.fogOfWar < 50) addHeadline((DATA.headlines.simulation.mine_detection || [])[0] || '', 'critical');
+        if (SIM.fogOfWar < 50) {
+            addHeadline((DATA.headlines.simulation.mine_detection || [])[0] || '', 'critical');
+            if (typeof showSceneImage === 'function') showSceneImage('assets/scene-mine.png', { duration: 5000, caption: 'MINE DETECTED' });
+        }
     }
 
     // Drones from intel
@@ -2161,7 +2166,7 @@ const DECISION_EVENTS = [
     {
         id: 'media_crisis', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-e04-journalist.png',
         minDay: 12, maxDay: 80,
         condition: () => SIM.navyShips.length > 0 && SIM.iranBoats.length > 0,
         choices: [
@@ -2209,7 +2214,7 @@ const DECISION_EVENTS = [
     {
         id: 'militia_attack', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-proxy-attack.png',
         minDay: 18, maxDay: 80,
         condition: () => SIM.proxyThreat > 35,
         choices: [
@@ -2221,7 +2226,7 @@ const DECISION_EVENTS = [
     {
         id: 'assassination_intel', title: '',
         description: '',
-        image: 'assets/event-intel.png',
+        image: 'assets/event-assassination.png',
         minDay: 20, maxDay: 85,
         condition: () => SIM.assassinationRisk > 40,
         choices: [
@@ -2287,7 +2292,7 @@ const DECISION_EVENTS = [
     {
         id: 'drone_shootdown', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 15, maxDay: 80,
         condition: () => SIM.drones.length > 0,
         choices: [
@@ -2322,7 +2327,7 @@ const DECISION_EVENTS = [
     {
         id: 'election_pressure', title: '',
         description: '',
-        image: 'assets/event-diplomatic.png',
+        image: 'assets/event-e18-congress.png',
         minDay: 30, maxDay: 75,
         condition: () => true,
         choices: [
@@ -2334,7 +2339,7 @@ const DECISION_EVENTS = [
     {
         id: 'pipeline_sabotage', title: '',
         description: '',
-        image: 'assets/event-economic.png',
+        image: 'assets/event-oil-chaos.png',
         minDay: 20, maxDay: 70,
         condition: () => SIM.crisisLevel >= 1,
         choices: [
@@ -2346,7 +2351,7 @@ const DECISION_EVENTS = [
     {
         id: 'russia_arms_deal', title: '',
         description: '',
-        image: 'assets/event-intel.png',
+        image: 'assets/event-e21-intel-breakthrough.png',
         minDay: 18, maxDay: 70,
         condition: () => SIM.chinaRelations < 40,
         choices: [
@@ -2407,7 +2412,7 @@ const DECISION_EVENTS = [
     {
         id: 'insurance_crisis', title: '',
         description: '',
-        image: 'assets/event-economic.png',
+        image: 'assets/event-e08-oil-panic.png',
         minDay: 8, maxDay: 50,
         condition: () => SIM.tension > 40 && SIM.oilPrice > 100,
         choices: [
@@ -2462,7 +2467,7 @@ const DECISION_EVENTS = [
     {
         id: 'mine_laying_detected', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/scene-mine.png',
         minDay: 15, maxDay: 60,
         condition: () => SIM.crisisLevel >= 1 && SIM.iranAggression > 50,
         choices: [
@@ -2474,7 +2479,7 @@ const DECISION_EVENTS = [
     {
         id: 'drone_carrier', title: '',
         description: '',
-        image: 'assets/event-intel.png',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 12, maxDay: 55,
         condition: () => SIM.fogOfWar < 60,
         choices: [
@@ -2546,7 +2551,7 @@ const DECISION_EVENTS = [
     {
         id: 'tanker_war_echoes', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-e01-tanker.png',
         minDay: 12, maxDay: 55,
         condition: () => SIM.oilFlow < 50 && SIM.navyShips.length >= 3,
         choices: [
@@ -2582,7 +2587,7 @@ const DECISION_EVENTS = [
     {
         id: 'truth_social_armada', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-trump-truth-social.png',
         minDay: 5, maxDay: 40,
         condition: () => SIM.tension > 30,
         choices: [
@@ -2631,7 +2636,7 @@ const DECISION_EVENTS = [
     {
         id: 'cape_route_crisis', title: '',
         description: '',
-        image: 'assets/event-economic.png',
+        image: 'assets/event-oil-chaos.png',
         minDay: 12, maxDay: 55,
         condition: () => SIM.oilFlow < 45,
         choices: [
@@ -2673,7 +2678,7 @@ const DECISION_EVENTS = [
     {
         id: 'joe_kent_resignation', title: '',
         description: '',
-        image: 'assets/event-diplomatic.png',
+        image: 'assets/event-e18-congress.png',
         minDay: 10, maxDay: 50,
         condition: () => SIM.warPath >= 2 && SIM.domesticApproval < 65,
         choices: [
@@ -2697,7 +2702,7 @@ const DECISION_EVENTS = [
     {
         id: 'iris_dena_aftermath', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 4, maxDay: 25,
         condition: () => SIM.iranAggression > 50,
         choices: [
@@ -2733,7 +2738,7 @@ const DECISION_EVENTS = [
     {
         id: 'russia_intel_leak', title: '',
         description: '',
-        image: 'assets/event-intel.png',
+        image: 'assets/event-e17-leak.png',
         minDay: 12, maxDay: 60,
         condition: () => SIM.chinaRelations < 35,
         choices: [
@@ -2781,7 +2786,7 @@ const DECISION_EVENTS = [
     {
         id: 'kc135_crash', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 4, maxDay: 35,
         condition: () => SIM.warPath >= 2,
         choices: [
@@ -2793,7 +2798,7 @@ const DECISION_EVENTS = [
     {
         id: 'war_crimes_tribunal', title: '',
         description: '',
-        image: 'assets/event-diplomatic.png',
+        image: 'assets/event-e11-un-showdown.png',
         minDay: 15, maxDay: 65,
         condition: () => SIM.warPath >= 2 && SIM.internationalStanding < 50,
         choices: [
@@ -2818,7 +2823,7 @@ const DECISION_EVENTS = [
     {
         id: 'iris_dena_aftermath', title: '',
         description: '',
-        image: 'assets/event-military.png',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 3, maxDay: 15,
         condition: () => SIM.internationalStanding < 60,
         choices: [
@@ -2866,7 +2871,7 @@ const DECISION_EVENTS = [
     {
         id: 'iran_moderate_coup', title: '',
         description: '',
-        image: 'assets/event-diplomatic.png',
+        image: 'assets/event-mojtaba.png',
         minDay: 18, maxDay: 60,
         condition: () => SIM.diplomaticCapital > 30 && SIM.iranAggression > 35,
         choices: [
@@ -2890,7 +2895,7 @@ const DECISION_EVENTS = [
     {
         id: 'european_split', title: '',
         description: '',
-        image: 'assets/event-diplomatic.png',
+        image: 'assets/event-e05-british-pm.png',
         minDay: 7, maxDay: 35,
         condition: () => SIM.internationalStanding < 55,
         choices: [
@@ -3080,7 +3085,7 @@ const DECISION_EVENTS = [
     {
         id: 'aipac_delegation', title: 'AIPAC Delegation',
         description: 'A Congressional delegation allied with pro-Israel lobbying groups requests a meeting to discuss your Iran policy.',
-        image: 'assets/event-e11-un-showdown.png',
+        image: 'assets/event-aipac-delegation.png',
         minDay: 5, maxDay: 15,
         condition: () => !SIM.firedConsequences.includes('aipac_delegation'),
         choices: [
@@ -3096,7 +3101,7 @@ const DECISION_EVENTS = [
     {
         id: 'netanyahu_call', title: 'The Netanyahu Call',
         description: 'Israel\'s Prime Minister is on the secure line. He wants intelligence sharing on Iran\'s nuclear program and a commitment to act.',
-        image: 'assets/event-e05-british-pm.png',
+        image: 'assets/event-netanyahu-call.png',
         minDay: 15, maxDay: 30,
         condition: () => SIM.aipacPressure > 40,
         choices: [
@@ -3112,7 +3117,7 @@ const DECISION_EVENTS = [
     {
         id: 'aipac_attack_ad', title: 'AIPAC Attack Ad',
         description: 'A major pro-Israel PAC is running television ads criticizing your Iran policy as "weak" and "dangerous for American security."',
-        image: 'assets/event-e04-journalist.png',
+        image: 'assets/event-lobby-attack.png',
         minDay: 20, maxDay: 50,
         condition: () => SIM.aipacPressure < 35,
         choices: [
@@ -3128,7 +3133,7 @@ const DECISION_EVENTS = [
     {
         id: 'donor_ultimatum', title: 'The Donor Ultimatum',
         description: 'Major political donors, coordinated through pro-Israel networks, threaten to pull all campaign funding unless you harden your Iran stance.',
-        image: 'assets/event-e08-oil-panic.png',
+        image: 'assets/event-donor-ultimatum.png',
         minDay: 30, maxDay: 60,
         condition: () => SIM.aipacPressure < 25,
         choices: [

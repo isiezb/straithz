@@ -391,17 +391,103 @@ function showSceneImage(src, options) {
 }
 
 /**
- * Show the current story arc image as ambient background at low opacity.
+ * Get the best ambient scene image based on current game state + character.
+ * Priority: crisis → character-specific state → strait status → budget → tension.
+ */
+function getAmbientSceneImage() {
+    if (typeof SIM === 'undefined') return null;
+    const char = SIM.character ? SIM.character.id : null;
+
+    // Crisis overrides everything
+    if (SIM.warPath >= 4) return 'assets/scene-total-war.png';
+    if (SIM.crisisLevel >= 2) return 'assets/situation-room-crisis.png';
+
+    // Character-specific ambient states
+    if (char === 'trump' && SIM.victoryNarrative >= 2)
+        return 'assets/scene-trump-victory.png';
+    if (char === 'kushner' && SIM.character.exposure > 60)
+        return 'assets/scene-kushner-exposure.png';
+    if (char === 'asmongold' && SIM.audience > 80)
+        return 'assets/scene-asmongold-viral.png';
+    if (char === 'fuentes' && SIM.withdrawalProgress > 0)
+        return 'assets/event-fuentes-withdraw.png';
+    if (char === 'hegseth')
+        return 'assets/scene-hegseth-carrier.png';
+
+    // Strait progressing toward win
+    if (SIM.straitOpenDays >= 3) return 'assets/scene-strait-open.png';
+
+    // Budget crisis
+    if (SIM.budget < 200) return 'assets/scene-budget-crisis.png';
+
+    // Tension-based situation room
+    if (SIM.tension > 70) return 'assets/situation-room-crisis.png';
+    if (SIM.tension > 40) return 'assets/situation-room-elevated.png';
+
+    // Fall back to story arc image
+    if (typeof getCurrentStoryArc === 'function') {
+        const arc = getCurrentStoryArc();
+        if (arc && arc.image) return arc.image;
+    }
+
+    return 'assets/situation-room-calm.png';
+}
+
+/**
+ * Show the ambient scene background based on game state.
  */
 function showSceneAmbient() {
-    if (typeof getCurrentStoryArc !== 'function') return;
-    const arc = getCurrentStoryArc();
-    if (arc && arc.image) {
-        _sceneAmbientSrc = arc.image;
-        showSceneImage(arc.image, { opacity: 0.4, fadeIn: 800 });
+    const img = getAmbientSceneImage();
+    if (img) {
+        _sceneAmbientSrc = img;
+        showSceneImage(img, { opacity: 0.4, fadeIn: 800 });
     } else {
         _clearSceneImage(500);
     }
+}
+
+// ======================== ARC TRANSITION SPLASH ========================
+
+const ARC_TITLES = {
+    the_spark:         'THE SPARK',
+    the_squeeze:       'THE SQUEEZE',
+    diplomatic_window: 'DIPLOMATIC WINDOW',
+    false_dawn:        'FALSE DAWN',
+    proxy_season:      'PROXY SEASON',
+    pressure_cooker:   'PRESSURE COOKER',
+    crossroads:        'CROSSROADS',
+    the_grind:         'THE GRIND',
+    endgame_setup:     'ENDGAME',
+    resolution:        'RESOLUTION'
+};
+
+/**
+ * Show a full-screen arc transition splash for ~3 seconds.
+ */
+function showArcTransition(arcId, arcImage) {
+    const title = ARC_TITLES[arcId] || arcId.replace(/_/g, ' ').toUpperCase();
+    const overlay = document.createElement('div');
+    overlay.className = 'arc-splash';
+    overlay.innerHTML = `
+        <img src="${arcImage}" class="arc-splash-img" alt="${title}">
+        <div class="arc-splash-title">${title}</div>
+    `;
+    document.getElementById('game-container').appendChild(overlay);
+
+    // Fade in
+    requestAnimationFrame(() => {
+        overlay.classList.add('arc-splash-visible');
+    });
+
+    // Hold 3s then fade out
+    setTimeout(() => {
+        overlay.classList.remove('arc-splash-visible');
+        overlay.classList.add('arc-splash-out');
+        setTimeout(() => overlay.remove(), 800);
+    }, 3000);
+
+    // Also update the scene panel to the arc image
+    showSceneImage(arcImage, { fadeIn: 800, caption: title, opacity: 0.6 });
 }
 
 /**

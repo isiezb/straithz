@@ -1253,13 +1253,26 @@ function showDailyReport() {
         return;
     }
 
-    // Show tension-variant situation room in scene panel for morning briefing
+    // Show tension/character-variant situation room in scene panel
+    const charId = SIM.character ? SIM.character.id : null;
     let briefingImg = 'assets/situation-room.png';
+
+    // Tension-based defaults
     if (SIM.tension > 65) briefingImg = 'assets/situation-room-crisis.png';
     else if (SIM.tension > 40) briefingImg = 'assets/situation-room-elevated.png';
     else if (SIM.tension < 25) briefingImg = 'assets/situation-room-calm.png';
+
+    // Day-based overrides
     if (SIM.day <= 7) briefingImg = 'assets/briefing-early.png';
     else if (SIM.day > 50) briefingImg = 'assets/briefing-late.png';
+
+    // Character-specific overrides for notable states
+    if (charId === 'hegseth' && SIM.warPath >= 2) briefingImg = 'assets/map-tactical.png';
+    else if (charId === 'kushner' && SIM.character.exposure > 60) briefingImg = 'assets/scene-kushner-exposure.png';
+    else if (charId === 'asmongold' && SIM.audience > 70) briefingImg = 'assets/scene-asmongold-viral.png';
+    else if (charId === 'fuentes' && SIM.internationalStanding < 25) briefingImg = 'assets/event-fuentes-isolation.png';
+    else if (charId === 'trump' && SIM.domesticApproval < 35) briefingImg = 'assets/event-trump-rally.png';
+
     if (typeof showSceneImage === 'function') {
         showSceneImage(briefingImg, { caption: 'MORNING BRIEFING \u2014 DAY ' + SIM.day });
     }
@@ -2444,34 +2457,70 @@ function _narrateAction(actionId, snap, scaledKeys) {
     const ACTION_SCENE_IMAGES = {
         // Military actions
         'deploy-escort': 'assets/scene-intercept.png',
-        'naval-exercise': 'assets/event-military.png',
+        'escort-tankers': 'assets/scene-intercept.png',
+        'naval-exercise': 'assets/event-hegseth-carrier.png',
         'carrier-ops': 'assets/scene-hegseth-carrier.png',
         'launch-strike': 'assets/scene-total-war.png',
-        'increase-patrols': 'assets/event-military.png',
-        'mine-sweeping': 'assets/scene-mine.png',
-        'intercept-boats': 'assets/scene-intercept.png',
+        'precision-strike': 'assets/scene-total-war.png',
+        'spec-ops-raid': 'assets/event-hegseth-shock-awe.png',
+        'mine-sweep': 'assets/scene-mine.png',
+        'drone-ops': 'assets/event-e09-carrier-incident.png',
+        'reposition-fleet': 'assets/event-hegseth-carrier.png',
+        'air-strikes': 'assets/scene-total-war.png',
         // Diplomatic actions
-        'make-phone-call': 'assets/scene-trump-phone.png',
-        'un-session': 'assets/event-e11-un-showdown.png',
-        'backchannel': 'assets/event-e10-shirazi.png',
-        'coalition-building': 'assets/event-envoy.png',
-        'press-conference': 'assets/event-diplomatic.png',
-        'humanitarian-gesture': 'assets/event-rescue-op.png',
-        // Economic
-        'impose-sanctions': 'assets/event-economic.png',
-        'oil-reserves': 'assets/event-e08-oil-panic.png',
-        'trade-incentives': 'assets/event-economic.png',
-        // Intelligence
-        'gather-intel': 'assets/event-intel.png',
-        'cyber-operation': 'assets/event-e23-cyber.png',
+        'negotiate': 'assets/scene-muscat-meeting.png',
+        'phone-call': 'assets/scene-trump-phone.png',
+        'draft-proposal': 'assets/event-diplomatic-win.png',
+        'demand-un-session': 'assets/event-e11-un-showdown.png',
+        'roe-adjustment': 'assets/event-e03-admiral.png',
+        'address-allies': 'assets/event-e05-british-pm.png',
+        'establish-line': 'assets/event-diplomatic.png',
+        // Economic actions
+        'release-spr': 'assets/event-economic.png',
+        'sanctions': 'assets/event-economic.png',
+        'adjust-sanctions': 'assets/event-economic.png',
+        'market-intervention': 'assets/event-oil-chaos.png',
+        // Intelligence actions
+        'gather-intel': 'assets/event-e21-intel-breakthrough.png',
         'analyze-threats': 'assets/event-intel.png',
-        // Domestic
-        'address-nation': 'assets/event-diplomatic.png',
+        'intel-ops': 'assets/event-intel.png',
+        // Domestic/PR actions
+        'press-conference': 'assets/event-trump-fox.png',
+        'address-nation': 'assets/event-trump-rally.png',
+        'brief-congress': 'assets/event-e18-congress.png',
         'lobby-congress': 'assets/event-e18-congress.png',
-        // Change ROE
-        'change-roe': 'assets/event-military.png',
+        'change-roe': 'assets/event-e03-admiral.png',
     };
-    const actionImg = ACTION_SCENE_IMAGES[actionId];
+    const CHARACTER_ACTION_IMAGES = {
+        trump: {
+            'phone-call': 'assets/scene-trump-phone.png',
+            'press-conference': 'assets/event-trump-fox.png',
+            'address-nation': 'assets/event-trump-rally.png',
+        },
+        hegseth: {
+            'reposition-fleet': 'assets/scene-hegseth-carrier.png',
+            'escort-tankers': 'assets/scene-hegseth-carrier.png',
+            'press-conference': 'assets/event-hegseth-pentagon.png',
+        },
+        kushner: {
+            'phone-call': 'assets/scene-muscat-meeting.png',
+            'negotiate': 'assets/scene-muscat-meeting.png',
+            'market-intervention': 'assets/event-kushner-deal.png',
+        },
+        asmongold: {
+            'press-conference': 'assets/event-asmongold-stream.png',
+            'gather-intel': 'assets/event-asmongold-osint.png',
+            'analyze-threats': 'assets/event-asmongold-osint.png',
+        },
+        fuentes: {
+            'press-conference': 'assets/event-fuentes-congress.png',
+            'address-nation': 'assets/event-fuentes-congress.png',
+            'brief-congress': 'assets/event-fuentes-congress.png',
+        }
+    };
+    const charId = SIM.character ? SIM.character.id : null;
+    const actionImg = (charId && CHARACTER_ACTION_IMAGES[charId] && CHARACTER_ACTION_IMAGES[charId][actionId])
+        || ACTION_SCENE_IMAGES[actionId];
     if (actionImg && typeof showSceneImage === 'function') {
         showSceneImage(actionImg, { duration: 6000, caption: actionName });
     }
@@ -3428,9 +3477,34 @@ function _writeDayEndScene() {
         reflective: 'assets/situation-room-calm.png',
     };
     const CHAR_OVERNIGHT = {
-        kushner: { confident: 'assets/scene-kushner-exposure.png', desperate: 'assets/scene-muscat-meeting.png' },
-        asmongold: { triumphant: 'assets/scene-asmongold-viral.png' },
-        hegseth: { confident: 'assets/scene-hegseth-carrier.png' },
+        trump: {
+            confident: 'assets/scene-trump-victory.png',
+            triumphant: 'assets/scene-trump-victory.png',
+            desperate: 'assets/event-trump-rally.png',
+            tense: 'assets/situation-room-crisis.png',
+        },
+        kushner: {
+            confident: 'assets/scene-muscat-meeting.png',
+            desperate: 'assets/scene-kushner-exposure.png',
+            tense: 'assets/scene-kushner-exposure.png',
+        },
+        asmongold: {
+            triumphant: 'assets/scene-asmongold-viral.png',
+            confident: 'assets/scene-asmongold-viral.png',
+            desperate: 'assets/event-asmongold-disinfo.png',
+        },
+        hegseth: {
+            confident: 'assets/scene-hegseth-carrier.png',
+            triumphant: 'assets/scene-hegseth-carrier.png',
+            desperate: 'assets/event-hegseth-battle.png',
+            grim: 'assets/event-crisis-friendly-fire.png',
+        },
+        fuentes: {
+            confident: 'assets/event-fuentes-base.png',
+            triumphant: 'assets/event-fuentes-withdraw.png',
+            desperate: 'assets/event-fuentes-isolation.png',
+            grim: 'assets/event-fuentes-pariah.png',
+        },
     };
     const overnightImg = (CHAR_OVERNIGHT[charId] && CHAR_OVERNIGHT[charId][finalMood]) || OVERNIGHT_IMAGES[finalMood];
     if (overnightImg && typeof showSceneImage === 'function') {
@@ -4314,26 +4388,34 @@ function showGameOverScreen() {
         const ep = SIM.character.epilogues;
         if (SIM.gameWon && SIM.warPath <= 1 && ep.diplomatic) {
             epilogueText = ep.diplomatic;
-            epilogueImg = 'assets/epilogue-peace.png';
+            epilogueImg = 'assets/epilogue-peace-crt.png';
         } else if (SIM.gameWon && SIM.warPath >= 4 && ep.military) {
             epilogueText = ep.military;
             epilogueImg = 'assets/epilogue-war.png';
         } else if (SIM.gameWon && SIM.warPath >= 2 && ep.military) {
             epilogueText = ep.military;
-            epilogueImg = 'assets/epilogue-military.png';
+            epilogueImg = 'assets/epilogue-military-crt.png';
         } else if (!SIM.gameWon && ep.decline) {
             epilogueText = ep.decline;
-            epilogueImg = 'assets/epilogue-managed-decline.png';
+            epilogueImg = 'assets/epilogue-decline-crt.png';
         } else if (SIM.gameWon && ep.diplomatic) {
             epilogueText = ep.diplomatic;
             epilogueImg = 'assets/epilogue-diplomatic.png';
         }
     }
     if (!SIM.gameWon && !epilogueText) {
-        // Pick defeat-specific epilogue image based on how the game ended
+        const cid = SIM.character ? SIM.character.id : null;
+        // Pick defeat-specific epilogue image based on how + who
         if (SIM.warPath >= 5) epilogueImg = 'assets/epilogue-war.png';
         else if (SIM.budget <= 0) epilogueImg = 'assets/scene-budget-crisis.png';
-        else if (SIM.domesticApproval < 15) epilogueImg = 'assets/scene-removal.png';
+        else if (SIM.domesticApproval < 15) {
+            if (cid === 'fuentes') epilogueImg = 'assets/event-fuentes-pariah.png';
+            else if (cid === 'trump') epilogueImg = 'assets/scene-removal.png';
+            else epilogueImg = 'assets/scene-removal.png';
+        }
+        else if (cid === 'kushner') epilogueImg = 'assets/scene-kushner-exposure.png';
+        else if (cid === 'asmongold') epilogueImg = 'assets/event-asmongold-disinfo.png';
+        else if (cid === 'hegseth') epilogueImg = 'assets/event-hegseth-battle.png';
         else epilogueImg = 'assets/epilogue-defeat.png';
     }
 
@@ -4567,11 +4649,81 @@ function _getEventPortrait(event) {
     return null;
 }
 
+// ======================== CAMPAIGN IMAGE SYSTEM ========================
+
+// Character-specific image overrides for shared events
+const CHARACTER_EVENT_IMAGES = {
+    trump: {
+        first_seizure_attempt: 'assets/event-e06-seizure.png',
+        oil_markets_panic: 'assets/event-e08-oil-panic.png',
+        election_pressure: 'assets/event-trump-rally.png',
+        congressional_hearing_big: 'assets/event-trump-rally.png',
+        congress_pressure: 'assets/event-trump-rally.png',
+        truth_social_armada: 'assets/event-trump-truth-social.png',
+        war_powers_vote: 'assets/event-trump-rally.png',
+    },
+    hegseth: {
+        carrier_incident: 'assets/event-hegseth-carrier.png',
+        first_seizure_attempt: 'assets/scene-intercept.png',
+        drone_carrier: 'assets/event-hegseth-carrier.png',
+        second_carrier: 'assets/event-hegseth-carrier.png',
+        carrier_near_miss: 'assets/event-hegseth-carrier.png',
+        friendly_fire: 'assets/event-crisis-friendly-fire.png',
+        carrier_hit: 'assets/event-hegseth-battle.png',
+        the_leak: 'assets/event-hegseth-pentagon.png',
+    },
+    kushner: {
+        oil_markets_panic: 'assets/event-oil-chaos.png',
+        secret_talks: 'assets/scene-muscat-meeting.png',
+        oman_talks: 'assets/scene-muscat-meeting.png',
+        backchannel_progress: 'assets/scene-muscat-meeting.png',
+        backchannel_ceasefire_test: 'assets/event-diplomatic-win.png',
+        gulf_offer: 'assets/event-kushner-mbs.png',
+        nowruz_ceasefire: 'assets/event-diplomatic-win.png',
+        china_mediation: 'assets/event-kushner-deal.png',
+    },
+    asmongold: {
+        journalists_call: 'assets/event-asmongold-osint.png',
+        media_crisis: 'assets/event-asmongold-disinfo.png',
+        the_leak: 'assets/event-asmongold-osint.png',
+        election_pressure: 'assets/event-asmongold-stream.png',
+        congress_pressure: 'assets/event-asmongold-stream.png',
+        oil_markets_panic: 'assets/event-oil-chaos.png',
+    },
+    fuentes: {
+        aipac_delegation: 'assets/event-lobby-attack.png',
+        election_pressure: 'assets/event-fuentes-congress.png',
+        congress_pressure: 'assets/event-fuentes-congress.png',
+        congressional_hearing_big: 'assets/event-fuentes-congress.png',
+        war_powers_vote: 'assets/event-fuentes-congress.png',
+        domestic_unrest: 'assets/event-fuentes-base.png',
+        donor_ultimatum: 'assets/event-donor-ultimatum.png',
+        oil_markets_panic: 'assets/event-oil-chaos.png',
+    }
+};
+
+function getEventImage(eventId, characterId) {
+    // 1. Character-specific override
+    if (characterId && CHARACTER_EVENT_IMAGES[characterId]) {
+        const charImg = CHARACTER_EVENT_IMAGES[characterId][eventId];
+        if (charImg) return charImg;
+    }
+    // 2. Fall through to event's own image property (handled by caller)
+    return null;
+}
+
 function _getEventCategoryImage(event) {
     if (!event) return '';
-    // Per-event image override (for story events with unique art)
+
+    // 1. Character-specific override via campaign system
+    const charId = SIM.character ? SIM.character.id : null;
+    const campaignImg = getEventImage(event.id, charId);
+    if (campaignImg) return campaignImg;
+
+    // 2. Per-event image override
     if (event.image) return event.image;
-    // Determine category from event content
+
+    // 3. Keyword-based category fallback (last resort)
     const title = (event.title || '').toLowerCase();
     const desc = (event.description || '').toLowerCase();
     const text = title + ' ' + desc;
@@ -4585,7 +4737,7 @@ function _getEventCategoryImage(event) {
         return 'assets/event-economic.png';
     if (text.match(/intel|spy|cyber|drone|surveil|sigint|humint|leak|defect|source|classified/))
         return 'assets/event-intel.png';
-    return 'assets/event-military.png'; // default
+    return 'assets/event-military.png';
 }
 
 // ======================== ACTION PANEL CSS ========================

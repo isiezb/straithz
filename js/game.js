@@ -104,11 +104,21 @@ function advanceDay() {
 }
 
 function advanceToMorning() {
+    // Detect story arc change before incrementing day
+    const prevArc = typeof getCurrentStoryArc === 'function' ? getCurrentStoryArc() : null;
+
     SIM.day++;
     SIM.hour = 0;
     SIM.weekDay = ((SIM.day - 1) % 7) + 1;
     SIM.week = Math.floor((SIM.day - 1) / 7) + 1;
     SIM.phase = 'morning';
+
+    // Show arc transition splash if the story arc changed
+    const newArc = typeof getCurrentStoryArc === 'function' ? getCurrentStoryArc() : null;
+    if (newArc && prevArc && newArc.id !== prevArc.id && typeof showArcTransition === 'function') {
+        showArcTransition(newArc.id, newArc.image);
+    }
+
     // Add day separator to narrative feed
     if (typeof addNarrative === 'function') {
         _narrativeEntries.push({
