@@ -121,10 +121,10 @@ body {
 #scene-panel {
     position: relative;
     width: 100%;
-    height: 140px;
+    height: 120px;
     min-height: 0;
-    max-height: 140px;
-    flex-shrink: 1;
+    max-height: 120px;
+    flex-shrink: 2;
     background: #020402;
     border-bottom: 1px solid var(--border);
     overflow: hidden;
@@ -475,7 +475,7 @@ body {
 #action-bar {
     flex-shrink: 1;
     min-height: 0;
-    max-height: 160px;
+    max-height: 140px;
     border-top: 1px solid var(--border);
     background: #080a08;
     overflow-y: auto;
@@ -2594,6 +2594,7 @@ body {
 
 .ap-scroll {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding: 6px 0;
 }
@@ -3079,9 +3080,15 @@ body {
     .nf-entry { font-size: 13px; }
 }
 
-@media (max-height: 700px) {
-    .terminal-box { padding: 16px 14px; }
-    #scene-panel { height: 140px; min-height: 80px; max-height: 140px; }
-    #map-sidebar { min-height: 100px; max-height: 180px; }
-    #char-panel { max-height: 120px; }
+@media (max-height: 800px) {
+    .terminal-box { padding: 12px 14px; }
+    #scene-panel { height: 100px; min-height: 0; max-height: 100px; }
+    #action-bar { max-height: 120px; }
+    #char-panel { max-height: 100px; }
+}
+
+@media (max-height: 600px) {
+    #scene-panel { height: 80px; max-height: 80px; }
+    #action-bar { max-height: 100px; }
+    #char-panel { display: none; }
 }
