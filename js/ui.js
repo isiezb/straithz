@@ -3222,12 +3222,31 @@ function _writeDayEndScene() {
         }
     }
 
-    // Write to narrative feed
-    if (reflectionText) {
-        addNarrative('scene', reflectionText, { portrait: _dayEndPortrait });
-    }
-    if (cliffText) {
-        addNarrative('alert', cliffText, { level: 'warning' });
+    // Write to narrative feed with paced delivery via narrateSequence
+    if (reflectionText && typeof narrateSequence === 'function') {
+        const sentences = reflectionText.match(/[^.!?]+[.!?]+/g) || [reflectionText];
+        const entries = sentences.map((s, i) => ({
+            type: 'scene',
+            text: s.trim(),
+            options: { portrait: i === 0 ? _dayEndPortrait : undefined },
+            delay: i === 0 ? 0 : 600
+        }));
+        if (cliffText) {
+            entries.push({
+                type: 'alert',
+                text: cliffText,
+                options: { level: 'warning' },
+                delay: 800
+            });
+        }
+        narrateSequence(entries);
+    } else {
+        if (reflectionText) {
+            addNarrative('scene', reflectionText, { portrait: _dayEndPortrait });
+        }
+        if (cliffText) {
+            addNarrative('alert', cliffText, { level: 'warning' });
+        }
     }
 
     // Snapshot for tomorrow's cliffhanger comparisons
@@ -3497,15 +3516,54 @@ function showEffectSummary(effects, targetEl) {
 
 // ======================== DECISION EVENTS ========================
 
-function showDecisionEvent(event) {
+async function showDecisionEvent(event) {
     hideActionPanel();
-    if (typeof SFX !== 'undefined') {
-        if (event.crisis) SFX.klaxon();
-        else SFX.phone();
+
+    const isCrisis = event.crisis === true;
+
+    // --- Crisis pacing: "Silence Before Storms" buildup ---
+    if (isCrisis) {
+        // 1. Fade background music to silence over 1 second
+        if (typeof SFX !== 'undefined') SFX.fadeOutMusic(1000);
+
+        // 2. Suppress ambient narrative feed
+        SIM._suppressAmbient = true;
+
+        // 3. Wait 2 seconds of quiet
+        await new Promise(r => setTimeout(r, 2000));
+
+        // 4. Flash traffic alert in narrative feed
+        if (typeof addNarrative === 'function') {
+            addNarrative('alert', '[ FLASH TRAFFIC ]', { level: 'critical' });
+        }
+
+        // 5. Wait 1 second of silence
+        await new Promise(r => setTimeout(r, 1000));
+
+        // 6. Deliver scene text line-by-line with 400ms delays
+        const eventScenesPre = DATA['event-scenes'] || {};
+        const customScenePre = eventScenesPre.scenes && eventScenesPre.scenes[event.id];
+        if (customScenePre && customScenePre.scene) {
+            const lines = customScenePre.scene.split(/(?<=[.!?])\s+/).filter(l => l.trim());
+            for (const line of lines.slice(0, 4)) {
+                if (typeof addNarrative === 'function') addNarrative('scene', line);
+                await new Promise(r => setTimeout(r, 400));
+            }
+        }
+
+        // 7. Beat, then klaxon
+        await new Promise(r => setTimeout(r, 600));
+        if (typeof SFX !== 'undefined') SFX.klaxon();
+
+        // 8. Re-enable ambient feed
+        SIM._suppressAmbient = false;
+    } else {
+        // Non-crisis: play phone sound immediately as before
+        if (typeof SFX !== 'undefined') SFX.phone();
     }
+
     let countdown = event.countdown || 0;
     let countdownInterval = null;
-    const isCrisis = event.crisis === true;
 
     // --- Build narrative scene for the feed ---
     const eventScenes = DATA['event-scenes'] || {};
@@ -3515,8 +3573,8 @@ function showDecisionEvent(event) {
     // Determine portrait for the event narrative entry
     const _evtPortrait = _getEventPortrait(event);
 
-    // Write scene to narrative feed
-    if (typeof addNarrative === 'function') {
+    // Write scene to narrative feed (non-crisis only; crisis already wrote lines above)
+    if (!isCrisis && typeof addNarrative === 'function') {
         addNarrative('scene', sceneText, { portrait: _evtPortrait });
     }
 
@@ -3814,6 +3872,9 @@ function resolveDecision(event, choiceIdx, customScene) {
         closeTerminal();
         SIM.decisionEventActive = false;
 
+        // Restore music after crisis event modal closes
+        if (event.crisis && typeof SFX !== 'undefined') SFX.restoreMusic();
+
         // After event resolves, go to daily report (overnight)
         SIM.phase = 'overnight';
         showDailyReport();
@@ -3826,6 +3887,7 @@ let _lastAmbientIdx = -1;
 let _ambientCooldown = 0;
 
 function _pushAmbientContent() {
+    if (SIM._suppressAmbient) return;
     if (_ambientCooldown > 0) { _ambientCooldown--; return; }
     // Don't flood — space out ambient entries
     _ambientCooldown = 0;

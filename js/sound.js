@@ -143,6 +143,44 @@ const SFX = {
         osc.stop(t + 0.2);
     },
 
+    /** Fade out background music over durationMs, then pause */
+    fadeOutMusic(durationMs) {
+        const audio = document.getElementById('bg-music');
+        if (!audio) return;
+        this._musicWasPlaying = !audio.paused;
+        this._musicOriginalVolume = audio.volume;
+        if (audio.paused) return;
+        const steps = 20;
+        const interval = durationMs / steps;
+        const volStep = audio.volume / steps;
+        let remaining = steps;
+        this._fadeInterval = setInterval(() => {
+            remaining--;
+            audio.volume = Math.max(0, audio.volume - volStep);
+            if (remaining <= 0) {
+                clearInterval(this._fadeInterval);
+                this._fadeInterval = null;
+                audio.pause();
+                audio.volume = 0;
+            }
+        }, interval);
+    },
+
+    /** Restore music volume and resume if it was playing before fade */
+    restoreMusic() {
+        const audio = document.getElementById('bg-music');
+        if (!audio) return;
+        if (this._fadeInterval) {
+            clearInterval(this._fadeInterval);
+            this._fadeInterval = null;
+        }
+        const vol = this._musicOriginalVolume !== undefined ? this._musicOriginalVolume : 0.3;
+        audio.volume = vol;
+        if (this._musicWasPlaying) {
+            audio.play().catch(() => {});
+        }
+    },
+
     /** Day transition whoosh */
     transition() {
         if (!this._ctx || this._muted) return;

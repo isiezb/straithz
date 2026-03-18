@@ -52,7 +52,7 @@
                 if (SIM.phase === 'dayplay' && !SIM.gameOver) {
                     // Ambient cable traffic during idle periods
                     _ambientTimer += dt;
-                    if (_ambientTimer > 4000 && !SIM.decisionEventActive) {
+                    if (_ambientTimer > 4000 && !SIM.decisionEventActive && !SIM._suppressAmbient) {
                         _ambientTimer = 0;
                         if (typeof _pushAmbientContent === 'function') _pushAmbientContent();
                     }
