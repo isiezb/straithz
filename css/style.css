@@ -296,13 +296,20 @@ body {
 .gauge-trend.down { color: #dd4444; }
 .gauge-trend.stable { color: #2a6a4a; }
 
-/* Gauge warning flash */
-@keyframes gaugeFlash {
+/* Gauge flash on change */
+@keyframes gaugeFlashBad {
     0%, 100% { border-color: #1a3a2a; }
     50% { border-color: #dd4444; background: rgba(221, 68, 68, 0.05); }
 }
+@keyframes gaugeFlashGood {
+    0%, 100% { border-color: #1a3a2a; }
+    50% { border-color: #44dd88; background: rgba(68, 221, 136, 0.05); }
+}
 .gauge-item.danger-flash {
-    animation: gaugeFlash 1s ease 2;
+    animation: gaugeFlashBad 0.5s ease 2;
+}
+.gauge-item.good-flash {
+    animation: gaugeFlashGood 0.5s ease 2;
 }
 
 /* Win progress bar */
@@ -557,54 +564,8 @@ body {
     border-color: #111;
 }
 
-/* News tickers removed — feed moved to situation panel */
+/* News tickers removed */
 #news-tickers { display: none; }
-
-.ticker {
-    display: flex;
-    align-items: center;
-    height: 22px;
-    border-bottom: 1px solid #0d1a10;
-    overflow: hidden;
-}
-
-.ticker-label {
-    flex-shrink: 0;
-    font-size: 9px;
-    letter-spacing: 2px;
-    padding: 0 8px;
-    color: #0a0a0a;
-    background: #44dd88;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-}
-
-.ticker.intel .ticker-label {
-    background: #ddaa44;
-    color: #0a0a0a;
-}
-
-.ticker-content {
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    font-size: 10px;
-    color: #44dd88;
-    letter-spacing: 0.5px;
-    padding-left: 12px;
-    animation: tickerScroll 30s linear infinite;
-}
-
-.ticker.intel .ticker-content {
-    color: #ddaa44;
-}
-
-@keyframes tickerScroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
 
 /* ======================== TERMINAL OVERLAY ======================== */
 
@@ -862,12 +823,7 @@ body {
 .crisis-terminal .terminal-box {
     border: 2px solid #dd4444;
     box-shadow: 0 0 30px rgba(221, 68, 68, 0.3);
-    animation: crisisPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes crisisPulse {
-    0%, 100% { box-shadow: 0 0 15px rgba(221, 68, 68, 0.2); }
-    50% { box-shadow: 0 0 40px rgba(221, 68, 68, 0.5); }
+    box-shadow: 0 0 30px rgba(221, 68, 68, 0.4);
 }
 
 .crisis-header {
@@ -2058,6 +2014,26 @@ body {
     box-shadow: 0 0 12px rgba(221, 170, 68, 0.2);
 }
 
+.ap-swap-btn {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid #1a3a2a;
+    color: #88aa99;
+    padding: 6px;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 6px;
+    transition: all 0.15s ease;
+}
+.ap-swap-btn:hover {
+    border-color: #44dd88;
+    color: #44dd88;
+}
+
 /* ======================== ACTION TOOLTIPS ======================== */
 
 .ap-btn .ap-tooltip {
@@ -2135,7 +2111,7 @@ body {
     color: #ddaa44;
     line-height: 1.5;
     box-shadow: 0 0 30px rgba(221, 170, 68, 0.15);
-    animation: guide-pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(221, 170, 68, 0.2);
 }
 .advisor-guide .guide-title {
     font-size: 9px;
@@ -2200,10 +2176,7 @@ body {
     border-right: 8px solid transparent;
     border-bottom: 10px solid #ddaa44;
 }
-@keyframes guide-pulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(221, 170, 68, 0.1); }
-    50% { box-shadow: 0 0 30px rgba(221, 170, 68, 0.25); }
-}
+
 
 /* ======================== INTERRUPT OVERLAY ======================== */
 
@@ -2282,40 +2255,19 @@ body {
 
 /* ======================== FLOATING NUMBERS ======================== */
 
-.floating-number {
-    position: fixed;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    pointer-events: none;
-    z-index: 200;
-    opacity: 0;
-    transform: translateY(0);
-    white-space: nowrap;
+/* Effect summary line (replaces floating numbers) */
+.effect-summary {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    margin: 4px 0;
+    color: #88aa99;
+    border-left: 2px solid #1a3a2a;
+    line-height: 1.5;
 }
-
-.floating-number.animate {
-    animation: floatUp 1.4s ease-out forwards;
-}
-
-@keyframes floatUp {
-    0% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.8);
-    }
-    15% {
-        opacity: 1;
-        transform: translateY(0) scale(1.1);
-    }
-    30% {
-        transform: translateY(-5px) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-40px) scale(0.9);
-    }
-}
+.effect-summary .eff-good { color: #44dd88; }
+.effect-summary .eff-bad { color: #dd4444; }
+.effect-summary .eff-neutral { color: #ddaa44; }
 
 /* ======================== ACTION PANEL SCROLLBAR ======================== */
 

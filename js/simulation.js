@@ -12,7 +12,7 @@ const SIM = {
     phase: 'charselect', // charselect|lore|initial_pick|morning|dayplay|event|overnight|weekly_checkin|gameover
 
     // Action Points
-    actionPoints: 3,
+    actionPoints: 5,
     roe: 'defensive',       // rules of engagement: defensive/moderate/aggressive
 
     // Daily desk tracking
@@ -121,7 +121,7 @@ const SIM = {
 /** Default values for SIM reset — used by restartGame() */
 const SIM_DEFAULTS = {
     day: 1, hour: 0, week: 1, weekDay: 1, speed: 2,
-    phase: 'morning', actionPoints: 3,
+    phase: 'morning', actionPoints: 5, swapsToday: 0,
     stanceActivationDay: {}, firedConsequences: [], pendingNews: [], prevGauges: null,
     oilFlow: 40, oilPrice: 95, tension: 65, domesticApproval: 60,
     internationalStanding: 50, conflictRisk: 35, budget: 900,
@@ -753,7 +753,7 @@ function dailyUpdate() {
     }
 
     // Clean old seizure days
-    SIM.recentSeizureDays = SIM.recentSeizureDays.filter(d => SIM.day - d <= 7);
+    SIM.recentSeizureDays = SIM.recentSeizureDays.filter(d => SIM.day - d <= 3);
 
     // Metric snapshot
     SIM.metricHistory.push({
@@ -949,20 +949,23 @@ function checkWinLose() {
         }
     }
 
-    // --- Win 2: Strait open 14 consecutive days (generic fallback) ---
-    const recentSeizures = SIM.recentSeizureDays.filter(d => SIM.day - d <= 7).length;
-    const straitOpen = SIM.oilFlow > 65 && SIM.tension < 45 && recentSeizures === 0 && SIM.crisisLevel === 0;
+    // --- Win 2: Strait open 10 consecutive days (generic fallback) ---
+    const recentSeizures = SIM.recentSeizureDays.filter(d => SIM.day - d <= 3).length;
+    const straitOpen = SIM.oilFlow > 55 && SIM.tension < 45 && recentSeizures === 0 && SIM.crisisLevel === 0;
 
     if (straitOpen) {
         SIM.straitOpenDays++;
-        if (SIM.straitOpenDays >= 14) {
-            endGame(true, 'The Strait of Hormuz has been open and stable for 14 consecutive days. Crisis resolved through ' +
+        if (SIM.straitOpenDays >= 7) {
+            addHeadline(`STRAIT STABLE ${SIM.straitOpenDays}/10 DAYS — maintain course!`, 'good');
+        }
+        if (SIM.straitOpenDays >= 10) {
+            endGame(true, 'The Strait of Hormuz has been open and stable for 10 consecutive days. Crisis resolved through ' +
                 (SIM.diplomaticCapital > 60 ? 'masterful diplomacy.' : SIM.domesticApproval > 70 ? 'strong leadership.' : 'persistent strategy.'));
             return true;
         }
     } else {
-        if (SIM.straitOpenDays > 3) {
-            addHeadline(`Strait stability disrupted — open day counter resets (was ${SIM.straitOpenDays}/14)`, 'warning');
+        if (SIM.straitOpenDays > 2) {
+            addHeadline(`Strait stability disrupted — counter resets (was ${SIM.straitOpenDays}/10)`, 'warning');
         }
         SIM.straitOpenDays = 0;
     }

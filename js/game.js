@@ -76,7 +76,7 @@ function advanceToMorning() {
 
 function startDayPlay() {
     SIM.phase = 'dayplay';
-    SIM.actionPoints = 3;
+    SIM.actionPoints = 5;
     SIM.prevGauges = calculateGauges();
     if (typeof showActionPanel === 'function') showActionPanel();
 }

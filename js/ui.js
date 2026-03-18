@@ -172,7 +172,6 @@ const _intelSnippets = [
 ];
 
 // Floating number stack counter for positioning
-let _floatingNumberStack = 0;
 
 // ======================== ACTION TOOLTIPS ========================
 
@@ -218,7 +217,6 @@ function initUI() {
     setupKeyboardShortcuts();
     _injectActionPanelStyles();
     initMusic();
-    updateTickers();
     initSituationPanel();
 }
 
@@ -422,8 +420,6 @@ function updateGauges() {
     const dayEl = document.getElementById('hud-day');
     if (dayEl) dayEl.textContent = _getDateString();
 
-    // Update tickers and situation panel periodically
-    if (SIM.day && typeof updateTickers === 'function') updateTickers();
     if (typeof updateSituationPanel === 'function') updateSituationPanel();
 
     // Rating
@@ -481,7 +477,14 @@ function setGauge(id, value, delta) {
         fill.className = 'gauge-fill ' + (value >= 60 ? 'good' : value >= 35 ? 'warning' : 'danger');
     }
     if (valEl) {
-        valEl.textContent = Math.round(value);
+        // Asmongold: fuzzy numbers at low credibility
+        let displayVal = Math.round(value);
+        if (SIM.character?.id === 'asmongold' && SIM.uniqueResource < 30) {
+            const fuzz = Math.round((30 - SIM.uniqueResource) * 0.5);
+            displayVal = Math.round(value / (fuzz + 1)) * (fuzz + 1);
+            displayVal = '~' + displayVal;
+        }
+        valEl.textContent = displayVal;
         valEl.className = 'gauge-value ' + (value >= 60 ? 'good' : value >= 35 ? 'warning' : 'danger');
     }
     // Trend arrow
@@ -491,11 +494,15 @@ function setGauge(id, value, delta) {
         else if (d < 0) { trendEl.textContent = '\u25BC' + d; trendEl.className = 'gauge-trend down'; }
         else { trendEl.textContent = ''; trendEl.className = 'gauge-trend stable'; }
     }
-    // Warning flash when gauge drops below 35
-    if (value < 35 && delta < -2) {
-        el.classList.remove('danger-flash');
-        void el.offsetWidth; // reflow to restart animation
+    // Flash when gauge changes significantly
+    if (delta < -2) {
+        el.classList.remove('danger-flash', 'good-flash');
+        void el.offsetWidth;
         el.classList.add('danger-flash');
+    } else if (delta > 2) {
+        el.classList.remove('danger-flash', 'good-flash');
+        void el.offsetWidth;
+        el.classList.add('good-flash');
     }
 }
 
@@ -799,58 +806,20 @@ function applyStances(selected) {
 // ======================== DAILY REPORT (merged morning + overnight) ========================
 
 function showDailyReport() {
-    const g = calculateGauges();
-    const prev = SIM.prevGauges || g;
-    const advisorQuote = getAdvisorReaction('weekStart');
-    const recommendation = getAdvisorRecommendation();
-
-    // Delta helper
-    function delta(curr, prevVal) {
-        const d = Math.round(curr - prevVal);
-        if (d === 0) return { text: '\u2014', cls: 'stable' };
-        const arrow = d > 0 ? '+' + d : '' + d;
-        return { text: arrow, cls: d > 0 ? 'up-good' : 'down-bad' };
-    }
-
-    const gauges = [
-        { label: 'STABILITY', value: g.stability, delta: delta(g.stability, prev.stability) },
-        { label: 'ECONOMY', value: g.economy, delta: delta(g.economy, prev.economy) },
-        { label: 'SUPPORT', value: g.support, delta: delta(g.support, prev.support) },
-        { label: 'INTEL', value: g.intel, delta: delta(g.intel, prev.intel) },
-    ];
-
     // Day 1: show immersive first morning instead of generic report
     if (SIM.day === 1) {
         showFirstMorning();
         return;
     }
 
-    // Headlines for current day — with wire service formatting
-    const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day).slice(-5);
-    let headlinesHtml;
-    if (todayHeadlines.length > 0) {
-        headlinesHtml = todayHeadlines.map(h => {
-            const prefix = h.level === 'critical' ? '<span class="wire-prefix wire-flash">FLASH</span> '
-                         : h.level === 'warning' ? '<span class="wire-prefix wire-urgent">URGENT</span> '
-                         : h.level === 'good' ? '<span class="wire-prefix wire-bulletin">BULLETIN</span> '
-                         : '';
-            return `<div class="morning-news-item ${h.level}">${prefix}${h.text}</div>`;
-        }).join('');
-    } else {
-        headlinesHtml = '<div class="term-line dim">Nothing notable happened today.</div>';
-    }
+    const recommendation = getAdvisorRecommendation();
 
-    // Current active stances
-    const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
-    const stanceHtml = SIM.activeStances.map(s => {
-        const card = allCards.find(c => c.id === s.cardId);
-        if (!card) return '';
-        const daysActive = SIM.day - (SIM.stanceActivationDay[s.cardId] || SIM.day);
-        return `<div class="morning-stance">
-            <span class="stance-name">${card.name}</span>
-            <span class="stance-funding ${s.funding}">${s.funding.toUpperCase()}${daysActive > 0 ? ' \u00B7 ' + daysActive + 'd' : ''}</span>
-        </div>`;
-    }).join('');
+    // Top headline from overnight
+    const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day);
+    const topHeadline = todayHeadlines.filter(h => h.level !== 'normal').slice(-1)[0]
+        || todayHeadlines.slice(-1)[0]
+        || { text: 'No major developments overnight.', level: 'normal' };
+    const hlClass = topHeadline.level === 'critical' ? 'wire-flash' : topHeadline.level === 'warning' ? 'wire-urgent' : '';
 
     // Special action button
     let specialActionHtml = '';
@@ -858,77 +827,14 @@ function showDailyReport() {
         specialActionHtml = `<button class="term-btn" id="btn-special-action">[ ${SIM.character.specialAction.name.toUpperCase()} ]</button>`;
     }
 
-    const advisorImg = SIM.character.portraitImage || null;
-
     openTerminal(`
-        <div class="briefing-header-row">
-            ${advisorImg ? `<img src="${advisorImg}" class="briefing-portrait" alt="${SIM.character.name}">` : ''}
-            <div class="briefing-header-text">
-                <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
-                <div class="term-title">${_getBriefingTitle()}</div>
-                <div class="term-line dim">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
-            </div>
-        </div>
-        <div class="term-line" style="color:#ddaa44;margin:4px 0 8px 0">\u25B6 ${recommendation}</div>
-
-        <div class="term-section">
-            <div class="term-section-label">WHAT HAPPENED</div>
-            ${headlinesHtml}
-        </div>
-
-        <div class="term-section">
-            <div class="term-section-label">GAUGES</div>
-            ${gauges.map(gItem => `
-                <div class="overnight-gauge">
-                    <span class="og-label">${gItem.label}</span>
-                    <span class="og-value">${gItem.value}</span>
-                    <span class="og-delta ${gItem.delta.cls}">${gItem.delta.text}</span>
-                </div>
-            `).join('')}
-        </div>
-
-        <div class="term-section">
-            <div class="term-section-label">KEY DRIVERS</div>
-            ${_getKeyDrivers()}
-        </div>
-
-        <div class="term-section">
-            <div class="term-section-label">ACTIVE STRATEGY</div>
-            ${stanceHtml || '<div class="term-line dim">No active strategies.</div>'}
-        </div>
-
-        ${SIM.pendingEffects.length > 0 ? `
-        <div class="term-section">
-            <div class="term-section-label">PENDING ORDERS</div>
-            ${SIM.pendingEffects.map(p => {
-                const eta = p.activateOnDay - SIM.day;
-                return `<div class="pending-order">
-                    <span class="po-name">${p.cardName} (${p.funding.toUpperCase()})</span>
-                    <span class="po-eta">ETA: ${eta === 1 ? 'TOMORROW' : eta + ' DAYS'}</span>
-                </div>`;
-            }).join('')}
-        </div>` : ''}
-
-        ${SIM.intelBriefings.length > 0 ? `
-        <div class="term-section">
-            <div class="term-section-label"><span class="wire-classify">TOP SECRET // SI // NOFORN</span> \u2014 INTEL SUMMARY</div>
-            ${SIM.intelBriefings.slice(-3).map(b => {
-                const confClass = b.confidence === 'HIGH' ? 'conf-high' : b.confidence === 'MEDIUM' ? 'conf-medium' : 'conf-low';
-                return `<div class="morning-news-item" style="font-size:11px"><span class="${confClass}">[${b.confidence}]</span> ${b.text}</div>`;
-            }).join('')}
-        </div>` : ''}
-
-        <div class="term-section">
-            <div class="term-section-label">STATUS</div>
-            <div class="stat-row"><span>Escalation</span><span style="color:${_getEscalationColor()}">${_getEscalationName()} (${SIM.warPath}/5)</span></div>
-            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/14</span></div>
-            <div class="stat-row"><span>Budget</span><span>$${Math.round(SIM.budget)}M</span></div>
-            <div class="stat-row"><span>Iran</span><span>${SIM.iranStrategy.toUpperCase()}</span></div>
-            ${SIM.character.uniqueResource ? `<div class="stat-row"><span>${SIM.character.uniqueResource.name}</span><span>${Math.round(SIM.uniqueResource)}</span></div>` : ''}
-        </div>
+        <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
+        <div class="term-line dim" style="margin:4px 0">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
+        <div class="term-line ${hlClass}" style="margin:4px 0">${topHeadline.text}</div>
+        <div class="term-line" style="color:#ddaa44;margin:8px 0">\u25B6 ${recommendation}</div>
 
         <div class="term-btn-row">
-            <button class="term-btn" id="btn-maintain">[ MAINTAIN COURSE ]</button>
+            <button class="term-btn" id="btn-maintain">[ BEGIN DAY ]</button>
             <button class="term-btn warning-btn" id="btn-adjust">[ ADJUST STRATEGY ]</button>
             ${specialActionHtml}
         </div>
@@ -946,12 +852,11 @@ function showDailyReport() {
         showAdjustStrategy();
     });
 
-    // Special action handler
     const specialBtn = document.getElementById('btn-special-action');
     if (specialBtn) {
         specialBtn.addEventListener('click', () => {
             executeSpecialAction();
-            showDailyReport(); // refresh
+            showDailyReport();
         });
     }
 }
@@ -1000,6 +905,12 @@ function showAdjustStrategy() {
         return;
     }
 
+    // Limit 2 swaps per day
+    if ((SIM.swapsToday || 0) >= 2) {
+        showToast('No swaps remaining today', 'warning');
+        return;
+    }
+
     let removingIdx = null;
     let replacement = null;
 
@@ -1010,7 +921,7 @@ function showAdjustStrategy() {
     function render() {
         openTerminal(`
             <div class="term-header">ADJUST STRATEGY \u2014 DAY ${SIM.day}</div>
-            <div class="term-title">SWAP ONE CARD</div>
+            <div class="term-title">SWAP CARD (${2 - (SIM.swapsToday || 0)} swaps left today)</div>
             <div class="term-line warning">Changing course costs credibility. Choose wisely.</div>
 
             <div class="term-section">
@@ -1083,7 +994,14 @@ function showAdjustStrategy() {
 
         // Cancel
         const cancelBtn = document.getElementById('btn-cancel-adjust');
-        if (cancelBtn) cancelBtn.addEventListener('click', () => showDailyReport());
+        if (cancelBtn) cancelBtn.addEventListener('click', () => {
+            if (SIM.phase === 'dayplay') {
+                closeTerminal();
+                if (typeof showActionPanel === 'function') showActionPanel();
+            } else {
+                showDailyReport();
+            }
+        });
 
         // Confirm swap
         const confirmBtn = document.getElementById('btn-confirm-swap');
@@ -1101,11 +1019,16 @@ function showAdjustStrategy() {
                     if (!SIM.playedExclusives.includes(replacement.card.id)) SIM.playedExclusives.push(replacement.card.id);
                 }
 
+                SIM.swapsToday = (SIM.swapsToday || 0) + 1;
                 addHeadline(`Strategy changed: ${removed.card.name} \u2192 ${replacement.card.name}`, 'warning');
 
                 closeTerminal();
-                resetActionPoints();
-                startDayPlay();
+                if (SIM.phase === 'dayplay') {
+                    if (typeof showActionPanel === 'function') showActionPanel();
+                } else {
+                    resetActionPoints();
+                    startDayPlay();
+                }
             });
         }
     }
@@ -1116,7 +1039,8 @@ function showAdjustStrategy() {
 // ======================== ACTION PANEL (replaces Quick Actions) ========================
 
 function resetActionPoints() {
-    SIM.actionPoints = 3;
+    SIM.actionPoints = 5;
+    SIM.swapsToday = 0;
     if (SIM.roe === undefined) SIM.roe = 'defensive';
 }
 
@@ -1155,10 +1079,8 @@ function _applyEffect(key, val) {
 function _applyEffects(effects) {
     for (const [key, val] of Object.entries(effects)) {
         _applyEffect(key, val);
-        if (val !== 0) {
-            showFloatingNumber(key, val);
-        }
     }
+    showEffectSummary(effects);
     updateGauges();
 }
 
@@ -1194,7 +1116,7 @@ function showActionPanel() {
 
     function renderPanel() {
         const ap = SIM.actionPoints || 0;
-        const apDots = Array.from({ length: 3 }, (_, i) => i < ap
+        const apDots = Array.from({ length: 5 }, (_, i) => i < ap
             ? '<span class="ap-dot filled">\u25CF</span>'
             : '<span class="ap-dot empty">\u25CB</span>'
         ).join('');
@@ -1253,6 +1175,7 @@ function showActionPanel() {
                 <div class="ap-title">ACTIONS</div>
                 <div class="ap-points">AP: ${apDots}</div>
                 <div class="ap-budget">${budgetStr}</div>
+                ${SIM.character?.id === 'trump' ? `<div class="ap-budget" style="color:#ddaa44">PC: ${Math.round(SIM.uniqueResource)} (-2/action)</div>` : ''}
             </div>
 
             <div class="ap-escalation-bar">
@@ -1310,6 +1233,7 @@ function showActionPanel() {
                 </div>
 
                 ${specialHtml}
+                ${_getCharacterActions(ap)}
             </div>
 
             <div class="ap-win-hint">
@@ -1317,6 +1241,7 @@ function showActionPanel() {
             </div>
 
             <div class="ap-footer">
+                ${(SIM.swapsToday || 0) < 2 ? `<button class="ap-swap-btn" id="btn-swap-card">[ SWAP CARD \u2022 ${2 - (SIM.swapsToday || 0)} left ]</button>` : ''}
                 <button class="ap-end-btn" data-action="end-day">[ END DAY ]</button>
             </div>
         `;
@@ -1333,6 +1258,14 @@ function showActionPanel() {
         panel.querySelector('.ap-end-btn').addEventListener('click', () => {
             _endDay();
         });
+
+        const swapBtn = panel.querySelector('#btn-swap-card');
+        if (swapBtn) {
+            swapBtn.addEventListener('click', () => {
+                hideActionPanel();
+                showAdjustStrategy();
+            });
+        }
     }
 
     document.body.appendChild(panel);
@@ -1370,7 +1303,7 @@ const _GUIDE_STEPS = [
         anchor: 'action-panel',
         position: 'left',
         title: 'ACTIONS',
-        text: 'You get <em>3 Action Points</em> per day. Each action costs 1 AP. Some also cost budget. Hover any action to see what it does. When done, hit END DAY.',
+        text: 'You get <em>5 Action Points</em> per day. Each action costs 1 AP. Some also cost budget. You can swap up to 2 cards per day. When done, hit END DAY.',
     },
     {
         anchor: 'action-panel',
@@ -1446,8 +1379,46 @@ function _showAdvisorGuide() {
     showStep();
 }
 
+function _getCharacterActions(ap) {
+    const charId = SIM.character?.id;
+    if (!charId) return '';
+
+    if (charId === 'hegseth') {
+        return `<div class="ap-category">
+            <div class="ap-cat-header" style="color:#dd4444">SECDEF EXCLUSIVE</div>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deploy-marines">DEPLOY MARINES</button>
+            <button class="ap-btn ${ap <= 0 || SIM.budget < 20 ? 'disabled' : ''}" data-action="combat-air-patrol">COMBAT AIR PATROL <span class="ap-cost">$20M</span></button>
+        </div>`;
+    }
+    if (charId === 'fuentes') {
+        return `<div class="ap-category">
+            <div class="ap-cat-header" style="color:#ff6644">AMERICA FIRST</div>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="rally-base">RALLY THE BASE</button>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="media-blitz">MEDIA BLITZ</button>
+        </div>`;
+    }
+    if (charId === 'kushner' && SIM.character.contacts) {
+        const contactBtns = SIM.character.contacts
+            .filter(c => c.trust >= 10)
+            .map(c => `<button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="call-contact-${c.id}">CALL ${c.name.split('(')[0].trim()} <span class="ap-cost">$10M</span></button>`)
+            .join('');
+        if (contactBtns) {
+            return `<div class="ap-category">
+                <div class="ap-cat-header" style="color:#aa44dd">CONTACTS</div>
+                ${contactBtns}
+            </div>`;
+        }
+    }
+    return '';
+}
+
 function _executeAction(actionId, rerenderFn) {
     if (SIM.actionPoints <= 0) return;
+
+    // Trump: AP actions cost Political Capital
+    if (SIM.character?.id === 'trump' && actionId !== 'special') {
+        SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 2);
+    }
 
     let toastMsg = '';
     let toastLevel = 'normal';
@@ -1860,12 +1831,74 @@ function _executeAction(actionId, rerenderFn) {
             executeSpecialAction();
             break;
 
+        // === Hegseth exclusive actions ===
+        case 'deploy-marines':
+            SIM.tension = Math.min(100, SIM.tension + 8);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 6);
+            SIM.oilFlow = Math.min(100, SIM.oilFlow + 4);
+            SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 8);
+            toastMsg = 'Marines deployed — securing key chokepoints';
+            toastLevel = 'normal';
+            addHeadline('US Marines deployed to secure strait positions.', 'warning');
+            break;
+
+        case 'combat-air-patrol':
+            if (SIM.budget < 20) return;
+            SIM.budget -= 20;
+            SIM.tension = Math.min(100, SIM.tension + 5);
+            SIM.fogOfWar = Math.max(0, SIM.fogOfWar - 10);
+            SIM.iranAggression = Math.max(0, SIM.iranAggression - 4);
+            toastMsg = 'F/A-18s on station — full air dominance';
+            toastLevel = 'good';
+            addHeadline('Combat air patrols established over the strait.', 'normal');
+            break;
+
+        // === Fuentes exclusive actions ===
+        case 'rally-base':
+            SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 8);
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 3);
+            SIM.polarization = Math.min(100, SIM.polarization + 4);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 2);
+            toastMsg = '"America First!" — base enthusiasm surges';
+            toastLevel = 'good';
+            addHeadline('Populist rally energizes the base.', 'normal');
+            break;
+
+        case 'media-blitz':
+            SIM.domesticApproval = Math.min(100, SIM.domesticApproval + 5);
+            SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 3);
+            SIM.internationalStanding = Math.max(0, SIM.internationalStanding - 3);
+            toastMsg = 'Media blitz — controlling the narrative';
+            toastLevel = 'normal';
+            addHeadline('Media blitz pushes America First messaging.', 'normal');
+            break;
+
         default:
+            // Kushner contact calls
+            if (actionId.startsWith('call-contact-')) {
+                const contactId = actionId.replace('call-contact-', '');
+                const contact = SIM.character?.contacts?.find(c => c.id === contactId);
+                if (!contact || SIM.budget < 10) return;
+                SIM.budget -= 10;
+                contact.trust = Math.min(100, contact.trust + 8);
+                SIM.diplomaticCapital = Math.min(100, SIM.diplomaticCapital + 4);
+                SIM.uniqueResource = Math.min(100, SIM.uniqueResource + 5);
+                toastMsg = `Called ${contact.name} — trust +8, now ${contact.trust}`;
+                toastLevel = 'good';
+                addHeadline(`Back-channel call to ${contact.name.split('(')[0].trim()}.`, 'normal');
+                break;
+            }
             return;
     }
 
     // Spend AP
     SIM.actionPoints = Math.max(0, SIM.actionPoints - 1);
+
+    // Sound feedback
+    if (typeof SFX !== 'undefined') {
+        if (toastLevel === 'good') SFX.chime();
+        else SFX.click();
+    }
 
     if (toastMsg) showToast(toastMsg, toastLevel);
     updateGauges();
@@ -1877,8 +1910,8 @@ function _executeAction(actionId, rerenderFn) {
         return;
     }
 
-    // Random interrupt check (40% chance)
-    if (Math.random() < 0.4) {
+    // Random interrupt check (30% chance)
+    if (Math.random() < 0.3) {
         setTimeout(() => {
             showInterrupt(rerenderFn);
         }, 400);
@@ -1889,17 +1922,8 @@ function _executeAction(actionId, rerenderFn) {
 
 function _endDay() {
     hideActionPanel();
-
-    // Capture state for end-of-day summary
-    const gaugesAfter = calculateGauges();
-    const gaugesBefore = SIM.prevGauges || gaugesAfter;
-    const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day).slice(-4);
-    const todayDecisions = (SIM.decisionLog || []).filter(d => d.day === SIM.day);
-    const actionsUsed = 3 - (SIM.actionPoints || 0);
-
-    _showEndOfDaySummary(gaugesBefore, gaugesAfter, todayHeadlines, todayDecisions, actionsUsed, () => {
-        advanceDay();
-    });
+    if (typeof SFX !== 'undefined') SFX.transition();
+    advanceDay();
 }
 
 function _showEndOfDaySummary(gaugesBefore, gaugesAfter, headlines, decisions, actionsUsed, onContinue) {
@@ -1975,11 +1999,21 @@ function _showEndOfDaySummary(gaugesBefore, gaugesAfter, headlines, decisions, a
 function _getWinProgress() {
     if (!SIM.character || !SIM.character.scenario || !SIM.character.scenario.winConditions) {
         // Generic win: strait open days
-        const pct = Math.min(100, Math.round((SIM.straitOpenDays / 14) * 100));
+        const pct = Math.min(100, Math.round((SIM.straitOpenDays / 10) * 100));
+        // Daily checklist
+        const recentSeizures = SIM.recentSeizureDays ? SIM.recentSeizureDays.filter(d => SIM.day - d <= 3).length : 0;
+        const checks = [
+            { label: 'Oil Flow > 55%', ok: SIM.oilFlow > 55 },
+            { label: 'Tension < 45', ok: SIM.tension < 45 },
+            { label: 'No seizures (3d)', ok: recentSeizures === 0 },
+            { label: 'No active crisis', ok: SIM.crisisLevel === 0 },
+        ];
+        const checkHtml = checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ');
         return `<div class="win-progress">
-            <div class="win-progress-label">OBJECTIVE: KEEP STRAIT OPEN 14 DAYS</div>
+            <div class="win-progress-label">OBJECTIVE: STRAIT OPEN 10 DAYS</div>
             <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%"></div></div>
-            <div class="win-progress-text">${SIM.straitOpenDays}/14 days</div>
+            <div class="win-progress-text">${SIM.straitOpenDays}/10 days</div>
+            <div style="font-size:9px;margin-top:4px;line-height:1.6">${checkHtml}</div>
         </div>`;
     }
 
@@ -2011,6 +2045,7 @@ function showInterrupt(afterCallback) {
     if (!panel) { if (afterCallback) afterCallback(); return; }
 
     const interrupt = INTERRUPTS[Math.floor(Math.random() * INTERRUPTS.length)];
+    if (typeof SFX !== 'undefined') SFX.klaxon();
 
     // Create interrupt overlay inside the action panel
     const overlay = document.createElement('div');
@@ -2097,51 +2132,46 @@ function hideActionPanel() {
 // ======================== FLOATING NUMBERS ========================
 
 function showFloatingNumber(metricKey, value) {
-    if (value === 0) return;
+    // No-op — replaced by showEffectSummary()
+}
 
-    const name = formatEffectName(metricKey);
-    const isPositive = value > 0;
+function showEffectSummary(effects, targetEl) {
+    if (!effects || Object.keys(effects).length === 0) return;
 
-    // Determine if this metric going up is "good" or "bad"
     const badIfUp = ['tension', 'iranAggression', 'conflictRisk', 'fogOfWar', 'polarization',
                      'assassinationRisk', 'warPath', 'proxyThreat', 'exposure', 'oilPrice'];
-    const isGood = badIfUp.includes(metricKey) ? !isPositive : isPositive;
 
-    const text = `${isPositive ? '+' : ''}${value} ${name.toUpperCase()}`;
-    const color = isGood ? '#44dd88' : '#dd4444';
+    const parts = [];
+    for (const [key, val] of Object.entries(effects)) {
+        if (val === 0) continue;
+        const name = formatEffectName(key);
+        const isPositive = val > 0;
+        const isGood = badIfUp.includes(key) ? !isPositive : isPositive;
+        const cls = isGood ? 'eff-good' : 'eff-bad';
+        parts.push(`<span class="${cls}">${isPositive ? '+' : ''}${val} ${name}</span>`);
+    }
+    if (parts.length === 0) return;
 
     const el = document.createElement('div');
-    el.className = 'floating-number';
-    el.textContent = text;
-    el.style.color = color;
-    el.style.textShadow = `0 0 8px ${color}`;
+    el.className = 'effect-summary';
+    el.innerHTML = parts.join(' &middot; ');
 
-    // Stack offset
-    const stackOffset = _floatingNumberStack * 24;
-    _floatingNumberStack++;
-    setTimeout(() => { _floatingNumberStack = Math.max(0, _floatingNumberStack - 1); }, 600);
-
-    // Position near the action panel
-    el.style.right = '292px';
-    el.style.top = (120 + stackOffset) + 'px';
-
-    document.body.appendChild(el);
-
-    // Trigger animation
-    requestAnimationFrame(() => {
-        el.classList.add('animate');
-    });
-
-    // Remove after animation
-    setTimeout(() => {
-        el.remove();
-    }, 1500);
+    // If a target container is given, append there; otherwise show as toast
+    if (targetEl) {
+        targetEl.appendChild(el);
+    } else {
+        showToast(parts.map(p => p.replace(/<[^>]+>/g, '')).join(' · '), 'info');
+    }
 }
 
 // ======================== DECISION EVENTS ========================
 
 function showDecisionEvent(event) {
     hideActionPanel();
+    if (typeof SFX !== 'undefined') {
+        if (event.crisis) SFX.klaxon();
+        else SFX.phone();
+    }
     let countdown = event.countdown || 0;
     let countdownInterval = null;
     const isCrisis = event.crisis === true;
@@ -2305,8 +2335,8 @@ function resolveDecision(event, choiceIdx) {
     // Apply effects
     for (const [key, val] of Object.entries(choice.effects)) {
         _applyEffect(key, val);
-        if (val !== 0) showFloatingNumber(key, val);
     }
+    showEffectSummary(choice.effects);
 
     // Contact trust effects (Kushner)
     if (choice.contactEffect && SIM.character.contacts) {
@@ -2580,54 +2610,18 @@ function initMusic() {
     // Auto-play on first user click anywhere
     document.addEventListener('click', function startMusic() {
         audio.play().catch(() => {});
+        if (typeof SFX !== 'undefined') { SFX.init(); SFX.crtBuzz(); }
         document.removeEventListener('click', startMusic);
     }, { once: true });
+
+    // Sync SFX mute with music mute
+    muteBtn.addEventListener('click', () => {
+        if (typeof SFX !== 'undefined') SFX.mute(audio.paused);
+    });
 }
 
 // ======================== NEWS TICKERS ========================
 
-function updateTickers() {
-    const publicEl = document.getElementById('public-ticker-content');
-    const intelEl = document.getElementById('intel-ticker-content');
-    if (!publicEl || !intelEl) return;
-
-    // Public ticker: wire service format (last 8 non-normal)
-    const publicNews = SIM.headlines
-        .filter(h => h.level !== 'normal')
-        .slice(-8)
-        .map(h => {
-            // Apply wire service prefix based on level
-            if (h.text.match(/^(AP |REUTERS |SITREP |STATE |CIA |EMBASSY |DIPNOTE|TREASURY|WHITE HOUSE)/)) return h.text;
-            if (h.level === 'critical') return 'AP FLASH: ' + h.text;
-            if (h.level === 'warning') return 'REUTERS URGENT: ' + h.text;
-            return 'AP BULLETIN: ' + h.text;
-        })
-        .join('  \u2502  ');
-
-    // Intel ticker: confidence-tagged briefings
-    let intelNews;
-    if (SIM.fogOfWar > 70) {
-        intelNews = 'TOP SECRET // SI // NOFORN \u2014 INTEL DEGRADED  \u2502  Signal clarity: LOW  \u2502  Multiple unverified contacts  \u2502  Assessment confidence: MINIMAL  \u2502  INCREASE SURVEILLANCE ASSETS';
-    } else {
-        const recentIntel = SIM.intelBriefings.slice(-5);
-        const statusItems = [
-            `Iran: ${(SIM.iranStrategy || 'unknown').toUpperCase()}`,
-            `IRGC assets: ${SIM.iranBoats.length}`,
-            `Mines: ${SIM.mines.length}`,
-            `Proxy: ${SIM.proxyThreat > 50 ? 'HIGH' : SIM.proxyThreat > 25 ? 'MOD' : 'LOW'}`,
-        ];
-        if (SIM.fogOfWar <= 40) {
-            statusItems.push(`Aggr: ${Math.round(SIM.iranAggression)}`);
-            statusItems.push(`Nuke: ${SIM.iranAggression > 70 ? 'ELEVATED' : 'BASELINE'}`);
-        }
-        const intelItems = recentIntel.map(b => `[${b.confidence}] ${b.text}`);
-        intelNews = [...statusItems, ...intelItems].join('  \u2502  ');
-    }
-
-    // Duplicate for seamless scroll
-    publicEl.innerHTML = publicNews ? `<span>${publicNews}  \u2502  ${publicNews}</span>` : '<span>No breaking news.</span>';
-    intelEl.innerHTML = `<span>${intelNews}  \u2502  ${intelNews}</span>`;
-}
 
 // ======================== HELPERS ========================
 
