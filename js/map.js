@@ -760,40 +760,71 @@ function drawPlatforms(ctx, w, h) {
 // --- Status Info Panel (canvas overlay) ---
 
 function drawStatusPanel(ctx, w, h) {
-    const px = 10;
-    const py = h - 108;
-    const pw = 220;
-    const ph = 50;
+    const px = 4;
+    const py = h - 76;
+    const pw = Math.min(w - 8, 220);
+    const ph = 72;
 
-    ctx.fillStyle = 'rgba(10, 10, 10, 0.75)';
+    ctx.fillStyle = 'rgba(5, 8, 5, 0.85)';
     ctx.fillRect(px, py, pw, ph);
-    ctx.strokeStyle = 'rgba(26, 58, 42, 0.6)';
+    ctx.strokeStyle = 'rgba(26, 58, 42, 0.5)';
     ctx.lineWidth = 1;
     ctx.strokeRect(px, py, pw, ph);
 
     ctx.save();
-    ctx.font = '9px monospace';
+    ctx.font = '8px monospace';
 
     const tankerCount = SIM.tankers.filter(t => !t.seized).length;
     const seizedCount = SIM.tankers.filter(t => t.seized).length;
-    const damagedCount = SIM.tankers.filter(t => t.damaged).length;
+    const navyCount = SIM.navyShips.length;
+    const boatCount = SIM.iranBoats.length;
+    const mineCount = SIM.mines.length;
 
+    // Row 1: Friendly forces
     ctx.fillStyle = '#44dd88';
-    ctx.fillText(`TANKERS: ${tankerCount}`, px + 6, py + 14);
-    ctx.fillStyle = seizedCount > 0 ? '#dd4444' : '#2a6a4a';
-    ctx.fillText(`SEIZED: ${seizedCount}`, px + 90, py + 14);
-    ctx.fillStyle = damagedCount > 0 ? '#ddaa44' : '#2a6a4a';
-    ctx.fillText(`DMG: ${damagedCount}`, px + 160, py + 14);
+    ctx.fillText(`USN: ${navyCount}${SIM.carrier ? '+CSG' : ''}`, px + 4, py + 12);
+    ctx.fillStyle = '#88aa99';
+    ctx.fillText(`TNK: ${tankerCount}`, px + 90, py + 12);
+    if (seizedCount > 0) {
+        ctx.fillStyle = '#dd4444';
+        ctx.fillText(`SEZ: ${seizedCount}`, px + 145, py + 12);
+    }
 
+    // Row 2: Threat forces
+    ctx.fillStyle = boatCount > 3 ? '#dd4444' : boatCount > 0 ? '#ddaa44' : '#2a6a4a';
+    ctx.fillText(`IRGC: ${boatCount}`, px + 4, py + 26);
+    if (mineCount > 0) {
+        ctx.fillStyle = '#dd4444';
+        ctx.fillText(`MINE: ${mineCount}`, px + 65, py + 26);
+    }
+    if (SIM.drones.length > 0) {
+        ctx.fillStyle = '#ddaa44';
+        ctx.fillText(`UAV: ${SIM.drones.length}`, px + 120, py + 26);
+    }
+
+    // Row 3: ROE + Oil
+    const roeLabel = SIM.roe === 'aggressive' ? 'AGR' : SIM.roe === 'moderate' ? 'MOD' : 'DEF';
+    const roeColor = SIM.roe === 'aggressive' ? '#dd4444' : SIM.roe === 'moderate' ? '#ddaa44' : '#44dd88';
+    ctx.fillStyle = roeColor;
+    ctx.fillText(`ROE: ${roeLabel}`, px + 4, py + 40);
+    const oilColor = SIM.oilFlow > 50 ? '#44dd88' : SIM.oilFlow > 25 ? '#ddaa44' : '#dd4444';
+    ctx.fillStyle = oilColor;
+    ctx.fillText(`OIL: ${Math.round(SIM.oilFlow)}%`, px + 65, py + 40);
     ctx.fillStyle = SIM.interceptCount > 0 ? '#44dd88' : '#2a6a4a';
-    ctx.fillText(`INTERCEPTS: ${SIM.interceptCount}`, px + 6, py + 28);
-    ctx.fillStyle = '#2a6a4a';
-    ctx.fillText(`CRISIS: ${SIM.crisisLevel}`, px + 110, py + 28);
+    ctx.fillText(`INT: ${SIM.interceptCount}`, px + 130, py + 40);
 
-    const crisisLabels = ['NONE', 'ELEVATED', 'MAJOR', 'WAR FOOTING'];
+    // Row 4: Escalation + Crisis
+    const esc = ESCALATION_LADDER[Math.min(SIM.warPath, 5)];
+    ctx.fillStyle = esc.color;
+    ctx.fillText(`ESC: ${esc.name}`, px + 4, py + 54);
+    const crisisLabels = ['NONE', 'ELEVATED', 'MAJOR', 'WAR'];
     const crisisColors = ['#2a6a4a', '#ddaa44', '#dd8844', '#dd4444'];
     ctx.fillStyle = crisisColors[SIM.crisisLevel];
-    ctx.fillText(`CRISIS: ${crisisLabels[SIM.crisisLevel]}`, px + 6, py + 42);
+    ctx.fillText(`ALERT: ${crisisLabels[SIM.crisisLevel]}`, px + 120, py + 54);
+
+    // Row 5: Strait status
+    ctx.fillStyle = SIM.straitOpenDays > 0 ? '#44dd88' : '#dd4444';
+    ctx.fillText(`STRAIT: ${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/7 OPEN' : 'CONTESTED'}`, px + 4, py + 66);
 
     ctx.restore();
 }

@@ -461,7 +461,9 @@ function initUI() {
     _injectActionPanelStyles();
     initMusic();
     initSituationPanel();
-    updateCenterPanel();
+    updateCharPanel();
+    updateCardsPanel();
+    updateHudChar();
 }
 
 // ======================== SITUATION PANEL (left sidebar) ========================
@@ -579,8 +581,6 @@ function updateSituationPanel() {
 function hideSituationPanel() {
     const panel = document.getElementById('situation-panel');
     if (panel) panel.style.display = 'none';
-    const centerPanel = document.getElementById('center-panel');
-    if (centerPanel) centerPanel.classList.add('no-sitpanel');
 }
 
 function showSituationPanel() {
@@ -597,13 +597,101 @@ function updateCenterPanel() {
 }
 
 function showCenterPanel() {
-    const panel = document.getElementById('center-panel');
-    if (panel) panel.style.display = '';
+    // Legacy — center panel removed in layout restructure
 }
 
 function hideCenterPanel() {
-    const panel = document.getElementById('center-panel');
-    if (panel) panel.style.display = 'none';
+    // Legacy — center panel removed in layout restructure
+}
+
+// ======================== CHARACTER PANEL (right column) ========================
+
+function updateCharPanel() {
+    const panel = document.getElementById('char-panel');
+    if (!panel || !SIM.character) return;
+
+    const c = SIM.character;
+    const portraitSrc = typeof PORTRAIT_REGISTRY !== 'undefined' ? PORTRAIT_REGISTRY[c.id] || '' : '';
+
+    // Unique resource info
+    let resourceHtml = '';
+    if (c.uniqueResourceName) {
+        const val = Math.round(SIM.uniqueResource || 0);
+        const max = c.uniqueResourceMax || 100;
+        const pct = Math.min(100, Math.max(0, (val / max) * 100));
+        const cls = pct > 60 ? 'good' : pct > 30 ? 'warning' : 'danger';
+        resourceHtml = `
+            <div class="chp-resource">
+                <div class="chp-res-label">${c.uniqueResourceName.toUpperCase()}: ${val}</div>
+                <div class="chp-res-track"><div class="chp-res-fill ${cls}" style="width:${pct}%"></div></div>
+            </div>
+        `;
+    }
+
+    // Win condition checklist
+    let winHtml = '';
+    if (typeof _getWinProgress === 'function') {
+        winHtml = '<div class="chp-win-checklist">' + _getWinProgress() + '</div>';
+    }
+
+    panel.innerHTML = `
+        ${portraitSrc ? `<img class="chp-portrait" src="${portraitSrc}" alt="${c.name}" draggable="false">` : ''}
+        <div class="chp-info">
+            <div class="chp-name">${c.name}</div>
+            <div class="chp-title">${c.title || ''}</div>
+            ${resourceHtml}
+            ${winHtml}
+        </div>
+    `;
+}
+
+// ======================== CARDS PANEL (right column) ========================
+
+function updateCardsPanel() {
+    const panel = document.getElementById('cards-panel');
+    if (!panel) return;
+
+    const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
+
+    if (!SIM.activeStances || SIM.activeStances.length === 0) {
+        panel.innerHTML = '';
+        return;
+    }
+
+    // Horizontal card strip — cards-panel is a flex row
+    panel.innerHTML = SIM.activeStances.map(s => {
+        const card = allCards.find(c => c.id === s.cardId);
+        if (!card) return '';
+        const fundingColor = s.funding === 'high' ? '#dd4444' : s.funding === 'medium' ? '#ddaa44' : '#2a6a4a';
+        return `<div class="card-compact">
+            <div class="card-compact-name">${card.name}</div>
+            <div class="card-compact-funding" style="color:${fundingColor}">${s.funding.toUpperCase()}</div>
+        </div>`;
+    }).join('');
+}
+
+// ======================== HUD CHARACTER / AP ========================
+
+function updateHudChar() {
+    const hudChar = document.getElementById('hud-char');
+    const hudAp = document.getElementById('hud-ap');
+    if (!SIM.character) return;
+
+    if (hudChar) {
+        const portraitSrc = typeof PORTRAIT_REGISTRY !== 'undefined' ? PORTRAIT_REGISTRY[SIM.character.id] || '' : '';
+        hudChar.innerHTML = (portraitSrc
+            ? `<img class="hud-char-portrait" src="${portraitSrc}" draggable="false">`
+            : '')
+            + `<span class="hud-char-name">${SIM.character.name}</span>`;
+    }
+
+    if (hudAp) {
+        const ap = SIM.actionPoints || 0;
+        hudAp.innerHTML = '<span class="hud-ap-label">AP</span>'
+            + Array.from({ length: 3 }, (_, i) =>
+                `<span class="hud-ap-dot ${i < ap ? 'filled' : ''}"></span>`
+            ).join('');
+    }
 }
 
 // ======================== TERMINAL HELPERS ========================
@@ -733,6 +821,16 @@ function updateGauges() {
         else if (SIM.budget < 100) warn = '\u26A0 BUDGET CRISIS';
         warnEl.textContent = warn;
         warnEl.style.display = warn ? '' : 'none';
+    }
+
+    // --- HUD AP dots ---
+    const hudAp = document.getElementById('hud-ap');
+    if (hudAp && SIM.phase === 'dayplay') {
+        const ap = SIM.actionPoints || 0;
+        hudAp.innerHTML = '<span class="hud-ap-label">AP</span>'
+            + Array.from({ length: 3 }, (_, i) =>
+                `<span class="hud-ap-dot ${i < ap ? 'filled' : ''}"></span>`
+            ).join('');
     }
 }
 
@@ -1488,6 +1586,38 @@ function _getROEColor() {
     return '#dd4444';
 }
 
+function _getRecommendedActions(ap, esc) {
+    const recs = [];
+    const bOk = (cost) => !cost || SIM.budget >= cost;
+
+    if (SIM.fogOfWar > 60 && bOk(15)) recs.push({ action: 'gather-intel', label: 'GATHER INTEL', cost: 15, reason: 'Low visibility' });
+    if (SIM.tension > 65 && SIM.diplomaticCapital < 40) recs.push({ action: 'phone-call', label: 'MAKE PHONE CALL', reason: 'High tension' });
+    if (SIM.tension > 75 && esc >= 1 && bOk(10)) recs.push({ action: 'escort-tankers', label: 'ESCORT TANKERS', cost: 10, reason: 'Tankers at risk' });
+    if (SIM.domesticApproval < 40) recs.push({ action: 'press-conference', label: 'PRESS CONFERENCE', reason: 'Low approval' });
+    if (SIM.budget < 300) recs.push({ action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Budget pressure' });
+    if (SIM.internationalStanding < 40 && bOk(10)) recs.push({ action: 'draft-proposal', label: 'DRAFT PROPOSAL', cost: 10, reason: 'Low standing' });
+    if (SIM.iranAggression > 60 && esc >= 2 && bOk(30)) recs.push({ action: 'precision-strike', label: 'PRECISION STRIKE', cost: 30, reason: 'Iran escalating' });
+    if (SIM.fogOfWar > 50) recs.push({ action: 'analyze-threats', label: 'ANALYZE THREATS', reason: 'Intel gap' });
+    if (SIM.conflictRisk > 60 && esc > 0) recs.push({ action: 'deescalate', label: 'DE-ESCALATE', reason: 'High conflict risk' });
+    if (SIM.oilFlow < 40 && bOk(25)) recs.push({ action: 'market-intervention', label: 'MARKET INTERVENTION', cost: 25, reason: 'Oil crisis' });
+    if (SIM.polarization > 50 && bOk(5)) recs.push({ action: 'brief-congress', label: 'BRIEF CONGRESS', cost: 5, reason: 'Political unrest' });
+    if (SIM.proxyThreat > 40 && bOk(20)) recs.push({ action: 'emergency-coalition', label: 'EMERGENCY COALITION', cost: 20, reason: 'Proxy threat' });
+
+    // Fill to at least 5 with defaults
+    const defaults = [
+        { action: 'phone-call', label: 'MAKE PHONE CALL', reason: 'Diplomacy' },
+        { action: 'gather-intel', label: 'GATHER INTEL', cost: 15, reason: 'Intelligence' },
+        { action: 'press-conference', label: 'PRESS CONFERENCE', reason: 'Public support' },
+        { action: 'analyze-threats', label: 'ANALYZE THREATS', reason: 'Assessment' },
+        { action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Economic' },
+    ];
+    for (const d of defaults) {
+        if (recs.length >= 6) break;
+        if (!recs.find(r => r.action === d.action)) recs.push(d);
+    }
+    return recs.slice(0, 6);
+}
+
 function showActionPanel() {
     hideActionPanel();
 
@@ -1578,37 +1708,27 @@ function showActionPanel() {
         const canEscalate = esc < 5 && ap > 0;
         const nextEsc = ESCALATION_LADDER[Math.min(esc + 1, 5)];
 
-        panel.innerHTML = `
-            <div class="ap-header">
-                <div class="ap-title">ACTIONS</div>
-                <div class="ap-points">AP: ${apDots}</div>
-                <div class="ap-budget">${budgetStr}</div>
-                ${SIM.character?.id === 'trump' ? `<div class="ap-budget" style="color:#ddaa44">PC: ${Math.round(SIM.uniqueResource)} | Wins: ${SIM.victoryNarrative}/3</div>` : ''}
-                ${SIM.character?.id === 'kushner' ? `<div class="ap-budget" style="color:#aa44dd">Deal: $${Math.round(SIM.dealValue || 0)}M</div>` : ''}
-                ${SIM.character?.id === 'asmongold' ? `<div class="ap-budget" style="color:#4488dd">Audience: ${Math.round(SIM.audience || 50)}</div>` : ''}
-                ${SIM.character?.id === 'fuentes' && SIM.withdrawalLocked ? `<div class="ap-budget" style="color:#44dd88">WITHDRAWAL ACTIVE</div>` : ''}
-            </div>
+        // Build recommended actions based on game state
+        const recs = _getRecommendedActions(ap, esc);
+        const recsHtml = recs.map(r => {
+            const costStr = r.cost ? ` <span class="ap-cost">$${r.cost}M</span>` : '';
+            const budgetOk = !r.cost || SIM.budget >= r.cost;
+            return `<button class="ap-btn ap-recommended ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${r.action}">${r.label}${costStr}<span class="ap-reason">${r.reason}</span>${tip(r.action)}</button>`;
+        }).join('');
 
-            <div class="ap-escalation-bar">
-                <span class="ap-esc-label">ESCALATION:</span>
-                <span class="ap-esc-level" style="color:${escColor}">${escName}</span>
-                <span class="ap-esc-pips">${Array.from({length: 6}, (_, i) => `<span class="ap-esc-pip ${i <= esc ? 'active' : ''}" style="${i <= esc ? 'background:' + ESCALATION_LADDER[i].color : ''}">${i}</span>`).join('')}</span>
-            </div>
-
-            <div class="ap-scroll">
+        // Full action list (hidden by default)
+        const allActionsHtml = `
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#44dd88">INTELLIGENCE</div>
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 15 ? 'disabled' : ''}" data-action="gather-intel">GATHER INTEL <span class="ap-cost">$15M</span>${tip('gather-intel')}</button>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="analyze-threats">ANALYZE THREATS${tip('analyze-threats')}</button>
                 </div>
-
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#4488dd">DIPLOMACY</div>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL${tip('phone-call')}</button>
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span>${tip('draft-proposal')}</button>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="demand-un-session">DEMAND UN SESSION${tip('demand-un-session')}</button>
                 </div>
-
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#dd4444">MILITARY <span style="color:${escColor};font-size:8px">[${escName}]</span></div>
                     ${milBtn('REPOSITION FLEET', 'reposition-fleet', 1, 0)}
@@ -1622,19 +1742,16 @@ function showActionPanel() {
                     ${milBtn('SEIZE IRANIAN ISLANDS', 'seize-islands', 4, 60)}
                     ${milBtn('FULL MOBILIZATION', 'full-mobilization', 5, 100)}
                 </div>
-
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#aa88dd">DOMESTIC</div>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="press-conference">PRESS CONFERENCE${tip('press-conference')}</button>
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 5 ? 'disabled' : ''}" data-action="brief-congress">BRIEF CONGRESS <span class="ap-cost">$5M</span>${tip('brief-congress')}</button>
                 </div>
-
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#ddaa44">ECONOMIC</div>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="adjust-sanctions">ADJUST SANCTIONS${tip('adjust-sanctions')}</button>
                     <button class="ap-btn ${ap <= 0 || SIM.budget < 25 ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span>${tip('market-intervention')}</button>
                 </div>
-
                 <div class="ap-category">
                     <div class="ap-cat-header" style="color:#dd4444">ESCALATION</div>
                     <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="issue-ultimatum">ISSUE ULTIMATUM${tip('issue-ultimatum')}</button>
@@ -1642,14 +1759,37 @@ function showActionPanel() {
                     ${canEscalate ? `<button class="ap-btn escalate-btn" data-action="escalate" title="Move to: ${nextEsc.name}">ESCALATE \u25B2 <span style="color:${nextEsc.color}">${nextEsc.name}</span>${tip('escalate')}</button>` : ''}
                     ${esc > 0 ? `<button class="ap-btn deescalate-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deescalate">DE-ESCALATE \u25BC${tip('deescalate')}</button>` : ''}
                 </div>
-
-                ${specialHtml}
                 ${_getCharacterActions(ap)}
                 ${_getBibleActionsHtml()}
+        `;
+
+        panel.innerHTML = `
+            <div class="ap-header">
+                <div class="ap-title">ACTIONS</div>
+                <div class="ap-points">AP: ${apDots}</div>
+                <div class="ap-budget">${budgetStr}</div>
             </div>
 
-            <div class="ap-win-hint">
-                ${typeof _getWinProgress === 'function' ? _getWinProgress() : ''}
+            <div class="ap-escalation-bar">
+                <span class="ap-esc-label">ESCALATION:</span>
+                <span class="ap-esc-level" style="color:${escColor}">${escName}</span>
+                <span class="ap-esc-pips">${Array.from({length: 6}, (_, i) => `<span class="ap-esc-pip ${i <= esc ? 'active' : ''}" style="${i <= esc ? 'background:' + ESCALATION_LADDER[i].color : ''}">${i}</span>`).join('')}</span>
+            </div>
+
+            <div class="ap-scroll">
+                ${specialHtml}
+
+                <div class="ap-category">
+                    <div class="ap-rec-header">RECOMMENDED</div>
+                    ${recsHtml}
+                </div>
+
+                <div class="ap-category">
+                    <div class="ap-cat-header" style="color:#88ddaa;cursor:pointer" id="all-actions-toggle">\u25B6 ALL ACTIONS</div>
+                    <div id="all-actions-list" style="display:none">
+                        ${allActionsHtml}
+                    </div>
+                </div>
             </div>
 
             <div class="ap-footer">
@@ -1679,7 +1819,20 @@ function showActionPanel() {
             });
         }
 
-        // Wire up MORE ACTIONS toggle
+        // Wire up ALL ACTIONS toggle
+        const allActionsToggle = panel.querySelector('#all-actions-toggle');
+        if (allActionsToggle) {
+            allActionsToggle.addEventListener('click', () => {
+                const list = panel.querySelector('#all-actions-list');
+                if (list) {
+                    const hidden = list.style.display === 'none';
+                    list.style.display = hidden ? '' : 'none';
+                    allActionsToggle.textContent = (hidden ? '\u25BC' : '\u25B6') + ' ALL ACTIONS';
+                }
+            });
+        }
+
+        // Wire up MORE ACTIONS toggle (inside all actions)
         const bibleToggle = panel.querySelector('#bible-actions-toggle');
         if (bibleToggle) {
             bibleToggle.addEventListener('click', () => {
@@ -1693,15 +1846,19 @@ function showActionPanel() {
         }
     }
 
-    // Append to narrative-area (bottom of narrative column) instead of body
-    const narrativeArea = document.getElementById('narrative-area');
-    if (narrativeArea) {
-        narrativeArea.appendChild(panel);
+    // Append to action-bar container in narrative column
+    const actionBar = document.getElementById('action-bar');
+    if (actionBar) {
+        actionBar.innerHTML = '';
+        actionBar.appendChild(panel);
+        actionBar.classList.add('active');
     } else {
         document.body.appendChild(panel);
     }
     panel._renderFn = renderPanel;
     renderPanel();
+    if (typeof updateCharPanel === 'function') updateCharPanel();
+    if (typeof updateCardsPanel === 'function') updateCardsPanel();
 
     // Slide-in animation
     requestAnimationFrame(() => {
@@ -2924,83 +3081,82 @@ function _pickFromPool(pool, historyKey) {
 
 function _getWinProgress() {
     if (!SIM.character || !SIM.character.scenario || !SIM.character.scenario.winConditions) {
-        // Generic win: strait open days
         const pct = Math.min(100, Math.round((SIM.straitOpenDays / 7) * 100));
-        // Daily checklist
         const recentSeizures = SIM.recentSeizureDays ? SIM.recentSeizureDays.filter(d => SIM.day - d <= 3).length : 0;
-        const wpl = DATA.intel.winProgressLabels.generic;
-        const checks = [
-            { label: wpl.checks.oilFlow, ok: SIM.oilFlow > 55 },
-            { label: wpl.checks.tension, ok: SIM.tension < 45 },
-            { label: wpl.checks.noSeizures, ok: recentSeizures === 0 },
-            { label: wpl.checks.noCrisis, ok: SIM.crisisLevel === 0 },
-        ];
-        const checkHtml = checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ');
-        return `<div class="win-progress">
-            <div class="win-progress-label">${wpl.objective}</div>
-            <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%"></div></div>
-            <div class="win-progress-text">${SIM.straitOpenDays}/7 days</div>
-            <div style="font-size:9px;margin-top:4px;line-height:1.6">${checkHtml}</div>
-        </div>`;
+        return _renderWinChecklist('Keep the strait open for 7 consecutive days', pct, `${SIM.straitOpenDays}/7 days`, [
+            { label: 'Restore oil flow', ok: SIM.oilFlow > 55, detail: `${Math.round(SIM.oilFlow)}% flowing` },
+            { label: 'Reduce tension', ok: SIM.tension < 45, detail: SIM.tension < 45 ? 'Stable' : 'Tense' },
+            { label: 'Prevent seizures', ok: recentSeizures === 0, detail: recentSeizures === 0 ? 'Clear' : `${recentSeizures} recent` },
+            { label: 'Avoid crisis', ok: SIM.crisisLevel === 0, detail: SIM.crisisLevel === 0 ? 'No crisis' : 'CRISIS' },
+        ]);
     }
 
     const wc = SIM.character.scenario.winConditions[0];
     const met = wc.check(SIM);
     const sustained = wc._days || 0;
     const pct = met ? Math.min(100, Math.round((sustained / 3) * 100)) : 0;
-
-    // Build a readable condition summary
     const charId = SIM.character.id;
-    const wplChar = DATA.intel.winProgressLabels;
-    const label = wplChar[charId] || 'Complete your objective';
+    const progressText = met ? `Sustaining: ${sustained}/3 days` : 'Conditions not met';
+    let objective, checks;
 
-    // Character-specific checklist
-    let checksHtml = '';
     if (charId === 'trump') {
-        const canClaim = SIM.day - SIM.lastPublicWinDay <= 1;
-        const checks = [
-            { label: `Victories: ${SIM.victoryNarrative}/3`, ok: SIM.victoryNarrative >= 3 },
-            { label: `Approval: ${Math.round(SIM.domesticApproval)} >= 60`, ok: SIM.domesticApproval >= 60 },
-            { label: `Oil flow: ${Math.round(SIM.oilFlow)} >= 55`, ok: SIM.oilFlow >= 55 },
+        objective = 'Claim three public victories';
+        checks = [
+            { label: 'Win the narrative', ok: SIM.victoryNarrative >= 3, detail: `${SIM.victoryNarrative}/3 victories` },
+            { label: 'Keep approval above 60', ok: SIM.domesticApproval >= 60, detail: `${Math.round(SIM.domesticApproval)}%` },
+            { label: 'Maintain oil flow', ok: SIM.oilFlow >= 55, detail: `${Math.round(SIM.oilFlow)}%` },
         ];
-        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
     } else if (charId === 'hegseth') {
-        const checks = [
-            { label: `WarPath: ${SIM.warPath} >= 3`, ok: SIM.warPath >= 3 },
-            { label: `Iran aggr: ${Math.round(SIM.iranAggression)} <= 25`, ok: SIM.iranAggression <= 25 },
-            { label: `Approval: ${Math.round(SIM.domesticApproval)} >= 55`, ok: SIM.domesticApproval >= 55 },
+        objective = 'Achieve decisive military victory';
+        checks = [
+            { label: 'Escalate to air campaign', ok: SIM.warPath >= 3, detail: ESCALATION_LADDER[Math.min(SIM.warPath, 5)].name },
+            { label: 'Crush Iranian resistance', ok: SIM.iranAggression <= 25, detail: SIM.iranAggression <= 25 ? 'Subdued' : `${Math.round(SIM.iranAggression)}%` },
+            { label: 'Keep the home front', ok: SIM.domesticApproval >= 55, detail: `${Math.round(SIM.domesticApproval)}%` },
         ];
-        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
     } else if (charId === 'kushner') {
-        const checks = [
-            { label: `Deal: $${Math.round(SIM.dealValue || 0)}M >= 300`, ok: (SIM.dealValue || 0) >= 300 },
-            { label: `Iran aggr: ${Math.round(SIM.iranAggression)} <= 25`, ok: SIM.iranAggression <= 25 },
-            { label: `Exposure: ${Math.round(SIM.uniqueResource)} < 50`, ok: SIM.uniqueResource < 50 },
+        objective = 'Build $300M deal portfolio in the shadows';
+        const dealVal = Math.round(SIM.dealValue || 0);
+        checks = [
+            { label: 'Build the portfolio', ok: dealVal >= 300, detail: `$${dealVal}M / $300M` },
+            { label: 'Neutralize Iran', ok: SIM.iranAggression <= 25, detail: SIM.iranAggression <= 25 ? 'Neutralized' : 'Active' },
+            { label: 'Stay hidden', ok: SIM.uniqueResource < 50, detail: SIM.uniqueResource < 50 ? 'Hidden' : `Exposed: ${Math.round(SIM.uniqueResource)}` },
         ];
-        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
     } else if (charId === 'fuentes') {
-        const checks = [
-            { label: `WarPath: ${SIM.warPath} = 0`, ok: SIM.warPath === 0 },
-            { label: `Ships: ${SIM.navyShips.length} <= 1`, ok: SIM.navyShips.length <= 1 },
-            { label: `Budget: $${Math.round(SIM.budget)}M >= 600`, ok: SIM.budget >= 600 },
-            { label: `Standing: ${Math.round(SIM.internationalStanding)} >= 35`, ok: SIM.internationalStanding >= 35 },
+        objective = 'Bring the troops home and save money';
+        checks = [
+            { label: 'End military escalation', ok: SIM.warPath === 0, detail: SIM.warPath === 0 ? 'Peace' : `Level ${SIM.warPath}` },
+            { label: 'Withdraw naval forces', ok: SIM.navyShips.length <= 1, detail: `${SIM.navyShips.length} ships` },
+            { label: 'Save the budget', ok: SIM.budget >= 600, detail: `$${Math.round(SIM.budget)}M / $600M` },
+            { label: 'Maintain standing', ok: SIM.internationalStanding >= 35, detail: SIM.internationalStanding >= 35 ? 'OK' : 'Pariah' },
         ];
-        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
     } else if (charId === 'asmongold') {
         const correctPreds = (SIM.predictions || []).filter(p => p.resolved && p.correct).length;
-        const checks = [
-            { label: `Audience: ${Math.round(SIM.audience)} >= 90`, ok: SIM.audience >= 90 },
-            { label: `Credibility: ${Math.round(SIM.uniqueResource)} >= 65`, ok: SIM.uniqueResource >= 65 },
-            { label: `Correct predictions: ${correctPreds} >= 3`, ok: correctPreds >= 3 },
+        objective = 'Become the top analyst with proven calls';
+        checks = [
+            { label: 'Max out audience', ok: SIM.audience >= 90, detail: `${Math.round(SIM.audience || 50)} / 90` },
+            { label: 'Build credibility', ok: SIM.uniqueResource >= 65, detail: `${Math.round(SIM.uniqueResource)} / 65` },
+            { label: 'Land predictions', ok: correctPreds >= 3, detail: `${correctPreds} / 3` },
         ];
-        checksHtml = `<div style="font-size:9px;margin-top:4px;line-height:1.6">${checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ')}</div>`;
+    } else {
+        objective = 'Complete your objective';
+        checks = [];
     }
 
+    return _renderWinChecklist(objective, pct, progressText, checks);
+}
+
+function _renderWinChecklist(objective, pct, progressText, checks) {
+    const checkHtml = checks.map(c => {
+        const icon = c.ok ? '\u2713' : '\u2717';
+        const cls = c.ok ? 'met' : 'unmet';
+        return `<div class="chp-win-item ${cls}"><span>${icon}</span> ${c.label} <span style="font-size:8px;opacity:0.7;margin-left:4px">${c.detail}</span></div>`;
+    }).join('');
+
     return `<div class="win-progress">
-        <div class="win-progress-label">${label}</div>
-        <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%;${met ? '' : 'background:#ddaa44;box-shadow:0 0 4px rgba(221,170,68,0.3)'}"></div></div>
-        <div class="win-progress-text">${met ? sustained + '/3 days sustained' : 'Conditions not yet met'}</div>
-        ${checksHtml}
+        <div class="win-progress-label">${objective}</div>
+        <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%"></div></div>
+        <div class="win-progress-text">${progressText}</div>
+        ${checkHtml}
     </div>`;
 }
 
@@ -3124,6 +3280,11 @@ function showInterrupt(afterCallback) {
 function hideActionPanel() {
     const existing = document.getElementById('action-panel');
     if (existing) existing.remove();
+    const actionBar = document.getElementById('action-bar');
+    if (actionBar) {
+        actionBar.innerHTML = '';
+        actionBar.classList.remove('active');
+    }
 }
 
 

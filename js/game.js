@@ -26,6 +26,10 @@
         initNarrativeFeed();
 
         SIM.phase = 'morning';
+        // Show situation room image for first morning briefing
+        if (typeof showSceneImage === 'function') {
+            showSceneImage('assets/situation-room.png', { fadeIn: 800, caption: 'THE SITUATION ROOM' });
+        }
         showDailyReport();
 
         // Verify all event image references resolve to real files
@@ -46,12 +50,12 @@
                     for (let i = 0; i < ticksPerFrame; i++) {
                         tickSimulation();
                     }
-                    // Update center panel every ~500ms (not every frame)
+                    // Update side panels every ~500ms (not every frame)
                     _cpUpdateTimer += dt;
                     if (_cpUpdateTimer > 500) {
                         _cpUpdateTimer = 0;
-                        if (typeof updateCenterPanel === 'function') updateCenterPanel();
-                        if (typeof updateSituationPanel === 'function') updateSituationPanel();
+                        if (typeof updateCharPanel === 'function') updateCharPanel();
+                        if (typeof updateCardsPanel === 'function') updateCardsPanel();
                     }
                 }
 
@@ -122,7 +126,8 @@ function startDayPlay() {
     SIM._dayStartWarPath = SIM.warPath;
     SIM._prevOilFlow = SIM.oilFlow;
     if (typeof showActionPanel === 'function') showActionPanel();
-    if (typeof updateCenterPanel === 'function') updateCenterPanel();
+    if (typeof updateCharPanel === 'function') updateCharPanel();
+    if (typeof updateCardsPanel === 'function') updateCardsPanel();
     // Show current story arc as ambient art during dayplay
     if (typeof showSceneAmbient === 'function') showSceneAmbient();
 }

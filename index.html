@@ -13,6 +13,7 @@
     <div id="game-container">
         <div class="scanlines-global"></div>
 
+        <!-- TOP BAR: compact metrics -->
         <div id="gauge-bar">
             <button id="mute-btn" class="mute-btn" title="Toggle Music">&#9835;</button>
             <div id="hud-day" class="hud-day">DAY 1</div>
@@ -52,17 +53,27 @@
                 <span class="gauge-label">HILL</span>
                 <span class="gauge-value warning">50</span>
             </div>
+            <div id="hud-char" class="hud-char"></div>
+            <div id="hud-ap" class="hud-ap"></div>
             <div id="hud-rating" class="hud-rating">C</div>
             <span id="hud-warning" class="hud-warning"></span>
         </div>
 
+        <!-- MAIN: two-column narrative RPG layout -->
         <div id="main-layout">
-            <div id="narrative-area">
-                <div id="center-panel"></div>
-                <!-- Action panel is created dynamically by ui.js, appended here -->
+            <!-- LEFT: Narrative experience (60%) -->
+            <div id="narrative-col">
+                <div id="scene-panel"></div>
+                <div id="narrative-feed"></div>
+                <div id="action-bar"></div>
             </div>
-            <div id="map-sidebar">
-                <canvas id="game-canvas"></canvas>
+            <!-- RIGHT: Strategic overview (40%) -->
+            <div id="strategy-col">
+                <div id="char-panel"></div>
+                <div id="map-sidebar">
+                    <canvas id="game-canvas"></canvas>
+                </div>
+                <div id="cards-panel"></div>
             </div>
         </div>
 

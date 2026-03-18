@@ -392,9 +392,9 @@ function _clearSceneImage(fadeMs) {
     _scenePanel.classList.remove('sp-active');
 }
 
-function _initScenePanel(centerPanel) {
-    _scenePanel = document.createElement('div');
-    _scenePanel.id = 'scene-panel';
+function _initScenePanel() {
+    _scenePanel = document.getElementById('scene-panel');
+    if (!_scenePanel) return;
     _scenePanel.innerHTML = `
         <div class="sp-viewport">
             <div class="sp-idle-bg"></div>
@@ -402,31 +402,26 @@ function _initScenePanel(centerPanel) {
         </div>
         <div class="sp-caption"></div>
     `;
-    // Insert before the narrative feed
-    centerPanel.insertBefore(_scenePanel, centerPanel.firstChild);
     _sceneCaptionEl = _scenePanel.querySelector('.sp-caption');
 }
 
 // ======================== DOM SETUP ========================
 
 function initNarrativeFeed() {
-    // Create the narrative panel element
-    _narrativePanel = document.createElement('div');
-    _narrativePanel.id = 'narrative-feed';
-    _narrativePanel.innerHTML = `
-        <div class="nf-header">
-            <span class="nf-header-label">\u2588 OPERATIONAL LOG</span>
-            <span class="nf-header-day">DAY ${SIM.day || 1}</span>
-        </div>
-        <div class="nf-feed" id="nf-feed-scroll"></div>
-    `;
+    // Set up scene panel (already exists in HTML)
+    _initScenePanel();
 
-    // Insert into center panel, after cp-content area
-    const centerPanel = document.getElementById('center-panel');
-    if (centerPanel) {
-        // Create scene panel above narrative feed
-        _initScenePanel(centerPanel);
-        centerPanel.appendChild(_narrativePanel);
+    // Set up narrative feed (already exists in HTML)
+    const feedContainer = document.getElementById('narrative-feed');
+    if (feedContainer) {
+        feedContainer.innerHTML = `
+            <div class="nf-header">
+                <span class="nf-header-label">\u2588 OPERATIONAL LOG</span>
+                <span class="nf-header-day">DAY ${SIM.day || 1}</span>
+            </div>
+            <div class="nf-feed" id="nf-feed-scroll"></div>
+        `;
+        _narrativePanel = feedContainer;
     }
 
     _narrativeFeed = document.getElementById('nf-feed-scroll');
