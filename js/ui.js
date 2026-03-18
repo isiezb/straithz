@@ -4395,61 +4395,47 @@ function showGameOverScreen() {
 
 // ======================== RESTART ========================
 
-function restartGame() {
+async function restartGame() {
     closeTerminal();
     hideActionPanel();
+    if (typeof _hideCommandPanel === 'function') _hideCommandPanel();
 
     const toastContainer = document.getElementById('toast-container');
     if (toastContainer) toastContainer.innerHTML = '';
+
+    // Clear narrative feed
+    if (typeof clearNarrative === 'function') clearNarrative();
+    const narrativeFeed = document.getElementById('narrative-feed');
+    if (narrativeFeed) narrativeFeed.innerHTML = '';
+    const scenePanel = document.getElementById('scene-panel');
+    if (scenePanel) scenePanel.innerHTML = '';
 
     // Reset SIM to defaults
     for (const [key, val] of Object.entries(SIM_DEFAULTS)) {
         SIM[key] = Array.isArray(val) ? [] : (typeof val === 'object' && val !== null) ? {} : val;
     }
+    SIM.character = null;
+    SIM.gameOver = false;
 
-    // Reset new character mechanic properties
-    SIM.victoryNarrative = 0;
-    SIM.lastPublicWinDay = -99;
-    SIM.publicWinType = '';
-    SIM._prevInterceptCount = 0;
-    SIM._prevSeizureCount = 0;
-    SIM._prevIranAggression = 45;
-    SIM._prevOilPrice = 95;
-    SIM._dayStartWarPath = 1;
-    SIM.dealValue = 0;
-    SIM.withdrawalProgress = 0;
-    SIM.withdrawalLocked = false;
-    SIM.predictions = [];
-    SIM.audience = 50;
+    // Go back to title screen → character select → lore → start
+    await showTitleScreen();
+    const character = await showCharacterSelect();
+    await showLoreScreen(character);
 
-    // Reset character-specific state
-    if (SIM.character) {
-        if (SIM.character._addressNationUses !== undefined) SIM.character._addressNationUses = 0;
-        if (SIM.character._withdrawalStreak !== undefined) SIM.character._withdrawalStreak = 0;
-        if (SIM.character.specialAction) SIM.character.specialAction.cooldown = 0;
-        if (SIM.character.contacts) {
-            const defaults = CHARACTERS.find(c => c.id === SIM.character.id);
-            if (defaults && defaults.contacts) {
-                for (let i = 0; i < SIM.character.contacts.length; i++) {
-                    SIM.character.contacts[i].trust = defaults.contacts[i].trust;
-                }
-            }
-        }
-        if (SIM.character.scenario?.loseConditions) {
-            for (const lc of SIM.character.scenario.loseConditions) {
-                lc._days = 0;
-            }
-        }
+    SIM.character = character;
+    if (character.aipacStart !== undefined) {
+        SIM.aipacPressure = character.aipacStart;
     }
 
-    // Reset action points and ROE
-    resetActionPoints();
-    SIM.roe = 'defensive';
-
-    if (typeof clearNarrative === 'function') clearNarrative();
-
+    initMap();
     initSimulation();
-    updateGauges();
+    initUI();
+    initNarrativeFeed();
+
+    SIM.phase = 'morning';
+    if (typeof showSceneImage === 'function') {
+        showSceneImage('assets/situation-room.png', { fadeIn: 800, caption: 'THE SITUATION ROOM' });
+    }
     showDailyReport();
 }
 
@@ -4467,11 +4453,13 @@ function setupKeyboardShortcuts() {
 // ======================== MUSIC ========================
 
 function initMusic() {
+    if (initMusic._done) return;
+    initMusic._done = true;
+
     const audio = document.getElementById('bg-music');
     const muteBtn = document.getElementById('mute-btn');
     if (!audio || !muteBtn) return;
 
-    // Try to play (will fail without user interaction)
     audio.volume = 0.3;
 
     muteBtn.addEventListener('click', () => {
