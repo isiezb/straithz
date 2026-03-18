@@ -324,11 +324,14 @@ function initSimulation() {
     }
 
     // Initial crisis headlines — loaded from DATA.headlines.initial
+    // Suppress toasts during init (they clutter the opening)
+    SIM._suppressToasts = true;
     const _initHL = (DATA.headlines && DATA.headlines.initial) || [];
     const _initLevels = ['critical','critical','warning','critical','warning','warning','critical','warning'];
     for (let i = 0; i < _initHL.length; i++) {
         addHeadline(_initHL[i], _initLevels[i] || 'warning');
     }
+    SIM._suppressToasts = false;
 }
 
 function spawnTanker() {
@@ -595,8 +598,8 @@ function spawnEffect(x, y, type) {
 function addHeadline(text, level) {
     SIM.headlines.push({ text, level, day: SIM.day, hour: SIM.hour, time: Date.now() });
     SIM.eventLog.push({ text, level, day: SIM.day, hour: SIM.hour });
-    // Show toast for critical/good headlines
-    if (level === 'critical' || level === 'good') {
+    // Show toast for critical/good headlines (suppressed during init)
+    if ((level === 'critical' || level === 'good') && !SIM._suppressToasts) {
         if (typeof showToast === 'function') showToast(text, level);
     }
     // Push to narrative feed
