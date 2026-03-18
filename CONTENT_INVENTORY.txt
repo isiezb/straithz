@@ -1,563 +1,390 @@
-================================================================================
-STRAIT OF HORMUZ — POLICY SIMULATOR
-CONTENT INVENTORY & COVERAGE AUDIT
+CONTENT INVENTORY — Strait of Hormuz Policy Simulator
+=====================================================
 Generated: 2026-03-18
-================================================================================
-
-Read-only audit of all non-code files, data files, and asset references.
-Cross-references code systems against content coverage.
-
-TABLE OF CONTENTS
-─────────────────
-1.  Asset Files Inventory
-2.  Data Files Inventory
-3.  Content Coverage Matrix
-4.  Missing Content & Gaps
-5.  Audio Inventory
-
-================================================================================
-1. ASSET FILES INVENTORY
-================================================================================
-
-Directory: assets/
-Total files: 97 (96 PNG + 1 MP3)
-Total size: 188 MB
-
-─── CHARACTER SELECT PORTRAITS (5 files, 5.8 MB) ─────────────────────────────
-
-  char-trump.png              1.2M    1024x1024    ✓ Referenced
-  char-hegseth.png            1.5M    1024x1024    ✓ Referenced
-  char-kushner.png            930K    1024x1024    ✓ Referenced
-  char-asmongold.png          1.0M    1024x1024    ✓ Referenced
-  char-fuentes.png            1.2M    1024x1024    ✓ Referenced
-
-─── CHARACTER PORTRAITS / REACTIONS (11 files, 5.5 MB) ────────────────────────
-
-  trump.png                   268K    1024x1024    ✓ portraitImage
-  trump-angry.png             1.2M    1024x1024    ✓ angry reaction
-  trump-smug.png              393K    1024x1024    ✓ positive reaction
-  pete.png                    262K    1024x1024    ✓ portraitImage (Hegseth)
-  pete-angry.png              1.2M    1024x1024    ✓ angry reaction
-  kushner.png                 182K    1024x1024    ✓ portraitImage
-  kushner-scheming.png        872K    1024x1024    ✓ positive reaction
-  asmongold.png               263K    1024x1024    ✓ portraitImage
-  asmongold-hype.png          504K    1024x1024    ✓ positive reaction
-  nick.png                    331K    1024x1024    ✓ portraitImage (Fuentes)
-  (Fuentes has no unique angry/positive variants — uses nick.png for both)
-
-─── IRANIAN FACTION PORTRAITS (3 files, 4.7 MB) ──────────────────────────────
-
-  iran-tangsiri.png           1.5M    1024x1024    ✓ Referenced
-  iran-araghchi.png           1.7M    1024x1024    ✓ Referenced
-  iran-mojtaba.png            1.5M    1024x1024    ✓ Referenced
-
-─── FLAGS (2 files, 463K) ────────────────────────────────────────────────────
-
-  us-flag.png                 353K    1024x1024    ✓ Referenced (morning briefing)
-  iran-flag.png               110K    1024x1024    ✓ Referenced (morning briefing)
-
-─── STORY ARC IMAGES (8 files, 17.2 MB) ──────────────────────────────────────
-
-  arc-escalation.png          2.1M    1536x1024    ✓ the_spark + the_squeeze arcs
-  arc-fog-of-war.png          2.5M    1536x1024    ✓ false_dawn arc
-  arc-proxy-front.png         2.1M    1536x1024    ✓ proxy_season arc
-  arc-nuclear-shadow.png      2.5M    1536x1024    ✓ pressure_cooker arc
-  arc-tipping-point.png       2.1M    1536x1024    ✓ crossroads arc
-  arc-long-game.png           1.5M    1536x1024    ✓ the_grind arc
-  arc-endgame.png             2.2M    1536x1024    ✓ endgame_setup arc
-  arc-aftermath.png           2.2M    1536x1024    ✓ resolution arc
-
-─── EPILOGUE / GAME OVER SCREENS (7 files, 16.9 MB) ─────────────────────────
-
-  victory.png                 2.2M    1536x1024    ✓ Win screen
-  defeat.png                  2.9M    1536x1024    ✓ Lose screen
-  epilogue-diplomatic.png     2.2M    1536x1024    ✓ Diplomatic ending
-  epilogue-managed-decline.png 2.4M   1536x1024    ✓ Decline ending
-  epilogue-defeat.png         2.3M    1536x1024    ✓ Defeat ending
-  epilogue-peace.png          2.5M    1536x1024    ✗ UNREFERENCED
-  epilogue-war.png            2.4M    1536x1024    ✗ UNREFERENCED
-
-─── EVENT CATEGORY ICONS (4 files, 3.0 MB) ───────────────────────────────────
-
-  event-military.png          1.3M    1024x1024    ✓ Fallback for military events
-  event-diplomatic.png        554K    1024x1024    ✓ Fallback for diplomatic events
-  event-economic.png          375K    1024x1024    ✓ Fallback for economic events
-  event-intel.png             736K    1024x1024    ✓ Fallback for intel events
-
-─── NUMBERED EVENTS (19 files, 42.7 MB) ──────────────────────────────────────
-
-  event-e01-tanker.png        1.9M    1536x1024    ✓ impounded_tanker
-  event-e02-predecesso.png    2.3M    1536x1024    ✗ ORPHANED (code refs "predecessor")
-  event-e03-admiral.png       2.3M    1536x1024    ✓ admirals_warning
-  event-e04-journalist.png    2.4M    1536x1024    ✓ journalists_call
-  event-e05-british-pm.png    1.5M    1536x1024    ✓ british_pm_call
-  event-e06-seizure.png       2.4M    1536x1024    ✓ first_seizure_attempt
-  event-e07-iran-doubles.png  2.6M    1536x1024    ✓ Referenced (multiple events)
-  event-e08-oil-panic.png     2.8M    1536x1024    ✓ oil_markets_panic
-  event-e09-carrier-incident.png 2.0M 1536x1024    ✓ carrier_incident
-  event-e10-shirazi.png       2.2M    1536x1024    ✓ secret_talks
-  event-e11-un-showdown.png   2.8M    1536x1024    ✓ un_showdown
-  event-e12-hostage.png       2.2M    1536x1024    ✓ hostage
-  event-e13-china.png         2.4M    1536x1024    ✓ china_mediation
-  event-e14-houthi.png        2.5M    1536x1024    ✓ proxy_ignition (+ reused)
-  event-e17-leak.png          2.6M    1536x1024    ✓ the_leak
-  event-e18-congress.png      2.0M    1536x1024    ✓ congressional_hearing_big
-  event-e20-muscat.png        2.3M    1536x1024    ✓ oman_talks
-  event-e21-intel-breakthrough.png 2.9M 1536x1024  ✓ intel_breakthrough
-  event-e23-cyber.png         1.5M    1536x1024    ✓ cyber_attack_decision
 
-─── CRISIS EVENTS (5 files, 12.4 MB) ─────────────────────────────────────────
 
-  event-crisis-cascade.png    3.0M    1536x1024    ✓ Referenced (cascade/misc)
-  event-crisis-three-seizures.png 2.3M 1536x1024   ✓ Referenced
-  event-crisis-friendly-fire.png 2.2M  1536x1024   ✓ Referenced
-  event-crisis-carrier-hit.png 2.3M   1536x1024    ✓ Referenced
-  event-crisis-nuclear.png    2.6M    1536x1024    ✗ UNREFERENCED
-
-─── TRUMP CHARACTER EVENTS (4 files, 10.0 MB) ────────────────────────────────
-
-  event-trump-fox.png         2.7M    1536x1024    ✓ T01_fox_news_call
-  event-trump-deal.png        2.3M    1536x1024    ✓ T02_deal_on_table
-  event-trump-rally.png       2.6M    1536x1024    ✓ T03_political_capital_crisis
-  event-trump-truth-social.png 2.4M   1536x1024    ✓ T04_iran_backchannel
-
-─── HEGSETH CHARACTER EVENTS (4 files, 9.4 MB) ───────────────────────────────
-
-  event-hegseth-pentagon.png  2.6M    1536x1024    ✓ H01 + H02_leak_result
-  event-hegseth-shock-awe.png 2.1M    1536x1024    ✓ H03_shock_and_awe
-  event-hegseth-troops.png    2.3M    1536x1024    ✓ H04_troop_morale
-  event-hegseth-carrier.png   2.4M    1536x1024    ✗ UNREFERENCED
-
-─── KUSHNER CHARACTER EVENTS (4 files, 9.1 MB) ───────────────────────────────
-
-  event-kushner-mbs.png       2.3M    1536x1024    ✓ K01_mbs_calls
-  event-kushner-exposure.png  2.5M    1536x1024    ✓ K02_exposure_spikes
-  event-kushner-summi.png     2.1M    1536x1024    ✓ K03_riyadh_summit (truncated)
-  vent-kushner-zarif.png      2.2M    1536x1024    ✓ K04_araghchi_gambit (typo: "vent-")
-
-─── ASMONGOLD CHARACTER EVENTS (4 files, 9.1 MB) ─────────────────────────────
-
-  event-asmongold-disinfo.png 2.4M    1536x1024    ✓ A02_disinfo_attack
-  event-asmongold-stream.png  2.3M    1536x1024    ✓ A03_credibility_test
-  event-asmongold-reddit.png  2.2M    1536x1024    ✓ A04_chat_demands_action
-  vent-asmongold-osint.png    2.2M    1536x1024    ✓ A01_osint_discovery (typo: "vent-")
-
-─── FUENTES CHARACTER EVENTS (4 files, 9.3 MB) ───────────────────────────────
-
-  event-fuentes-base.png      2.4M    1536x1024    ✓ F01_base_demands_blood
-  event-fuentes-pariah.png    2.3M    1536x1024    ✓ F02_international_pariah
-  event-fuentes-isolation.png 2.0M    1536x1024    ✓ F03_america_first_rally
-  event-fuentes-assassination.png 2.6M 1536x1024   ✓ F04_assassination_whisper
-
-─── CHAIN / OTHER EVENTS (7 files, 14.2 MB) ──────────────────────────────────
-
-  event-grand-bargain.png     1.8M    1536x1024    ✓ T02_deal_response
-  event-envoy.png             2.2M    1536x1024    ✓ K04_framework + allied_request
-  event-rescue-op.png         2.2M    1536x1024    ✓ humanitarian
-  event-fordow-strike.png     2.3M    1536x1024    ✓ nuclear_breakout
-  event-mojtaba.png           2.0M    1536x1024    ✓ mojtaba_succession
-  event-ceasefire-test.png    1.9M    1536x1024    ✓ backchannel_ceasefire_test
-  event-hostage-escalates.png 2.0M    1536x1024    ✗ UNREFERENCED
-  event-nuclear-inspection.png 2.4M   1536x1024    ✗ UNREFERENCED
-
-─── BACKGROUNDS / UI (3 files, 5.0 MB) ───────────────────────────────────────
-
-  situation-room.png          1.0M    1536x1024    ✓ CSS background (2 refs)
-  map-bg.png                  1.8M    1264x848     ✗ UNREFERENCED
-  strait-map.png              2.2M    1536x1024    ✗ UNREFERENCED
-
-─── TITLE SCREEN (1 file, 2.6 MB) ────────────────────────────────────────────
-
-  title screen.png            2.6M    1536x1024    ✗ UNREFERENCED (space in filename)
-
-─── ODDBALL (1 file, 2.3 MB) ─────────────────────────────────────────────────
-
-  pilogue-military.png        2.3M    1536x1024    ✗ ORPHANED (typo: missing "e" in epilogue)
-
-─── AUDIO (1 file, 5.0 MB) ───────────────────────────────────────────────────
-
-  bgmusic.mp3                 5.0M    MP3 (stereo 44.1kHz)  ✓ index.html <audio>
-
-================================================================================
-2. DATA FILES INVENTORY
-================================================================================
-
-Directory: data/
-Loader: data/loader.js (700 bytes)
-Loads 12 JSON files into window.DATA via async fetch + Promise.all
-
-─── cards.json (14 KB) ────────────────────────────────────────────────────────
-
-Structure: Object with 5 top-level keys
-  strategyCards:       28 cards (keyed by card ID)
-  characterBonusCards:  5 cards (keyed by character ID)
-  contactCards:         5 cards (keyed by contact ID)
-  synergies:            7 synergies (keyed by synergy ID)
-  cardLevels:           4 levels (keyed by level number)
-
-Schema per card: { name, description, hint: { low, med, high } }
-Schema per synergy: { name, description, flavor }
-Schema per level: { name }
-
-Sample:
-  "carrier_strike": {
-    "name": "Carrier Strike Group",
-    "description": "Deploy carrier strike group to the Gulf of Oman.",
-    "hint": { "low": "Show the flag...", "med": "Full battle group...", "high": "Maximum projection..." }
-  }
-
-─── events.json (75 KB) ──────────────────────────────────────────────────────
-
-Structure: Object with 6 top-level keys
-  decisionEvents:     94 event text entries (keyed by event ID)
-  escalationLadder:    6 entries (array)
-  iranEscalation:      6 entries (array)
-  storyArcs:          10 arcs (keyed by arc ID)
-  winLoseReasons:      8 entries (keyed by reason ID)
-  overnightNewsFiller: 4 entries (array)
-
-Schema per event: { title, description, choices: [{ label, flavor }] }
-Schema per arc: { name, brief }
-
-Sample:
-  "impounded_tanker": {
-    "title": "THE IMPOUNDED TANKER",
-    "description": "An oil tanker flying a Liberian flag...",
-    "choices": [
-      { "label": "Diplomatic protest", "flavor": "File a formal complaint..." },
-      { "label": "Send a destroyer", "flavor": "USS Arleigh Burke alters course..." }
-    ]
-  }
-
-─── interrupts.json (14 KB) ──────────────────────────────────────────────────
-
-Structure: Object with 4 top-level keys
-  interrupts:   35 interrupt events (array)
-  actionTips:   38 action descriptions (keyed by action ID)
-  bibleActions: 15 major action headlines (array)
-  guideSteps:    4 tutorial steps (array)
-
-Schema per interrupt: { text, choices: [{ label }] }
-Schema per actionTip: { desc, effect }
-No scene_intro or scene_resolution fields present.
-
-Sample:
-  { "text": "NSA flagged unusual encrypted traffic from an IRGC base...",
-    "choices": [{ "label": "Divert analysts now" }, { "label": "Queue for tomorrow" }] }
-
-─── intel.json (7 KB) ─────────────────────────────────────────────────────────
-
-Structure: Object with 7 top-level keys
-  intelSnippets:          27 intel strings (array)
-  effectNames:            28 metric-to-label mappings (object)
-  keyDrivers:             17 narrative driver templates (object)
-  briefingTitles:          6 character-specific titles (object)
-  advisorRecommendations:  6 conditional advice strings (object)
-  firstMorning:            3 scenario-opening texts (object)
-  winProgressLabels:       6 win-condition display strings (object)
-
-Sample:
-  intelSnippets[0]: "SIGINT intercept: IRGC naval base at Bandar Abbas showing surge activity."
-  effectNames.tension: "Tension"
-  effectNames.oilFlow: "Oil Flow"
-
-─── characters.json (34 KB) ──────────────────────────────────────────────────
-
-Structure: Object with 1 top-level key
-  characters: 5 character objects (keyed by character ID)
-
-Schema per character: { name, title, ability, abilityDesc, lore[], morningBrief[],
-                        uniqueEvents: { eventId: { title, description, choices[] } },
-                        epilogues: { diplomatic, military, decline } }
-
-Character data:
-  trump:     1 lore, 3 morningBrief, 5 uniqueEvents, 3 epilogues
-  hegseth:   1 lore, 3 morningBrief, 5 uniqueEvents, 3 epilogues
-  kushner:   1 lore, 3 morningBrief, 5 uniqueEvents, 3 epilogues
-  asmongold: 1 lore, 3 morningBrief, 5 uniqueEvents, 3 epilogues
-  fuentes:   1 lore, 3 morningBrief, 4 uniqueEvents, 3 epilogues
-
-─── dialogue.json (7 KB) ─────────────────────────────────────────────────────
-
-Structure: Object with 4 top-level keys
-  advisorReactions: 5 character reaction sets (keyed by character ID)
-  titleScreen:      3 UI strings
-  characterSelect:  5 UI strings
-  loreScreen:       1 UI string
-
-Each character has ~11 reaction types: weekStart, morningBrief, highTension,
-lowApproval, seizure, diplomatic, victory, lowBudget, highProxy,
-uniqueResourceLow, uniqueResourceCritical
-
-─── headlines.json (22 KB) ────────────────────────────────────────────────────
-
-Structure: Object with 5 top-level keys
-  initial:     8 opening headlines (array)
-  simulation:  categorized headline arrays
-  actions:     action-triggered headlines
-  bible_actions: bible action outcome headlines
-  characters:  character-specific overrides
-Total headline strings: ~160
-
-─── action-scenes.json (45 KB) ───────────────────────────────────────────────
-
-Structure: Object with 3 top-level keys
-  actions:  27 action scene sets (keyed by action ID, each array of 3 variants)
-  contacts:  1 generic contact call scene set (array of 3 variants)
-  bible:    15 bible action scene sets (keyed by bible action ID)
-
-Total scene variants: 129
-Each variant: 2-4 sentence narrative prose, second person present tense.
-
-─── briefings.json (51 KB) ───────────────────────────────────────────────────
-
-Structure: Object with 4 top-level keys
-  openings:     31 condition keys, 93 total variants
-  iranIntel:     4 condition keys, 18 variants
-  closers:      11 condition keys, 33 variants
-  advisorNames:  5 pool keys, 15 total names
-
-Conditions include: criticalTension, highTension, budgetDire, conflictRiskHigh,
-seizureYesterday, dayAfterStrike, internationalPariah, lowApproval, lowOilFlow,
-budgetCrisis, highEscalation, iranEscalating, highFogOfWar, highPolarization,
-proxyThreats, restrictedOilFlow, fallingApproval, chinaProblems, minesThreat,
-carrierDeployed, straitOpening, diplomaticProgress, strongCoalition, iranBacked,
-everythingBad, goodMomentum, earlyDays, midGame, lateGame, totalWarFooting, calmDay
-
-─── event-scenes.json (141 KB) ───────────────────────────────────────────────
-
-Structure: Object with 3 top-level keys
-  scenes:           93 event scene objects (keyed by event ID)
-  atmospherePrefix:  6 category arrays (crisis, military, diplomatic, economic, intel, default)
-  timedUrgency:      8 urgency strings (array)
-
-Schema per scene: { scene: "narrative text", consequences: ["choice 0 text", ...] }
-Some scenes include optional urgency field for timed events.
-
-─── reactions.json (7 KB) ────────────────────────────────────────────────────
-
-Structure: Object with 16 top-level keys (state bracket categories)
-  highTension: 6, lowTension: 5, diplomaticProgress: 6, militaryEscalation: 6,
-  proxyThreats: 6, oilCrisis: 5, budgetPressure: 5, domesticUnrest: 5,
-  iranHardliner: 5, iranModerate: 5, internationalIsolation: 5,
-  strongCoalition: 5, fogHigh: 5, earlyGame: 4, lateGame: 5, general: 6
-Total: 84 one-liner news reactions
-
-─── day-endings.json (19 KB) ─────────────────────────────────────────────────
-
-Structure: Object with 2 top-level keys
-  reflections:  5 character objects, each with 7 state keys, each with 3 variants
-  cliffhangers: 12 category keys with 2-4 variants each
-
-Reflection states: highTension, lowTension, militaryAction, diplomaticDay,
-                   budgetTight, approvalDrop, default
-Total reflection variants: 105 (5 chars × 7 states × 3 variants)
-
-Cliffhanger categories: scheduledEvent, iranHardlinerShift, iranModerateShift,
-    tensionCrossedHigh, tensionCrossedLow, oilCrisis, warPathRising,
-    approvalCrisis, proxyActivity, fogHigh, straitProgress, default
-Total cliffhanger variants: 39
-
-================================================================================
-3. CONTENT COVERAGE MATRIX
-================================================================================
-
-─── ACTION SCENES (27/28 actions covered) ────────────────────────────────────
-
-Action ID               Variants  Status
-──────────────────────── ──────── ──────
-gather-intel             3        ✓
-analyze-threats          3        ✓
-phone-call               3        ✓
-draft-proposal           3        ✓
-demand-un-session        3        ✓
-reposition-fleet         3        ✓
-change-roe               3        ✓  (sub-variants for defensive/moderate/aggressive)
-escort-tankers           3        ✓
-precision-strike         3        ✓
-spec-ops-raid            3        ✓
-air-strikes              3        ✓
-sead-mission             3        ✓
-ground-troops            3        ✓
-seize-islands            3        ✓
-full-mobilization        3        ✓
-press-conference         3        ✓
-brief-congress           3        ✓
-adjust-sanctions         3        ✓
-market-intervention      3        ✓
-issue-ultimatum          3        ✓
-emergency-coalition      3        ✓
-escalate                 3        ✓
-deescalate               3        ✓
-deploy-marines           3        ✓  (Hegseth exclusive)
-combat-air-patrol        3        ✓  (Hegseth exclusive)
-rally-base               3        ✓  (Fuentes exclusive)
-media-blitz              3        ✓  (Fuentes exclusive)
-special                  0        ✗ MISSING (delegates to executeSpecialAction)
-
-Also covered:
-  contacts/generic:      3 variants (Kushner call-contact actions)
-  bible/* :             15 bible actions, 3 variants each = 45 variants
-
-─── DECISION EVENT SCENES (89/89 code events covered) ────────────────────────
-
-All 89 DECISION_EVENTS IDs have matching scenes in event-scenes.json.
-5 additional scene IDs for crisis telephone events: nuclear_threshold,
-three_seizures, friendly_fire, cascade_crisis, carrier_hit.
-6 atmosphere prefix categories for fallback scene generation.
-8 timed urgency strings for countdown events.
-
-─── EVENT TEXT (events.json vs simulation.js) ─────────────────────────────────
-
-events.json has 94 decisionEvent text entries.
-simulation.js DECISION_EVENTS has 89 events.
-All code events have corresponding text in events.json.
-
-─── EVENT IMAGES ──────────────────────────────────────────────────────────────
-
-Events using dedicated images:   68  (unique per-event assets)
-Events using category fallbacks: 13  (event-military/diplomatic/economic/intel.png)
-Events using placeholder:         8  (assets/event-placeholder.png — MISSING)
-
-─── INTERRUPT TEXT (35/35 matched) ────────────────────────────────────────────
-
-INTERRUPTS array in ui.js: 35 entries
-interrupts.json interrupts array: 35 entries
-All interrupts have text and choice labels.
-No scene_intro or scene_resolution fields exist.
-
-─── CHARACTER CONTENT ─────────────────────────────────────────────────────────
-
-                  trump   hegseth  kushner  asmongold  fuentes
-                  ─────   ───────  ───────  ─────────  ───────
-Lore paragraphs     1       1        1         1         1
-Morning briefs      3       3        3         3         3
-Unique events       5       5        5         5         4
-Epilogues           3       3        3         3         3
-Day-end states      7       7        7         7         7
-Reflections/state   3       3        3         3         3
-Total reflections  21      21       21        21        21
-Select portrait     ✓       ✓        ✓         ✓         ✓
-Game portrait       ✓       ✓        ✓         ✓         ✓
-Angry reaction      ✓       ✓        ✗*        ✗*        ✗*
-Positive reaction   ✓       ✗*       ✓         ✓         ✗*
-Event images (ea)   4       4        4         4         4
-
-* Characters without unique angry/positive images reuse their base portrait.
-  Kushner: angry=kushner.png, positive=kushner-scheming.png
-  Asmongold: angry=asmongold.png, positive=asmongold-hype.png
-  Fuentes: angry=nick.png, positive=nick.png (same image for both)
-  Hegseth: angry=pete-angry.png, positive=pete.png (base portrait)
-
-─── STORY ARC IMAGES (10 arcs, 8 unique images) ──────────────────────────────
-
-Arc ID              Image File                 Exists
-─────────────────── ──────────────────────── ──────
-the_spark           arc-escalation.png          ✓
-the_squeeze         arc-escalation.png          ✓ (shared with the_spark)
-diplomatic_window   event-diplomatic.png        ✓ (uses event icon, not arc image)
-false_dawn          arc-fog-of-war.png          ✓
-proxy_season        arc-proxy-front.png         ✓
-pressure_cooker     arc-nuclear-shadow.png      ✓
-crossroads          arc-tipping-point.png       ✓
-the_grind           arc-long-game.png           ✓
-endgame_setup       arc-endgame.png             ✓
-resolution          arc-aftermath.png           ✓
-
-================================================================================
-4. MISSING CONTENT & GAPS
-================================================================================
-
-─── MISSING FILES (referenced in code but not on disk) ────────────────────────
-
-1. assets/event-e02-predecessor.png
-   Referenced: js/simulation.js:1559
-   On disk as: event-e02-predecesso.png (truncated filename — missing "r")
-
-2. assets/event-e19-ultimatum.png
-   Referenced: js/simulation.js:1730
-   No file exists. Event: iran_ultimatum.
-
-3. assets/event-placeholder.png
-   Referenced: js/simulation.js lines 2600, 2620, 2638, 2657, 2676, 2691, 2741, 2760
-   No file exists. Used by 8 events as stub image.
-
-4. assets/epilogue-military.png
-   Referenced: js/ui.js:3177
-   On disk as: pilogue-military.png (typo — missing "e" in "epilogue")
-
-─── UNREFERENCED FILES (on disk but never used in code) ───────────────────────
-
-1. assets/epilogue-peace.png          2.5 MB  — No code reference
-2. assets/epilogue-war.png            2.4 MB  — No code reference
-3. assets/event-crisis-nuclear.png    2.6 MB  — No code reference
-4. assets/event-hegseth-carrier.png   2.4 MB  — No code reference
-5. assets/event-hostage-escalates.png 2.0 MB  — No code reference
-6. assets/event-nuclear-inspection.png 2.4 MB — No code reference
-7. assets/map-bg.png                  1.8 MB  — No code reference
-8. assets/strait-map.png              2.2 MB  — No code reference
-9. assets/title screen.png            2.6 MB  — No code reference (space in filename)
-10. assets/event-e02-predecesso.png   2.3 MB  — Orphaned (code refs "predecessor")
-11. assets/pilogue-military.png       2.3 MB  — Orphaned (code refs "epilogue-military")
-
-Total unreferenced: 25.5 MB (11 files)
-
-─── FILENAME TYPOS / INCONSISTENCIES ─────────────────────────────────────────
-
-1. vent-kushner-zarif.png     — Missing "e" in "event" (referenced as-is in code)
-2. vent-asmongold-osint.png   — Missing "e" in "event" (referenced as-is in code)
-3. event-e02-predecesso.png   — Truncated "predecessor" → "predecesso"
-4. event-kushner-summi.png    — Truncated "summit" → "summi"
-5. pilogue-military.png       — Missing "e" in "epilogue"
-6. title screen.png           — Space in filename (non-standard for web)
-
-─── CONTENT GAPS ──────────────────────────────────────────────────────────────
-
-1. ACTION SCENES: "special" action has no scene variants (1 gap of 28)
-2. INTERRUPTS: No scene_intro or scene_resolution fields
-3. FUENTES: Only 4 unique events vs 5 for other characters
-4. STORY ARCS: the_spark and the_squeeze share same image (arc-escalation.png)
-5. STORY ARCS: diplomatic_window uses event-diplomatic.png (category icon, not arc)
-6. 8 events use non-existent placeholder image
-7. epilogue-peace.png and epilogue-war.png exist but are never displayed
-
-─── EVENTS USING PLACEHOLDER IMAGE ───────────────────────────────────────────
-
-These 8 events reference assets/event-placeholder.png which does not exist:
-  (Located at js/simulation.js lines 2600-2760, likely newer events added
-   without corresponding art assets)
-
-================================================================================
-5. AUDIO INVENTORY
-================================================================================
-
-─── MUSIC ─────────────────────────────────────────────────────────────────────
-
-File: assets/bgmusic.mp3
-Size: 5.0 MB
-Format: MPEG Audio Layer 3, stereo, 44.1 kHz
-Reference: index.html line 11 (<audio id="bg-music">)
-Trigger: initMusic() in js/ui.js:3298 — gets element by ID "bg-music",
-         sets volume, loops, plays on user interaction
-
-─── PROCEDURAL SFX (js/sound.js, 169 lines) ──────────────────────────────────
-
-All sound effects are generated procedurally via Web Audio API.
-No external audio files used for SFX.
-
-Function         Description                      Trigger Location
-──────────────── ──────────────────────────────── ────────────────────────
-SFX.init()       Initialize AudioContext           Called on first user interaction
-SFX.click()      UI click (square 800→200Hz)       ui.js — non-good toast actions
-SFX.chime()      Success (3-note: 520,660,780Hz)   ui.js — good toast actions
-SFX.klaxon()     Warning (sawtooth 440→380Hz ×3)   ui.js — event/crisis alerts
-SFX.phone()      Phone ring (dual: 440+480Hz)      ui.js — diplomatic events
-SFX.crtBuzz()    CRT power-on (60Hz + noise)       ui.js — game init
-SFX.transition() Day change (filtered noise sweep)  ui.js — _endDay()
-
-No missing audio references. No orphaned audio files.
-All SFX trigger points in code correspond to defined functions.
-
-================================================================================
-END OF CONTENT INVENTORY
-================================================================================
+========================================================================
+ASSET FILES
+========================================================================
+
+Character Portraits (5 files, 1024x1024 each)
+----------------------------------------------
+- assets/trump.png (274 KB) - Referenced in characters.js as portraitImage
+- assets/pete.png (268 KB) - Referenced as hegseth portraitImage
+- assets/kushner.png (186 KB) - Referenced as kushner portraitImage
+- assets/asmongold.png (269 KB) - Referenced as asmongold portraitImage
+- assets/nick.png (339 KB) - Referenced as fuentes portraitImage
+
+Character Select Images (5 files, 1536x1024 each)
+---------------------------------------------------
+- assets/char-trump.png (1.28 MB) - Referenced as selectImage
+- assets/char-hegseth.png (1.61 MB) - Referenced as selectImage
+- assets/char-kushner.png (952 KB) - Referenced as selectImage
+- assets/char-asmongold.png (1.05 MB) - Referenced as selectImage
+- assets/char-fuentes.png (1.28 MB) - Referenced as selectImage
+
+Character Reaction Images (1024x1024 each)
+-------------------------------------------
+- assets/trump-angry.png (1.24 MB)
+- assets/trump-smug.png (402 KB)
+- assets/asmongold-hype.png (516 KB)
+- assets/pete-angry.png (1.28 MB)
+- assets/kushner-scheming.png (893 KB)
+
+Iranian Faction Portraits (1024x1024 each)
+-------------------------------------------
+- assets/iran-tangsiri.png (1.54 MB) - IRGC hardliner
+- assets/iran-araghchi.png (1.75 MB) - Moderate faction
+- assets/iran-mojtaba.png (1.56 MB) - Supreme Leader successor
+
+Flags (1024x1024 each)
+-----------------------
+- assets/iran-flag.png (112 KB)
+- assets/us-flag.png (362 KB)
+
+Story Arc Images (1536x1024 each)
+----------------------------------
+- assets/arc-escalation.png (2.23 MB) - Used for the_spark and the_squeeze arcs
+- assets/arc-fog-of-war.png (2.61 MB) - Used for false_dawn arc
+- assets/arc-proxy-front.png (2.15 MB) - Used for proxy_season arc
+- assets/arc-nuclear-shadow.png (2.61 MB) - Used for pressure_cooker arc
+- assets/arc-tipping-point.png (2.23 MB) - Used for crossroads arc
+- assets/arc-long-game.png (1.62 MB) - Used for the_grind arc
+- assets/arc-endgame.png (2.35 MB) - Used for endgame_setup arc
+- assets/arc-aftermath.png (2.30 MB) - Used for resolution arc
+
+Epilogue Images (1536x1024 each)
+----------------------------------
+- assets/epilogue-diplomatic.png (2.31 MB)
+- assets/epilogue-military.png (2.44 MB)
+- assets/epilogue-military-crt.png (2.72 MB)
+- assets/epilogue-defeat.png (2.45 MB)
+- assets/epilogue-war.png (2.49 MB)
+- assets/epilogue-peace.png (2.67 MB)
+- assets/epilogue-peace-crt.png (2.98 MB) - NOTE: filename has space: "epilogue-peace-crt.png .png"
+- assets/epilogue-managed-decline.png (2.54 MB)
+- assets/epilogue-decline-crt.png (2.76 MB)
+
+Event Category Icons (1024x1024 each)
+--------------------------------------
+- assets/event-diplomatic.png (567 KB)
+- assets/event-economic.png (384 KB)
+- assets/event-intel.png (754 KB)
+- assets/event-military.png (1.37 MB)
+
+Numbered Event Images (E01-E23, 1536x1024 each)
+-------------------------------------------------
+- assets/event-e01-tanker.png (1.97 MB) - impounded_tanker
+- assets/event-e02-predecessor.png (2.36 MB) - predecessors_ghost
+- assets/event-e03-admiral.png (2.46 MB) - admirals_warning
+- assets/event-e04-journalist.png (2.52 MB) - journalists_call
+- assets/event-e05-british-pm.png (1.61 MB) - british_pm_call
+- assets/event-e06-seizure.png (2.48 MB) - first_seizure_attempt
+- assets/event-e07-iran-doubles.png (2.76 MB) - iran_ultimatum (also reused)
+- assets/event-e08-oil-panic.png (2.94 MB) - oil_markets_panic
+- assets/event-e09-carrier-incident.png (2.07 MB) - carrier_incident
+- assets/event-e10-shirazi.png (2.35 MB) - secret_talks
+- assets/event-e11-un-showdown.png (2.93 MB) - un_showdown
+- assets/event-e12-hostage.png (2.28 MB) - hostage
+- assets/event-e13-china.png (2.49 MB) - china_mediation
+- assets/event-e14-houthi.png (2.60 MB) - proxy_ignition (also reused for houthi events)
+- assets/event-e17-leak.png (2.67 MB) - the_leak
+- assets/event-e18-congress.png (2.13 MB) - congressional_hearing_big
+- assets/event-e19-ultimatum.png (751 KB) - NOT referenced in code
+- assets/event-e20-muscat.png (2.45 MB) - oman_talks
+- assets/event-e21-intel-breakthrough.png (3.02 MB) - intel_breakthrough
+- assets/event-e23-cyber.png (1.59 MB) - cyber_attack_decision
+NOTE: event-e15, event-e16, event-e22 do not exist
+
+Crisis Event Images (1536x1024 each)
+--------------------------------------
+- assets/event-crisis-nuclear.png (2.72 MB) - nuclear_breakout, nuclear_threshold
+- assets/event-crisis-three-seizures.png (2.36 MB) - three_seizures, fast_boat_swarm
+- assets/event-crisis-friendly-fire.png (2.30 MB) - friendly_fire, minab_school_strike
+- assets/event-crisis-cascade.png (3.10 MB) - cascade_crisis, asian_energy_crisis, gas_price_crisis, indian_energy_crisis
+- assets/event-crisis-carrier-hit.png (2.37 MB) - carrier_hit, gcc_attacks, three_carriers, al_udeid_attack, carrier_near_miss
+
+Character-Specific Event Images (1536x1024 each)
+--------------------------------------------------
+
+  Trump:
+  - assets/event-trump-fox.png (2.86 MB) - T01_fox_news_call
+  - assets/event-trump-deal.png (2.39 MB) - T02_deal_on_table
+  - assets/event-trump-rally.png (2.77 MB) - T03_political_capital_crisis
+  - assets/event-trump-truth-social.png (2.50 MB) - T04_iran_backchannel
+
+  Hegseth:
+  - assets/event-hegseth-carrier.png (2.49 MB) - carrier_incident, H events
+  - assets/event-hegseth-pentagon.png (2.71 MB) - H01_pentagon_power_play
+  - assets/event-hegseth-shock-awe.png (2.23 MB) - H03_shock_and_awe
+  - assets/event-hegseth-troops.png (2.42 MB) - H04_troop_morale
+  - assets/event-hegseth-battle.png (2.75 MB) - hegseth battle report
+
+  Kushner:
+  - assets/event-kushner-mbs.png (2.39 MB) - K01_mbs_calls
+  - assets/event-kushner-exposure.png (2.59 MB) - K02_exposure_spikes
+  - assets/event-kushner-summit.png (2.23 MB) - K03_riyadh_summit
+  - assets/event-kushner-zarif.png (2.34 MB) - K04_araghchi_gambit
+  - assets/event-kushner-deal.png (2.60 MB) - kushner deal
+
+  Asmongold:
+  - assets/event-asmongold-osint.png (2.29 MB) - A01_osint_discovery
+  - assets/event-asmongold-disinfo.png (2.57 MB) - A02_disinfo_attack
+  - assets/event-asmongold-stream.png (2.37 MB) - A03/A04 events
+  - assets/event-asmongold-reddit.png (2.30 MB) - reddit subreddit event
+  - assets/event-asmongold-predict.png (2.63 MB) - prediction event
+
+  Fuentes:
+  - assets/event-fuentes-base.png (2.49 MB) - F01_base_demands_blood
+  - assets/event-fuentes-isolation.png (2.11 MB) - F02_international_pariah
+  - assets/event-fuentes-congress.png (2.42 MB) - F03_america_first_rally
+  - assets/event-fuentes-assassination.png (2.76 MB) - F04_assassination_whisper
+  - assets/event-fuentes-pariah.png (2.36 MB) - pariah event
+  - assets/event-fuentes-withdraw.png (3.37 MB) - withdrawal event
+
+Chain/Story Event Images (1536x1024 each)
+-------------------------------------------
+- assets/event-assassination.png (1.79 MB) - assassination_crisis
+- assets/event-ceasefire-test.png (2.01 MB) - backchannel_ceasefire_test, nowruz_ceasefire
+- assets/event-diplomatic-win.png (2.55 MB) - diplomatic victory
+- assets/event-cyber-war.png (2.64 MB) - cyber war
+- assets/event-oil-chaos.png (2.64 MB) - oil chaos
+- assets/event-envoy.png (2.30 MB) - allied_request, hostage_envoy_result, tanker_escort
+- assets/event-grand-bargain.png (1.89 MB) - gulf_offer, T02_deal_response
+- assets/event-mojtaba.png (2.05 MB) - mojtaba_succession, mojtaba_consolidation
+- assets/event-fordow-strike.png (2.41 MB) - nuclear_ultimatum_response
+- assets/event-nuclear-inspection.png (2.51 MB) - nuclear_inspection_crisis
+- assets/event-rescue-op.png (2.29 MB) - humanitarian, hostage_rescue_result, kc135_crew_rescue
+- assets/event-hostage-escalates.png (2.12 MB) - hostage_situation_escalates
+- assets/event-proxy-attack.png (2.03 MB) - proxy attack
+- assets/event-netanyahu-call.png (2.08 MB) - netanyahu_call
+- assets/event-aipac-delegation.png (2.14 MB) - NOT directly referenced (aipac_delegation uses event-e11-un-showdown.png)
+- assets/event-donor-ultimatum.png (2.45 MB) - NOT directly referenced (donor_ultimatum uses event-e08-oil-panic.png)
+- assets/event-lobby-attack.png (2.67 MB) - NOT directly referenced
+
+Scene Images (1536x1024 each)
+-------------------------------
+- assets/scene-seizure.png (2.55 MB)
+- assets/scene-intercept.png (2.59 MB)
+- assets/scene-mine.png (2.81 MB)
+- assets/scene-houthi-launch.png (2.41 MB)
+- assets/scene-hegseth-carrier.png (2.42 MB)
+- assets/scene-kushner-exposure.png (2.83 MB)
+- assets/scene-asmongold-viral.png (2.89 MB)
+- assets/scene-budget-crisis.png (2.66 MB)
+- assets/scene-muscat-meeting.png (2.38 MB)
+- assets/scene-strait-open.png (2.38 MB)
+- assets/scene-total-war.png (3.82 MB)
+- assets/scene-trump-phone.png (2.82 MB)
+- assets/scene-trump-victory.png (2.65 MB)
+- assets/scene-removal.png (2.68 MB)
+
+Backgrounds/Maps (various sizes)
+----------------------------------
+- assets/map-bg.png (1.84 MB, 1264x848) - tactical map background
+- assets/map-tactical.png (2.85 MB, 1536x1024) - NOT directly referenced in map.js
+- assets/strait-map.png (2.31 MB, 1536x1024) - NOT directly referenced
+
+Situation Room (1536x1024 each)
+---------------------------------
+- assets/situation-room.png (1.10 MB) - first morning briefing
+- assets/situation-room-calm.png (2.55 MB) - referenced in narrative.js for low tension
+- assets/situation-room-elevated.png (2.69 MB) - referenced for medium tension
+- assets/situation-room-crisis.png (2.09 MB) - referenced for high tension
+
+Briefing Images (1536x1024 each)
+----------------------------------
+- assets/briefing-early.png (2.35 MB) - early game briefing
+- assets/briefing-late.png (2.63 MB) - late game briefing
+
+Title/UI
+---------
+- assets/title-screen.png (2.74 MB, 1536x1024) - title screen art
+- assets/title-screen 2.png (3.27 MB, 1536x1024) - UNREFERENCED (note space in filename)
+- assets/victory.png (2.35 MB, 1536x1024) - game won screen
+- assets/defeat.png (3.00 MB, 1536x1024) - game lost screen
+
+Audio
+------
+- assets/bgmusic.mp3 (5.29 MB, ~11 minutes) - background music loop
+
+TOTAL: ~128 asset files, ~290 MB total
+
+
+========================================================================
+DATA FILES
+========================================================================
+
+cards.json (14 KB, 400 lines)
+-------------------------------
+Top-level: strategyCards(27), characterBonusCards(5), contactCards(5), synergies(7), cardLevels(4)
+Schema: {name, description, hint:{low,med,high}}
+Sample: strategyCards.carrier_strike: {name:"Carrier Strike Group", description:"Deploy a carrier strike group...", hint:{low:"Alert carrier group",med:"Deploy to theater",high:"Full strike posture"}}
+
+events.json (81 KB, 927 lines)
+--------------------------------
+Top-level: decisionEvents(94), escalationLadder(6), iranEscalation(6), storyArcs(10), winLoseReasons(8), overnightNewsFiller(4)
+Schema per event: {title, description, choices:[{label, flavor}], characterFlavor?:{character:string}}
+91 events have scenes in event-scenes.json
+
+interrupts.json (38 KB, 357 lines)
+------------------------------------
+Top-level: interrupts(35), actionTips(33), bibleActions(15), guideSteps(4)
+Schema per interrupt: {text, scene_intro, choices:[{label, scene_resolution}], charId?}
+All 35 interrupts have both scene_intro and scene_resolution
+
+intel.json (7 KB, 117 lines)
+------------------------------
+Top-level: intelSnippets(29), effectNames(29), keyDrivers(17), briefingTitles(6), advisorRecommendations(6), firstMorning(3 fields), winProgressLabels(6), guideSteps(4)
+
+characters.json (35 KB, 532 lines)
+------------------------------------
+Top-level: characters(5)
+Schema: {name, title, ability, abilityDesc, lore:[string], morningBrief:[3 strings], uniqueEvents:{eventId:{choices:[3]}}, epilogues:{diplomatic,military,decline}}
+
+dialogue.json (10 KB, 123 lines)
+----------------------------------
+Top-level: advisorReactions(5 chars), titleScreen, characterSelect, loreScreen
+Schema per char: {weekStart:[3], morningBrief:[3], highTension, lowApproval, seizure, diplomatic, victory, lowBudget, highProxy, uniqueResourceLow, uniqueResourceCritical}
+
+reactions.json (7 KB, 118 lines)
+----------------------------------
+IDENTICAL content to dialogue.json -- duplicate file
+
+headlines.json (23 KB, 490 lines)
+-----------------------------------
+Top-level: initial(8), simulation(~30 categories), actions(34), bible_actions(~15 categories), characters(2)
+Includes: 67 card consequence headlines, 29 ambient events, 21 iran provocations, 4 overnight filler
+
+action-scenes.json (55 KB, 250 lines)
+---------------------------------------
+Top-level: actions(27 keys, 3 variants each), bible(15 keys, 3 each), contacts(1 key, 3), characterVariants(5 chars with action overrides)
+Total: 81 base action scenes + 45 bible scenes + 3 contact scenes + ~15 character variant scenes
+
+briefings.json (69 KB, 462 lines)
+-----------------------------------
+Top-level: openings(31 categories, 3 each), iranIntel(4 categories), closers(11 categories, 3 each), advisorNames(5 categories), characterBriefing(5 chars)
+Total: 93 opening variants + 16 iran intel + 33 closer variants + 15 advisor names + extensive character briefing variants
+
+event-scenes.json (150 KB, 838 lines)
+---------------------------------------
+Top-level: scenes(91), atmospherePrefix, timedUrgency
+Schema: {scene:string, consequences:[strings], characterFlavor?:{char:string}}
+91 events have complete scene coverage
+
+day-endings.json (28 KB, 253 lines)
+-------------------------------------
+Top-level: reflections(5 chars x 7 moods x 3 variants = 105), cliffhangers(13 categories, ~40 total)
+
+
+========================================================================
+CONTENT COVERAGE MATRIX
+========================================================================
+
+Action Scene Coverage
+----------------------
+ALL 27 core actions have 3 scene variants
+ALL 15 bible actions have 3 scene variants
+Contact actions have 1 generic set of 3 variants
+5 characters have action overrides for 3 actions each
+
+Decision Event Scene Coverage
+------------------------------
+91 of 94 events have scenes in event-scenes.json
+Events with characterFlavor (5 chars each): impounded_tanker, first_seizure_attempt, congressional_hearing_big, iran_ultimatum, intel_breakthrough
+
+Decision Event Image Coverage
+------------------------------
+Most events have image references. Events reusing generic images:
+- event-military.png: media_crisis, militia_attack, drone_carrier, fast_boat_swarm(?), iris_dena_aftermath(x2), tanker_war_echoes, mine_laying_detected, kc135_crash, etc.
+- event-diplomatic.png: election_pressure, joe_kent_resignation, iran_moderate_coup, european_split, war_crimes_tribunal(event)
+- event-economic.png: pipeline_sabotage, insurance_crisis, cape_route_crisis
+- event-intel.png: assassination_intel, russia_arms_deal, drone_carrier, russia_intel_leak
+
+Interrupt Coverage
+-------------------
+ALL 35 interrupts have: text, scene_intro, 2 choices with scene_resolution
+
+Character Asset Coverage
+-------------------------
+Each character has:
+- Portrait (1024x1024)
+- Select image (1536x1024)
+- 4-6 unique event images
+- Reaction images: trump(2), hegseth(1:pete-angry), kushner(1:kushner-scheming), asmongold(1:asmongold-hype), fuentes(0 - MISSING reaction image)
+
+Story Arc Coverage
+-------------------
+All 10 arcs have images (arc-escalation reused for 2 arcs)
+
+Epilogue Coverage
+------------------
+3 variants (diplomatic/military/decline) per character in characters.json
+Images: epilogue-diplomatic, epilogue-military, epilogue-military-crt, epilogue-defeat, epilogue-war, epilogue-peace, epilogue-peace-crt, epilogue-managed-decline, epilogue-decline-crt
+NOTE: epilogue-peace-crt.png has a space in filename: "epilogue-peace-crt.png .png" -- likely broken reference
+
+
+========================================================================
+MISSING CONTENT
+========================================================================
+
+Missing Event Numbers
+----------------------
+- event-e15, event-e16, event-e22 image files don't exist (no events reference them)
+
+Unreferenced Asset Files (on disk but not in code)
+----------------------------------------------------
+- assets/event-e19-ultimatum.png - No event uses this image
+- assets/event-aipac-delegation.png - aipac_delegation event uses event-e11-un-showdown.png instead
+- assets/event-donor-ultimatum.png - donor_ultimatum event uses event-e08-oil-panic.png instead
+- assets/event-lobby-attack.png - No code reference found
+- assets/event-netanyahu-call.png - netanyahu_call event uses event-e05-british-pm.png instead
+- assets/event-proxy-attack.png - No direct code reference (proxy events use event-e14-houthi.png)
+- assets/event-diplomatic-win.png - No direct code reference
+- assets/event-cyber-war.png - No direct code reference
+- assets/event-oil-chaos.png - No direct code reference
+- assets/map-tactical.png - map.js uses map-bg.png
+- assets/strait-map.png - Not referenced in code
+- assets/title-screen 2.png - Not referenced (space in filename)
+- assets/scene-* images - These may be referenced in narrative.js or ui.js scene system, need to verify
+
+Files Referenced in Code but Potentially Missing
+--------------------------------------------------
+- Check all scene-*.png references in narrative.js showSceneAmbient() and other scene functions
+
+Duplicate/Redundant Files
+--------------------------
+- dialogue.json and reactions.json have identical content
+- epilogue-military.png and epilogue-military-crt.png (CRT variant exists)
+- epilogue-peace.png and epilogue-peace-crt.png .png (CRT variant, broken filename)
+
+Broken References
+------------------
+- epilogue-peace-crt.png .png has a space before .png in the filename -- any code referencing "epilogue-peace-crt.png" would fail to find this file
+- SIM.hillSupport gauge element in HTML but no hillSupport property in SIM
+
+Character Data Completeness
+-----------------------------
+All 5 characters have:
+- name, title, ability, abilityDesc
+- lore (1 paragraph each)
+- morningBrief (3 variants each)
+- 4-5 uniqueEvents with choices
+- 3 epilogues (diplomatic, military, decline)
+- Reactions for: weekStart(3), morningBrief(3), highTension, lowApproval, seizure, diplomatic, victory, lowBudget, highProxy, uniqueResourceLow, uniqueResourceCritical
+
+
+========================================================================
+AUDIO INVENTORY
+========================================================================
+
+- bgmusic.mp3: ~11 minute loop, triggered on title screen click, volume 0.3
+- All other sounds are procedural via Web Audio API (SFX object in sound.js):
+    - SFX.click() - UI interactions
+    - SFX.chime() - good events, wins
+    - SFX.klaxon() - crisis events, interrupts
+    - SFX.phone() - decision events (non-crisis)
+    - SFX.crtBuzz() - CRT aesthetic
+    - SFX.error() - error states
+    - SFX.transition() - phase transitions
+- No missing audio references (all procedural)
