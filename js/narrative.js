@@ -15,7 +15,77 @@
  *   options.delta     — (stat) signed number
  *   options.level     — (alert/headline) 'critical' | 'warning' | 'good' | 'normal'
  *   options.silent    — suppress auto-scroll
+ *   options.portrait  — image path or character/NPC ID for inline portrait
  */
+
+// ======================== PORTRAIT REGISTRY ========================
+
+const PORTRAIT_REGISTRY = {
+    // Player characters
+    trump:      'assets/trump.png',
+    hegseth:    'assets/pete.png',
+    kushner:    'assets/kushner.png',
+    asmongold:  'assets/asmongold.png',
+    fuentes:    'assets/nick.png',
+
+    // Character variants (angry/positive)
+    'trump-angry':      'assets/trump-angry.png',
+    'trump-positive':   'assets/trump-smug.png',
+    'hegseth-angry':    'assets/pete-angry.png',
+    'hegseth-positive': 'assets/pete.png',
+    'kushner-angry':    'assets/kushner.png',
+    'kushner-positive': 'assets/kushner-scheming.png',
+    'asmongold-angry':  'assets/asmongold.png',
+    'asmongold-positive': 'assets/asmongold-hype.png',
+    'fuentes-angry':    'assets/nick.png',
+    'fuentes-positive': 'assets/nick.png',
+
+    // Iranian NPCs
+    tangsiri:   'assets/iran-tangsiri.png',
+    araghchi:   'assets/iran-araghchi.png',
+    mojtaba:    'assets/iran-mojtaba.png',
+
+    // Flags (for generic / institutional speakers)
+    us:         'assets/us-flag.png',
+    iran:       'assets/iran-flag.png',
+    domestic:   'assets/us-flag.png',
+
+    // Advisor name lookups (map common briefing advisor names to portraits)
+    'CIA Director':         'assets/us-flag.png',
+    'DNI':                  'assets/us-flag.png',
+    'SecDef':               'assets/us-flag.png',
+    'SecState':             'assets/us-flag.png',
+    'National Security Advisor': 'assets/us-flag.png',
+    'NSA Director':         'assets/us-flag.png',
+    'Joint Chiefs Chair':   'assets/us-flag.png',
+    'CENTCOM Commander':    'assets/us-flag.png',
+    'Press Secretary':      'assets/us-flag.png',
+    'Chief of Staff':       'assets/us-flag.png',
+    'Treasury Secretary':   'assets/us-flag.png',
+    'Energy Secretary':     'assets/us-flag.png',
+    'Your advisor':         'assets/us-flag.png',
+
+    // Iranian names for dialogue
+    'Araghchi':   'assets/iran-araghchi.png',
+    'Tangsiri':   'assets/iran-tangsiri.png',
+    'Mojtaba':    'assets/iran-mojtaba.png',
+    'IRGC':       'assets/iran-flag.png',
+    'Tehran':     'assets/iran-flag.png',
+};
+
+/**
+ * Resolve a portrait option to an image path.
+ * Accepts: image path, character ID, speaker name, or null.
+ */
+function _resolvePortrait(portrait, speaker) {
+    // Direct path
+    if (portrait && portrait.indexOf('/') !== -1) return portrait;
+    // Registry lookup by portrait key
+    if (portrait && PORTRAIT_REGISTRY[portrait]) return PORTRAIT_REGISTRY[portrait];
+    // Fallback: try speaker name
+    if (speaker && PORTRAIT_REGISTRY[speaker]) return PORTRAIT_REGISTRY[speaker];
+    return null;
+}
 
 const _narrativeEntries = [];
 let _narrativePanel = null;
@@ -64,6 +134,10 @@ function clearNarrative() {
 // ======================== INTERNALS ========================
 
 function _pushEntry(type, text, opts) {
+    const portraitSrc = (type === 'scene' || type === 'dialogue')
+        ? _resolvePortrait(opts.portrait, opts.speaker)
+        : null;
+
     const entry = {
         type: type,
         text: text,
@@ -73,7 +147,8 @@ function _pushEntry(type, text, opts) {
         speaker: opts.speaker || null,
         metric: opts.metric || null,
         delta: opts.delta || null,
-        level: opts.level || 'normal'
+        level: opts.level || 'normal',
+        portrait: portraitSrc
     };
 
     _narrativeEntries.push(entry);
@@ -98,16 +173,23 @@ function _renderEntry(entry) {
     el.className = 'nf-entry nf-' + entry.type;
 
     const timestamp = _formatTimestamp(entry.hour, entry.day);
+    const portraitHtml = entry.portrait
+        ? `<img class="nf-portrait" src="${entry.portrait}" alt="" draggable="false">`
+        : '';
+    const hasPortrait = !!entry.portrait;
+    if (hasPortrait) el.classList.add('nf-has-portrait');
 
     switch (entry.type) {
         case 'scene':
-            el.innerHTML = `<span class="nf-time">${timestamp}</span><span class="nf-scene-text">${entry.text}</span>`;
+            el.innerHTML = portraitHtml
+                + `<div class="nf-text-body"><span class="nf-time">${timestamp}</span><span class="nf-scene-text">${entry.text}</span></div>`;
             break;
 
         case 'dialogue':
-            el.innerHTML = `<span class="nf-time">${timestamp}</span>`
+            el.innerHTML = portraitHtml
+                + `<div class="nf-text-body"><span class="nf-time">${timestamp}</span>`
                 + `<span class="nf-speaker">${entry.speaker || 'UNKNOWN'}:</span> `
-                + `<span class="nf-dialogue-text">\u201C${entry.text}\u201D</span>`;
+                + `<span class="nf-dialogue-text">\u201C${entry.text}\u201D</span></div>`;
             break;
 
         case 'alert': {

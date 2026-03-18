@@ -1274,9 +1274,9 @@ function showDailyReport() {
 
     // Also push the briefing to the narrative feed
     if (typeof addNarrative === 'function' && briefing) {
-        addNarrative('scene', openingText);
-        if (iranIntel) addNarrative('dialogue', iranIntel, { speaker: advisorName });
-        if (closerText) addNarrative('scene', closerText);
+        addNarrative('scene', openingText, { portrait: advisorName });
+        if (iranIntel) addNarrative('dialogue', iranIntel, { speaker: advisorName, portrait: advisorName });
+        if (closerText) addNarrative('scene', closerText, { portrait: advisorName });
     }
 
     document.getElementById('btn-maintain').addEventListener('click', () => {
@@ -1971,8 +1971,9 @@ function _narrateAction(actionId, snap, scaledKeys) {
     }
     _sceneHistory[sceneKey] = idx;
 
-    // Write the scene
-    addNarrative('scene', pool[idx]);
+    // Write the scene with player character portrait
+    const _actPortrait = SIM.character ? SIM.character.id : null;
+    addNarrative('scene', pool[idx], { portrait: _actPortrait });
 
     // Write stat changes beneath the scene
     for (const k of scaledKeys) {
@@ -2623,9 +2624,19 @@ function _writeDayEndScene() {
         }
     }
 
+    // Determine character portrait mood variant for day-end
+    let _dayEndPortrait = charId || null;
+    if (charId && typeof PORTRAIT_REGISTRY !== 'undefined') {
+        if (reflectionKey === 'highTension' || reflectionKey === 'approvalDrop' || reflectionKey === 'militaryAction') {
+            _dayEndPortrait = charId + '-angry';
+        } else if (reflectionKey === 'lowTension' || reflectionKey === 'diplomaticDay') {
+            _dayEndPortrait = charId + '-positive';
+        }
+    }
+
     // Write to narrative feed
     if (reflectionText) {
-        addNarrative('scene', reflectionText);
+        addNarrative('scene', reflectionText, { portrait: _dayEndPortrait });
     }
     if (cliffText) {
         addNarrative('alert', cliffText, { level: 'warning' });
@@ -2753,6 +2764,18 @@ function showInterrupt(afterCallback) {
 
             addHeadline(`Interrupt: ${interrupt.text.substring(0, 40)}... \u2014 ${choice.label}`, 'normal');
 
+            // Push to narrative feed with contextual portrait
+            if (typeof addNarrative === 'function') {
+                const iText = interrupt.text.toLowerCase();
+                let iPortrait = 'us';
+                if (iText.indexOf('iran') !== -1 || iText.indexOf('tehran') !== -1 || iText.indexOf('irgc') !== -1 || iText.indexOf('araghchi') !== -1) {
+                    iPortrait = 'iran';
+                } else if (SIM.character) {
+                    iPortrait = SIM.character.id;
+                }
+                addNarrative('scene', interrupt.text + ' \u2014 ' + choice.label, { portrait: iPortrait });
+            }
+
             // Remove overlay
             overlay.classList.remove('visible');
             setTimeout(() => {
@@ -2834,9 +2857,12 @@ function showDecisionEvent(event) {
     const customScene = eventScenes.scenes && eventScenes.scenes[event.id];
     const sceneText = _buildEventScene(event, customScene, eventScenes);
 
+    // Determine portrait for the event narrative entry
+    const _evtPortrait = _getEventPortrait(event);
+
     // Write scene to narrative feed
     if (typeof addNarrative === 'function') {
-        addNarrative('scene', sceneText);
+        addNarrative('scene', sceneText, { portrait: _evtPortrait });
     }
 
     // Show event image in scene panel
@@ -3051,7 +3077,7 @@ function resolveDecision(event, choiceIdx, customScene) {
 
     // Write consequence to narrative feed
     if (typeof addNarrative === 'function') {
-        addNarrative('scene', consequenceText);
+        addNarrative('scene', consequenceText, { portrait: _getEventPortrait(event) });
         // Stat changes as subtle indicators
         for (const [key, val] of Object.entries(choice.effects)) {
             if (val !== 0) {
@@ -3412,6 +3438,25 @@ function _getReactionImage(context) {
     if (context === 'defeat') return reactions.angry;
     if (context === 'crisis') return reactions.angry;
     if (context === 'good') return reactions.positive;
+    return null;
+}
+
+function _getEventPortrait(event) {
+    if (!event) return null;
+    const id = (event.id || '').toLowerCase();
+    // Character-specific events — show that character's portrait
+    if (id.startsWith('t0') || id.startsWith('trump')) return SIM.character ? SIM.character.portraitImage : 'assets/trump.png';
+    if (id.startsWith('h0') || id.startsWith('hegseth')) return 'assets/pete.png';
+    if (id.startsWith('k0') || id.startsWith('kushner')) return 'assets/kushner.png';
+    if (id.startsWith('a0') || id.startsWith('asmongold')) return 'assets/asmongold.png';
+    if (id.startsWith('f0') || id.startsWith('fuentes')) return 'assets/nick.png';
+    // Iranian NPC events
+    if (id.indexOf('mojtaba') !== -1) return 'assets/iran-mojtaba.png';
+    if (id.indexOf('araghchi') !== -1 || id.indexOf('zarif') !== -1) return 'assets/iran-araghchi.png';
+    if (id.indexOf('tangsiri') !== -1) return 'assets/iran-tangsiri.png';
+    if (id.indexOf('iran') !== -1 || id.indexOf('tehran') !== -1) return 'assets/iran-flag.png';
+    // Domestic / US government events
+    if (id.indexOf('congress') !== -1 || id.indexOf('domestic') !== -1 || id.indexOf('hostage') !== -1) return 'assets/us-flag.png';
     return null;
 }
 

@@ -378,10 +378,31 @@ body {
     border-bottom: 1px solid rgba(26, 58, 42, 0.1);
     animation: nf-fadein 0.4s ease;
 }
+.nf-entry.nf-has-portrait {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 .nf-entry:last-child { border-bottom: none; }
 @keyframes nf-fadein {
     from { opacity: 0; transform: translateY(4px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Inline portraits */
+.nf-portrait {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    border: 2px solid #00ff41;
+    object-fit: cover;
+    image-rendering: auto;
+    box-shadow: 0 0 6px rgba(0, 255, 65, 0.15);
+}
+.nf-text-body {
+    flex: 1;
+    min-width: 0;
 }
 
 /* Timestamp */
@@ -406,6 +427,10 @@ body {
     color: var(--text);
     padding-left: 12px;
     border-left: 2px solid var(--green-dim);
+}
+.nf-dialogue.nf-has-portrait {
+    padding-left: 0;
+    border-left: none;
 }
 .nf-speaker {
     color: var(--yellow);

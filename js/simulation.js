@@ -931,6 +931,12 @@ function dailyUpdate() {
             const hlLevel = moveType === 'hardliner' ? 'warning' : moveType === 'moderate' ? 'good' : 'normal';
             addHeadline(`TEHRAN: ${move}`, hlLevel);
 
+            // Also push to narrative feed as dialogue with Iran portrait
+            if (typeof addNarrative === 'function') {
+                const iranSpeaker = moveType === 'hardliner' ? 'Tangsiri' : moveType === 'moderate' ? 'Araghchi' : 'Tehran';
+                addNarrative('dialogue', move, { speaker: iranSpeaker, portrait: iranSpeaker });
+            }
+
             // Show Iran portrait in scene panel
             if (typeof showSceneImage === 'function') {
                 const iranPortrait = moveType === 'hardliner' ? 'assets/iran-tangsiri.png'
