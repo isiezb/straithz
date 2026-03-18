@@ -1649,6 +1649,9 @@ function showAdjustStrategy() {
                 SIM.swapsToday = (SIM.swapsToday || 0) + 1;
                 addHeadline(`Strategy changed: ${removed.card.name} \u2192 ${replacement.card.name}`, 'warning');
 
+                // Card selection reaction
+                _showCardReaction(replacement.card);
+
                 closeTerminal();
                 if (SIM.phase === 'dayplay') {
                     if (typeof showActionPanel === 'function') showActionPanel();
