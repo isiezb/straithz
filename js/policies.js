@@ -669,12 +669,12 @@ function hydrateCards() {
         if (t) { c.name = t.name; c.description = t.description; c.hint = t.hint; }
     });
     // Character bonus cards
-    CHARACTER_BONUS_CARDS.forEach(c => {
+    Object.values(CHARACTER_BONUS_CARDS).forEach(c => {
         const t = d.characterBonusCards[c.id];
         if (t) { c.name = t.name; c.description = t.description; c.hint = t.hint; }
     });
     // Contact cards
-    CONTACT_CARDS.forEach(c => {
+    Object.values(CONTACT_CARDS).forEach(c => {
         const t = d.contactCards[c.id];
         if (t) { c.name = t.name; c.description = t.description; c.hint = t.hint; }
     });
