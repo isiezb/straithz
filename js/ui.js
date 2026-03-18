@@ -994,9 +994,9 @@ function showFirstMorning() {
 
     const advisorImg = SIM.character ? SIM.character.portraitImage : null;
 
-    // Show situation room in scene panel for first morning
+    // Show early-game briefing art in scene panel for first morning
     if (typeof showSceneImage === 'function') {
-        showSceneImage('assets/situation-room.png', { caption: 'THE WHITE HOUSE SITUATION ROOM \u2014 DAY 1' });
+        showSceneImage('assets/briefing-early.png', { caption: 'THE WHITE HOUSE SITUATION ROOM \u2014 DAY 1' });
     }
 
     openTerminal(`
@@ -1253,9 +1253,15 @@ function showDailyReport() {
         return;
     }
 
-    // Show situation room in scene panel for morning briefing
+    // Show tension-variant situation room in scene panel for morning briefing
+    let briefingImg = 'assets/situation-room.png';
+    if (SIM.tension > 65) briefingImg = 'assets/situation-room-crisis.png';
+    else if (SIM.tension > 40) briefingImg = 'assets/situation-room-elevated.png';
+    else if (SIM.tension < 25) briefingImg = 'assets/situation-room-calm.png';
+    if (SIM.day <= 7) briefingImg = 'assets/briefing-early.png';
+    else if (SIM.day > 50) briefingImg = 'assets/briefing-late.png';
     if (typeof showSceneImage === 'function') {
-        showSceneImage('assets/situation-room.png', { caption: 'MORNING BRIEFING \u2014 DAY ' + SIM.day });
+        showSceneImage(briefingImg, { caption: 'MORNING BRIEFING \u2014 DAY ' + SIM.day });
     }
 
     // Generate narrative briefing
@@ -2426,6 +2432,42 @@ function _narrateAction(actionId, snap, scaledKeys) {
     const actionName = _getActionDisplayName(actionId);
     addNarrative('command', actionName);
 
+    // --- Step 1b: Show action scene image ---
+    const ACTION_SCENE_IMAGES = {
+        // Military actions
+        'deploy-escort': 'assets/scene-intercept.png',
+        'naval-exercise': 'assets/event-military.png',
+        'carrier-ops': 'assets/scene-hegseth-carrier.png',
+        'launch-strike': 'assets/scene-total-war.png',
+        'increase-patrols': 'assets/event-military.png',
+        'mine-sweeping': 'assets/scene-mine.png',
+        'intercept-boats': 'assets/scene-intercept.png',
+        // Diplomatic actions
+        'make-phone-call': 'assets/scene-trump-phone.png',
+        'un-session': 'assets/event-e11-un-showdown.png',
+        'backchannel': 'assets/event-e10-shirazi.png',
+        'coalition-building': 'assets/event-envoy.png',
+        'press-conference': 'assets/event-diplomatic.png',
+        'humanitarian-gesture': 'assets/event-rescue-op.png',
+        // Economic
+        'impose-sanctions': 'assets/event-economic.png',
+        'oil-reserves': 'assets/event-e08-oil-panic.png',
+        'trade-incentives': 'assets/event-economic.png',
+        // Intelligence
+        'gather-intel': 'assets/event-intel.png',
+        'cyber-operation': 'assets/event-e23-cyber.png',
+        'analyze-threats': 'assets/event-intel.png',
+        // Domestic
+        'address-nation': 'assets/event-diplomatic.png',
+        'lobby-congress': 'assets/event-e18-congress.png',
+        // Change ROE
+        'change-roe': 'assets/event-military.png',
+    };
+    const actionImg = ACTION_SCENE_IMAGES[actionId];
+    if (actionImg && typeof showSceneImage === 'function') {
+        showSceneImage(actionImg, { duration: 6000, caption: actionName });
+    }
+
     // --- Step 2: Scene text ---
     const _actPortrait = SIM.character ? SIM.character.id : null;
     const sceneText = (charVariantText && Math.random() < 0.5) ? charVariantText : pool[idx];
@@ -3353,6 +3395,40 @@ function _writeDayEndScene() {
     else if (SIM.budget < 200) reflectionKey = 'budgetTight';
     else if (SIM.domesticApproval < 35) reflectionKey = 'approvalDrop';
 
+    // --- Show overnight scene image based on mood ---
+    const OVERNIGHT_MOOD_MAP = {
+        highTension: 'tense',
+        lowTension: 'hopeful',
+        militaryAction: 'grim',
+        diplomaticDay: 'hopeful',
+        budgetTight: 'desperate',
+        approvalDrop: 'grim',
+        default: 'reflective',
+    };
+    const mood = OVERNIGHT_MOOD_MAP[reflectionKey] || 'reflective';
+    // Extra mood overrides for extreme states
+    const finalMood = (SIM.straitOpenDays > 10 && SIM.oilFlow > 55) ? 'triumphant' :
+                      (SIM.domesticApproval > 70 && SIM.tension < 40) ? 'confident' : mood;
+
+    const OVERNIGHT_IMAGES = {
+        confident: 'assets/scene-trump-victory.png',
+        triumphant: 'assets/scene-strait-open.png',
+        desperate: 'assets/scene-budget-crisis.png',
+        grim: 'assets/event-crisis-cascade.png',
+        tense: 'assets/event-military.png',
+        hopeful: 'assets/event-diplomatic-win.png',
+        reflective: 'assets/situation-room-calm.png',
+    };
+    const CHAR_OVERNIGHT = {
+        kushner: { confident: 'assets/scene-kushner-exposure.png', desperate: 'assets/scene-muscat-meeting.png' },
+        asmongold: { triumphant: 'assets/scene-asmongold-viral.png' },
+        hegseth: { confident: 'assets/scene-hegseth-carrier.png' },
+    };
+    const overnightImg = (CHAR_OVERNIGHT[charId] && CHAR_OVERNIGHT[charId][finalMood]) || OVERNIGHT_IMAGES[finalMood];
+    if (overnightImg && typeof showSceneImage === 'function') {
+        showSceneImage(overnightImg, { duration: 8000, caption: 'END OF DAY ' + SIM.day, opacity: 0.7 });
+    }
+
     let reflectionText = '';
     if (reflections) {
         const pool = reflections[reflectionKey] || reflections['default'] || [];
@@ -4245,7 +4321,11 @@ function showGameOverScreen() {
         }
     }
     if (!SIM.gameWon && !epilogueText) {
-        epilogueImg = 'assets/epilogue-defeat.png';
+        // Pick defeat-specific epilogue image based on how the game ended
+        if (SIM.warPath >= 5) epilogueImg = 'assets/epilogue-war.png';
+        else if (SIM.budget <= 0) epilogueImg = 'assets/scene-budget-crisis.png';
+        else if (SIM.domesticApproval < 15) epilogueImg = 'assets/scene-removal.png';
+        else epilogueImg = 'assets/epilogue-defeat.png';
     }
 
     // Show epilogue/outcome image in scene panel

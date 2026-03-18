@@ -847,6 +847,9 @@ function dailyUpdate() {
             addHeadline((DATA.headlines.simulation.intercept || [])[0] || '', 'good');
             spawnEffect(bx, by, 'intercept');
             addIncidentMarker(bx, by, 'intercept', SIM.day);
+            if (typeof showSceneImage === 'function') {
+                showSceneImage('assets/scene-intercept.png', { duration: 5000, caption: 'INTERCEPT SUCCESSFUL' });
+            }
             if (boat) boat.fleeing = true;
         } else {
             // Seizure happens
@@ -862,6 +865,9 @@ function dailyUpdate() {
                 addHeadline(`BREAKING: IRGC seizes tanker ${tanker.id} (${tanker.flag}-flagged)`, 'critical');
                 spawnEffect(pos.x, pos.y, 'seizure');
                 addIncidentMarker(pos.x, pos.y, 'seizure', SIM.day);
+                if (typeof showSceneImage === 'function') {
+                    showSceneImage('assets/scene-seizure.png', { duration: 5000, caption: 'TANKER SEIZED' });
+                }
                 if (!SIM.decisionEventActive) triggerSeizureDecision(tanker);
             }
         }
