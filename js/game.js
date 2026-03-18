@@ -11,6 +11,9 @@
         hydrateCharacters();
 
 
+        // Init music early so mute button works on intro screens
+        initMusic();
+
         await showTitleScreen();
         const character = await showCharacterSelect();
         await showLoreScreen(character);
