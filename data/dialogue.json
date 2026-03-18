@@ -257,5 +257,124 @@
   },
   "loreScreen": {
     "proceedButton": "[ ENTER THE SITUATION ROOM ]"
+  },
+  "cardReactions": {
+    "trump": {
+      "military": {
+        "positive": "[Trump nods approvingly] 'Now that's what I'm talking about. Strength. Real strength. They'll see this on every channel.'",
+        "reluctant": "[Trump waves his hand] 'Fine, fine. The generals want their toys. Just make sure it looks good on camera.'"
+      },
+      "diplomatic": {
+        "positive": "[Trump leans forward] 'A deal. I love deals. Nobody makes deals like me. Let's see what they're offering.'",
+        "reluctant": "[Trump grimaces] 'Diplomacy. Boring word. But sometimes you gotta shake hands before you squeeze. Fine.'"
+      },
+      "economic": {
+        "positive": "[Trump taps the desk] 'Money talks. Always has. Hit them in the wallet and they come to the table begging.'",
+        "reluctant": "[Trump shrugs] 'The economists want to play their games. As long as the stock market doesn't crash, whatever.'"
+      },
+      "intelligence": {
+        "positive": "[Trump squints] 'Intel. Sure. Just don't let the deep state types run the show. I want results I can see.'",
+        "reluctant": "[Trump crosses his arms] 'Spies. Never trusted them. But I guess someone has to watch the watchers.'"
+      },
+      "domestic": {
+        "positive": "[Trump grins widely] 'The American people. That's who matters. This plays great in the heartland — I can feel it.'",
+        "reluctant": "[Trump checks his phone] 'Congress wants attention again. Give them their briefing. Just make sure they know who's in charge.'"
+      }
+    },
+    "hegseth": {
+      "military": {
+        "positive": "[Hegseth straightens up] 'Outstanding. This is the kind of decisive force projection that changes the calculus on the ground.'",
+        "reluctant": "[Hegseth nods slowly] 'Military assets deployed. Not my first choice of configuration, but the operators will make it work.'"
+      },
+      "diplomatic": {
+        "positive": "[Hegseth considers carefully] 'Diplomacy backed by credible force. That's the only kind that works. I can support this.'",
+        "reluctant": "[Hegseth exhales] 'Talking. While our people are in harm's way. I'll defer to the process, but I want a military option ready.'"
+      },
+      "economic": {
+        "positive": "[Hegseth reviews the brief] 'Economic pressure can shape the battlespace before a shot is fired. Smart play.'",
+        "reluctant": "[Hegseth frowns] 'Sanctions and spreadsheets while the fleet is on station. I hope the economists know what they're doing.'"
+      },
+      "intelligence": {
+        "positive": "[Hegseth marks the map] 'Good intel saves lives. Every recon asset we deploy makes our operators safer and more effective.'",
+        "reluctant": "[Hegseth taps the table] 'Intel collection is solid, but it's not a substitute for decisive action. Clock's ticking.'"
+      },
+      "domestic": {
+        "positive": "[Hegseth pauses] 'The troops need to know the country has their back. Shoring up the home front supports the mission.'",
+        "reluctant": "[Hegseth stiffens] 'Politics. We're running a military operation and someone wants a press conference. Do what you have to.'"
+      }
+    },
+    "kushner": {
+      "military": {
+        "positive": "[Kushner adjusts his cuffs] 'Military leverage. Not to use — to have. Every carrier group is a bargaining chip in the right negotiation.'",
+        "reluctant": "[Kushner checks his phone] 'The military option complicates three deals I have in progress. But I understand the optics. Proceed.'"
+      },
+      "diplomatic": {
+        "positive": "[Kushner's eyes light up] 'This is our lane. Every back-channel conversation compounds. The relationships are the strategy.'",
+        "reluctant": "[Kushner nods politely] 'Diplomatic channels, sure. Just make sure it doesn't step on the private conversations that are actually producing results.'"
+      },
+      "economic": {
+        "positive": "[Kushner leans in] 'Follow the money. The deal architecture depends on economic frameworks. This is foundational work.'",
+        "reluctant": "[Kushner glances at his watch] 'Economic levers are useful, but the real value is in the relationships behind the numbers. Don't lose sight of that.'"
+      },
+      "intelligence": {
+        "positive": "[Kushner lowers his voice] 'Information is currency. The more we know, the better our negotiating position. Smart investment.'",
+        "reluctant": "[Kushner shifts uncomfortably] 'Intelligence operations create paper trails. Paper trails create exposure. Be careful with this.'"
+      },
+      "domestic": {
+        "positive": "[Kushner considers] 'Domestic stability protects the deal pipeline. If Congress is calm, the back-channels stay quiet.'",
+        "reluctant": "[Kushner waves it off] 'Domestic politics is noise. The real work happens in private rooms. But fine, manage the noise.'"
+      }
+    },
+    "asmongold": {
+      "military": {
+        "positive": "[Asmongold sits up] 'Dude, military content is insane engagement. Chat goes wild every time we move a carrier group. Let's go.'",
+        "reluctant": "[Asmongold rubs his neck] 'Military stuff is hype but also scary, man. Real people out there. Chat better understand what we're doing.'"
+      },
+      "diplomatic": {
+        "positive": "[Asmongold reads chat] 'Chat says diplomacy arc is actually kinda based. The analysis threads get crazy engagement. I'm in.'",
+        "reluctant": "[Asmongold yawns] 'Diplomacy content is... look, it's important, I get it. But chat's gonna zone out. We need to frame this right.'"
+      },
+      "economic": {
+        "positive": "[Asmongold pulls up charts] 'OK the economic analysis is actually content gold if you know how to present it. Numbers don't lie, chat.'",
+        "reluctant": "[Asmongold squints at a spreadsheet] 'Economic policy. This is the part where half of chat goes to get food. But we'll make it work.'"
+      },
+      "intelligence": {
+        "positive": "[Asmongold's eyes go wide] 'OSINT content is literally what we're built for. Chat, we're in our element. Crowd-source everything.'",
+        "reluctant": "[Asmongold nods] 'Intel stuff is cool but we gotta be careful what we show on stream. Don't want to get anyone in trouble.'"
+      },
+      "domestic": {
+        "positive": "[Asmongold grins] 'Domestic engagement is our bread and butter. This is what chat cares about. Real talk, real impact.'",
+        "reluctant": "[Asmongold sighs] 'Domestic politics... chat's gonna be divided on this one. Mods, get ready for the paragraphs.'"
+      }
+    },
+    "fuentes": {
+      "military": {
+        "positive": "[Fuentes pounds the desk] 'American military power — for AMERICAN interests. Not for Israel, not for Saudi Arabia. For US. That's the difference.'",
+        "reluctant": "[Fuentes narrows his eyes] 'More military deployment. The defense contractors are celebrating. As long as this serves America First, fine.'"
+      },
+      "diplomatic": {
+        "positive": "[Fuentes considers] 'Bilateral talks, nation to nation. Not through the UN, not through the globalist framework. This I can support.'",
+        "reluctant": "[Fuentes scowls] 'Diplomacy. The establishment's favorite word for doing nothing while Americans pay the bill. Get it over with.'"
+      },
+      "economic": {
+        "positive": "[Fuentes nods firmly] 'Economic nationalism. Every dollar should benefit American workers first. This is the America First doctrine in action.'",
+        "reluctant": "[Fuentes crosses his arms] 'More economic games that benefit Wall Street and foreign banks. The base sees through this, but go ahead.'"
+      },
+      "intelligence": {
+        "positive": "[Fuentes leans forward] 'Intel that protects Americans and exposes the establishment. As long as it's not turned inward, I'll take it.'",
+        "reluctant": "[Fuentes glares] 'The intelligence community. The same people who spy on their own citizens. Keep them on a very short leash.'"
+      },
+      "domestic": {
+        "positive": "[Fuentes stands up, energized] 'THIS is what it's about. The American people first. The base. The movement. Everything else is secondary.'",
+        "reluctant": "[Fuentes shakes his head] 'Domestic optics for the establishment crowd. The base doesn't need spin — they need action. But fine, play the game.'"
+      }
+    }
+  },
+  "cardRestrictions": {
+    "trump": "[Trump slams his hand on the desk] 'No. That's not how we do things. Next.'",
+    "hegseth": "[Hegseth shakes his head] 'That's outside my lane, sir. I wouldn't recommend it.'",
+    "kushner": "[Kushner slides the briefing folder aside] 'That doesn't fit the portfolio. Moving on.'",
+    "asmongold": "[Asmongold laughs nervously] 'Chat would roast me alive if I picked that. Pass.'",
+    "fuentes": "[Fuentes pushes away from the table] 'Absolutely not. That's exactly what they want us to do.'"
   }
 }

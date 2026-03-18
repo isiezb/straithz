@@ -1151,6 +1151,8 @@ function showInitialPick() {
                     selected.splice(existingIdx, 1);
                 } else if (selected.length < maxPicks) {
                     selected.push({ card, funding: 'medium' });
+                    // Show character reaction to card selection
+                    _showCardReaction(card);
                 }
                 render();
             });
@@ -1513,6 +1515,62 @@ function executeSpecialAction() {
     return true;
 }
 
+// ======================== CARD SELECTION REACTIONS ========================
+
+// Positive categories per character (everything else is "reluctant")
+const _POSITIVE_CATEGORIES = {
+    trump:     ['military', 'domestic'],
+    hegseth:   ['military', 'intelligence'],
+    kushner:   ['economic', 'diplomatic'],
+    asmongold: ['intelligence', 'domestic'],
+    fuentes:   ['domestic', 'military'],
+};
+
+/**
+ * Show a character reaction in the narrative feed when a card is swapped in.
+ * Picks "positive" or "reluctant" based on whether the card category aligns
+ * with the character's worldview.
+ */
+function _showCardReaction(card) {
+    if (!card || !SIM.character) return;
+    const charId = SIM.character.id;
+    const category = card.category;
+    if (!charId || !category) return;
+
+    const reactions = DATA.dialogue && DATA.dialogue.cardReactions;
+    if (!reactions || !reactions[charId] || !reactions[charId][category]) return;
+
+    const positives = _POSITIVE_CATEGORIES[charId] || [];
+    const level = positives.includes(category) ? 'positive' : 'reluctant';
+    const text = reactions[charId][category][level];
+    if (!text) return;
+
+    // Determine portrait variant: positive gets happy, reluctant gets default
+    const portrait = level === 'positive' ? charId + '-positive' : charId;
+
+    if (typeof addNarrative === 'function') {
+        addNarrative('dialogue', text, { speaker: SIM.character.name || charId.toUpperCase(), portrait: portrait });
+    }
+}
+
+/**
+ * Show a character restriction reaction in the narrative feed when a
+ * restricted card category is encountered.
+ */
+function _showCardRestrictionReaction() {
+    if (!SIM.character) return;
+    const charId = SIM.character.id;
+    const restrictions = DATA.dialogue && DATA.dialogue.cardRestrictions;
+    if (!restrictions || !restrictions[charId]) return;
+
+    const text = restrictions[charId];
+    if (!text) return;
+
+    if (typeof addNarrative === 'function') {
+        addNarrative('dialogue', text, { speaker: SIM.character.name || charId.toUpperCase(), portrait: charId + '-angry' });
+    }
+}
+
 // ======================== ADJUST STRATEGY ========================
 
 function showAdjustStrategy() {
@@ -1544,6 +1602,11 @@ function showAdjustStrategy() {
     // Available replacements: cards in hand that aren't currently active
     const activeIds = SIM.activeStances.map(s => s.cardId);
     const available = hand.filter(c => !activeIds.includes(c.id));
+
+    // Build list of restricted cards for this character (shown as locked)
+    const cp = SIM.character.cardPool || {};
+    const restrictedIds = cp.restricted || [];
+    const restrictedCards = STRATEGY_CARDS.filter(c => restrictedIds.includes(c.id));
 
     function render() {
         openTerminal(`
@@ -1582,6 +1645,13 @@ function showAdjustStrategy() {
                             ` : ''}
                         </div>`;
                     }).join('') : '<div class="term-line dim">No replacements available.</div>'}
+                    ${restrictedCards.length > 0 ? restrictedCards.map((card, i) => {
+                        return `<div class="adjust-card restricted" data-restricted="${i}" style="opacity:0.35;cursor:not-allowed;border-color:#553333">
+                            <div class="adjust-card-cat" style="color:#884444">${card.category.toUpperCase()} <span style="font-size:9px;color:#884444">[RESTRICTED]</span></div>
+                            <div class="adjust-card-name" style="color:#666">${card.name}</div>
+                            <div class="adjust-card-desc" style="color:#444">${card.description}</div>
+                        </div>`;
+                    }).join('') : ''}
                 </div>
             ` : ''}
 
@@ -1616,6 +1686,14 @@ function showAdjustStrategy() {
         TERMINAL.querySelectorAll('.fund-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (replacement) { replacement.funding = btn.dataset.fund; render(); }
+            });
+        });
+
+        // Restricted card click — show character refusal
+        TERMINAL.querySelectorAll('[data-restricted]').forEach(el => {
+            el.addEventListener('click', () => {
+                _showCardRestrictionReaction();
+                showToast('Card restricted for this character', 'warning');
             });
         });
 
