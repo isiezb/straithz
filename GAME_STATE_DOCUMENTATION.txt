@@ -1,0 +1,1788 @@
+================================================================================
+STRAIT OF HORMUZ — POLICY SIMULATOR
+COMPLETE GAME STATE DOCUMENTATION
+Updated: 2026-03-18
+================================================================================
+
+This document describes what the game CURRENTLY does. Every metric, every
+formula, every event, every card effect. Not aspirational — actual.
+
+================================================================================
+CHANGELOG
+================================================================================
+
+2026-03-18  Narrative system overhaul & action economy rebalance
+  - Action points reduced from 5 to 3 per day
+  - All direct action stat effects scaled by 1.5x multiplier (budget/warPath excluded)
+  - Trump's political capital cost per action: 2 → 3
+  - Interrupt probability: 30% → 50%
+  - Player delta decay rate: 0.85 → 0.88 (effects last ~8 days instead of ~6)
+  - Convergence rates slowed 20%:
+      tension:               0.12 → 0.10
+      oilPrice:              0.15 → 0.12
+      domesticApproval:      0.10 → 0.08
+      internationalStanding: 0.10 → 0.08
+  - All hardcoded text extracted to 12 JSON data files loaded via data/loader.js
+  - New file: js/narrative.js — scrollable narrative feed panel (5 entry types)
+  - New file: js/sound.js — audio/SFX system
+  - Action scenes: every action writes 2-4 sentence narrative + stat indicators
+  - Morning briefing rewritten: rotating advisors, state-driven templates
+  - Decision events rewritten: narrative scene in feed, no stat previews on choices
+  - Reactive news: 40% chance of one-liner news update after each action
+  - Day-end scenes: character-voice reflection + cliffhanger teaser before dailyUpdate
+  - addHeadline() now bridges to narrative feed (alert for critical/good, headline for others)
+  - Removed dead code: _buildImpactSummary(), choice-effects CSS, legacy canvas CSS
+
+TABLE OF CONTENTS
+─────────────────
+1.  Architecture & File Structure
+2.  Game Flow & Phase Machine
+3.  SIM Object — All Properties & Defaults
+4.  Daily Update (dailyUpdate) — Every Formula
+5.  Entity Movement (tickSimulation)
+6.  Win/Lose Conditions (checkWinLose)
+7.  Event System (checkConsequenceEvents)
+8.  All Decision Events — Complete Catalog
+9.  Gauge Calculations & Rating
+10. Strategy Cards — All 28 Cards with Effects
+11. Character Bonus Cards (5)
+12. Contact Cards (5, Kushner)
+13. Card Synergies (7)
+14. Card Progression System
+15. Characters — Complete Profiles
+16. Action Panel — All Actions with Effects
+17. Bible Actions (15 Extended Actions)
+18. Interrupts — All 35
+19. Sprites — All Procedural Art
+20. Map Rendering
+21. Narrative System
+22. Known Issues & Inconsistencies
+
+================================================================================
+1. ARCHITECTURE & FILE STRUCTURE
+================================================================================
+
+Browser-based, vanilla JS, no build tools, no frameworks.
+Deployed on Render.com as static site from GitHub.
+
+Script load order (matters):
+  data/loader.js → js/sound.js → js/policies.js → js/simulation.js →
+  js/sprites.js → js/map.js → js/narrative.js → js/characters.js →
+  js/ui.js → js/game.js
+
+Files:
+  index.html          — DOM structure, script loading
+  css/style.css       — All styles (CRT green phosphor theme)
+  data/loader.js      — Async JSON loader (fetches all data files into window.DATA)
+  js/sound.js         — Audio/SFX system
+  js/policies.js      — Strategy cards, dealing, stance effects, synergies
+  js/simulation.js    — SIM state, entities, daily update, AI, win/lose
+  js/sprites.js       — Procedural pixel art sprite generation
+  js/map.js           — Canvas rendering (map, overlays, effects, HUD)
+  js/narrative.js     — Scrollable narrative feed panel (5 entry types)
+  js/characters.js    — 5 playable characters with abilities/lore
+  js/ui.js            — Terminal UI screens, action panel, events, music, tickers
+  js/game.js          — Entry point, game loop, phase transitions
+
+Data files (loaded async by data/loader.js into window.DATA):
+  data/cards.json         — Strategy card text (names, descriptions, funding labels)
+  data/events.json        — Decision event text (titles, descriptions, choice labels/flavors)
+  data/interrupts.json    — Interrupt text, tips, bible action text, guides
+  data/intel.json         — Intel snippets, effect names, briefing titles, recommendations
+  data/characters.json    — Character lore, events, epilogues, morning brief lines
+  data/dialogue.json      — Advisor reactions, UI text strings
+  data/headlines.json     — All headline strings by context
+  data/action-scenes.json — 129 narrative scene variants for 43 actions
+  data/briefings.json     — 93 openings, 33 closers, 18 iran intel, 5 advisor pools
+  data/event-scenes.json  — 93 event scenes with consequences, atmosphere prefixes
+  data/reactions.json     — 84 reactive one-liner news updates across 16 state brackets
+  data/day-endings.json   — 105 character-voice reflections + 39 cliffhanger teasers
+
+================================================================================
+2. GAME FLOW & PHASE MACHINE
+================================================================================
+
+  Init: loadGameData() → hydrate(Cards,Simulation,UI,Characters) → initSprites()
+  ↓
+  charselect → lore → morning → dayplay → [action loop] → end-day
+                         ↑                                    ↓
+                         |                       _writeDayEndScene() (reflection + cliffhanger)
+                         |                                    ↓
+                         ←←← dailyUpdate() → checkWinLose() →←
+                                               ↓
+                                    checkConsequenceEvents()? → event phase
+                                               ↓
+                                         advanceToMorning()
+
+  Action loop during dayplay:
+    _executeAction() → 1.5x scale deltas → _narrateAction() → _maybeReactiveNews()
+    → spend AP → interrupt (50%) or re-render panel
+
+Phase names in code:
+  'charselect'  — Character selection (pre-game)
+  'lore'        — Character backstory
+  'morning'     — Daily briefing (showDailyReport)
+  'dayplay'     — Active play (3 AP, action panel)
+  'event'       — Decision event popup
+  'overnight'   — Implied during dailyUpdate
+  'gameover'    — End screen
+
+Game Loop (game.js):
+  - 60fps via requestAnimationFrame
+  - Entity ticks: 2 per frame (120 ticks/sec) during dayplay
+  - Panel updates: ~2x/sec (500ms throttle)
+  - Effect lifetime: decremented each frame, removed when 0
+
+_endDay():
+  1. hideActionPanel()
+  2. _writeDayEndScene() — character-voice reflection + cliffhanger to narrative feed
+  3. advanceDay()
+
+advanceDay():
+  1. SIM._prevWarPath = SIM.warPath
+  2. dailyUpdate()
+  3. checkWinLose() → if true, stop
+  4. checkConsequenceEvents() → if event found, show it
+  5. else advanceToMorning()
+
+advanceToMorning():
+  SIM.day++, SIM.hour=0, weekDay=(day-1)%7+1, week=floor((day-1)/7)+1
+  SIM.phase='morning'
+  Add daybreak separator to narrative feed
+  updateNarrativeHeader()
+  showDailyReport()
+
+startDayPlay():
+  SIM.phase='dayplay', SIM.actionPoints=3, showActionPanel()
+
+================================================================================
+3. SIM OBJECT — ALL PROPERTIES & DEFAULTS
+================================================================================
+
+Property                  Default     Description
+────────────────────────  ──────────  ──────────────────────────────────────────
+day                       1           Game day counter
+hour                      0           Hour within day
+week                      1           Week counter
+weekDay                   1           Day within week (1-7)
+speed                     2           Entity movement speed multiplier
+phase                     'morning'   Current game phase
+actionPoints              3           AP available per day
+swapsToday                0           Card swaps used today
+stanceActivationDay       {}          {cardId: day} when each stance activated
+firedConsequences         []          Consequence IDs already fired
+pendingNews               []          News items accumulated during day
+prevGauges                null        Gauge snapshot from start of day
+
+--- CORE METRICS ---
+oilFlow                   50          Daily oil transit % (10-100)
+oilPrice                  95          $/barrel (40+)
+tension                   55          Regional tension (0-100)
+domesticApproval          60          US public approval % (0-100)
+internationalStanding     50          Global coalition standing (0-100)
+conflictRisk              35          War escalation risk (0-100)
+budget                    900         Military/ops budget in $M (no cap)
+iranAggression            45          Iran aggression level (0-100)
+iranEconomy               35          Iran economic health (0-100)
+iranStrategy              'probing'   AI strategy (restrained|probing|escalatory|confrontational)
+fogOfWar                  70          Intel uncertainty (0-100, lower=better)
+diplomaticCapital         35          Diplomatic leverage (0-100)
+proxyThreat               25          Houthis/Hezbollah/militia threat (0-100)
+chinaRelations            50          Beijing relations (0-100)
+polarization              20          US domestic polarization (0-100)
+assassinationRisk         0           IRGC/domestic threat level (0-100)
+warPath                   1           War escalation stage (0-5)
+
+--- COUNTERS ---
+straitOpenDays            0           Consecutive days with open strait
+lowApprovalDays           0           Consecutive days <15% approval
+lowStandingDays           0           Consecutive days <10% standing
+recentSeizureDays         []          Days with seizures (last 3 tracked)
+interceptCount            0           Successful intercepts
+seizureCount              0           Tanker seizures
+highPolarizationDays      0           Consecutive days >=85% polarization
+
+--- ENTITIES ---
+tankers                   []          Tanker entities
+navyShips                 []          US Navy ship entities
+iranBoats                 []          IRGC boat entities
+platforms                 []          Oil platform entities
+mines                     []          Mine entities
+drones                    []          Surveillance drone entities
+carrier                   null        Carrier strike group or null
+
+--- STRATEGY ---
+activeStances             []          [{cardId, funding}] active cards
+playedExclusives          []          IDs of exclusive cards used
+crisisLevel               0           Crisis escalation (0-3)
+crisisTimer               0           Frames until crisis decays
+roe                       'defensive' Rules of engagement
+
+--- EVENTS & HISTORY ---
+eventLog                  []          All events log
+headlines                 []          Ticker headlines
+effects                   []          Visual effects on map
+decisionEventActive       false       Event dialog active flag
+decisionHistory           []          All decisions made
+lastDecisionDay           0           Last day a decision fired
+metricHistory             []          Daily metric snapshots
+incidentMarkers           []          Map incident locations
+pendingEffects            []          Delayed card effects queue
+intelBriefings            []          Intel items
+decisionLog              []          Detailed decision log
+
+--- CHARACTER ---
+uniqueResource            0           Character-specific resource
+_leakCount                0           Kushner leak tracking
+_assassinationEventFired  false       One-time event trigger
+
+--- NARRATIVE (BIBLE) ---
+storyFlags                {}          Narrative flags from event choices
+scheduledEvents           []          [{eventId, triggerDay, sourceEvent}]
+storyArc                  'the_spark' Current narrative phase
+iranFactionBalance        50          0=hardliner(Tangsiri), 100=moderate(Araghchi)
+iranVisibleMoves          []          [{text, type, day}] Iran signals
+reputation                {reliability:50, proportionality:50, creativity:50}
+memoryTags                []          Decision memory for consequences
+
+--- UI STATE ---
+gameOver                  false       Game end flag
+gameOverReason            ''          End reason
+gameWon                   false       Win/lose flag
+selectedEntity            null        Selected map entity
+selectedType              null        Type of selected entity
+weeklyReportActive        false       Weekly report screen flag
+_guideSeen                false       Tutorial flag
+
+--- PLAYER DELTAS ---
+playerDeltas              {tension:0, oilFlow:0, domesticApproval:0,
+                           internationalStanding:0, iranAggression:0,
+                           iranEconomy:0, fogOfWar:0, diplomaticCapital:0,
+                           conflictRisk:0}
+                          Direct effects from actions, decay 12%/day
+
+================================================================================
+4. DAILY UPDATE — EVERY FORMULA
+================================================================================
+
+dailyUpdate() executes at end of each dayplay phase. Order of operations:
+
+A. PENDING EFFECTS
+   processPendingEffects() — activates delayed card effects when day >= activateOnDay
+
+B. INTEL GENERATION
+   70% chance per day to generate intel briefing item
+
+C. IRAN STRATEGY AI
+   updateIranStrategy():
+   - iranAggression < 25  → 'restrained'
+   - iranAggression 25-50 → 'probing'
+   - iranAggression 50-75 → 'escalatory'
+   - iranAggression >= 75 → 'confrontational'
+
+   AI responses to player cards:
+   - Heavy sanctions (<-15) + no diplomacy: iranAggression += 0.8
+   - Diplomacy + low economy (<40):        iranAggression -= 2.5
+   - Heavy navy (>=3) + no coalition:       iranAggression += 0.5
+   - Coalition + diplomacy:                 iranAggression -= 2
+   - Low China relations (<25):             iranAggression += 0.3
+
+D. PROXY THREATS
+   updateProxyThreats():
+   proxyDelta = getStanceEffect('proxyThreat')
+   SIM.proxyThreat += (tension * 0.015) + (iranAggression * 0.01) - 0.3 + (proxyDelta * 0.1)
+   Clamped 0-100
+
+   Events on thresholds:
+   - >30 (8% chance): Houthis attack → oilFlow -3
+   - >50 (5% chance): Iraqi militia → budget -15, approval -2
+   - >70 (3% chance): Hezbollah threat → tension +8, standing -3
+
+E. GREAT POWERS
+   updateGreatPowers():
+   chinaRelations adjustments:
+   - Sanctions < -10:        -0.3
+   - Sanctions < -20:        -0.5
+   - Diplomacy > 5:          +0.2
+   - Navy >= 3 ships:        -0.15
+   - warPath > 0:            -0.25
+   - Standing > 5:           +0.1
+   - Card effect:            += getStanceEffect('chinaRelations') * 0.1
+
+F. DOMESTIC POLITICS
+   updateDomesticPolitics():
+   Polarization increases if:
+   - Daily cost > 50 AND approval < 60: +0.4
+   - Budget < 0:                        +0.8
+   - Day > 21 AND tension > 40:         +0.2
+   Polarization decreases if:
+   - Approval > 70:                     -0.4
+   Plus card effect: += getStanceEffect('polarization') * 0.1
+
+   Assassination Risk:
+   - iranAggression > 80: +1.5
+   - approval < 25 AND tension > 70: +2
+   - Natural decay: -0.3/day
+   Clamped 0-100
+
+G. BUDGET
+   Spending:
+     adjustedCost = costDelta * character.costMult (if economic card)
+     SIM.budget -= adjustedCost / 7  (weekly cost / 7)
+
+   Income:
+     coalitionIncome = (internationalStanding / 100) * 5   (up to $5M/day)
+     oilRevenue      = (oilFlow / 100) * 4                 (up to $4M/day)
+     baseFunding     = 3                                    ($3M/day)
+     SIM.budget += coalitionIncome + oilRevenue + baseFunding
+
+H. TENSION
+   dipBonus = (diplomaticCapital - 50) * 0.08
+   targetTension = clamp(0, 100, 15 + tensionDelta - dipBonus + playerDeltas.tension * 0.3)
+   SIM.tension += (targetTension - SIM.tension) * 0.10    (10% convergence/day)
+   SIM.tension += crisisLevel * 1.5
+
+I. OIL FLOW
+   baseFlow = 100 - (tension * 0.5)
+   SIM.oilFlow = clamp(10, 100, baseFlow + protectionBonus*0.3 + playerDeltas.oilFlow)
+   SIM.oilFlow -= seizedCount * 3
+   SIM.oilFlow -= proxyThreat * 0.08
+   Clamped 10-100 (minimum floor prevents total collapse)
+
+J. OIL PRICE
+   targetPrice = 80 + (100 - oilFlow) * 1.5 + priceDelta
+   SIM.oilPrice += (targetPrice - SIM.oilPrice) * 0.12    (12% convergence/day)
+
+K. DOMESTIC APPROVAL
+   approvalDelta = getStanceEffect('domesticApproval')
+   if (character.approvalMult && delta < 0): delta *= character.approvalMult
+   targetApproval = clamp(0, 100, 65 + approvalDelta + playerDeltas.domesticApproval)
+   SIM.domesticApproval += (targetApproval - SIM.domesticApproval) * 0.08
+
+   Additional:
+   - Seized tankers:           -0.5 each
+   - Intercepts:               +0.3 each (max +2)
+   - oilFlow < 25:             -1.5
+   - oilFlow < 15:             -2
+   - budget < 0:               -0.5
+   - polarization > 50:        -(polarization-50) * 0.04
+
+L. INTERNATIONAL STANDING
+   standingDelta = getStanceEffect('internationalStanding')
+   targetStanding = clamp(0, 100, 70 + standingDelta + playerDeltas.internationalStanding)
+   SIM.internationalStanding += (targetStanding - SIM.internationalStanding) * 0.08
+
+M. IRAN AGGRESSION
+   aggrDelta = getStanceEffect('iranAggression')
+   SIM.iranAggression = clamp(0, 100, iranAggression + aggrDelta*0.6 + playerDeltas.iranAggression*0.3)
+   if (iranEconomy < 30): iranAggression += 0.15
+
+N. IRAN ECONOMY
+   econDelta = getStanceEffect('iranEconomy')
+   SIM.iranEconomy = clamp(0, 100, iranEconomy + econDelta*0.4 + playerDeltas.iranEconomy*0.3)
+   if (chinaRelations < 30): iranEconomy += 0.3
+
+O. FOG OF WAR
+   fogDelta = getStanceEffect('fogOfWar')
+   SIM.fogOfWar = clamp(0, 100, fogOfWar + 0.4 + fogDelta*0.5 + playerDeltas.fogOfWar*0.3)
+   Natural drift: +0.4/day (fog increases naturally)
+
+P. CONFLICT RISK
+   crDelta = getStanceEffect('conflictRisk')
+   SIM.conflictRisk = clamp(0, 100,
+     tension*0.35 + iranAggression*0.25 + crDelta + crisisLevel*8 + warPath*5 + playerDeltas.conflictRisk)
+
+Q. DIPLOMATIC CAPITAL
+   dipDelta2 = getStanceEffect('diplomaticCapital')
+   if (character.diplomacyMult && dipDelta2 > 0):
+     SIM.diplomaticCapital += dipDelta2 * character.diplomacyMult * 0.7
+   else:
+     SIM.diplomaticCapital += dipDelta2 * 0.7
+   SIM.diplomaticCapital += playerDeltas.diplomaticCapital * 0.3
+   Clamped 0-100
+
+R. CARD SYNERGIES (daily effects)
+   For each active synergy from getActiveSynergies():
+   - dailyStanding     → internationalStanding +=
+   - dailyApproval     → domesticApproval +=
+   - dailyTension      → tension +=
+   - dailyDeterrence   → iranAggression -= (deterrence * 0.1)
+   - dailyIranEconomy  → iranEconomy +=
+   - dailyFactionShift → iranFactionBalance += (min 100)
+
+S. REPUTATION TRACKING
+   Reliability:
+     longTermStances = count with level >= 2
+     reliability += (longTermStances * 0.3) - 0.1
+     Clamped 0-100
+
+   Proportionality:
+     threatLevel = iranAggression > 80 ? 4 : > 60 ? 3 : > 40 ? 2 : > 20 ? 1 : 0
+     mismatch = abs(warPath - threatLevel)
+     proportionality += (mismatch < 2 ? 0.2 : -0.3)
+
+   Creativity:
+     synergyCount = active synergies count
+     creativity += synergyCount * 0.2 - 0.05
+
+T. WEEKLY DE-ESCALATION
+   If day > 1 AND day % 7 === 0 AND warPath > 0 AND tension < 60:
+     warPath -= 1
+
+U. PLAYER DELTA DECAY
+   Each delta *= 0.88 per day (meaningful for ~8 days)
+   Snaps to 0 when < 0.1
+
+V. ENTITY MANAGEMENT
+   Navy ships: targetShips = [0, 3, 7, 12][navalPresence level]
+               * character.militaryMult if > 1 → * 1.1
+   Iran boats: targetBoats = floor(iranAggression / 12 * strategyMult)
+               strategyMult = confrontational 1.5, escalatory 1.2, else 1
+   Tankers:    minTankers = max(3, floor(oilFlow / 8))
+   Seized:     10% chance per day to release each seized tanker
+
+W. SEIZURE/INTERCEPT MODEL (daily probability)
+   Seizure base chance:
+   - confrontational: 12%
+   - escalatory:      6%
+   - probing:         2%
+   - restrained:      0.5%
+
+   Naval deterrence: min(10%, navalPresence * 4%)
+   seizureChance = max(0, seizureBase - navalDeterrence)
+
+   If seizure triggers:
+     Intercept chance = min(85%, navalPresence*15% + blockadeLevel*15% + roeBonus)
+       roeBonus: aggressive=25%, moderate=10%, defensive=0%
+
+     If intercepted: interceptCount++, boat flees
+     If seized: tanker.seized=true, seizureCount++, tension+12, oilFlow-5
+
+X. ROE EFFECTS
+   moderate: tension +1/day
+   aggressive: tension +3/day, 5% chance warPath +1
+
+Y. CARRIER MANAGEMENT
+   Spawns/despawns based on getStanceEffect('carrier') > 0
+
+Z. MINE SPAWNING
+   If crisisLevel >= 2 AND mines < 5: 30% chance to spawn mine
+
+AA. DRONE INTELLIGENCE
+    targetDrones = [0, 1, 3, 5][intelLevel]
+    Drones can neutralize mines: if within 0.1 distance, 20% chance
+
+AB. CRISIS DECAY
+    If crisisTimer > 0: decrement
+    Else if crisisLevel > 0 AND tension < 40: crisisLevel -= 1
+
+AC. IRAN FACTION BALANCE
+    Hardliner shifts (balance decreases):
+    - warPath >= 3: -2
+    - warPath >= 2: -1
+    - Sanctions without diplomacy: -0.5
+    - tension > 70: -0.5
+    - iranAggression > 70: -0.3
+
+    Moderate shifts (balance increases):
+    - Diplomacy active: +1
+    - diplomaticCapital > 50: +0.3
+    - storyFlags.humanitarian_rescue: +0.5
+    - iranAggression < 30: +0.3
+
+AD. IRAN VISIBLE MOVES
+    30% chance per day to generate move
+    Pool based on factionBalance:
+    - < 35: hardliner pool
+    - > 65: moderate pool
+    - 35-65: 50% ambiguous, 25% each
+
+AE. STORY ARC
+    Tracks current arc by day, adds headline on transition
+
+AF. METRIC HISTORY
+    Snapshots all metrics + gauges + rating each day
+
+AG. CHARACTER RESOURCE UPDATES
+    Calls character.updateResource(SIM) if defined
+    Warnings at thresholds (low authority, high exposure, etc.)
+    Hegseth: if authority < 25, navy ships move at half speed
+
+================================================================================
+5. ENTITY MOVEMENT (tickSimulation)
+================================================================================
+
+Runs 2x per frame during dayplay. Speed multiplier: SIM.speed (default 2).
+
+Tankers:    progress += speed * spd along shipping lane waypoints
+Navy Ships: smooth interpolation → target at 0.02 * spd rate
+Iran Boats: interpolation at 0.025 * spd (0.04 if fleeing)
+Drones:     circular orbit, angle += 0.002 * spd
+Carrier:    very slow 0.005 * spd, random patrol target ~1% of frames
+
+Also calls: updateIranBoatBehavior(), updateNavyBehavior(), updateMineHazards()
+
+================================================================================
+6. WIN/LOSE CONDITIONS
+================================================================================
+
+WIN CONDITIONS:
+
+1. Character-specific win (if defined):
+   Must sustain 3 consecutive days
+
+2. Strait Open (generic fallback):
+   Requires: oilFlow > 55 AND tension < 45 AND no seizures in 3 days AND crisisLevel === 0
+   Requires 7 consecutive days
+   If conditions break: lose 2 days of progress (grace period)
+   Win message varies by diplomaticCapital and domesticApproval
+
+3. Day 91+ failsafe:
+   If stability < 30: lose
+   Else: win
+
+LOSE CONDITIONS:
+
+1. Domestic Approval <= 15 for 5 consecutive days
+   "Congress has initiated removal proceedings..."
+
+2. Assassination Risk > 80: forced decision event (15s countdown)
+   If still > 95 after: game over
+
+3. International Standing <= 10 for 3 consecutive days
+   "Global pariah..."
+
+4. Polarization >= 85 for 3 consecutive days
+   "Civil order collapses..."
+
+5. warPath >= 5 (instant, no duration)
+   "Regional war has begun..."
+
+6. Character-specific lose conditions (if defined)
+
+================================================================================
+7. EVENT SYSTEM (checkConsequenceEvents)
+================================================================================
+
+Priority 1: Scheduled chain events
+  Checks SIM.scheduledEvents array
+  Fires if SIM.day >= triggerDay
+
+Event frequency pacing:
+  Days 1-10:  30% chance
+  Days 11-30: 45% chance
+  Days 31-55: 35% chance
+  Days 56+:   45% chance
+
+60% of events: triggerCardConsequence() or triggerAmbientEvent()
+
+Iran provocations (based on iranStrategy):
+  confrontational: 35%
+  escalatory:      20%
+  probing:         8%
+  restrained:      2%
+
+Crisis escalation: if tension > 80, 15% chance
+
+Event selection filters:
+  - Not in decisionHistory
+  - Within minDay/maxDay range
+  - condition() passes
+  - Character events can replay if 10+ days since last
+
+================================================================================
+8. ALL DECISION EVENTS
+================================================================================
+
+--- E01: THE IMPOUNDED TANKER (Days 1-3) ---
+Choice 1 (Diplomatic): internationalStanding +5, tension -3, iranAggression +5
+Choice 2 (Military):   tension +8, internationalStanding -3 → chains carrier_incident Day+10
+Choice 3 (Coalition):  internationalStanding +3, diplomaticCapital +3
+
+--- E02: THE PREDECESSOR'S GHOST (Days 2-4) ---
+Choice 1 (Read):  fogOfWar -10
+Choice 2 (Burn):  domesticApproval +5
+
+--- E03: THE ADMIRAL'S WARNING (Days 1-2) ---
+Choice 1 (Defer):    budget -20, tension +3
+Choice 2 (Convene):  no effects
+Choice 3 (Override): diplomaticCapital +5
+
+--- E04: THE JOURNALIST'S CALL (Days 3-5, fogOfWar > 50) ---
+Choice 1 (Brief):    fogOfWar -10, domesticApproval +3 → chains journalist_returns Day+20
+Choice 2 (Written):  fogOfWar -3, domesticApproval -2
+Choice 3 (Hang up):  no effects
+
+--- E05: BRITISH PM CALL (Days 4-6) ---
+Choice 1 (Joint):      internationalStanding +10, tension -3
+Choice 2 (Parallel):   internationalStanding +5
+Choice 3 (Negotiate):  diplomaticCapital +3
+
+--- E06: FIRST SEIZURE ATTEMPT (Days 6-8, warPath < 3, 12s countdown) ---
+Choice 1 (Warning):       tension +3
+Choice 2 (Warning shots): tension +8, warPath +1
+Choice 3 (Allow):         oilFlow -15, tension +10, internationalStanding +15, diplomaticCapital +10
+
+--- E08: OIL MARKETS PANIC (Days 9-12, oilFlow < 60) ---
+Choice 1 (SPR):     oilFlow +10, oilPrice -8, domesticApproval +5, budget -50
+Choice 2 (Saudi):   oilFlow +8, internationalStanding -3
+Choice 3 (Markets): domesticApproval -8, oilPrice +5
+
+--- E11: UN SECURITY COUNCIL (Days 17-20) ---
+Choice 1 (Binding, requires standing>50): diplomaticCapital +20, internationalStanding +8, tension +3
+Choice 2 (Safe):     internationalStanding +3
+Choice 3 (Dramatic): fogOfWar -20, internationalStanding +10, tension +8
+
+--- E14: HOUTHI STRIKE (Days 29-32) ---
+Choice 1 (Strike):    budget -20, tension +8, proxyThreat -15, internationalStanding -3
+Choice 2 (Intercept): budget -10, proxyThreat -3
+Choice 3 (Red line):  tension +10, diplomaticCapital +5
+
+--- E17: THE LEAK (Days 20-28, 50% random || approval < 30) ---
+Choice 1 (Investigate): domesticApproval +3, fogOfWar -5
+Choice 2 (Spin):        domesticApproval +5, fogOfWar +5
+Choice 3 (Ignore):      domesticApproval -5
+
+--- E18: CONGRESSIONAL HEARING (Days 36-40) ---
+Choice 1 (Testify):     domesticApproval +10, fogOfWar -5
+Choice 2 (Deputy):      domesticApproval -5, internationalStanding -3
+Choice 3 (Declassify):  fogOfWar -15, domesticApproval +15, tension +5, internationalStanding +5
+
+--- E19: IRAN'S ULTIMATUM (Days 38-42, 15s countdown) ---
+Choice 1 (Call bluff):  domesticApproval +8, tension +10
+Choice 2 (Negotiate, requires dipCap > 30): diplomaticCapital +5, tension -3
+Choice 3 (Prepare):     budget -15, tension +3
+
+--- E21: INTELLIGENCE BREAKTHROUGH (Days 57-62) ---
+Choice 1 (Share):    internationalStanding +15, diplomaticCapital +10, fogOfWar +10
+Choice 2 (Classify): fogOfWar -10
+Choice 3 (Leak):     fogOfWar -20, domesticApproval +8
+
+--- JOURNALIST RETURNS (Day 20+, requires journalist_briefed flag) ---
+Choice 1 (Interview): domesticApproval +10, fogOfWar -5
+Choice 2 (Embed):     domesticApproval +15, fogOfWar -10
+Choice 3 (Feed):      domesticApproval +8
+
+--- CARRIER INCIDENT (Day 10+, requires tanker_military flag OR warPath >= 2) ---
+Choice 1 (Protest):  internationalStanding +3
+Choice 2 (Footage):  fogOfWar -15, internationalStanding +8, domesticApproval +10, tension +5, iranAggression -5
+Choice 3 (Retaliate): tension +20, warPath +1, domesticApproval +5, budget -25, iranAggression +10
+
+--- SECRET BACK-CHANNEL (Days 5-40, tension > 25 && dipCap > 20) ---
+Choice 1 (Accept): tension -12, domesticApproval -5, diplomaticCapital +15, iranAggression -8 → chains backchannel_progress Day+4
+Choice 2 (Reject): tension +3, iranAggression +5
+Choice 3 (Leak):   domesticApproval +8, tension +6, diplomaticCapital -15
+
+--- HOUTHI RED SEA ATTACK (Days 10-75, proxyThreat > 25) ---
+Choice 1 (Strike): proxyThreat -15, tension +10, internationalStanding -5, warPath +1
+Choice 2 (Saudi):  proxyThreat -8, internationalStanding +3
+Choice 3 (Condemn): proxyThreat +5, domesticApproval -3
+
+--- MILITIA BASE ATTACK (Days 18-80, proxyThreat > 35) ---
+Choice 1 (Retaliate): iranAggression -10, proxyThreat -10, tension +12, warPath +1, domesticApproval +5
+Choice 2 (Secure):    domesticApproval -2, polarization +2
+Choice 3 (Withdraw):  domesticApproval -8, tension -5, proxyThreat +3
+
+--- HOSTAGE SITUATION (Days 10-75, seizureCount > 0) ---
+Choice 1 (Negotiate): domesticApproval +8, tension -5, diplomaticCapital -10 → chains hostage_escalates Day+3
+Choice 2 (Demand):    tension +8, domesticApproval +3, iranAggression +5, warPath +1
+Choice 3 (Concession): tension -8, domesticApproval -5, iranAggression -3
+
+--- DRONE SHOOTDOWN (Days 15-80, drones.length > 0) ---
+Choice 1 (Strike battery): tension +20, conflictRisk +15, iranAggression -10, domesticApproval +5, warPath +2
+Choice 2 (More drones):    tension +5, fogOfWar -15, domesticApproval +2
+Choice 3 (Stand down):     tension -3, domesticApproval -5, iranAggression +5
+
+--- CYBER ATTACK PROPOSAL (Days 20-80, iranAggression > 40) ---
+Choice 1 (Approve): iranAggression -15, fogOfWar -20, tension +10, conflictRisk +12, warPath +1
+Choice 2 (Deny):    no effects
+
+--- OIL SPIKE (Days 8-80, oilPrice > 110) ---
+Choice 1 (Release):  oilPrice -12, domesticApproval +5
+Choice 2 (Verbal):   oilPrice -4, domesticApproval -2
+Choice 3 (Let ride):  domesticApproval -5
+
+--- GULF STATE OFFER (Days 12-55, cost > 50) ---
+Choice 1 (With conditions): domesticApproval +5, tension +3, internationalStanding +3
+Choice 2 (Accept fully):    domesticApproval -3, tension +5
+Choice 3 (Decline):         domesticApproval +3, diplomaticCapital -5
+
+--- TANKER ESCORT REQUEST (Days 12-65, oilFlow < 70 && ships >= 3) ---
+Choice 1 (Full):    oilFlowProtection +15, tension +5, domesticApproval +5, internationalStanding +8
+Choice 2 (Allies):  oilFlowProtection +8, internationalStanding -3, domesticApproval +2
+Choice 3 (Decline): oilFlowProtection -5, domesticApproval -3
+
+--- STENA IMPERATIVE (Days 4-30, ships > 0 && boats > 1, 12s countdown) ---
+Choice 1 (Full speed): tension +15, iranAggression -8, domesticApproval +8, warPath +1, internationalStanding +3
+Choice 2 (Weapons tight): tension +8, iranAggression -3, domesticApproval +5
+Choice 3 (Monitor):   tension +3, iranAggression +5, domesticApproval -5, oilFlow -5
+
+--- INSURANCE CRISIS (Days 8-50, tension > 40 && oilPrice > 100) ---
+Choice 1 (Gov insurance): budget -200, oilFlow +15, domesticApproval +5, internationalStanding +5
+Choice 2 (Pressure):      oilFlow +5, internationalStanding -3
+Choice 3 (Let market):    oilFlow -10, oilPrice +15, domesticApproval -8
+
+--- NUCLEAR BREAKOUT (Days 20-70, iranAggression > 50 && tension > 40) ---
+Choice 1 (Strike Fordow): tension +30, warPath +2, iranAggression +15, internationalStanding -15, domesticApproval +10
+Choice 2 (UN session):    tension +5, internationalStanding +10, diplomaticCapital +15, iranAggression +3 → chains nuclear_inspection Day+4
+Choice 3 (Deal):          tension -10, iranAggression -8, domesticApproval -10, diplomaticCapital +10
+
+--- SAUDI ARAMCO ATTACK (Days 12-65, proxyThreat > 30 || iranAggression > 55) ---
+Choice 1 (Retaliate):   tension +20, warPath +2, iranAggression -10, proxyThreat -15, domesticApproval +8, oilPrice +10
+Choice 2 (Coordinate):  tension +5, internationalStanding +5, proxyThreat -5, oilPrice +8
+Choice 3 (Investigate): oilPrice +12, domesticApproval -5, proxyThreat +5
+
+--- MINE LAYING DETECTED (Days 15-60, crisisLevel >= 1 && iranAggression > 50) ---
+Choice 1 (Sink):        tension +20, warPath +1, iranAggression -12, oilFlow +5, domesticApproval +8, internationalStanding -5
+Choice 2 (Minesweep):   tension +5, oilFlow +8, budget -30, internationalStanding +5
+Choice 3 (Exclusion):   tension +12, oilFlow -5, warPath +1, internationalStanding +3
+
+--- FAST BOAT SWARM (Days 8-70, boats > 2 && iranAggression > 45, 8s countdown) ---
+Choice 1 (Weapons free):  tension +25, warPath +2, iranAggression -15, domesticApproval +10, internationalStanding -8
+Choice 2 (Warning shots):  tension +15, iranAggression -5, domesticApproval +5
+Choice 3 (Evasive):       tension +8, oilFlow -5, domesticApproval -3
+
+--- BEIJING CEASEFIRE PROPOSAL (Days 10-55, chinaRelations > 20 && tension > 40) ---
+Choice 1 (Accept):  tension -15, iranAggression -10, chinaRelations +15, domesticApproval -8, internationalStanding +10, diplomaticCapital +15
+Choice 2 (Counter): tension -5, chinaRelations -5, diplomaticCapital -8, internationalStanding +5
+Choice 3 (Reject):  chinaRelations -15, domesticApproval +8, tension +5, iranAggression +3
+
+--- GCC BASES UNDER FIRE (Days 5-40, tension > 60 && iranAggression > 55) ---
+Choice 1 (Massive):      tension +20, warPath +2, iranAggression -15, domesticApproval +12, internationalStanding -5, budget -40
+Choice 2 (Proportional):  tension +10, warPath +1, iranAggression -8, domesticApproval +8, internationalStanding +3
+Choice 3 (Evacuate):     tension -5, domesticApproval -8, iranAggression +5, internationalStanding -5
+
+--- IRIS DENA AFTERMATH (Days 4-25, iranAggression > 50) ---
+Choice 1 (Press):    tension +20, warPath +1, iranAggression -15, domesticApproval +5, internationalStanding -10
+Choice 2 (Aid):      internationalStanding +10, tension -5, iranAggression -5, domesticApproval +3
+Choice 3 (Leverage): tension -3, diplomaticCapital +10, iranAggression -3, domesticApproval +5
+
+--- THREE CARRIER GROUPS (Days 3-35, carrier exists && tension > 50) ---
+Choice 1 (Air campaign): tension +25, warPath +2, iranAggression -20, domesticApproval +8, internationalStanding -12, budget -80
+Choice 2 (Deterrence):   tension +5, iranAggression -10, domesticApproval +5, budget -40
+Choice 3 (Withdraw one): tension -8, domesticApproval -3, iranAggression +3, internationalStanding +5, budget +20
+
+--- MOJTABA SUCCESSION (Days 5-45, iranAggression > 40) ---
+Choice 1 (Covert):  iranAggression -12, tension -5, fogOfWar +8, diplomaticCapital -8 → chains mojtaba_power_play Day+5
+Choice 2 (Public):   internationalStanding +8, domesticApproval +5, iranAggression +10, tension +5
+Choice 3 (Exploit): tension +15, warPath +1, iranAggression -10, domesticApproval +3, internationalStanding -10
+
+================================================================================
+9. GAUGE CALCULATIONS & RATING
+================================================================================
+
+calculateGauges():
+  Stability = 100 - (tension*0.4) - (conflictRisk*0.3) - (crisisLevel*8) - (warPath*10)
+  Economy   = (oilFlow*0.4) + ((150-oilPrice)*0.2) + (min(50,max(0,budget/20))*0.4)
+  Support   = (domesticApproval*0.5) + (internationalStanding*0.3) + ((100-polarization)*0.2)
+  Intel     = 100 - fogOfWar
+  All clamped 0-100
+
+calculateRating():
+  Score = (stability*0.30) + (economy*0.25) + (support*0.30) + (intel*0.15)
+  >= 90: S "Outstanding"
+  >= 80: A "Excellent"
+  >= 65: B "Good"
+  >= 50: C "Adequate"
+  >= 35: D "Poor"
+  <  35: F "Failing"
+
+================================================================================
+10. STRATEGY CARDS — ALL 28 CARDS
+================================================================================
+
+Format: [id] Name (category)
+  Low/Med/High funding effects
+
+MILITARY (8 cards):
+
+[carrier_strike] Carrier Strike Group
+  Low:  navalPresence+1, tension+5, cost-50, iranAggression-3, approval+2, standing-1
+  Med:  navalPresence+2, tension+12, cost-200, iranAggression-8, approval+5, standing-4, carrier+1
+  High: navalPresence+3, tension+25, cost-500, iranAggression+5, approval+8, standing-8, carrier+1, warPath+1
+
+[naval_patrol] Naval Patrol
+  Low:  navalPresence+1, blockade+1, tension+2, cost-30, oilProtection+5
+  Med:  navalPresence+2, blockade+2, tension+6, cost-80, oilProtection+15, approval+3
+  High: navalPresence+2, blockade+3, tension+12, cost-150, oilProtection+25, iranAggression+5
+
+[active_intercept] Active Intercept
+  Low:  blockade+2, tension+8, cost-20, oilProtection+10, conflictRisk+3
+  Med:  blockade+3, tension+18, cost-40, oilProtection+25, conflictRisk+8, iranAggression-5, warPath+1
+  High: blockade+3, tension+30, cost-80, oilProtection+35, conflictRisk+20, iranAggression+8, warPath+2, standing-10
+
+[missile_strike] Precision Strike (EXCLUSIVE)
+  Low:  tension+20, cost-60, iranAggression-10, conflictRisk+12, warPath+1, approval+3, standing-8
+  Med:  tension+35, cost-120, iranAggression-20, conflictRisk+20, warPath+2, approval+5, standing-15
+  High: tension+50, cost-200, iranAggression-25, conflictRisk+30, warPath+3, approval-3, standing-25
+
+[regional_deterrence] Regional Deterrence
+  Low:  proxyThreat-8, cost-25, tension+2
+  Med:  proxyThreat-18, cost-70, tension+6, standing-2
+  High: proxyThreat-30, cost-140, tension+12, standing-6, warPath+1
+
+[mine_countermeasures] Mine Countermeasures
+  Low:  oilProtection+5, fogOfWar-5, cost-15
+  Med:  oilProtection+12, fogOfWar-10, cost-40, tension+2
+  High: oilProtection+20, fogOfWar-15, cost-80, tension+5, iranAggression-3
+
+[submarine_warfare] Submarine Warfare
+  Low:  fogOfWar-8, tension+2, cost-20, iranAggression-2
+  Med:  fogOfWar-15, tension+5, cost-50, iranAggression-5, oilProtection+8
+  High: fogOfWar-20, tension+12, cost-80, iranAggression-10, oilProtection+15, warPath+1
+
+[ballistic_missile_defense] Missile Defense
+  Low:  cost-30, approval+2, tension+2, conflictRisk-3
+  Med:  cost-80, approval+5, tension+3, conflictRisk-8, standing+3
+  High: cost-150, approval+8, tension+5, conflictRisk-15, standing+5, iranAggression-5
+
+DIPLOMATIC (6 cards):
+
+[back_channel] Back-Channel Talks
+  Low:  tension-3, dipCap+5, iranAggression-2, standing+2
+  Med:  tension-8, dipCap+12, iranAggression-6, approval-3, standing+5
+  High: tension-15, dipCap+20, iranAggression-12, approval-6, standing+10
+
+[gulf_coalition] Gulf Coalition
+  Low:  oilProtection+5, approval+3, standing+5, cost-20, iranAggression-2
+  Med:  oilProtection+15, approval+6, standing+12, cost-80, iranAggression-6, navalPresence+1
+  High: oilProtection+25, approval+8, standing+18, cost-150, iranAggression-10, navalPresence+2
+
+[un_resolution] UN Resolution
+  Low:  standing+1, dipCap-3, tension+1
+  Med:  standing+2, dipCap-10, tension+2
+  High: standing+3, dipCap-20, tension+3, chinaRelations-3
+
+[summit_proposal] Summit Proposal
+  Low:  tension-5, approval-2, standing+5, iranAggression-3
+  Med:  tension-12, approval-5, standing+12, iranAggression-8, dipCap-8
+  High: tension-20, approval-8, standing+18, iranAggression-15, dipCap-15
+
+[humanitarian_corridor] Humanitarian Corridor
+  Low:  approval+3, standing+5, iranAggression-2, cost-15
+  Med:  approval+6, standing+12, iranAggression-5, cost-50, tension-3
+  High: approval+10, standing+20, iranAggression-10, cost-100, tension-6
+
+[war_crimes_tribunal] War Crimes Tribunal
+  Low:  standing+3, dipCap+3, tension+1
+  Med:  standing+8, dipCap+8, tension+2, iranAggression-3
+  High: standing+12, dipCap+12, tension+3, iranAggression-5, approval+3
+
+ECONOMIC (4 cards + 2 more):
+
+[targeted_sanctions] Targeted Sanctions
+  Low:  iranEconomy-5, tension+3, iranAggression+3, approval+3, chinaRelations-2
+  Med:  iranEconomy-15, tension+8, iranAggression+8, approval+5, chinaRelations-5
+  High: iranEconomy-30, tension+15, iranAggression+15, approval+3, chinaRelations-12, standing-3
+
+[maximum_pressure] Maximum Pressure
+  Low:  iranEconomy-10, tension+8, iranAggression+8, oilPrice+3, chinaRelations-5
+  Med:  iranEconomy-25, tension+15, iranAggression+15, oilPrice+8, chinaRelations-10, standing-5
+  High: iranEconomy-40, tension+25, iranAggression+25, oilPrice+15, chinaRelations-18, standing-12
+
+[reserve_release] Strategic Reserve Release
+  Low:  oilPrice-5, approval+3, cost-30
+  Med:  oilPrice-12, approval+5, cost-80, oilProtection+5
+  High: oilPrice-20, approval+8, cost-150, oilProtection+10
+
+[trade_incentives] Trade Incentives
+  Low:  iranAggression-3, tension-2, approval-2, iranEconomy+3
+  Med:  iranAggression-8, tension-6, approval-5, iranEconomy+8, standing+3
+  High: iranAggression-15, tension-12, approval-10, iranEconomy+15, chinaRelations+5
+
+[oil_diplomacy] Oil Diplomacy
+  Low:  oilPrice-3, standing+3, cost-10
+  Med:  oilPrice-8, standing+5, oilFlow+3, cost-30
+  High: oilPrice-15, standing+8, oilFlow+5, cost-60, dipCap+5
+
+[insurance_backstop] Insurance Backstop
+  Low:  oilFlow+5, cost-20, approval+2
+  Med:  oilFlow+12, cost-60, approval+3, oilPrice-5
+  High: oilFlow+20, cost-120, approval+5, oilPrice-10, standing+3
+
+INTELLIGENCE (5 cards):
+
+[sigint_sweep] SIGINT Sweep
+  Low:  fogOfWar-10, cost-10, intelLevel+1
+  Med:  fogOfWar-25, cost-35, intelLevel+2, iranAggression-2
+  High: fogOfWar-40, cost-80, intelLevel+3, iranAggression-5
+
+[cyber_operation] Cyber Operation
+  Low:  fogOfWar-8, cost-15, tension+2
+  Med:  fogOfWar-18, iranAggression-8, cost-40, tension+6, conflictRisk+3
+  High: fogOfWar-30, iranAggression-15, cost-90, tension+12, conflictRisk+10, warPath+1
+
+[drone_surveillance] Drone Surveillance
+  Low:  fogOfWar-12, intelLevel+1, cost-10
+  Med:  fogOfWar-22, intelLevel+2, cost-30, oilProtection+3
+  High: fogOfWar-35, intelLevel+3, cost-60, oilProtection+8, tension+5
+
+[humint_iran] HUMINT Iran
+  Low:  fogOfWar-8, cost-15, iranAggression-2
+  Med:  fogOfWar-18, cost-40, iranAggression-5, intelLevel+1
+  High: fogOfWar-30, cost-80, iranAggression-8, intelLevel+2, tension+3
+
+[electronic_warfare] Electronic Warfare
+  Low:  fogOfWar-10, cost-10
+  Med:  fogOfWar-20, iranAggression-5, cost-30, tension+3
+  High: fogOfWar-35, iranAggression-10, cost-60, tension+8, conflictRisk-5
+
+DOMESTIC (3 cards):
+
+[media_blitz] Media Campaign
+  Low:  approval+5, cost-5
+  Med:  approval+10, standing+3, cost-20, polarization-2
+  High: approval+15, standing+5, cost-50, polarization-5
+
+[congressional_briefing] Congressional Briefing
+  Low:  approval+3, polarization-2
+  Med:  approval+6, polarization-5
+  High: approval+10, polarization-8, cost-10
+
+[america_first] America First
+  Low:  approval+5, standing-3, cost+20, tension-2, oilProtection-3
+  Med:  approval+10, standing-8, cost+60, tension-5, oilProtection-10, iranAggression+5
+  High: approval+15, standing-15, cost+100, oilProtection-20, iranAggression+12
+
+================================================================================
+11. CHARACTER BONUS CARDS (5)
+================================================================================
+
+[art_of_deal] Art of the Deal (Trump)
+  Low:  cost+30, approval+3, standing-2
+  Med:  cost+80, approval+8, standing-5, tension+3
+  High: cost+150, approval+12, standing-10, tension+8
+
+[abraham_accords] Abraham Accords II (Kushner)
+  Low:  dipCap+8, standing+5, tension-3
+  Med:  dipCap+15, standing+12, tension-8, iranAggression-5, cost-20
+  High: dipCap+25, standing+20, tension-15, iranAggression-10, cost-50
+
+[shock_awe] Shock & Awe (Hegseth)
+  Low:  navalPresence+2, tension+10, cost-80, iranAggression-8, approval+5
+  Med:  navalPresence+3, carrier+1, tension+20, cost-200, iranAggression-15, approval+8, standing-5
+  High: navalPresence+3, carrier+1, tension+35, cost-350, iranAggression-20, approval+10, standing-12, warPath+1
+
+[osint_flood] OSINT Flood (Asmongold)
+  Low:  fogOfWar-15, cost-5
+  Med:  fogOfWar-30, cost-10, approval+3, intelLevel+2
+  High: fogOfWar-45, cost-20, approval+8, intelLevel+3
+
+[populist_rally] America First Rally (Fuentes)
+  Low:  approval+5, polarization+3, standing-2
+  Med:  approval+12, polarization+8, standing-5
+  High: approval+18, polarization+15, standing-10, cost-20
+
+================================================================================
+12. CONTACT CARDS (Kushner's system, unlock at trust >= 60)
+================================================================================
+
+[saudi_deal] Saudi Grand Bargain
+  Low:  cost+40, standing+5, tension-3, dipCap+5
+  Med:  cost+100, standing+10, tension-8, dipCap+12, iranAggression-5
+  High: cost+200, standing+15, tension-12, dipCap+20, iranAggression-10
+
+[uae_port_access] UAE Port Access
+  Low:  navalPresence+1, oilProtection+8, cost+20
+  Med:  navalPresence+2, oilProtection+15, cost+50, tension+3
+  High: navalPresence+2, oilProtection+25, cost+80, tension+8
+
+[bosphorus_leverage] Turkish Leverage
+  Low:  iranAggression-3, tension-2, dipCap+5
+  Med:  iranAggression-8, tension-5, dipCap+10, cost-30
+  High: iranAggression-15, tension+5, dipCap+15, cost-60
+
+[secret_channel] Araghchi Direct Line
+  Low:  tension-5, iranAggression-5, dipCap+8
+  Med:  tension-12, iranAggression-12, dipCap+15, approval-5
+  High: tension-20, iranAggression-20, dipCap+25, approval-10
+
+[mossad_intel] Mossad Intelligence
+  Low:  fogOfWar-15, intelLevel+1
+  Med:  fogOfWar-30, intelLevel+2, iranAggression-5
+  High: fogOfWar-45, intelLevel+3, iranAggression-10, tension+5
+
+================================================================================
+13. CARD SYNERGIES (7)
+================================================================================
+
+1. smart_pressure
+   Required: sanctions + diplomacy (by category: economic + diplomatic)
+   Daily: sanctionsBoost +25%, diplomaticBoost +25%
+
+2. iron_curtain
+   Required: naval_patrol + carrier_strike
+   Daily: interceptBoost +15%
+
+3. hearts_and_minds
+   Required: humanitarian_corridor + media_campaign
+   Daily: standing +3, approval +2
+
+4. shadow_war
+   Required: cyber_ops + intel_surge
+   Daily: intelMultiplier 2x, fogReduction 2x
+   *** BROKEN: 'intel_surge' has no matching card in pool ***
+
+5. fortress_america
+   Required: missile_defense + troop_surge
+   Daily: deterrence +10, tension -5
+   *** BROKEN: 'troop_surge' has no matching card in pool ***
+
+6. diplomatic_blitz
+   Required: un_resolution + gulf_coalition
+   Daily: dipCapitalMultiplier 1.5x
+
+7. maximum_pressure (synergy)
+   Required: sanctions + carrier_strike + cyber_ops
+   Daily: iranEconomy -1, factionShift +3, tension +2
+
+Matching uses partial ID matching: 'cyber_ops' matches 'cyber_operation',
+but 'intel_surge' and 'troop_surge' match NOTHING in the card pool.
+
+================================================================================
+14. CARD PROGRESSION SYSTEM
+================================================================================
+
+Level    Name      Days Active    Bonus
+1        ACTIVE    0+             0%
+2        VETERAN   7+             +20%
+3        ELITE     14+            +40%
+4        MASTERY   21+            +60%
+
+getCardLevel(cardId):
+  Checks SIM.stanceActivationDay[cardId]
+  daysActive = SIM.day - activationDay
+  Returns { level, bonus, name, daysActive }
+
+applyCardLevelBonus(effects, cardId):
+  Multiplies all numeric effects by (1 + bonus)
+
+getStanceEffect() already applies card level bonus automatically.
+
+================================================================================
+15. CHARACTERS — COMPLETE PROFILES
+================================================================================
+
+─── DONALD TRUMP ───────────────────────────────────────────────────────────────
+
+ID: 'trump'
+Title: '45th & 47th President'
+Ability: 'The Decider'
+selectImage: 'assets/char-trump.png'
+
+Multipliers:
+  costMult: 0.8          (20% cheaper economic cards)
+  approvalMult: 0.7      (30% less approval penalty)
+  diplomacyMult: 1.0     (normal)
+  militaryMult: 1.2      (20% more military effectiveness)
+
+Card Pool:
+  allCards: true          (sees ALL cards)
+  effectMultiplier: 1.5   (50% stronger effects)
+  maxPicks: 4             (picks 4 instead of 3)
+  restricted: []
+  exclusiveIds: ['art_of_deal']
+
+Unique Resource: POLITICAL CAPITAL
+  value: 80, max: 100, color: '#ddaa44'
+  Costs 3 per action executed
+  updateResource: approval > 50 → +0.5/day, else -1/day
+
+Special Action: EXECUTIVE ORDER
+  AP: 1, cooldown: 3 days
+  Effects: tension +5, domesticApproval +5, diplomaticCapital -3
+
+Unique Lose Conditions:
+  1. congress_blocks: uniqueResource <= 0
+  2. economic_meltdown: oilPrice > 180 && budget < 200
+
+Character Events (4 main):
+  T01: Art of the Deal (Day 3-5)
+  T02: The Rally (Day 8-12)
+  T03: Mar-a-Lago Summit (Day 20-25)
+  T04: The Tweet (Day 30-40)
+
+Epilogues:
+  diplomatic: "History will say Trump did what no one thought possible..."
+  military:   "They said it couldn't be done. You did it anyway..."
+  decline:    "The deal of the century became the disaster of the decade..."
+
+─── PETE HEGSETH ───────────────────────────────────────────────────────────────
+
+ID: 'hegseth'
+Title: 'Secretary of Defense'
+Ability: 'Chain of Command'
+selectImage: 'assets/char-hegseth.png'
+
+Multipliers:
+  costMult: 1.0
+  approvalMult: 1.0
+  diplomacyMult: 0.7     (30% less diplomatic effectiveness)
+  militaryMult: 1.5      (50% more military effectiveness)
+
+Card Pool:
+  allCards: false
+  effectMultiplier: 1.0
+  maxPicks: 3
+  restricted: ['summit_proposal', 'humanitarian_corridor']
+  exclusiveIds: ['shock_awe']
+
+Unique Resource: MILITARY AUTHORITY
+  value: 70, max: 100, color: '#44aadd'
+  updateResource: tension > 60 → +0.3/day, else -0.5/day
+  If authority < 25: navy ships move at half speed
+
+Special Action: DEPLOY MARINES
+  AP: 1, cooldown: 5 days
+  Effects: tension +10, iranAggression -8, oilFlow +5, uniqueResource -10
+
+Unique Lose Conditions:
+  1. mutiny: uniqueResource <= 0
+  2. friendly_fire: warPath >= 4 && tension > 85
+
+Character Events (4 main):
+  H01: The Pentagon Briefing (Day 2-4)
+  H02: Rules of Engagement (Day 7-10)
+  H03: The Carrier Decision (Day 15-20)
+  H04: Friendly Fire (Day 25-35)
+
+Epilogues:
+  diplomatic: "They'll never put your face on a coin. But the sailors know..."
+  military:   "The Pentagon will study this for decades..."
+  decline:    "The mission creep they warned you about came from within..."
+
+─── JARED KUSHNER ──────────────────────────────────────────────────────────────
+
+ID: 'kushner'
+Title: 'Senior Advisor'
+Ability: 'The Dealmaker'
+selectImage: 'assets/char-kushner.png'
+
+Multipliers:
+  costMult: 1.0
+  approvalMult: 1.0
+  diplomacyMult: 2.0     (DOUBLE diplomatic effectiveness)
+  militaryMult: 0.6      (40% LESS military effectiveness)
+
+Card Pool:
+  allCards: false
+  effectMultiplier: 1.0
+  maxPicks: 3
+  restricted: ['missile_strike', 'active_intercept']
+  exclusiveIds: ['abraham_accords']
+
+Unique Resource: EXPOSURE
+  value: 15, max: 100, color: '#dd4488'
+  INVERTED: higher = worse (leak risk)
+  updateResource: +0.2/day base, +0.3 if tension > 60
+
+Contacts System (5 contacts):
+  mbs:       Mohammed bin Salman (Saudi), trust 50, unlocks 'saudi_deal'
+  mbz:       Mohammed bin Zayed (UAE), trust 45, unlocks 'uae_port_access'
+  erdogan:   Erdogan (Turkey), trust 30, unlocks 'bosphorus_leverage'
+  araghchi:  Abbas Araghchi (Iran FM), trust 10, unlocks 'secret_channel'
+  mossad:    Mossad Director, trust 40, unlocks 'mossad_intel'
+
+Special Action: CALL CONTACT
+  AP: 1, cost: $10, cooldown: 2 days
+  Raises selected contact trust +8, diplomaticCapital +4, exposure +5
+
+Unique Lose Conditions:
+  1. exposed: uniqueResource >= 90
+  2. diplomatic_incident: diplomaticCapital <= 0 && tension > 70
+
+Character Events (4 main + chains):
+  K01: The Back Channel (Day 3-6)
+  K02: The Saudi Meeting (Day 10-15)
+  K03: The Leak (Day 18-25)
+  K04: The Summit (Day 30-40)
+
+Epilogues:
+  diplomatic: "Nobody elected you. Nobody appointed you. But you found the thread..."
+  military:   "The Abraham Accords were about avoiding this exact scenario..."
+  decline:    "The exposure was always the risk. You knew that going in..."
+
+─── ASMONGOLD ──────────────────────────────────────────────────────────────────
+
+ID: 'asmongold'
+Title: 'Digital Secretary of State'
+Ability: 'OSINT Network'
+selectImage: 'assets/char-asmongold.png'
+
+Multipliers:
+  costMult: 0.5          (50% cheaper)
+  approvalMult: 1.3      (30% more approval impact — both positive and negative)
+  diplomacyMult: 0.8
+  militaryMult: 0.8
+
+Card Pool:
+  allCards: false
+  effectMultiplier: 1.0
+  maxPicks: 3
+  restricted: ['missile_strike', 'submarine_warfare']
+  exclusiveIds: ['osint_flood']
+
+Unique Resource: AUDIENCE
+  value: 60, max: 100, color: '#aa44dd'
+  updateResource: approval > 50 → +0.4/day, else -0.6/day
+
+Special Action: STREAM CRISIS
+  AP: 1, cooldown: 4 days
+  Effects: fogOfWar -10, domesticApproval +5, internationalStanding -3, uniqueResource +5
+
+Unique Lose Conditions:
+  1. cancelled: uniqueResource <= 0
+  2. doxxed: fogOfWar > 85 && assassinationRisk > 50
+
+Character Events (4 main):
+  A01: The First Stream (Day 2-4)
+  A02: The OSINT Discovery (Day 8-12)
+  A03: The Viral Moment (Day 18-25)
+  A04: The Platform War (Day 30-40)
+
+Epilogues:
+  diplomatic: "They laughed when you started streaming from the Situation Room..."
+  military:   "The internet never forgets. That's what made you dangerous..."
+  decline:    "The algorithm giveth and the algorithm taketh away..."
+
+─── NICK FUENTES ───────────────────────────────────────────────────────────────
+
+ID: 'fuentes'
+Title: 'National Security Advisor'
+Ability: 'America First'
+selectImage: 'assets/char-fuentes.png'
+
+Multipliers:
+  costMult: 0.7          (30% cheaper)
+  approvalMult: 1.5      (50% more approval impact)
+  diplomacyMult: 0.3     (70% LESS diplomatic effectiveness)
+  militaryMult: 1.0
+
+Card Pool:
+  allCards: false
+  effectMultiplier: 1.0
+  maxPicks: 3
+  restricted: ['back_channel', 'humanitarian_corridor', 'summit_proposal']
+  exclusiveIds: ['populist_rally']
+
+Unique Resource: BASE LOYALTY
+  value: 65, max: 100, color: '#dd6644'
+  updateResource: polarization > 30 → +0.3/day, else -0.4/day
+
+Special Action: RALLY THE BASE
+  AP: 1, cooldown: 3 days
+  Effects: domesticApproval +8, polarization +5, internationalStanding -5, uniqueResource +10
+
+Unique Lose Conditions:
+  1. impeached: uniqueResource <= 0
+  2. isolation: internationalStanding <= 5 && domesticApproval < 30
+
+Character Events (4 main):
+  F01: America First Address (Day 2-4)
+  F02: The Base Demands (Day 8-12)
+  F03: The Purge (Day 18-25)
+  F04: The Ultimatum (Day 30-40)
+
+Epilogues:
+  diplomatic: "They said America First meant America alone. You proved them wrong..."
+  military:   "The world learned that America First doesn't mean America won't fight..."
+  decline:    "The movement consumed itself. The base turned on you..."
+
+─── getAdvisorReaction(character, metric, delta) ─────────────────────────────
+Returns character-specific quote strings based on metric changes.
+Each character has unique voice/personality in reactions.
+
+================================================================================
+16. ACTION PANEL — ALL ACTIONS WITH EFFECTS
+================================================================================
+
+All actions cost 1 AP unless noted. Trump pays 3 uniqueResource per action.
+All direct action stat effects are scaled by 1.5x (ACTION_MULT) after application.
+Budget and warPath changes are NOT scaled by the multiplier.
+After each action, a narrative scene is written to the feed (_narrateAction).
+After narration, 40% chance of a reactive news one-liner (_maybeReactiveNews).
+50% chance of an interrupt between actions (if AP remaining).
+
+INTELLIGENCE:
+  gather-intel      ($15): fogOfWar -8, generates intel snippet
+  analyze-threats   (free): fogOfWar -3 if fogOfWar < 50
+
+DIPLOMACY:
+  phone-call        (free): context-dependent:
+                            tension > 60 → tension -5, iranAggression +2
+                            chinaRelations < 40 → chinaRelations +5
+                            standing < 40 → standing +5
+                            else → dipCap +3
+  draft-proposal    ($10):  dipCap +5
+  demand-un-session (free): standing +3, dipCap +4, tension -2
+
+MILITARY:
+  reposition-fleet  (free): tension +2, oilFlow +3
+  change-roe        (free): cycles defensive→moderate→aggressive
+                            defensive: tension -3, standing +2
+                            moderate:  tension +3, approval +1
+                            aggressive: tension +5, iranAggression -3, standing -2
+  escort-tankers    ($10, warPath>=1): oilFlow +5, tension +2, marks 2 tankers escorted
+  precision-strike  ($30, warPath>=2): tension +12, iranAggression -8, standing -5, approval +3, warPath +1, removes ~2 boats
+  spec-ops-raid     ($25, warPath>=2): fogOfWar -12, tension +6, iranAggression -4, removes ~3 mines
+  air-strikes       ($50, warPath>=3): tension +18, iranAggression -15, standing -8, approval +5, conflictRisk +10, warPath +1, removes 60% boats/50% drones
+  sead-mission      ($40, warPath>=3): tension +10, iranAggression -6, fogOfWar -8
+  ground-troops     ($80, warPath>=4): tension +25, iranAggression -20, standing -15, approval -5, polarization +10, conflictRisk +20, oilFlow +10
+  seize-islands     ($60, warPath>=4): tension +15, iranAggression -12, oilFlow +8, standing -10, clears all mines
+  full-mobilization ($100, warPath>=5): tension=100, iranAggression -30, standing -20, approval -10, polarization +20, conflictRisk=100, oilFlow +15, clears all enemies
+
+DOMESTIC:
+  press-conference  (free): approval +4, standing -1, polarization +1
+  brief-congress    ($5):   polarization -3, approval +2
+
+ECONOMIC:
+  adjust-sanctions  (free): iranEconomy -3, chinaRelations -2, iranAggression +2
+  market-intervention ($25): oilPrice -5
+
+ESCALATION:
+  issue-ultimatum   (free): tension +8, iranAggression -5, approval +5, warPath +1
+  emergency-coalition ($20): standing +5, oilFlow +3, dipCap +5
+  escalate          (free, warPath<5): warPath +1, tension +8, approval +3, standing -4, iranAggression -3
+  deescalate        (free, warPath>0): warPath -1, tension -5, standing +5, approval -3, iranAggression +4
+
+CHARACTER-EXCLUSIVE:
+  Hegseth: deploy-marines (free): tension +8, iranAggression -6, oilFlow +4, uniqueResource -8
+  Hegseth: combat-air-patrol ($20): tension +5, fogOfWar -10, iranAggression -4
+  Fuentes: rally-base (free): uniqueResource +8, approval +3, polarization +4, standing -2
+  Fuentes: media-blitz (free): approval +5, uniqueResource +3, standing -3
+  Kushner: call-contact-[id] ($10): contact.trust +8, dipCap +4, uniqueResource +5
+
+================================================================================
+17. BIBLE ACTIONS (15 EXTENDED ACTIONS)
+================================================================================
+
+These appear in the "MORE ACTIONS" dropdown. Each has conditions and costs.
+
+1. prisoner_exchange (diplomacy, 2 AP, $20)
+   Condition: seizureCount > 0
+   Success (dipCap>30 && iranFactionBalance>40): tension-8, approval+10, dipCap-8, iranAggression-5
+   Failure: tension+3, dipCap-5
+
+2. covert_operation (intelligence, 3 AP, $25)
+   Condition: fogOfWar < 50
+   Success (70%): iranAggression-10, fogOfWar-15, tension+5, conflictRisk+3
+   Failure: tension+15, standing-10, iranAggression+10, fogOfWar+5
+
+3. emergency_budget (domestic, 1 AP, $0)
+   Condition: budget < 100
+   Success (approval>40): budget+200, approval-3, polarization+3
+   Failure: budget+50, approval-5, polarization+5
+
+4. media_offensive (domestic, 2 AP, $10)
+   Condition: fogOfWar > 60
+   Effect: fogOfWar-8, approval+5, standing+3, polarization-2
+
+5. backchannel_message (diplomacy, 1 AP, $0)
+   Condition: storyFlags.backchannel_accepted || dipCap > 20
+   Effect: tension-3, dipCap-2, iranAggression-2
+
+6. allied_consultation (diplomacy, 1 AP, $0)
+   Condition: standing > 30
+   Effect: standing+3, dipCap+3
+
+7. sanctions_adjustment (economic, 1 AP, $0)
+   Condition: always
+   Immediate: iranEconomy-3, tension+2, iranAggression+2, standing-2
+   Delayed (3 days): iranEconomy-5, iranAggression-3
+
+8. intel_sharing (intelligence, 1 AP, $0)
+   Condition: fogOfWar < 40 && standing > 30
+   Effect: standing+5, dipCap+3, fogOfWar+3
+
+9. humanitarian_corridor (diplomacy, 2 AP, $15)
+   Condition: warPath >= 2
+   Effect: standing+10, tension-3, approval+3, oilFlow+5
+
+10. economic_stimulus (economic, 1 AP, $30)
+    Condition: oilPrice > 120
+    Effect: approval+8, oilPrice-5, budget-30
+
+11. cyber_recon (intelligence, 1 AP, $10)
+    Condition: fogOfWar > 30
+    Base: fogOfWar-10
+    30% chance bonus: fogOfWar-10 additional
+
+12. war_powers_consult (domestic, 1 AP, $0)
+    Condition: warPath >= 3
+    Effect: approval+3, polarization-3, standing+3
+    Sets storyFlags.war_powers_briefed
+
+13. regional_flyover (military, 1 AP, $15)
+    Condition: always
+    Effect: tension+5, iranAggression-5, approval+3, standing-2
+
+14. summit_proposal (diplomacy, 2 AP, $20)
+    Condition: dipCap > 40
+    Effect: dipCap-10, standing+8, tension-5, approval+3
+    Sets storyFlags.summit_proposed
+
+15. press_embargo (domestic, 1 AP, $0)
+    Condition: fogOfWar > 50
+    Effect: fogOfWar-5, approval-2, polarization+2
+
+================================================================================
+18. ALL INTERRUPTS (35)
+================================================================================
+
+Random 2-choice popups between actions (50% chance per action if AP remaining).
+Each has conditions and effects.
+
+INT-01: NSA encrypted IRGC traffic
+  "Divert analysts": fogOfWar-5, budget-5
+  "Queue for tomorrow": (none)
+
+INT-02: Weather gap over Bandar Abbas
+  "Redirect satellite": budget-5, fogOfWar-3
+  "Keep targets": (none)
+
+INT-03: Iranian officer at Swiss embassy
+  "Send team": fogOfWar-8, tension+3
+  "Vet through channels": fogOfWar-3
+
+INT-04: IRGC call intercepted, translator on leave
+  "Backup translator": fogOfWar-5
+  "Wait for expert": fogOfWar-3
+
+INT-05: Telegram military schedules
+  "Act cautiously": fogOfWar-3
+  "Flag and move on": (none)
+
+INT-06: French ambassador upset
+  "See him now": standing+3
+  "Schedule tomorrow": standing-2
+
+INT-07: Omani intermediary, Araghchi message
+  "Read now": dipCap+3, tension-2
+  "Read after": dipCap+1
+
+INT-08: UN SecGen ceasefire call
+  "Take call": dipCap+3, standing+2
+  "Call back": standing-2
+
+INT-09: Russian surveillance ship
+  "Diplomatic note": standing+2
+  "Shadow with destroyer": budget-5, tension+2
+
+INT-10: South Korea trade minister
+  "Reassure": standing+3, oilFlow+2
+  "Refer to deputy": (none)
+
+INT-11: USS Eisenhower radar down
+  "Keep on station": conflictRisk+3
+  "Pull back": budget-10, conflictRisk-2
+
+INT-12: Iranian speedboats approaching
+  "Grant weapons-free": tension+3, conflictRisk+2
+  "Maintain ROE": (none)
+
+INT-13: Nearly fired on UAE Coast Guard
+  "Apologize": standing+3
+  "Blame UAE": standing-5
+
+INT-14: SOCOM covert recon proposal
+  "Approve": budget-15, fogOfWar-8, tension+5
+  "Deny": (none)
+
+INT-15: Mine detected in lane
+  "Send minesweeper": budget-10, oilFlow-3
+  "Investigate with drones": budget-5, oilFlow-5
+
+INT-16: Senator tweeted classified details
+  "Demand investigation": approval+3, fogOfWar+2
+  "Brief FBI": (none)
+
+INT-17: Trucker convoy over fuel prices
+  "Express sympathy": approval+3, budget-10
+  "Say nothing": approval-3
+
+INT-18: SecState vs SecDef screaming match
+  "Mediate": polarization-3
+  "Let them work it out": polarization+2
+
+INT-19: Snap poll, comms team wants response
+  "Rapid response": approval+2
+  "Stay the course": (none)
+
+INT-20: Veterans org statement
+  "Respond publicly": approval+3
+  "No response": (none)
+
+INT-21: Damaged tanker leaking crude
+  "Divert naval assets": budget-15, standing+5
+  "Let flag state handle": standing-5, oilFlow-3
+
+INT-22: Qatar Airways in restricted airspace
+  "De-escalate via hotline": dipCap+5, tension-5
+  "Scramble fighters": tension+3
+
+INT-23: 6.4 earthquake in Iran
+  "Humanitarian aid": standing+10, tension-8, budget-10, sets humanitarian_rescue flag
+  "Express condolences": standing-3
+
+INT-24: False seizure rumor spikes oil
+  "Public denial with intel": fogOfWar-3, oilPrice-5
+  "Let it ride": oilPrice+3
+
+INT-25: Crowd at Baghdad embassy
+  "Reinforce security": budget-5
+  "Begin evacuation": budget-10, approval-3
+
+INT-26: (Trump only) Posted memo to Truth Social
+  "Claim 4D chess": approval+3, fogOfWar+5
+  "Delete and deny": approval-3
+
+INT-27: (Trump only) Donor calling about oil stocks
+  "Schmooze": approval+2
+  "Have assistant handle": approval-2
+
+INT-28: (Hegseth only) Marine PT challenge
+  "Accept": approval+5, standing+3
+  "Decline": approval-2
+
+INT-29: (Hegseth only) Generals split 50/50
+  "Decide immediately": tension+3
+  "Ask for analysis": dipCap+2
+
+INT-30: (Kushner only) "Tomorrow. 3pm. Come alone. —Z"
+  "Go": fogOfWar-10, dipCap+5
+  "Trace number": fogOfWar-3
+
+INT-31: (Kushner only) Father-in-law wants briefing
+  "Brief honestly": approval+3
+  "Sanitized version": (none)
+
+INT-32: (Asmongold only) Hostile streamer leak
+  "Find the source": fogOfWar-5
+  "Feed false intel": fogOfWar-3
+
+INT-33: (Asmongold only) Subreddit found IC miss
+  "Engage, give credit": approval+5, fogOfWar-3
+  "Classify it": fogOfWar-3, approval-5
+
+INT-34: (Fuentes only) Movement figure denounces you
+  "Attack back, purge": approval-5, polarization+5
+  "Reach out privately": approval+5
+
+INT-35: (Fuentes only) Nobody co-sponsors resolution
+  "Bypass Congress": approval+5, polarization+3
+  "Compromise": approval-3, standing+3
+
+================================================================================
+19. SPRITES — ALL PROCEDURAL ART
+================================================================================
+
+All sprites generated procedurally at game start. Stored in SPRITES object.
+
+Sprite            Logical Size    Scale    Description
+────────────────  ──────────────  ─────    ──────────────────────────────────
+tanker            48x18           3x       Oil tanker (empty cargo, gray deck)
+tankerLoaded      48x18           3x       Oil tanker (loaded, brown cargo)
+navy              48x18           3x       US Navy destroyer
+carrier           64x20           3x       Aircraft carrier (CVN)
+iranboat          36x14           3x       IRGC patrol boat (olive green)
+mine              16x16           3x       Naval mine with spikes + chain
+drone             28x14           3x       MQ-9 Reaper drone
+platform          32x32           3x       Oil drilling platform with flare
+
+iconNaval         16x16           2x       Ship silhouette (green)
+iconSanctions     16x16           2x       Explosive fist (red/yellow)
+iconDiplomacy     16x16           2x       Handshake (green)
+iconBlockade      16x16           2x       Barricade on water (gold)
+iconCoalition     16x16           2x       Two figures (green/blue)
+iconIntel         16x16           2x       Satellite dish (blue/red)
+
+portrait_trump    32x32           2x       Blonde hair, red tie, navy suit
+portrait_hegseth  32x32           2x       Military cut, olive jacket
+portrait_kushner  32x32           2x       Dark hair, blue tie, pale
+portrait_asmongold 32x32          2x       Long brown hair, headset, beard
+portrait_fuentes  32x32           2x       Dark styled hair, navy suit
+
+================================================================================
+20. MAP RENDERING
+================================================================================
+
+renderMap() — Main render loop:
+  1. Black background
+  2. Situation room image at 30% opacity (if loaded)
+  3. Map background image at 70% opacity (if loaded)
+  4. Or procedural map: coastlines, islands, ports, grid, water ripples
+  5. Shipping lane flow visualization (animated dots + arrows)
+  6. Incident markers (seizure=red ✕, intercept=green ✓, mine=yellow ⚠)
+  7. Entity sprites (tankers, navy, boats, carrier, drones, mines)
+  8. Vignette effect (darkened edges)
+  9. Tension overlay (red tint when tension > 40)
+  10. Crisis border flash (red pulse when crisisLevel >= 2)
+  11. Event flash card (slide-in notification)
+
+Shipping Lane Flow Colors:
+  flow >= 75%: green #44dd88 + glow
+  flow >= 50%: orange #ddaa44
+  flow >= 20%: red #dd4444
+  flow <  20%: dark red #551111 + blinking "BLOCKED"
+
+Shipping Lanes (2 routes):
+  Inbound:  (0.95,0.85) → (0.75,0.65) → (0.58,0.52) → (0.48,0.47) → (0.35,0.43) → (0.15,0.42) → (0.0,0.45)
+  Outbound: (0.0,0.50) → (0.15,0.48) → (0.35,0.48) → (0.48,0.52) → (0.58,0.57) → (0.75,0.70) → (0.95,0.90)
+
+Procedural Map Features:
+  - Iran (north): olive green with curved coastline, mountains
+  - UAE/Oman (south): green with curved coastline
+  - Qeshm Island: ellipse at (0.48, 0.36)
+  - Ports: Bandar Abbas (0.50,0.29), Fujairah (0.68,0.76), Muscat (0.15,0.78)
+  - Water: radial gradient, 25 animated ripple lines
+  - Labels: STRAIT OF HORMUZ, PERSIAN GULF, GULF OF OMAN
+
+Entity Indicators on Map:
+  - Seized tankers: pulsing red tint + "SEIZED" label
+  - Escorted tankers: green dashed ring
+  - Targeting boats: pulsing red ring
+  - Aggressive boats: red triangle above
+  - Carrier: "CSG EISENHOWER" label + patrol zone dashed circle
+  - Drones: dashed orbit circle
+  - Mines: pulsing + danger radius circle
+
+================================================================================
+21. NARRATIVE SYSTEM
+================================================================================
+
+All text is extracted from JS source files into JSON data files. JS arrays are
+defined with empty text fields and populated at runtime via hydrate functions
+(hydrateCards, hydrateSimulation, hydrateUI, hydrateCharacters) called after
+the async loadGameData() completes.
+
+A. NARRATIVE FEED (js/narrative.js)
+   Scrollable terminal-style text log in the center panel.
+   Replaces the ticker/headline system as the primary information channel.
+
+   Entry types:
+     scene    — 2-4 sentence narrative prose (primary content)
+     dialogue — quoted NPC speech with speaker attribution
+     alert    — urgent one-liner (red/yellow/green prefix)
+     stat     — metric change indicator (always preceded by a scene)
+     headline — news ticker style, single line
+
+   API: addNarrative(type, text, options)
+     options.speaker   — (dialogue) NPC name
+     options.metric    — (stat) metric key for color coding
+     options.delta     — (stat) signed number
+     options.level     — (alert/headline) 'critical'|'warning'|'good'|'normal'
+
+   Stat entries without a preceding scene auto-generate a contextual scene.
+   Auto-scrolls unless user has scrolled up manually.
+
+B. ACTION NARRATION (_narrateAction in ui.js)
+   After every action, looks up scene variants from DATA['action-scenes'].
+   Picks random variant, avoids repeating the last-used variant per action key.
+   Writes scene + stat change indicators to narrative feed.
+   129 scene variants across 43 action keys.
+
+C. REACTIVE NEWS (_maybeReactiveNews in ui.js)
+   40% chance after each action during dayplay.
+   Selects from DATA.reactions pools filtered by current game state:
+     highTension (>60), lowTension (<40), diplomaticProgress, militaryEscalation (warPath>=3),
+     proxyThreats (>50), oilCrisis (oilFlow<30), budgetPressure (<200),
+     domesticUnrest (approval<35), iranHardliner (factionBalance<35),
+     iranModerate (factionBalance>65), internationalIsolation (standing<25),
+     strongCoalition (standing>70), fogHigh (>65), earlyGame (day<5),
+     lateGame (day>25), general (fallback).
+   84 total one-liners. Avoids repeating same entry consecutively.
+
+D. DAY-END SCENES (_writeDayEndScene in ui.js)
+   Written to narrative feed when player clicks "End Day", BEFORE dailyUpdate().
+   Two parts:
+   1. Character reflection — 2-3 sentences in character's voice based on game state.
+      Conditions checked in priority order: highTension, lowTension, militaryAction,
+      diplomaticDay, budgetTight, approvalDrop, default.
+      105 total variants (21 per character × 5 characters).
+   2. Cliffhanger teaser — references real simulation state:
+      scheduledEvent (upcoming chain event within 2 days),
+      iranHardlinerShift (factionBalance dropped >3 since yesterday),
+      iranModerateShift (factionBalance rose >3),
+      tensionCrossedHigh (crossed 75 threshold),
+      tensionCrossedLow (dropped below 40 threshold),
+      oilCrisis, warPathRising, approvalCrisis, proxyActivity,
+      fogHigh, straitProgress, default.
+      39 total cliffhangers. Snapshots iranFactionBalance and tension for next day's
+      threshold comparison (SIM._prevIranFaction, SIM._prevTensionBracket).
+
+E. MORNING BRIEFING (generateMorningBriefing in narrative.js)
+   State-driven briefing generator. Evaluates 31 game state conditions in
+   priority order. Returns: advisor name, narrative opening, iran intel note,
+   forward-momentum closer, gauges (secondary).
+   Advisor pool selected by dominant concern (intel/military/diplomatic/domestic/generic).
+   Opening and closer avoid repeating the same variant consecutively.
+   93 opening variants, 33 closer variants, 18 iran intel variants.
+
+F. DECISION EVENT SCENES (showDecisionEvent/resolveDecision in ui.js)
+   Decision events write a narrative scene to the feed (not just a popup).
+   Scene text from DATA['event-scenes'].scenes[event.id].scene.
+   Fallback: _buildEventScene() prepends atmospheric prefix by category
+   (crisis/military/diplomatic/economic/intel/default) to the event description.
+   Choices shown WITHOUT stat previews — player decides on narrative alone.
+   After choosing, consequence scene written from DATA['event-scenes'].scenes[event.id].consequences[idx].
+   Timed events show urgency text. 93 event scenes with consequences.
+
+G. HEADLINE BRIDGE (addHeadline in simulation.js)
+   addHeadline() pushes to both SIM.headlines (legacy) and addNarrative():
+   critical/good level → alert type, others → headline type.
+
+================================================================================
+22. KNOWN ISSUES & INCONSISTENCIES
+================================================================================
+
+1. BROKEN SYNERGIES:
+   - shadow_war requires 'intel_surge' — no card with this ID exists
+   - fortress_america requires 'troop_surge' — no card with this ID exists
+   These synergies can NEVER activate in the current game.
+
+2. ASSET FILENAME TYPOS:
+   - 'vent-asmongold-osint.png' — missing 'e' (should be 'event-...')
+   - 'vent-kushner-zarif.png' — missing 'e' (should be 'event-...')
+   - 'event-e02-predecesso.png' — truncated (should be 'predecessor')
+   - 'event-kushner-summi.png' — truncated (should be 'summit')
+   - 'pilogue-military.png' — missing 'e' (should be 'epilogue-...')
+
+3. STORY_ARCS IMAGE REFERENCES:
+   Some arcs reference generic images rather than unique arc-specific ones.
+   Arc 'the_spark' and 'the_squeeze' both use 'assets/arc-escalation.png'.
+
+4. SIM_DEFAULTS vs CLAUDE.md DISCREPANCY:
+   CLAUDE.md says: oilFlow starts at 25, oilPrice at 145, tension at 72, approval at 55, budget at $900M, fogOfWar at 82
+   SIM_DEFAULTS says: oilFlow=50, oilPrice=95, tension=55, approval=60, budget=900, fogOfWar=70
+   The CODE values (SIM_DEFAULTS) are the actual starting values.
+
+5. CARD COUNT DISCREPANCY:
+   CLAUDE.md says "19 cards across 5 categories" — actual count in code is 28 strategy cards
+   (8 military + 6 diplomatic + 6 economic + 5 intelligence + 3 domestic)
+
+6. UN_RESOLUTION EFFECTS SEEM WRONG:
+   All three funding levels have very small standing gains (+1/+2/+3) but increasing
+   diplomatic capital COSTS (-3/-10/-20). This makes the card almost always net negative.
+
+7. PARTIAL ID MATCHING IN SYNERGIES:
+   getActiveSynergies() uses partial string matching (e.g., 'sanctions' matches
+   'targeted_sanctions'). This is intentional but fragile — any card with a partial
+   name match will satisfy synergy requirements.
+
+8. CONVERGENCE RATES:
+   Metrics converge at 8-12% per day toward target values. This means
+   dramatic single-day swings are dampened — it takes 6-9 days for the full
+   effect of a card change to materialize.
+   Tension: 10%, oilPrice: 12%, domesticApproval: 8%, internationalStanding: 8%.
+
+9. PLAYER DELTA DECAY (0.88):
+   Direct action effects persist ~8 days. After 8 days at 88% retention,
+   effects are <36% of original magnitude. Snap to 0 below 0.1.
+
+10. GAME DATE CALCULATION:
+    Game starts Feb 28, 2026. Date = Feb 28 + (SIM.day - 1) days.
+    Day 91 = May 30, 2026. The game spans approximately 3 months.
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
