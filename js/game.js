@@ -50,9 +50,9 @@
 
                 // Update side panels every ~500ms during dayplay
                 if (SIM.phase === 'dayplay' && !SIM.gameOver) {
-                    // Ambient cable traffic during idle periods
+                    // Ambient cable traffic during idle periods (15s interval)
                     _ambientTimer += dt;
-                    if (_ambientTimer > 4000 && !SIM.decisionEventActive && !SIM._suppressAmbient) {
+                    if (_ambientTimer > 15000 && !SIM.decisionEventActive && !SIM._suppressAmbient) {
                         _ambientTimer = 0;
                         if (typeof _pushAmbientContent === 'function') _pushAmbientContent();
                     }

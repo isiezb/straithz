@@ -2226,7 +2226,10 @@ function _showAdvisorGuide() {
             <div class="advisor-guide-arrow ${arrowClass}"></div>
             <div class="guide-title">${s.title}</div>
             <div class="guide-text">${s.text}</div>
-            <button class="guide-dismiss">${step < _GUIDE_STEPS.length - 1 ? '[ NEXT ]' : '[ GOT IT ]'}</button>
+            <div class="guide-buttons">
+                <button class="guide-dismiss">${step < _GUIDE_STEPS.length - 1 ? '[ NEXT ]' : '[ GOT IT ]'}</button>
+                ${step < _GUIDE_STEPS.length - 1 ? '<button class="guide-skip">[ SKIP TUTORIAL ]</button>' : ''}
+            </div>
             <div class="guide-step">STEP ${step + 1} / ${_GUIDE_STEPS.length}</div>
         `;
 
@@ -2237,6 +2240,12 @@ function _showAdvisorGuide() {
             step++;
             showStep();
         });
+        const skipBtn = guide.querySelector('.guide-skip');
+        if (skipBtn) {
+            skipBtn.addEventListener('click', () => {
+                guide.remove();
+            });
+        }
     }
 
     showStep();
@@ -4236,60 +4245,75 @@ function resolveDecision(event, choiceIdx, customScene) {
 
 // ======================== AMBIENT CABLE TRAFFIC ========================
 
-let _lastAmbientIdx = -1;
 let _ambientCooldown = 0;
+let _ambientUsedTexts = new Set();  // tracks texts shown this day
+let _ambientDayCount = 0;           // how many ambient msgs this day
+let _ambientDay = 0;                // which day we're tracking
+const _AMBIENT_MAX_PER_DAY = 4;     // cap ambient messages per day
 
 function _pushAmbientContent() {
     if (SIM._suppressAmbient) return;
     if (_ambientCooldown > 0) { _ambientCooldown--; return; }
-    // Don't flood — space out ambient entries
-    _ambientCooldown = 0;
+
+    // Reset tracking on new day
+    if (SIM.day !== _ambientDay) {
+        _ambientDay = SIM.day;
+        _ambientDayCount = 0;
+        _ambientUsedTexts.clear();
+    }
+
+    // Cap per day
+    if (_ambientDayCount >= _AMBIENT_MAX_PER_DAY) return;
 
     const pool = [];
     const s = SIM;
     const headlines = DATA.headlines;
-    const intel = DATA.intel;
 
-    // Simulation headlines based on state
+    // Simulation headlines based on state — pick ONE category randomly, not all
     if (headlines && headlines.simulation) {
         const sim = headlines.simulation;
-        if (s.tension > 60 && sim.crisis_escalation) pool.push(...sim.crisis_escalation.map(t => ({type:'ambient', text:t})));
-        if (s.oilFlow < 40 && sim.strait_stability) pool.push(...sim.strait_stability.map(t => ({type:'ambient', text:t})));
-        if (s.iranFactionBalance < 40 && sim.iran_faction_hardliner_moves) pool.push(...sim.iran_faction_hardliner_moves.map(t => ({type:'ambient', text:t.replace('{moveText}', 'increased naval deployments')})));
-        if (s.iranFactionBalance > 60 && sim.iran_faction_moderate_moves) pool.push(...sim.iran_faction_moderate_moves.map(t => ({type:'ambient', text:t.replace('{moveText}', 'diplomatic signals through intermediaries')})));
-        if (s.proxyThreat > 40 && sim.proxy_events) pool.push(...sim.proxy_events.map(t => ({type:'ambient', text:t})));
-        if (s.domesticApproval < 40 && sim.approval_warnings) pool.push(...sim.approval_warnings.map(t => ({type:'ambient', text:t})));
-        if (s.polarization > 60 && sim.polarization_warnings) pool.push(...sim.polarization_warnings.map(t => ({type:'ambient', text:t})));
+        const candidates = [];
+
+        if (s.tension > 60 && sim.crisis_escalation) candidates.push(sim.crisis_escalation);
+        if (s.oilFlow < 40 && sim.strait_stability) candidates.push(sim.strait_stability);
+        if (s.iranFactionBalance < 40 && sim.iran_faction_hardliner_moves) candidates.push(sim.iran_faction_hardliner_moves.map(t => t.replace('{moveText}', 'increased naval deployments')));
+        if (s.iranFactionBalance > 60 && sim.iran_faction_moderate_moves) candidates.push(sim.iran_faction_moderate_moves.map(t => t.replace('{moveText}', 'diplomatic signals through intermediaries')));
+        if (s.proxyThreat > 40 && sim.proxy_events) candidates.push(sim.proxy_events);
+        if (s.domesticApproval < 40 && sim.approval_warnings) candidates.push(sim.approval_warnings);
+        if (s.polarization > 60 && sim.polarization_warnings) candidates.push(sim.polarization_warnings);
 
         // Tension-graded ambient cables
-        if (s.tension < 40 && sim.ambient_low_tension) pool.push(...sim.ambient_low_tension.map(t => ({type:'ambient', text:t})));
-        else if (s.tension < 70 && sim.ambient_medium_tension) pool.push(...sim.ambient_medium_tension.map(t => ({type:'ambient', text:t})));
-        else if (sim.ambient_high_tension) pool.push(...sim.ambient_high_tension.map(t => ({type:'ambient', text:t})));
+        if (s.tension < 40 && sim.ambient_low_tension) candidates.push(sim.ambient_low_tension);
+        else if (s.tension < 70 && sim.ambient_medium_tension) candidates.push(sim.ambient_medium_tension);
+        else if (sim.ambient_high_tension) candidates.push(sim.ambient_high_tension);
 
-        // Polymarket headlines (always available, meta-satirical layer)
-        if (sim.polymarket && Math.random() < 0.3) pool.push(...sim.polymarket.map(t => ({type:'ambient', text:t})));
+        // Polymarket (less frequent)
+        if (sim.polymarket && Math.random() < 0.15) candidates.push(sim.polymarket);
+
+        // Pick one random category, then one random item from it
+        if (candidates.length > 0) {
+            const cat = candidates[Math.floor(Math.random() * candidates.length)];
+            const text = cat[Math.floor(Math.random() * cat.length)];
+            pool.push({type:'ambient', text: text});
+        }
     }
 
-    // Intel cables removed from ambient — delivered in morning briefing only
-
-    // Idle asides — character-specific flavor during quiet moments
-    if (SIM.character && DATA.dialogue && DATA.dialogue.idleAsides) {
+    // Idle asides — character-specific flavor (mutually exclusive with headlines)
+    if (pool.length === 0 && SIM.character && DATA.dialogue && DATA.dialogue.idleAsides) {
         const asides = DATA.dialogue.idleAsides[SIM.character.id];
-        if (asides && asides.length > 0 && Math.random() < 0.2) {
+        if (asides && asides.length > 0 && Math.random() < 0.3) {
             const aside = asides[Math.floor(Math.random() * asides.length)];
             pool.push({type:'advisor', text: aside, speaker: SIM.character.name, portrait: SIM.character.id});
         }
     }
 
-    // Advisor asides based on state thresholds
-    // Advisor asides (skip if _maybeAdvisorReaction recently fired)
-    if (SIM.character && DATA.dialogue && DATA.dialogue.advisorReactions && !SIM._lastAdvisorReaction) {
+    // Advisor reactions (only if nothing else picked, and rare)
+    if (pool.length === 0 && SIM.character && DATA.dialogue && DATA.dialogue.advisorReactions && !SIM._lastAdvisorReaction) {
         const charReactions = DATA.dialogue.advisorReactions[SIM.character.id];
         if (charReactions) {
-            if (s.tension > 75 && charReactions.highTension && Math.random() < 0.15) {
+            if (s.tension > 75 && charReactions.highTension && Math.random() < 0.2) {
                 pool.push({type:'advisor', text: charReactions.highTension, speaker: SIM.character.name, portrait: SIM.character.id});
-            }
-            if (s.domesticApproval < 30 && charReactions.lowApproval && Math.random() < 0.15) {
+            } else if (s.domesticApproval < 30 && charReactions.lowApproval && Math.random() < 0.2) {
                 pool.push({type:'advisor', text: charReactions.lowApproval, speaker: SIM.character.name, portrait: SIM.character.id});
             }
         }
@@ -4297,12 +4321,14 @@ function _pushAmbientContent() {
 
     if (pool.length === 0) return;
 
-    // Pick one, avoid repeating
-    let idx;
-    do { idx = Math.floor(Math.random() * pool.length); } while (idx === _lastAmbientIdx && pool.length > 1);
-    _lastAmbientIdx = idx;
+    const entry = pool[0];
 
-    const entry = pool[idx];
+    // Skip if we already showed this exact text today
+    if (_ambientUsedTexts.has(entry.text)) return;
+
+    _ambientUsedTexts.add(entry.text);
+    _ambientDayCount++;
+
     addNarrative(entry.type, entry.text, {
         speaker: entry.speaker || null,
         portrait: entry.portrait || null,
