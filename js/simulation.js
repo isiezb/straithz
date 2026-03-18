@@ -120,7 +120,14 @@ const SIM = {
     // Story system
     storyFlags: {},           // narrative flags set by event choices, checked by follow-ups
     scheduledEvents: [],      // [{eventId, triggerDay, sourceEvent}] - chain follow-ups
-    storyArc: 'aftermath',    // current narrative phase
+    storyArc: 'the_spark',    // current narrative phase
+
+    iranFactionBalance: 50,    // 0=hardliner(Tangsiri), 100=moderate(Araghchi)
+    iranVisibleMoves: [],      // [{text, type:'hardliner'|'moderate'|'ambiguous', day}]
+
+    // Reputation tracks
+    reputation: { reliability: 50, proportionality: 50, creativity: 50 },
+    memoryTags: [],  // decision memory tags for consequence system
 };
 
 /** Default values for SIM reset — used by restartGame() */
@@ -153,7 +160,10 @@ const SIM_DEFAULTS = {
     roe: 'defensive',
     _guideSeen: false,
     highPolarizationDays: 0,
-    storyFlags: {}, scheduledEvents: [], storyArc: 'aftermath',
+    storyFlags: {}, scheduledEvents: [], storyArc: 'the_spark',
+    iranFactionBalance: 50, iranVisibleMoves: [],
+    reputation: { reliability: 50, proportionality: 50, creativity: 50 },
+    memoryTags: [],
 };
 
 const ESCALATION_LADDER = [
@@ -175,32 +185,38 @@ const IRAN_ESCALATION = [
     { level: 5, name: 'ALL-OUT', triggers: 'aggression > 90, mass missile/drone swarm, suicide boats' },
 ];
 
-// Story Arc Phases — gives each week narrative meaning
+// Story Arc Phases — 13-week structure from content bible
 const STORY_ARCS = [
-    { id: 'aftermath',     name: 'THE AFTERMATH',      startDay: 1,  endDay: 7,
-      brief: 'Khamenei is dead. Iran burns. The strait is closing. You have days to act.',
-      color: '#dd4444' },
-    { id: 'escalation',    name: 'ESCALATION',         startDay: 8,  endDay: 14,
-      brief: 'Both sides are testing limits. Every move draws a counter-move.',
-      color: '#dd6644' },
-    { id: 'fog_of_war',    name: 'FOG OF WAR',         startDay: 15, endDay: 21,
-      brief: 'Intelligence is unreliable. Proxies are moving. Trust nothing.',
-      color: '#ddaa44' },
-    { id: 'proxy_front',   name: 'THE PROXY FRONT',    startDay: 22, endDay: 28,
-      brief: 'Houthis, Hezbollah, Iraqi militias — Iran fights through others.',
-      color: '#dd8844' },
-    { id: 'nuclear_shadow', name: 'NUCLEAR SHADOW',    startDay: 29, endDay: 35,
-      brief: 'Iran\'s nuclear program becomes the central question.',
-      color: '#aa44dd' },
-    { id: 'tipping_point', name: 'TIPPING POINT',      startDay: 36, endDay: 49,
-      brief: 'The world holds its breath. One wrong move changes everything.',
-      color: '#dd4488' },
-    { id: 'endgame',       name: 'ENDGAME',            startDay: 50, endDay: 70,
-      brief: 'History is being written. Your choices echo forward.',
-      color: '#4488dd' },
-    { id: 'aftermath_late', name: 'THE LONG GAME',     startDay: 71, endDay: 999,
-      brief: 'You\'ve survived this long. But can you end it?',
-      color: '#44dd88' },
+    { id: 'the_spark',      name: 'THE SPARK',          startDay: 1,  endDay: 7,
+      brief: 'You inherit a crisis in motion. Nobody expects you to last.',
+      color: '#dd4444', image: 'assets/arc-escalation.png' },
+    { id: 'the_squeeze',    name: 'THE SQUEEZE',        startDay: 8,  endDay: 14,
+      brief: 'Iran tightens. A second vessel seized. Your opposition smells blood.',
+      color: '#dd6644', image: 'assets/arc-escalation.png' },
+    { id: 'diplomatic_window', name: 'THE DIPLOMATIC WINDOW', startDay: 15, endDay: 21,
+      brief: 'A brief thaw. Iran releases crew. The UN convenes. Choose wisely.',
+      color: '#ddaa44', image: 'assets/event-diplomatic.png' },
+    { id: 'false_dawn',     name: 'THE FALSE DAWN',     startDay: 22, endDay: 28,
+      brief: 'Whatever progress you made gets complicated. Every path leads to a setback.',
+      color: '#dd8844', image: 'assets/arc-fog-of-war.png' },
+    { id: 'proxy_season',   name: 'PROXY SEASON',       startDay: 29, endDay: 35,
+      brief: 'Houthis. Hezbollah. Iraqi militias. The crisis is metastasizing.',
+      color: '#aa44dd', image: 'assets/arc-proxy-front.png' },
+    { id: 'pressure_cooker', name: 'THE PRESSURE COOKER', startDay: 36, endDay: 42,
+      brief: 'Congressional hearings. Leaked documents. Iran issues an ultimatum.',
+      color: '#dd4488', image: 'assets/arc-nuclear-shadow.png' },
+    { id: 'crossroads',     name: 'CROSSROADS',         startDay: 43, endDay: 49,
+      brief: 'The ultimatum expires. What happens depends on what you\'ve built.',
+      color: '#4488dd', image: 'assets/arc-tipping-point.png' },
+    { id: 'the_grind',      name: 'THE GRIND',          startDay: 50, endDay: 56,
+      brief: 'The world adjusts. The crisis becomes chronic. Fatigue sets in.',
+      color: '#888888', image: 'assets/arc-long-game.png' },
+    { id: 'endgame_setup',  name: 'ENDGAME',            startDay: 57, endDay: 70,
+      brief: 'A breakthrough reveals Iran\'s true objective. The board reshapes.',
+      color: '#44dd88', image: 'assets/arc-endgame.png' },
+    { id: 'resolution',     name: 'RESOLUTION',         startDay: 71, endDay: 999,
+      brief: 'Diplomatic resolution, military victory, or managed decline. History is watching.',
+      color: '#ffffff', image: 'assets/arc-aftermath.png' },
 ];
 
 function getCurrentStoryArc() {
@@ -677,6 +693,45 @@ function dailyUpdate() {
     SIM.diplomaticCapital += pd.diplomaticCapital * 0.3;
     SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital));
 
+    // --- Card Synergies daily effects ---
+    if (typeof getActiveSynergies === 'function') {
+        const synergies = getActiveSynergies();
+        for (const syn of synergies) {
+            if (syn.effects.dailyStanding) SIM.internationalStanding += syn.effects.dailyStanding;
+            if (syn.effects.dailyApproval) SIM.domesticApproval += syn.effects.dailyApproval;
+            if (syn.effects.dailyTension) SIM.tension += syn.effects.dailyTension;
+            if (syn.effects.dailyDeterrence) SIM.iranAggression -= syn.effects.dailyDeterrence * 0.1;
+            if (syn.effects.dailyIranEconomy) SIM.iranEconomy += syn.effects.dailyIranEconomy;
+            if (syn.effects.dailyFactionShift) SIM.iranFactionBalance = Math.min(100, SIM.iranFactionBalance + syn.effects.dailyFactionShift);
+        }
+    }
+
+    // --- Reputation update based on recent actions ---
+    // Reliability: consistency between promises and actions
+    // Proportionality: matching responses to provocations
+    // Creativity: choosing unconventional options
+    if (SIM.reputation) {
+        // Reliability drifts toward 50 slowly; boosted by consistent stance maintenance
+        const stanceCount = SIM.activeStances ? SIM.activeStances.length : 0;
+        const longTermStances = SIM.activeStances ? SIM.activeStances.filter(s => {
+            const level = (typeof getCardLevel === 'function') ? getCardLevel(s.cardId) : { level: 1 };
+            return level.level >= 2;
+        }).length : 0;
+        SIM.reputation.reliability += (longTermStances * 0.3) - 0.1; // reward keeping stances active
+        SIM.reputation.reliability = Math.max(0, Math.min(100, SIM.reputation.reliability));
+
+        // Proportionality: rewarded when warPath matches threat level
+        const threatLevel = SIM.iranAggression > 80 ? 4 : SIM.iranAggression > 60 ? 3 : SIM.iranAggression > 40 ? 2 : SIM.iranAggression > 20 ? 1 : 0;
+        const mismatch = Math.abs(SIM.warPath - threatLevel);
+        SIM.reputation.proportionality += (mismatch < 2 ? 0.2 : -0.3);
+        SIM.reputation.proportionality = Math.max(0, Math.min(100, SIM.reputation.proportionality));
+
+        // Creativity: boosted by active synergies (unconventional combinations)
+        const synergyCount = (typeof getActiveSynergies === 'function') ? getActiveSynergies().length : 0;
+        SIM.reputation.creativity += synergyCount * 0.2 - 0.05;
+        SIM.reputation.creativity = Math.max(0, Math.min(100, SIM.reputation.creativity));
+    }
+
     // Free weekly de-escalation: -1 warPath every 7 days if tension is below 60
     if (SIM.day > 1 && SIM.day % 7 === 0 && SIM.warPath > 0 && SIM.tension < 60) {
         SIM.warPath = Math.max(0, SIM.warPath - 1);
@@ -819,6 +874,89 @@ function dailyUpdate() {
 
     // Clean old seizure days
     SIM.recentSeizureDays = SIM.recentSeizureDays.filter(d => SIM.day - d <= 3);
+
+    // ---- Iran Faction Balance ----
+    // Player actions shift the balance between hardliners (Tangsiri) and moderates (Araghchi)
+    // Lower = hardliners ascendant, Higher = moderates ascendant
+    if (typeof SIM.iranFactionBalance !== 'undefined') {
+        // Military strikes push toward hardliners
+        if (SIM.warPath >= 3) SIM.iranFactionBalance = Math.max(0, SIM.iranFactionBalance - 2);
+        else if (SIM.warPath >= 2) SIM.iranFactionBalance = Math.max(0, SIM.iranFactionBalance - 1);
+
+        // Sanctions without diplomacy empower hardliners
+        const hasSanctions = SIM.activeStances.some(s => s.cardId === 'targeted_sanctions' || s.cardId === 'maximum_pressure');
+        const hasDiplomacy = SIM.activeStances.some(s => s.cardId === 'back_channel' || s.cardId === 'summit_proposal' || s.cardId === 'humanitarian_corridor');
+        if (hasSanctions && !hasDiplomacy) SIM.iranFactionBalance = Math.max(0, SIM.iranFactionBalance - 0.5);
+
+        // Diplomacy empowers moderates
+        if (hasDiplomacy) SIM.iranFactionBalance = Math.min(100, SIM.iranFactionBalance + 1);
+        if (SIM.diplomaticCapital > 50) SIM.iranFactionBalance = Math.min(100, SIM.iranFactionBalance + 0.3);
+
+        // Humanitarian gestures help moderates
+        if (SIM.storyFlags.humanitarian_rescue) SIM.iranFactionBalance = Math.min(100, SIM.iranFactionBalance + 0.5);
+
+        // High tension helps hardliners
+        if (SIM.tension > 70) SIM.iranFactionBalance = Math.max(0, SIM.iranFactionBalance - 0.5);
+
+        // Iran aggression correlates — very aggressive Iran means hardliners winning
+        if (SIM.iranAggression > 70) SIM.iranFactionBalance = Math.max(0, SIM.iranFactionBalance - 0.3);
+        else if (SIM.iranAggression < 30) SIM.iranFactionBalance = Math.min(100, SIM.iranFactionBalance + 0.3);
+
+        SIM.iranFactionBalance = Math.max(0, Math.min(100, SIM.iranFactionBalance));
+
+        // Generate visible Iran moves for morning briefing (30% chance per day)
+        if (Math.random() < 0.30) {
+            const moves_hardliner = [
+                'IRGC fast-boats conducted exercises 12nm from USS Eisenhower. They practiced formation attacks.',
+                'Iranian state media aired a documentary glorifying the IRGC Navy. Tangsiri appeared in uniform.',
+                'New anti-ship missile batteries moved to coastal positions. Satellite shows launch-ready config.',
+                'IRGC social media posted training videos of boarding operations. Caption: "The strait is ours."',
+                'Tangsiri gave a speech: "Every American vessel in our waters is a legitimate target."',
+                'Iranian naval exercises announced near the strait. Largest since 2019.',
+                'IRGC proxy channels activated. Houthi rhetoric matches Tehran talking points word-for-word.',
+                'Mojtaba Khamenei visited IRGC Navy HQ. Photos show him inspecting fast-attack craft.',
+            ];
+            const moves_moderate = [
+                'Iran\'s foreign ministry called for "dialogue without preconditions." Analysts note the phrase echoes 2015.',
+                'Araghchi gave an interview to Al Jazeera emphasizing "mutual respect and diplomatic solutions."',
+                'Iran released two detained foreign nationals from Evin prison. No demands were made.',
+                'Iranian state media ran an editorial criticizing unnamed military officials for "unnecessary provocations."',
+                'Araghchi was seen meeting the Omani ambassador. Back-channel activity suspected.',
+                'Iranian moderate newspapers published op-eds calling for economic normalization with the West.',
+                'Mojtaba Khamenei praised "the wisdom of patience" in a Friday sermon. Analysts are divided.',
+                'Iran offered to allow IAEA access to a previously restricted site. Conditions unclear.',
+            ];
+            const moves_ambiguous = [
+                'The Supreme Leader gave a sermon praising both military strength and patience. Analysts divided.',
+                'Iran announced a new oil barter deal with China, bypassing US sanctions entirely.',
+                'IRGC and Foreign Ministry issued contradictory statements within hours. Power struggle visible.',
+                'Iranian parliament debated the crisis openly for the first time. Both factions claimed support.',
+            ];
+
+            let movePool, moveType;
+            if (SIM.iranFactionBalance < 35) {
+                movePool = moves_hardliner;
+                moveType = 'hardliner';
+            } else if (SIM.iranFactionBalance > 65) {
+                movePool = moves_moderate;
+                moveType = 'moderate';
+            } else {
+                // Near balance — could go either way
+                if (Math.random() < 0.4) { movePool = moves_ambiguous; moveType = 'ambiguous'; }
+                else if (Math.random() < 0.5) { movePool = moves_hardliner; moveType = 'hardliner'; }
+                else { movePool = moves_moderate; moveType = 'moderate'; }
+            }
+
+            const move = movePool[Math.floor(Math.random() * movePool.length)];
+            SIM.iranVisibleMoves.push({ text: move, type: moveType, day: SIM.day });
+            // Keep only last 5 moves
+            if (SIM.iranVisibleMoves.length > 5) SIM.iranVisibleMoves.shift();
+
+            // Add as headline with appropriate level
+            const hlLevel = moveType === 'hardliner' ? 'warning' : moveType === 'moderate' ? 'good' : 'normal';
+            addHeadline(`TEHRAN: ${move}`, hlLevel);
+        }
+    }
 
     // Update story arc
     const arc = getCurrentStoryArc();
@@ -1422,9 +1560,270 @@ function triggerSeizureDecision(tanker) {
 // ======================== DECISION EVENTS ========================
 
 const DECISION_EVENTS = [
+    // ======================== CONTENT BIBLE EVENTS (E01-E23) ========================
+    {
+        id: 'impounded_tanker', title: 'THE IMPOUNDED TANKER',
+        description: 'An Iranian Revolutionary Guard fast-boat swarm harassed a commercial tanker three days ago. The crew is safe but the ship is impounded in Bandar Abbas. Your predecessor resigned in disgrace. You are the replacement. Nobody expects you to last.',
+        image: 'assets/event-e01-tanker.png',
+        minDay: 1, maxDay: 3,
+        choices: [
+            { text: 'Demand release through official channels', effects: { internationalStanding: 5, tension: -3, iranAggression: 5 },
+              setFlags: { tanker_diplomatic: true },
+              flavor: 'You follow process. The world sees restraint. Iran sees an opening.' },
+            { text: 'Send a destroyer to loiter outside Bandar Abbas', effects: { tension: 8, internationalStanding: -3 },
+              setFlags: { tanker_military: true }, chainEvent: 'carrier_incident', chainDelay: 10,
+              chainHint: 'Iran is watching your destroyer very carefully...',
+              flavor: 'You say nothing. The image speaks. IRGC commanders take note.' },
+            { text: 'Call the flag-state directly — propose a joint response', effects: { internationalStanding: 3, diplomaticCapital: 3 },
+              setFlags: { tanker_coalition: true },
+              flavor: 'Shared burden, shared credit. The coalition option opens.' },
+        ],
+    },
+    {
+        id: 'predecessors_ghost', title: 'THE PREDECESSOR\'S GHOST',
+        description: 'A classified folder sits on your desk — your predecessor\'s secret negotiations with Tehran. Reading it is knowledge. Burning it is a clean start. The contents are radioactive either way.',
+        image: 'assets/event-e02-predecessor.png',
+        minDay: 2, maxDay: 4,
+        choices: [
+            { text: 'Read the classified file', effects: { fogOfWar: -10 },
+              setFlags: { predecessor_read: true },
+              flavor: 'You now know Iran\'s real red line. This knowledge will matter — if it doesn\'t destroy you first.' },
+            { text: 'Burn the file — start clean', effects: { domesticApproval: 5 },
+              setFlags: { predecessor_burned: true },
+              flavor: 'The public trusts a clean break. But you\'ll discover Iran\'s red line the hard way — through a crisis.' },
+        ],
+    },
+    {
+        id: 'admirals_warning', title: 'THE ADMIRAL\'S WARNING',
+        description: 'Your first real briefing. Admiral Chen stands at the podium with satellite imagery of Iranian naval movements. "We need to increase patrol tempo immediately," he says. Your civilian advisors shift uncomfortably.',
+        image: 'assets/event-e03-admiral.png',
+        minDay: 1, maxDay: 2,
+        choices: [
+            { text: 'Defer to the Admiral — increase patrols', effects: { budget: -20, tension: 3 },
+              setFlags: { admiral_deferred: true },
+              flavor: 'The Admiral nods. Your civilian advisors resent being sidelined. The Pentagon respects the energy.' },
+            { text: 'Convene your full team before deciding', effects: { },
+              setFlags: { admiral_waited: true },
+              flavor: 'The Admiral respects the process. Barely. Your team appreciates being heard.' },
+            { text: 'Override — propose a diplomatic signal instead', effects: { diplomaticCapital: 5 },
+              setFlags: { admiral_overridden: true },
+              flavor: 'The Admiral begins quietly briefing Congress about your "lack of seriousness." But Araghchi notices.' },
+        ],
+    },
+    {
+        id: 'journalists_call', title: 'THE JOURNALIST\'S CALL',
+        description: 'A New York Times reporter is on the line. She\'s working on a piece about your first 72 hours. Off-the-record, she says. But you know how that goes.',
+        image: 'assets/event-e04-journalist.png',
+        minDay: 3, maxDay: 5,
+        condition: () => SIM.fogOfWar > 50,
+        choices: [
+            { text: 'Give an off-the-record briefing', effects: { fogOfWar: -10, domesticApproval: 3 },
+              setFlags: { journalist_briefed: true }, chainEvent: 'journalist_returns', chainDelay: 20,
+              chainHint: 'This journalist will remember how you treated her...',
+              flavor: 'You shape the narrative. But there\'s a 20% chance she burns you.' },
+            { text: 'Written statement through press office', effects: { fogOfWar: -3, domesticApproval: -2 },
+              setFlags: { journalist_stonewalled: true },
+              flavor: '"Administration stonewalling" runs above the fold. Safe but unhelpful.' },
+            { text: '"No comment" — hang up', effects: { },
+              setFlags: { journalist_hostile: true },
+              flavor: 'She becomes hostile. Future media events will be harder.' },
+        ],
+    },
+    {
+        id: 'british_pm_call', title: 'ALLY ON THE LINE: THE BRITISH PM',
+        description: 'The British Prime Minister is offering a joint naval task force. Shared command, shared rules of engagement. It\'s generous — suspiciously so. Nothing is free in the special relationship.',
+        image: 'assets/event-e05-british-pm.png',
+        minDay: 4, maxDay: 6,
+        choices: [
+            { text: 'Accept — joint task force', effects: { internationalStanding: 10, tension: -3 },
+              setFlags: { british_joint_force: true },
+              flavor: 'Shared command means shared veto. You lose unilateral strike capability. But the coalition is real.' },
+            { text: 'Counter with parallel operations — same area, separate commands', effects: { internationalStanding: 5 },
+              setFlags: { british_parallel: true },
+              flavor: 'You keep your freedom. The UK is mildly insulted but professional.' },
+            { text: 'Ask what they want in return', effects: { diplomaticCapital: 3 },
+              setFlags: { british_negotiating: true },
+              flavor: 'The PM wants your vote on a UN trade resolution. Opens a side-negotiation.' },
+        ],
+    },
+    {
+        id: 'first_seizure_attempt', title: 'THE FIRST SEIZURE ATTEMPT',
+        description: 'FLASH traffic from CENTCOM: IRGC fast-boats converging on the MV Pacific Meridian, a Liberian-flagged tanker carrying Japanese electronics. This is the game\'s first real test.',
+        image: 'assets/event-e06-seizure.png',
+        minDay: 6, maxDay: 8,
+        condition: () => SIM.warPath < 3,
+        countdown: 12,
+        choices: [
+            { text: 'Scramble jets — verbal warning over radio', effects: { tension: 3 },
+              setFlags: { seizure_warned: true },
+              flavor: '70% chance the seizure is deterred. Standard procedure. If it fails, you own the failure.' },
+            { text: 'Authorize warning shots across the bow', effects: { tension: 8, warPath: 1 },
+              setFlags: { seizure_shots: true },
+              flavor: 'The world watches nervously. 90% chance Iran backs down. But escalation is real.' },
+            { text: 'Let it happen — document everything for the UN', effects: { oilFlow: -15, tension: 10, internationalStanding: 15, diplomaticCapital: 10 },
+              setFlags: { seizure_allowed: true },
+              flavor: 'The tanker is seized. It\'s painful. But the footage at the UN will be devastating for Iran.' },
+        ],
+    },
+    {
+        id: 'oil_markets_panic', title: 'OIL MARKETS PANIC',
+        description: 'Oil futures jumped $15/barrel overnight. The Energy Secretary is on the phone. Gas prices are on every cable news chyron. The Saudi Energy Minister might increase production — if you ask nicely.',
+        image: 'assets/event-e08-oil-panic.png',
+        minDay: 9, maxDay: 12,
+        condition: () => SIM.oilFlow < 60,
+        choices: [
+            { text: 'Release strategic petroleum reserves', effects: { oilFlow: 10, oilPrice: -8, domesticApproval: 5, budget: -50 },
+              setFlags: { spr_released: true },
+              flavor: 'Markets calm immediately. But reserves are finite — you\'ve bought 10 days, not a solution.' },
+            { text: 'Call Saudi — beg for increased production', effects: { oilFlow: 8, internationalStanding: -3 },
+              setFlags: { saudi_called: true },
+              flavor: 'MBS agrees — for a price you\'ll pay later. The humiliating leak comes on Day 20.' },
+            { text: 'Let markets find their own level', effects: { domesticApproval: -8, oilPrice: 5 },
+              setFlags: { markets_ignored: true },
+              flavor: 'Pain now, stability later. The opposition runs "gas prices" attack ads within hours.' },
+        ],
+    },
+    {
+        id: 'un_showdown', title: 'UN SECURITY COUNCIL SHOWDOWN',
+        description: 'The Security Council is in emergency session. You have one shot to get a binding resolution. Russia is leaning veto. China is undecided. Your ambassador is waiting for instructions.',
+        image: 'assets/event-e11-un-showdown.png',
+        minDay: 17, maxDay: 20,
+        choices: [
+            { text: 'Push for binding resolution with sanctions', effects: { diplomaticCapital: 20, internationalStanding: 8, tension: 3 },
+              condition: () => SIM.internationalStanding > 50,
+              setFlags: { un_binding: true },
+              flavor: 'Russia abstains. China follows. The resolution passes. Iran is formally isolated.' },
+            { text: 'Non-binding statement of concern — play it safe', effects: { internationalStanding: 3 },
+              flavor: 'Safe, symbolic, useless. Your team is demoralized.' },
+            { text: 'Dramatic intelligence presentation — name IRGC commanders', effects: { fogOfWar: -20, internationalStanding: 10, tension: 8 },
+              setFlags: { un_theater: true },
+              flavor: 'The room is shocked. Iran scrambles. But you just burned intelligence sources.' },
+        ],
+    },
+    {
+        id: 'proxy_ignition', title: 'PROXY IGNITION: HOUTHI STRIKE',
+        description: 'Houthis launched anti-ship missiles at a commercial vessel in the Red Sea. The crisis is no longer contained to the strait — it\'s metastasizing. Your budget is burning and allies are nervous.',
+        image: 'assets/event-e14-houthi.png',
+        minDay: 29, maxDay: 32,
+        choices: [
+            { text: 'Strike the Houthi launch site', effects: { budget: -20, tension: 8, proxyThreat: -15, internationalStanding: -3 },
+              setFlags: { houthi_struck: true },
+              flavor: 'Proportional. Professional. Saudi Arabia is grateful. But you just opened a second front.' },
+            { text: 'Intercept missiles — let proxies tire themselves out', effects: { budget: -10, proxyThreat: -3 },
+              setFlags: { houthi_contained: true },
+              flavor: 'Defense only. The Houthis try again in 3 days.' },
+            { text: 'Tell Iran through channels: proxy attacks = Tehran\'s responsibility', effects: { tension: 10, diplomaticCapital: 5 },
+              setFlags: { proxy_redline: true },
+              flavor: 'A red line. If Iran believes you, this changes everything. If they don\'t, it changes nothing.' },
+        ],
+    },
+    {
+        id: 'the_leak', title: 'THE LEAK',
+        description: 'The Washington Post has your classified strategy memo. Every detail of your Iran approach is now public. Someone in your inner circle betrayed you. The press is circling.',
+        image: 'assets/event-e17-leak.png',
+        minDay: 20, maxDay: 28,
+        condition: () => Math.random() < 0.5 || SIM.domesticApproval < 30,
+        choices: [
+            { text: 'Launch an aggressive investigation — find the leaker', effects: { domesticApproval: 3, fogOfWar: -5 },
+              setFlags: { leak_investigated: true },
+              flavor: 'You burn political capital hunting the mole. If you find them, credibility skyrockets.' },
+            { text: 'Spin it — frame the leak as showing your brilliant strategy', effects: { domesticApproval: 5, fogOfWar: 5 },
+              setFlags: { leak_spun: true },
+              flavor: 'Bold. Iran now knows your playbook. But your base thinks you\'re playing 4D chess.' },
+            { text: 'Ignore it — refuse to dignify leaks', effects: { domesticApproval: -5 },
+              flavor: 'The news cycle moves on. But your staff knows there are no consequences for betrayal.' },
+        ],
+    },
+    {
+        id: 'congressional_hearing_big', title: 'THE CONGRESSIONAL HEARING',
+        description: 'Senate Armed Services Committee. Live on C-SPAN. The chairman opens with: "The American people deserve to know why we\'re spending $50 million a day on a crisis that\'s getting worse." The cameras are rolling.',
+        image: 'assets/event-e18-congress.png',
+        minDay: 36, maxDay: 40,
+        choices: [
+            { text: 'Testify personally — face the music', effects: { domesticApproval: 10, fogOfWar: -5 },
+              setFlags: { testified_personally: true },
+              flavor: 'You came prepared. The viral clip is you calmly dismantling the chairman\'s argument with classified data.' },
+            { text: 'Send your deputy — you\'re managing a crisis', effects: { domesticApproval: -5, internationalStanding: -3 },
+              flavor: 'Congress is insulted. Future funding requests just got harder.' },
+            { text: 'Testify AND declassify satellite imagery live on camera', effects: { fogOfWar: -15, domesticApproval: 15, tension: 5, internationalStanding: 5 },
+              setFlags: { declassified_live: true },
+              flavor: 'The room gasps. Iran scrambles. The Pentagon is furious about the declassification. But the public is with you.' },
+        ],
+    },
+    {
+        id: 'iran_ultimatum', title: 'IRAN\'S ULTIMATUM',
+        description: 'Mojtaba Khamenei appears on state television: "Lift sanctions on our central bank within 72 hours, or the next vessel we seize will fly the American flag." Tangsiri stands behind him, arms crossed. The clock is ticking.',
+        image: 'assets/event-e19-ultimatum.png',
+        minDay: 38, maxDay: 42,
+        countdown: 15,
+        choices: [
+            { text: 'Call the bluff publicly — "America does not respond to threats"', effects: { domesticApproval: 8, tension: 10 },
+              setFlags: { ultimatum_called: true },
+              flavor: 'If Iran follows through, this gets catastrophic. If they back down, you win the crisis.' },
+            { text: 'Counter-propose through channels — mutual step-down', effects: { diplomaticCapital: 5, tension: -3 },
+              condition: () => SIM.diplomaticCapital > 30,
+              setFlags: { ultimatum_negotiated: true },
+              flavor: '50% Iran accepts. Araghchi is pushing for it internally. Tangsiri wants blood.' },
+            { text: 'Prepare quietly — move assets, brief allies, say nothing', effects: { budget: -15, tension: 3 },
+              setFlags: { ultimatum_prepared: true },
+              flavor: 'Iran is uncertain. Their own internal debate intensifies. Sometimes silence is the loudest response.' },
+        ],
+    },
+    {
+        id: 'intel_breakthrough', title: 'THE INTELLIGENCE BREAKTHROUGH',
+        description: 'A SIGINT intercept combined with a HUMINT source has revealed Iran\'s true strategic objective. This isn\'t about the strait — it\'s about forcing recognition of Iran\'s regional hegemony. Every move they\'ve made was building toward this moment. The question is what you do with the knowledge.',
+        image: 'assets/event-e21-intel-breakthrough.png',
+        minDay: 57, maxDay: 62,
+        choices: [
+            { text: 'Share with allies — build a coalition response', effects: { internationalStanding: 15, diplomaticCapital: 10, fogOfWar: 10 },
+              setFlags: { intel_shared: true },
+              flavor: 'Allies are galvanized. But your intelligence methods are exposed. Future intel quality degrades.' },
+            { text: 'Keep it classified — act unilaterally', effects: { fogOfWar: -10 },
+              setFlags: { intel_hoarded: true },
+              flavor: 'You know something nobody else does. That\'s power. But allies will feel blindsided later.' },
+            { text: 'Leak to a trusted journalist — shape the narrative', effects: { fogOfWar: -20, domesticApproval: 8 },
+              setFlags: { intel_leaked: true },
+              flavor: 'The public needs to know. Iran changes plans. The intelligence becomes partly obsolete. But public pressure on Iran surges.' },
+        ],
+    },
+    // --- CONTENT BIBLE CHAIN EVENTS ---
+    {
+        id: 'journalist_returns', title: 'THE JOURNALIST RETURNS',
+        description: 'Remember the Times reporter? She\'s back. This time she wants to be embedded with your team for 48 hours. Radical transparency — or radical exposure. Your relationship with her determines how this plays out.',
+        image: 'assets/event-e04-journalist.png',
+        minDay: 20, maxDay: 999,
+        condition: () => SIM.storyFlags.journalist_briefed,
+        choices: [
+            { text: 'Full on-the-record interview — you\'ve earned it', effects: { domesticApproval: 10, fogOfWar: -5 },
+              flavor: 'Your narrative is coherent. The piece is fair. For once, the press is on your side.' },
+            { text: 'Embed her with your team for 48 hours', effects: { domesticApproval: 15, fogOfWar: -10 },
+              flavor: 'She sees everything — including your mistakes. But the transparency is powerful. 70% chance of a glowing profile.' },
+            { text: 'Feed her a specific story you want published', effects: { domesticApproval: 8 },
+              flavor: 'It works — this time. But journalists have long memories about being used.' },
+        ],
+    },
+    {
+        id: 'carrier_incident', title: 'THE CARRIER INCIDENT',
+        description: 'An Iranian drone buzzed the USS Eisenhower\'s flight deck at 50 feet. Sailors hit the deck. Gun cameras captured everything. CENTCOM wants to release the footage. Iran claims it was "routine surveillance."',
+        image: 'assets/event-e09-carrier-incident.png',
+        minDay: 10, maxDay: 999,
+        condition: () => SIM.storyFlags.tanker_military || SIM.warPath >= 2,
+        choices: [
+            { text: 'Issue formal protest through military channels', effects: { internationalStanding: 3 },
+              flavor: 'Professionals talk to professionals. Iran absorbs the protest. IRGC internally: "They flinched."' },
+            { text: 'Declassify footage — release to CNN', effects: { fogOfWar: -15, internationalStanding: 8, domesticApproval: 10, tension: 5, iranAggression: -5 },
+              setFlags: { humiliated_iran: true },
+              flavor: 'The footage goes viral. Iran is embarrassed globally. But Tangsiri remembers the humiliation.' },
+            { text: 'Retaliate — disable the drone command facility', effects: { tension: 20, warPath: 1, domesticApproval: 5, budget: -25, iranAggression: 10 },
+              setFlags: { drone_facility_struck: true },
+              flavor: 'Precision strike. Clean hit. The world holds its breath. Iran goes silent for 48 hours.' },
+        ],
+    },
+    // ======================== ORIGINAL EVENTS ========================
     {
         id: 'secret_talks', title: 'SECRET BACK-CHANNEL',
         description: 'Iranian moderates have reached out through Omani intermediaries. They propose secret talks — but if leaked, hawks on both sides will be furious.',
+        image: 'assets/event-e10-shirazi.png',
         minDay: 5, maxDay: 40,
         condition: () => SIM.tension > 25 && SIM.diplomaticCapital > 20,
         choices: [
@@ -1443,6 +1842,7 @@ const DECISION_EVENTS = [
     {
         id: 'congress_pressure', title: 'CONGRESSIONAL HEARING',
         description: 'Senate Armed Services Committee demands testimony. They threaten to cut your budget.',
+        image: 'assets/event-e18-congress.png',
         minDay: 10, maxDay: 60,
         condition: () => getStanceEffect('cost') > 100,
         choices: [
@@ -1454,6 +1854,7 @@ const DECISION_EVENTS = [
     {
         id: 'allied_request', title: 'ALLIED NAVAL REQUEST',
         description: 'Japan requests dedicated US Navy escort for their tanker fleet. It strengthens the alliance but costs resources.',
+        image: 'assets/event-envoy.png',
         minDay: 8, maxDay: 50,
         condition: () => SIM.navyShips.length > 0,
         choices: [
@@ -1464,6 +1865,7 @@ const DECISION_EVENTS = [
     {
         id: 'humanitarian', title: 'HUMANITARIAN CRISIS',
         description: 'An Iranian fishing vessel capsized near the strait. 40 fishermen in the water. Your destroyer is 15 minutes away.',
+        image: 'assets/event-rescue-op.png',
         minDay: 6, maxDay: 70,
         condition: () => SIM.navyShips.length > 0,
         choices: [
@@ -1475,6 +1877,7 @@ const DECISION_EVENTS = [
     {
         id: 'media_crisis', title: 'MEDIA FIRESTORM',
         description: 'Footage of a near-collision between US and Iranian vessels. Cable news running it 24/7.',
+        image: 'assets/event-military.png',
         minDay: 12, maxDay: 80,
         condition: () => SIM.navyShips.length > 0 && SIM.iranBoats.length > 0,
         choices: [
@@ -1486,6 +1889,7 @@ const DECISION_EVENTS = [
     {
         id: 'intel_reveal', title: 'INTELLIGENCE BREAKTHROUGH',
         description: 'Your agents located Iran\'s mine-laying operations. Acting on it would burn the source.',
+        image: 'assets/event-e21-intel-breakthrough.png',
         minDay: 15, maxDay: 75,
         condition: () => SIM.fogOfWar < 60 && SIM.crisisLevel >= 1,
         choices: [
@@ -1497,6 +1901,7 @@ const DECISION_EVENTS = [
     {
         id: 'china_mediation', title: 'CHINESE MEDIATION OFFER',
         description: 'Beijing proposes brokering a deal: they\'ll pressure Iran if you ease tech restrictions on Chinese firms.',
+        image: 'assets/event-e13-china.png',
         minDay: 14, maxDay: 65,
         condition: () => SIM.tension > 30 && SIM.chinaRelations > 25,
         choices: [
@@ -1508,6 +1913,7 @@ const DECISION_EVENTS = [
     {
         id: 'houthi_attack', title: 'HOUTHI RED SEA ATTACK',
         description: 'Houthi forces have struck a commercial vessel in the Red Sea with an anti-ship missile. Iran\'s proxy war is expanding.',
+        image: 'assets/event-e14-houthi.png',
         minDay: 10, maxDay: 75,
         condition: () => SIM.proxyThreat > 25,
         choices: [
@@ -1519,6 +1925,7 @@ const DECISION_EVENTS = [
     {
         id: 'militia_attack', title: 'MILITIA BASE ATTACK',
         description: 'Iraqi militia rockets hit a US base in the region. Two soldiers wounded. CENTCOM wants authorization to retaliate.',
+        image: 'assets/event-military.png',
         minDay: 18, maxDay: 80,
         condition: () => SIM.proxyThreat > 35,
         choices: [
@@ -1530,6 +1937,7 @@ const DECISION_EVENTS = [
     {
         id: 'assassination_intel', title: 'CREDIBLE THREAT DETECTED',
         description: 'Intelligence agencies detect a credible assassination threat against senior officials. The source is unclear — could be Iranian or domestic.',
+        image: 'assets/event-intel.png',
         minDay: 20, maxDay: 85,
         condition: () => SIM.assassinationRisk > 40,
         choices: [
@@ -1541,6 +1949,7 @@ const DECISION_EVENTS = [
     {
         id: 'domestic_unrest', title: 'DOMESTIC UNREST',
         description: 'Protests erupt in major cities over war spending and the strait crisis. The National Guard is requesting authorization.',
+        image: 'assets/event-e18-congress.png',
         minDay: 25, maxDay: 85,
         condition: () => SIM.polarization > 50,
         choices: [
@@ -1552,6 +1961,7 @@ const DECISION_EVENTS = [
     {
         id: 'hostage', title: 'HOSTAGE SITUATION',
         description: 'Iran is holding 12 crew members from a seized tanker. Families are on every news channel.',
+        image: 'assets/event-e12-hostage.png',
         minDay: 10, maxDay: 75,
         condition: () => SIM.seizureCount > 0,
         choices: [
@@ -1569,6 +1979,7 @@ const DECISION_EVENTS = [
     {
         id: 'oil_spike', title: 'OIL MARKET PANIC',
         description: 'Oil futures jumped $15/barrel. Energy Secretary is on the phone — should you release reserves?',
+        image: 'assets/event-e08-oil-panic.png',
         minDay: 8, maxDay: 80,
         condition: () => SIM.oilPrice > 110,
         choices: [
@@ -1580,6 +1991,7 @@ const DECISION_EVENTS = [
     {
         id: 'gulf_offer', title: 'GULF STATE OFFER',
         description: 'Saudi Arabia and UAE offer to fund 60% of your operations — but they want a say in rules of engagement.',
+        image: 'assets/event-grand-bargain.png',
         minDay: 12, maxDay: 55,
         condition: () => getStanceEffect('cost') > 50,
         choices: [
@@ -1591,6 +2003,7 @@ const DECISION_EVENTS = [
     {
         id: 'drone_shootdown', title: 'DRONE SHOOT-DOWN',
         description: 'Iran shot down your surveillance drone over international waters. Joint Chiefs want a proportional response.',
+        image: 'assets/event-military.png',
         minDay: 15, maxDay: 80,
         condition: () => SIM.drones.length > 0,
         choices: [
@@ -1602,6 +2015,7 @@ const DECISION_EVENTS = [
     {
         id: 'un_vote', title: 'UN RESOLUTION VOTE',
         description: 'A resolution condemning Iran is up for vote. Russia will veto unless you water it down.',
+        image: 'assets/event-e11-un-showdown.png',
         minDay: 15, maxDay: 60,
         condition: () => SIM.tension > 20,
         choices: [
@@ -1613,6 +2027,7 @@ const DECISION_EVENTS = [
     {
         id: 'cyber_attack_decision', title: 'CYBER OPERATION PROPOSAL',
         description: 'NSA can disable Iran\'s naval command network for 48 hours. If attributed, it\'s an act of war.',
+        image: 'assets/event-e23-cyber.png',
         minDay: 20, maxDay: 80,
         condition: () => SIM.iranAggression > 40,
         choices: [
@@ -1623,6 +2038,7 @@ const DECISION_EVENTS = [
     {
         id: 'election_pressure', title: 'ELECTION YEAR PRESSURE',
         description: 'Your party is down in polls. Advisors want a dramatic move before midterms.',
+        image: 'assets/event-diplomatic.png',
         minDay: 30, maxDay: 75,
         condition: () => true,
         choices: [
@@ -1634,6 +2050,7 @@ const DECISION_EVENTS = [
     {
         id: 'pipeline_sabotage', title: 'PIPELINE SABOTAGE',
         description: 'An underwater pipeline feeding a major terminal has been damaged. Could be Iran, could be an accident.',
+        image: 'assets/event-economic.png',
         minDay: 20, maxDay: 70,
         condition: () => SIM.crisisLevel >= 1,
         choices: [
@@ -1645,6 +2062,7 @@ const DECISION_EVENTS = [
     {
         id: 'russia_arms_deal', title: 'RUSSIAN ARMS SHIPMENT',
         description: 'Intel shows Russia is shipping advanced anti-ship missiles to Iran. If they\'re deployed, the strait becomes deadlier.',
+        image: 'assets/event-intel.png',
         minDay: 18, maxDay: 70,
         condition: () => SIM.chinaRelations < 40,
         choices: [
@@ -1656,6 +2074,7 @@ const DECISION_EVENTS = [
     {
         id: 'iran_internal', title: 'IRANIAN POWER STRUGGLE',
         description: 'Intel suggests moderates within Iran\'s government are challenging IRGC hardliners. You could tip the balance.',
+        image: 'assets/event-e07-iran-doubles.png',
         minDay: 25, maxDay: 80,
         condition: () => SIM.iranEconomy < 40 && SIM.fogOfWar < 50,
         choices: [
@@ -1667,6 +2086,7 @@ const DECISION_EVENTS = [
     {
         id: 'tanker_escort', title: 'ESCORT CONVOY REQUEST',
         description: 'Multiple shipping companies request military escort through the strait. It would restore confidence but stretch your forces.',
+        image: 'assets/event-envoy.png',
         minDay: 12, maxDay: 65,
         condition: () => SIM.oilFlow < 70 && SIM.navyShips.length >= 3,
         choices: [
@@ -1678,6 +2098,7 @@ const DECISION_EVENTS = [
     {
         id: 'wargame_leak', title: 'WARGAME SIMULATION LEAKED',
         description: 'A Pentagon wargame simulation showing US casualties in a strait conflict was leaked to the press. Public is alarmed.',
+        image: 'assets/event-e17-leak.png',
         minDay: 20, maxDay: 75,
         condition: () => SIM.conflictRisk > 30,
         choices: [
@@ -1689,6 +2110,7 @@ const DECISION_EVENTS = [
     {
         id: 'stena_imperative', title: 'TANKER ESCAPE — USS MCFAUL',
         description: 'Six IRGC gunboats are converging on the tanker Stena Imperative. USS McFaul (DDG-74) is 12 minutes away. The tanker captain is requesting emergency escort.',
+        image: 'assets/event-e06-seizure.png',
         minDay: 4, maxDay: 30,
         condition: () => SIM.navyShips.length > 0 && SIM.iranBoats.length > 1,
         countdown: 12,
@@ -1701,6 +2123,7 @@ const DECISION_EVENTS = [
     {
         id: 'insurance_crisis', title: 'MARITIME INSURANCE COLLAPSE',
         description: 'Lloyd\'s of London and major maritime insurers have cancelled all war risk coverage in the Persian Gulf. No insurance = no tankers transit. Oil markets are panicking.',
+        image: 'assets/event-economic.png',
         minDay: 8, maxDay: 50,
         condition: () => SIM.tension > 40 && SIM.oilPrice > 100,
         choices: [
@@ -1712,6 +2135,7 @@ const DECISION_EVENTS = [
     {
         id: 'nuclear_breakout', title: 'NUCLEAR BREAKOUT WARNING',
         description: 'IAEA reports Iran has moved enriched uranium to the underground Fordow facility. At 60% enrichment with 440kg stockpile, weapons-grade material is 72 hours away.',
+        image: 'assets/event-fordow-strike.png',
         minDay: 20, maxDay: 70,
         condition: () => SIM.iranAggression > 50 && SIM.tension > 40,
         choices: [
@@ -1730,6 +2154,7 @@ const DECISION_EVENTS = [
     {
         id: 'abqaiq_redux', title: 'SAUDI ARAMCO ATTACK',
         description: 'Drone swarm strikes Abqaiq-Khurais oil processing facility. 5.7 million barrels/day knocked offline — half of Saudi production. Oil futures spike 15% overnight.',
+        image: 'assets/event-e07-iran-doubles.png',
         minDay: 12, maxDay: 65,
         condition: () => SIM.proxyThreat > 30 || SIM.iranAggression > 55,
         choices: [
@@ -1741,6 +2166,7 @@ const DECISION_EVENTS = [
     {
         id: 'houthi_restart', title: 'HOUTHI RED SEA CAMPAIGN RESUMES',
         description: 'After months of quiet, Houthi forces launch anti-ship missiles at three commercial vessels in the Red Sea. Container shipping drops 90% through Bab el-Mandeb.',
+        image: 'assets/event-e14-houthi.png',
         minDay: 10, maxDay: 60,
         condition: () => SIM.proxyThreat > 20,
         choices: [
@@ -1752,6 +2178,7 @@ const DECISION_EVENTS = [
     {
         id: 'mine_laying_detected', title: 'IRAN BEGINS MINING THE STRAIT',
         description: 'CNN confirms: Iranian vessels are actively laying mines in the Strait of Hormuz shipping channels. CENTCOM identifies 12+ minelayers operating under cover of darkness.',
+        image: 'assets/event-military.png',
         minDay: 15, maxDay: 60,
         condition: () => SIM.crisisLevel >= 1 && SIM.iranAggression > 50,
         choices: [
@@ -1763,6 +2190,7 @@ const DECISION_EVENTS = [
     {
         id: 'drone_carrier', title: 'IRIS SHAHID BAGHERI DETECTED',
         description: 'Intelligence identifies the IRIS Shahid Bagheri — a converted container ship functioning as Iran\'s first drone carrier. It can deploy 30+ fast attack craft and explosive drone boats from inside the hull.',
+        image: 'assets/event-intel.png',
         minDay: 12, maxDay: 55,
         condition: () => SIM.fogOfWar < 60,
         choices: [
@@ -1774,6 +2202,7 @@ const DECISION_EVENTS = [
     {
         id: 'china_oil_deal', title: 'CHINA\'S SHADOW FLEET',
         description: 'Satellite imagery shows 15 Chinese-flagged tankers loading Iranian oil at Kharg Island. 11.7 million barrels shipped to China since the crisis began. Your sanctions are being openly defied.',
+        image: 'assets/event-e13-china.png',
         minDay: 10, maxDay: 70,
         condition: () => SIM.chinaRelations > 20,
         choices: [
@@ -1783,8 +2212,9 @@ const DECISION_EVENTS = [
         ],
     },
     {
-        id: 'oman_talks', title: 'MUSCAT BACK-CHANNEL',
+        id: 'oman_talks', title: 'MUSCAT BACK-CHANNEL', image: 'assets/iran-araghchi.png',
         description: 'Omani intermediaries report Iran\'s Foreign Minister Araghchi says a nuclear deal is "within reach." He proposes secret talks in Muscat. Three days later, your intelligence says IRGC is planning a major provocation.',
+        image: 'assets/event-e20-muscat.png',
         minDay: 8, maxDay: 45,
         condition: () => SIM.diplomaticCapital > 15 && SIM.tension > 30,
         choices: [
@@ -1796,6 +2226,7 @@ const DECISION_EVENTS = [
     {
         id: 'asian_energy_crisis', title: 'ASIAN ENERGY EMERGENCY',
         description: 'India, Japan, and South Korea declare energy emergencies. 89% of strait oil goes to Asia. India invokes emergency powers to redirect LPG from industry to households. Tokyo warns of rolling blackouts.',
+        image: 'assets/event-crisis-cascade.png',
         minDay: 14, maxDay: 60,
         condition: () => SIM.oilFlow < 40,
         choices: [
@@ -1807,6 +2238,7 @@ const DECISION_EVENTS = [
     {
         id: 'gas_price_crisis', title: 'GAS HITS $6 PER GALLON',
         description: 'Average US gas price breaks $6/gallon. Trucking companies halt routes. Airlines cancel flights. The economic pain is no longer abstract — it\'s at every pump in America.',
+        image: 'assets/event-crisis-cascade.png',
         minDay: 10, maxDay: 70,
         condition: () => SIM.oilPrice > 130,
         choices: [
@@ -1818,6 +2250,7 @@ const DECISION_EVENTS = [
     {
         id: 'war_powers_vote', title: 'WAR POWERS RESOLUTION',
         description: 'Both chambers of Congress have drafted War Powers Resolutions. If passed, your military options are severely constrained. The vote is in 48 hours.',
+        image: 'assets/event-e18-congress.png',
         minDay: 15, maxDay: 75,
         condition: () => SIM.warPath >= 2 || SIM.tension > 60,
         choices: [
@@ -1829,6 +2262,7 @@ const DECISION_EVENTS = [
     {
         id: 'tanker_war_echoes', title: 'OPERATION EARNEST WILL 2.0',
         description: 'Pentagon proposes a formal convoy escort operation through the strait — echoing the 1987-88 Tanker War. Reflagging allied tankers under US flag for legal protection.',
+        image: 'assets/event-military.png',
         minDay: 12, maxDay: 55,
         condition: () => SIM.oilFlow < 50 && SIM.navyShips.length >= 3,
         choices: [
@@ -1840,6 +2274,7 @@ const DECISION_EVENTS = [
     {
         id: 'cyber_port_attack', title: 'IRANIAN CYBER ATTACK — FUJAIRAH PORT',
         description: 'APT33 (IRGC-affiliated) has hit Fujairah port systems with wiper malware. Terminal operating systems are down. 40+ tankers can\'t load or unload. It\'s the digital equivalent of mining the strait.',
+        image: 'assets/event-e23-cyber.png',
         minDay: 10, maxDay: 65,
         condition: () => SIM.iranAggression > 40,
         choices: [
@@ -1851,6 +2286,7 @@ const DECISION_EVENTS = [
     {
         id: 'second_carrier', title: 'SECOND CARRIER DEPLOYMENT',
         description: 'CENTCOM requests deployment of a second carrier strike group — USS Gerald R. Ford. It would be the largest naval buildup since 2003. The signal is unmistakable.',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 15, maxDay: 55,
         condition: () => SIM.carrier !== null && SIM.tension > 50,
         choices: [
@@ -1862,6 +2298,7 @@ const DECISION_EVENTS = [
     {
         id: 'truth_social_armada', title: '"MASSIVE ARMADA HEADING TO IRAN"',
         description: 'The President posts on Truth Social: "A massive Armada is heading to Iran. They will learn!" The post has 50 million views. Iran\'s Supreme Leader responds within the hour.',
+        image: 'assets/event-military.png',
         minDay: 5, maxDay: 40,
         condition: () => SIM.tension > 30,
         choices: [
@@ -1871,8 +2308,9 @@ const DECISION_EVENTS = [
         ],
     },
     {
-        id: 'iran_internal_struggle', title: 'IRANIAN MODERATES VS IRGC',
+        id: 'iran_internal_struggle', title: 'IRANIAN MODERATES VS IRGC', image: 'assets/iran-tangsiri.png',
         description: 'Iran\'s civilian government and IRGC are openly clashing. The Foreign Ministry wants negotiations. The IRGC is planning more seizures. Your intel shows the split is real.',
+        image: 'assets/event-e07-iran-doubles.png',
         minDay: 18, maxDay: 70,
         condition: () => SIM.fogOfWar < 50 && SIM.iranEconomy < 45,
         choices: [
@@ -1884,6 +2322,7 @@ const DECISION_EVENTS = [
     {
         id: 'fast_boat_swarm', title: 'IRGC FAST BOAT SWARM',
         description: 'TWENTY-FIVE Heydar-class fast boats — the fastest combat boats on earth at 110 knots — are converging on a tanker convoy. This is Iran\'s signature tactic: overwhelm with speed and numbers.',
+        image: 'assets/event-crisis-three-seizures.png',
         minDay: 8, maxDay: 70,
         countdown: 8,
         condition: () => SIM.iranBoats.length > 2 && SIM.iranAggression > 45,
@@ -1896,6 +2335,7 @@ const DECISION_EVENTS = [
     {
         id: 'hezbollah_front', title: 'HEZBOLLAH OPENS SECOND FRONT',
         description: 'Hezbollah launches missiles and drones into northern Israel from Lebanon. Iran\'s proxy war is expanding beyond the Gulf. Israel demands US support.',
+        image: 'assets/event-e14-houthi.png',
         minDay: 20, maxDay: 75,
         condition: () => SIM.proxyThreat > 35 && SIM.tension > 45,
         choices: [
@@ -1907,6 +2347,7 @@ const DECISION_EVENTS = [
     {
         id: 'cape_route_crisis', title: 'CAPE OF GOOD HOPE BOTTLENECK',
         description: 'With the strait effectively closed, 150+ tankers are rerouting via the Cape of Good Hope — adding 11,000 nautical miles, 10 days, and $1M fuel per voyage. Ports in South Africa are overwhelmed.',
+        image: 'assets/event-economic.png',
         minDay: 12, maxDay: 55,
         condition: () => SIM.oilFlow < 45,
         choices: [
@@ -1919,6 +2360,7 @@ const DECISION_EVENTS = [
     {
         id: 'minab_school_strike', title: 'MINAB SCHOOL STRIKE',
         description: 'Reports emerge of a US airstrike hitting a school in Minab, southern Iran. 47 civilians reported killed including children. Iran broadcasting footage globally. UN demands investigation.',
+        image: 'assets/event-crisis-friendly-fire.png',
         minDay: 3, maxDay: 30,
         condition: () => SIM.warPath >= 2,
         choices: [
@@ -1928,8 +2370,9 @@ const DECISION_EVENTS = [
         ],
     },
     {
-        id: 'mojtaba_succession', title: 'SUPREME LEADER SUCCESSION CRISIS',
+        id: 'mojtaba_succession', title: 'SUPREME LEADER SUCCESSION CRISIS', image: 'assets/iran-mojtaba.png',
         description: 'With Khamenei dead, his son Mojtaba is consolidating power with IRGC backing. But the Assembly of Experts is divided. Iran\'s internal chaos creates both danger and opportunity.',
+        image: 'assets/event-mojtaba.png',
         minDay: 5, maxDay: 45,
         condition: () => SIM.iranAggression > 40,
         choices: [
@@ -1946,6 +2389,7 @@ const DECISION_EVENTS = [
     {
         id: 'joe_kent_resignation', title: 'NSA KENT RESIGNS',
         description: 'National Security Advisor Joe Kent has resigned, citing disagreements over escalation. He goes on Fox News within the hour. "The President is being misled by hawks who\'ve never seen combat."',
+        image: 'assets/event-diplomatic.png',
         minDay: 10, maxDay: 50,
         condition: () => SIM.warPath >= 2 && SIM.domesticApproval < 65,
         choices: [
@@ -1957,6 +2401,7 @@ const DECISION_EVENTS = [
     {
         id: 'gcc_attacks', title: 'GCC BASES UNDER FIRE',
         description: 'Iran launches ballistic missiles at Al Udeid (Qatar) and Al Dhafra (UAE). Both house US forces. Patriot batteries intercept most but three impact inside Al Udeid. 8 US casualties.',
+        image: 'assets/event-crisis-carrier-hit.png',
         minDay: 5, maxDay: 40,
         condition: () => SIM.tension > 60 && SIM.iranAggression > 55,
         choices: [
@@ -1968,6 +2413,7 @@ const DECISION_EVENTS = [
     {
         id: 'iris_dena_aftermath', title: 'IRIS DENA SINKING — AFTERMATH',
         description: 'The sinking of the IRIS Dena — Iran\'s largest warship — has become a rallying cry in Tehran. Massive funeral processions. IRGC vows "rivers of fire." But their navy just lost its flagship.',
+        image: 'assets/event-military.png',
         minDay: 4, maxDay: 25,
         condition: () => SIM.iranAggression > 50,
         choices: [
@@ -1979,6 +2425,7 @@ const DECISION_EVENTS = [
     {
         id: 'three_carriers', title: 'THREE CARRIER GROUPS IN THEATER',
         description: 'Lincoln, Truman, and Carl Vinson are all in the Arabian Sea. 200+ aircraft, 30 warships, 25,000 sailors. The largest US naval deployment since Iraq 2003. The world is watching.',
+        image: 'assets/event-crisis-carrier-hit.png',
         minDay: 3, maxDay: 35,
         condition: () => SIM.carrier !== null && SIM.tension > 50,
         choices: [
@@ -1990,6 +2437,7 @@ const DECISION_EVENTS = [
     {
         id: 'china_mediation_real', title: 'BEIJING CEASEFIRE PROPOSAL',
         description: 'Chinese FM Wang Yi proposes a 5-point ceasefire framework: mutual de-escalation, UN peacekeepers in strait, sanctions relief timeline, nuclear talks restart, regional security forum. Beijing is serious.',
+        image: 'assets/event-e13-china.png',
         minDay: 10, maxDay: 55,
         condition: () => SIM.chinaRelations > 20 && SIM.tension > 40,
         choices: [
@@ -2001,6 +2449,7 @@ const DECISION_EVENTS = [
     {
         id: 'russia_intel_leak', title: 'RUSSIAN INTELLIGENCE LEAK',
         description: 'An FSB defector reveals Russia has been sharing US military intelligence with Iran — satellite passes, carrier positions, submarine locations. Your operational security is compromised.',
+        image: 'assets/event-intel.png',
         minDay: 12, maxDay: 60,
         condition: () => SIM.chinaRelations < 35,
         choices: [
@@ -2012,6 +2461,7 @@ const DECISION_EVENTS = [
     {
         id: 'nowruz_ceasefire', title: 'NOWRUZ CEASEFIRE WINDOW',
         description: 'Iranian New Year (Nowruz) is in 3 days. Iranian moderates propose a 5-day ceasefire for the holiday. IRGC hasn\'t objected. This could be the off-ramp.',
+        image: 'assets/event-ceasefire-test.png',
         minDay: 18, maxDay: 35,
         condition: () => SIM.tension > 30 && SIM.diplomaticCapital > 10,
         choices: [
@@ -2022,6 +2472,7 @@ const DECISION_EVENTS = [
     },
     {
         id: 'hezbollah_ceasefire_break', title: 'HEZBOLLAH BREAKS CEASEFIRE',
+        image: 'assets/event-e14-houthi.png',
         description: 'Hezbollah launches 150 rockets into northern Israel, breaking the Lebanon ceasefire. Israel retaliates immediately. Iran\'s proxy network is activating across the region.',
         minDay: 8, maxDay: 55,
         condition: () => SIM.proxyThreat > 30 && SIM.tension > 40,
@@ -2034,6 +2485,7 @@ const DECISION_EVENTS = [
     {
         id: 'houthi_escalation', title: 'HOUTHIS TARGET US WARSHIP',
         description: 'Houthi anti-ship ballistic missile targets USS Gravely (DDG-107) in the Red Sea. SM-2 intercept at 8nm. The closest a Houthi missile has come to hitting a US warship.',
+        image: 'assets/event-e14-houthi.png',
         minDay: 6, maxDay: 50,
         condition: () => SIM.proxyThreat > 25,
         choices: [
@@ -2045,6 +2497,7 @@ const DECISION_EVENTS = [
     {
         id: 'kc135_crash', title: 'KC-135 CRASH — COMBAT LOSSES MOUNT',
         description: 'A KC-135 aerial refueling tanker crashes during combat operations, killing all 3 crew. It\'s the first US aircraft loss. Cable news shows the wreckage on loop.',
+        image: 'assets/event-military.png',
         minDay: 4, maxDay: 35,
         condition: () => SIM.warPath >= 2,
         choices: [
@@ -2056,6 +2509,7 @@ const DECISION_EVENTS = [
     {
         id: 'war_crimes_tribunal', title: 'ICC WAR CRIMES INVESTIGATION',
         description: 'The International Criminal Court announces an investigation into both US and Iranian conduct. Warrants could be issued for senior officials. European allies are divided.',
+        image: 'assets/event-diplomatic.png',
         minDay: 15, maxDay: 65,
         condition: () => SIM.warPath >= 2 && SIM.internationalStanding < 50,
         choices: [
@@ -2066,8 +2520,9 @@ const DECISION_EVENTS = [
     },
     // === NEW EVENTS: Post-strikes escalation scenarios ===
     {
-        id: 'mojtaba_consolidation', title: 'MOJTABA KHAMENEI POWER GRAB',
+        id: 'mojtaba_consolidation', title: 'MOJTABA KHAMENEI POWER GRAB', image: 'assets/iran-mojtaba.png',
         description: 'Intelligence confirms Mojtaba Khamenei — the dead Supreme Leader\'s son — has consolidated IRGC support. He\'s demanding revenge strikes and threatening to close the strait permanently.',
+        image: 'assets/event-mojtaba.png',
         minDay: 5, maxDay: 30,
         condition: () => SIM.iranAggression > 40,
         choices: [
@@ -2079,6 +2534,7 @@ const DECISION_EVENTS = [
     {
         id: 'iris_dena_aftermath', title: 'IRIS DENA WRECKAGE',
         description: 'The Iranian frigate IRIS Dena was sunk on Day 1. Now bodies and wreckage are washing up on Omani beaches. Al Jazeera is broadcasting it live. International pressure mounts.',
+        image: 'assets/event-military.png',
         minDay: 3, maxDay: 15,
         condition: () => SIM.internationalStanding < 60,
         choices: [
@@ -2090,6 +2546,7 @@ const DECISION_EVENTS = [
     {
         id: 'al_udeid_attack', title: 'AL UDEID BASE UNDER FIRE',
         description: 'Iranian ballistic missiles hit Al Udeid Air Base in Qatar — the forward HQ of CENTCOM. 3 US personnel killed, 22 wounded. Qatar is demanding you relocate operations.',
+        image: 'assets/event-crisis-carrier-hit.png',
         minDay: 4, maxDay: 25,
         condition: () => SIM.tension > 50,
         choices: [
@@ -2101,6 +2558,7 @@ const DECISION_EVENTS = [
     {
         id: 'indian_energy_crisis', title: 'INDIA ENERGY EMERGENCY',
         description: 'India declares a national energy emergency. They import 80% of their oil through the Strait. PM Modi is calling — demanding action or they will negotiate directly with Iran.',
+        image: 'assets/event-crisis-cascade.png',
         minDay: 10, maxDay: 50,
         condition: () => SIM.oilFlow < 50,
         choices: [
@@ -2112,6 +2570,7 @@ const DECISION_EVENTS = [
     {
         id: 'carrier_near_miss', title: 'USS EISENHOWER NEAR MISS',
         description: 'An Iranian anti-ship ballistic missile splashes 200 meters from the USS Eisenhower. The closest a hostile weapon has come to a US carrier since WWII. The crew is shaken.',
+        image: 'assets/event-e09-carrier-incident.png',
         minDay: 8, maxDay: 40,
         condition: () => SIM.tension > 55 && SIM.iranAggression > 45,
         choices: [
@@ -2123,6 +2582,7 @@ const DECISION_EVENTS = [
     {
         id: 'iran_moderate_coup', title: 'MODERATE FACTION REACHES OUT',
         description: 'An encrypted message through Swiss channels: Iran\'s moderate faction is planning to sideline the IRGC hardliners. They need 72 hours — and a gesture of good faith.',
+        image: 'assets/event-diplomatic.png',
         minDay: 18, maxDay: 60,
         condition: () => SIM.diplomaticCapital > 30 && SIM.iranAggression > 35,
         choices: [
@@ -2134,6 +2594,7 @@ const DECISION_EVENTS = [
     {
         id: 'kc135_crew_rescue', title: 'DOWNED KC-135 CREW',
         description: 'The KC-135 tanker shot down on Day 1 — search teams have located 2 surviving crew members on an Iranian island. IRGC is closing in.',
+        image: 'assets/event-rescue-op.png',
         minDay: 3, maxDay: 12,
         condition: () => true,
         choices: [
@@ -2145,6 +2606,7 @@ const DECISION_EVENTS = [
     {
         id: 'european_split', title: 'NATO FRACTURES',
         description: 'France breaks with the US — Macron calls the Iran strikes "disproportionate" and blocks NATO solidarity statement. Germany is wavering. The UK stands with you — for now.',
+        image: 'assets/event-diplomatic.png',
         minDay: 7, maxDay: 35,
         condition: () => SIM.internationalStanding < 55,
         choices: [
@@ -2265,7 +2727,7 @@ const DECISION_EVENTS = [
     {
         id: 'mojtaba_power_play', title: 'MOJTABA CONSOLIDATES',
         description: 'Mojtaba Khamenei has purged three senior IRGC commanders who opposed his succession. Satellite imagery shows Republican Guard units redeploying to Tehran — not to the Gulf. Intelligence suggests he\'s more afraid of internal rivals than of you. A CIA source inside the Guardian Council reports he might be open to a deal if it helps him consolidate power.',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/iran-mojtaba.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.mojtaba_watched,
         choices: [
@@ -2283,7 +2745,7 @@ const DECISION_EVENTS = [
     {
         id: 'mojtaba_secret_deal', title: 'THE SUPREME LEADER\'S OFFER',
         description: 'Mojtaba\'s people made contact. The proposal is extraordinary: Iran will reopen the strait and halt enrichment above 20% — permanently. In exchange, they want recognition of the new Supreme Leader, removal of all personal sanctions on Mojtaba, and a secret $5 billion reconstruction fund. The CIA says he\'s genuine. The risk: if Congress finds out, it\'s Iran-Contra 2.0.',
-        image: 'assets/event-placeholder.png',
+        image: 'assets/iran-mojtaba.png',
         minDay: 1, maxDay: 999,
         condition: () => SIM.storyFlags.mojtaba_channel_open,
         choices: [

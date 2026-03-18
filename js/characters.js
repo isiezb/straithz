@@ -32,7 +32,7 @@ function showTitleScreen() {
 const CHARACTERS = [
     {
         id: 'trump', name: 'Donald Trump', title: '45th & 47th President',
-        spriteKey: 'portrait_trump', portraitImage: 'assets/trump.png',
+        spriteKey: 'portrait_trump', portraitImage: 'assets/trump.png', selectImage: 'assets/char-trump.png',
         ability: 'The Decider',
         abilityDesc: 'Gets ALL cards. 1.5x effects. 4 picks. WIN: Make America win BIG — high approval, oil flowing, low tension.',
         lore: 'February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it.',
@@ -77,36 +77,80 @@ const CHARACTERS = [
         // Unique events
         uniqueEvents: [
             {
-                id: 'truth_social_post', title: 'TRUTH SOCIAL MOMENT',
-                description: 'Your phone is buzzing. A well-timed post could rally the base — or start a diplomatic incident.',
-                minDay: 3, maxDay: 80,
+                id: 'T01_fox_news_call', title: 'THE FOX NEWS CALL', image: 'assets/event-trump-fox.png',
+                description: 'Fox & Friends is calling. They want you live in 10 minutes. A vintage Trump performance could rally the base — or start an international incident.',
+                minDay: 5, maxDay: 15,
                 condition: () => true,
                 choices: [
-                    { text: 'Post tough talk on Iran', effects: { domesticApproval: 8, tension: 10, iranAggression: 5, politicalCapital: 5 }, flavor: '"Iran is WEAK. We are STRONG. They will learn!" 40M views in 2 hours.' },
-                    { text: 'Post about the economy', effects: { domesticApproval: 5, politicalCapital: 3 }, flavor: '"Gas prices coming DOWN thanks to YOUR President!" Markets respond.' },
-                    { text: 'Put the phone down', effects: {}, flavor: 'Staff breathes a sigh of relief.' },
+                    { text: 'Go on Fox — vintage Trump', effects: { domesticApproval: 15, internationalStanding: -5, tension: 3 },
+                      flavor: '"Iran is WEAK. We are STRONG. They will learn!" 40M views in 2 hours. Your staff is already doing damage control.',
+                      setFlags: { fox_appearance: true } },
+                    { text: 'Decline — stay presidential', effects: { domesticApproval: -8, politicalCapital: 5 },
+                      flavor: 'Your team is shocked. Fox runs a segment questioning your "energy." Your base wonders what happened.' },
+                    { text: 'Go on Fox but message Iran directly', effects: { tension: 8, diplomaticCapital: 5 },
+                      flavor: '"Supreme Leader — if you\'re watching, and I know you are — call me." Unorthodox. But Iran\'s back-channel lights up.',
+                      setFlags: { fox_iran_message: true }, chainEvent: 'T04_iran_backchannel', chainDelay: 4,
+                      chainHint: 'Iran\'s back-channel is buzzing. Someone may respond...' },
                 ],
             },
             {
-                id: 'european_demand', title: 'EUROPEAN ALLIES DEMAND CONSULTATION',
-                description: 'France and Germany are furious you acted without consulting NATO. They threaten to withdraw naval support.',
-                minDay: 10, maxDay: 60,
-                condition: () => SIM.tension > 30,
+                id: 'T02_deal_on_table', title: 'THE DEAL ON THE TABLE', image: 'assets/event-trump-deal.png',
+                description: 'Your advisors have a framework: comprehensive grand deal with Iran. Sanctions relief, security guarantees, economic partnership. The Nobel Prize play.',
+                minDay: 25, maxDay: 45,
+                condition: () => SIM.budget > 300 && SIM.diplomaticCapital > 25,
                 choices: [
-                    { text: 'Tell them to pay up or shut up', effects: { domesticApproval: 10, internationalStanding: -12, politicalCapital: 8 }, flavor: '"The US pays for everything. Where were you?" The base loves it.' },
-                    { text: 'Invite them to a summit', effects: { internationalStanding: 8, tension: -5, politicalCapital: -5 }, flavor: 'A grudging meeting produces a joint statement.' },
-                    { text: 'Ignore them', effects: { internationalStanding: -5, politicalCapital: 3 }, flavor: 'Europe fumes. You move on.' },
+                    { text: 'Go big — comprehensive grand deal', effects: { diplomaticCapital: -15, tension: -8, domesticApproval: -5 },
+                      flavor: 'Everything on the table. If Iran engages, this changes everything. If not, humiliation.',
+                      setFlags: { grand_deal_proposed: true }, chainEvent: 'T02_deal_response', chainDelay: 5,
+                      chainHint: 'Iran is deliberating on your proposal...' },
+                    { text: 'Start small — tanker release deal', effects: { diplomaticCapital: 10, tension: -5 },
+                      flavor: 'A narrow deal on safe passage. Achievable. Your base asks "where\'s the big deal?"' },
+                    { text: 'Announce on Truth Social first', effects: { domesticApproval: 12, diplomaticCapital: -10 },
+                      flavor: 'Create public pressure on Iran. Diplomats despair. But 50M views forces Iran to respond.',
+                      setFlags: { deal_leaked_truth_social: true } },
                 ],
             },
             {
-                id: 'pentagon_leak', title: 'PENTAGON LEAK',
-                description: 'Someone in the Pentagon leaked your classified strategy memo. The press has it.',
-                minDay: 15, maxDay: 70,
-                condition: () => SIM.fogOfWar < 60,
+                id: 'T03_political_capital_crisis', title: 'POLITICAL CAPITAL CRISIS', image: 'assets/event-trump-rally.png',
+                description: 'Congress is circling. Your political capital is hemorrhaging. Without a win soon, they\'ll pull the plug on your war spending.',
+                minDay: 40, maxDay: 65,
+                condition: () => SIM.uniqueResource < 20,
                 choices: [
-                    { text: 'Fire everyone involved', effects: { domesticApproval: 5, politicalCapital: -10, fogOfWar: 10 }, flavor: 'Heads roll. Morale at the Pentagon drops. Intel flow slows.' },
-                    { text: 'Use it as disinformation', effects: { iranAggression: -5, fogOfWar: -8, politicalCapital: 5 }, flavor: 'You claim the memo was planted. Iran recalculates.' },
-                    { text: 'Address it publicly', effects: { domesticApproval: 3, polarization: 3 }, flavor: 'A combative press conference. The story fades.' },
+                    { text: 'Rally — you know how to work a crowd', effects: { politicalCapital: 20, domesticApproval: 10, internationalStanding: -5, budget: -15 },
+                      flavor: 'Biggest rally since 2020. Swing state. "Nobody handles Iran like Trump!" The base erupts.' },
+                    { text: 'Cut a deal with Congressional leadership', effects: { politicalCapital: 15, budget: -10, domesticApproval: 5 },
+                      flavor: 'You give them a pet project. They give you support. Transactional. Effective.' },
+                    { text: 'Fire someone — publicly, dramatically', effects: { politicalCapital: 12, domesticApproval: -5, fogOfWar: 5 },
+                      flavor: 'Heads roll on live TV. The base loves it. Staff morale craters. Intel flow slows.' },
+                ],
+            },
+            {
+                id: 'T04_iran_backchannel', title: 'IRAN\'S BACK-CHANNEL RESPONSE', image: 'assets/event-trump-truth-social.png',
+                description: 'Your Fox News message to Iran worked. Araghchi has responded through Omani intermediaries. A face-to-face is possible.',
+                minDay: 10, maxDay: 25,
+                condition: () => SIM.storyFlags?.fox_iran_message,
+                choices: [
+                    { text: 'Send Kushner as envoy', effects: { diplomaticCapital: 10, tension: -5, fogOfWar: 5 },
+                      flavor: 'Secret meeting in a Gulf state. High-risk, high-reward. If leaked, it\'s a scandal.',
+                      setFlags: { kushner_envoy_sent: true } },
+                    { text: 'Official State Department channels', effects: { diplomaticCapital: 5, internationalStanding: 3 },
+                      flavor: 'Proper channels. Slower but safer. Araghchi is disappointed by the bureaucracy.' },
+                    { text: 'Ignore — let them stew', effects: { tension: 5, politicalCapital: 3 },
+                      flavor: 'You sent the message. They received it. Let them wonder. Channel stays open.' },
+                ],
+            },
+            {
+                id: 'T02_deal_response', title: 'IRAN RESPONDS TO THE DEAL', image: 'assets/event-grand-bargain.png',
+                description: 'Iran has responded to your grand deal proposal. Araghchi says the framework is "interesting but insufficient." Tangsiri says it\'s "American surrender theater."',
+                minDay: 30, maxDay: 55,
+                condition: () => SIM.storyFlags?.grand_deal_proposed,
+                choices: [
+                    { text: 'Sweeten the offer', effects: { tension: -10, domesticApproval: -8, diplomaticCapital: 15, iranAggression: -10 },
+                      flavor: 'More sanctions relief. More guarantees. The deal takes shape. Hawks are furious.' },
+                    { text: 'Walk away — they had their chance', effects: { tension: 8, domesticApproval: 8, iranAggression: 5 },
+                      flavor: '"I made the best deal in history and they said no. Their loss." The base loves it.' },
+                    { text: 'Leak Tangsiri\'s response to embarrass him', effects: { domesticApproval: 5, iranAggression: 8, diplomaticCapital: -5, fogOfWar: 5 },
+                      flavor: 'The world sees Iran\'s hardliner blocking peace. Araghchi is furious at Tangsiri.' },
                 ],
             },
         ],
@@ -144,10 +188,16 @@ const CHARACTERS = [
             uniqueResourceLow: "We're losing political capital fast. Congress is circling. Need a win.",
             uniqueResourceCritical: "Congress is about to pull the plug. Do something NOW.",
         },
+
+        epilogues: {
+            diplomatic: 'They said you couldn\'t do it. They said you were too unpredictable, too brash, too everything. And maybe they were right about all of that. But the deal is signed. Not the grand deal. You learned that grand deals are for Nobel speeches, not for the Persian Gulf. The deal that worked was smaller, uglier, full of compromises your base doesn\'t love and Iran\'s hardliners hate. But tankers are sailing. Oil is flowing. And on the cover of Time magazine, for the third time (but who\'s counting), is your face, with the headline: "The Deal Nobody Wanted." You frame it anyway.',
+            military: 'The carrier group is coming home. You\'re on the flight deck for the photo op, obviously. The sailors love you. The polls love you. The defense contractors really love you. Iran\'s navy is functionally neutered, Tangsiri is under house arrest, and the strait is open under American escort. It cost more than anyone will publicly admit, in dollars, in standing, in the quiet funerals that didn\'t make the news. But you learned something in this crisis that surprised even you: sometimes the threat of the deal is more powerful than the deal itself. You\'ll never say that out loud, of course.',
+            decline: 'The strait is technically open. Oil is technically flowing. Your approval is technically above water. Everything is technically fine. The deal you cut with Iran is held together by duct tape and mutual exhaustion. Your base pretends to celebrate. The media pretends to care. You pretend it was the plan all along. In the quiet of the Oval Office, you stare at the portrait of Andrew Jackson and think: he would have just blown the whole thing up. Maybe that would have been better. Maybe not. The Art of the Deal, it turns out, sometimes means the deal nobody wanted, including you.',
+        },
     },
     {
         id: 'hegseth', name: 'Pete Hegseth', title: 'Secretary of War',
-        spriteKey: 'portrait_hegseth', portraitImage: 'assets/pete.png',
+        spriteKey: 'portrait_hegseth', portraitImage: 'assets/pete.png', selectImage: 'assets/char-hegseth.png',
         ability: 'The Warhorse',
         abilityDesc: 'Command Authority resource. Military cards cost authority. WIN: Total war with public support — crush Iran.',
         lore: 'February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran\'s response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You\'ve trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003.',
@@ -208,48 +258,74 @@ const CHARACTERS = [
 
         uniqueEvents: [
             {
-                id: 'joint_chiefs_revolt', title: 'JOINT CHIEFS PUSHBACK',
-                description: 'The Joint Chiefs are pushing back on your aggressive posture. They want a more measured approach.',
-                minDay: 8, maxDay: 60,
-                condition: () => SIM.tension > 40,
-                choices: [
-                    { text: 'Override them', effects: { commandAuthority: -15, tension: 8, iranAggression: -5, domesticApproval: 3 }, flavor: 'You pull rank. The brass is unhappy but complies.' },
-                    { text: 'Find middle ground', effects: { commandAuthority: 5, tension: -3 }, flavor: 'A compromise. The brass appreciates being heard.' },
-                    { text: 'Accept their plan', effects: { commandAuthority: 10, tension: -8, domesticApproval: -3 }, flavor: 'You defer to military expertise. Some call it leadership.' },
-                ],
-            },
-            {
-                id: 'fox_interview', title: 'FOX NEWS INTERVIEW REQUEST',
-                description: 'Your old network wants an exclusive. Great for domestic support but could reveal operational details.',
-                minDay: 5, maxDay: 70,
+                id: 'H01_pentagon_power_play', title: 'THE PENTAGON POWER PLAY', image: 'assets/event-hegseth-pentagon.png',
+                description: 'Day one at the Pentagon. The Joint Chiefs are sizing you up. Every decision here sets the tone for your entire tenure.',
+                minDay: 3, maxDay: 8,
                 condition: () => true,
                 choices: [
-                    { text: 'Full interview — go big', effects: { domesticApproval: 10, commandAuthority: 5, fogOfWar: 8, internationalStanding: -3 }, flavor: 'Ratings through the roof. The Pentagon is nervous about what you revealed.' },
-                    { text: 'Brief, controlled appearance', effects: { domesticApproval: 5, commandAuthority: 3 }, flavor: 'A polished 5 minutes. Nothing leaked.' },
-                    { text: 'Decline — stay focused', effects: { commandAuthority: 3 }, flavor: 'The network is disappointed. Your staff is relieved.' },
+                    { text: 'Assert dominance — present your war plan', effects: { commandAuthority: 10, diplomaticCapital: -5, tension: 3 },
+                      flavor: 'You call a full Joint Chiefs meeting and lay it out. Pentagon respects the energy but watches for overreach.' },
+                    { text: 'Listen first — build relationships', effects: { commandAuthority: 5, diplomaticCapital: 5 },
+                      flavor: 'Three days learning the command structure. Slower start but deeper foundation. Critics call you passive.' },
+                    { text: 'Go to the carrier — be with the troops', effects: { commandAuthority: 8, domesticApproval: 10, fogOfWar: 5 },
+                      flavor: 'Skip the briefing room. Be on the ship. Spectacular photo op. You missed important briefings though.' },
                 ],
             },
             {
-                id: 'carrier_captain_engage', title: 'CARRIER CAPTAIN REQUEST',
-                description: 'USS Eisenhower captain requests permission to engage Iranian fast boats harassing the task force. 15 seconds to decide.',
-                minDay: 12, maxDay: 80,
-                condition: () => SIM.carrier !== null && SIM.iranBoats.length > 2,
-                countdown: 15,
+                id: 'H02_leak_from_within', title: 'THE LEAK FROM WITHIN', image: 'assets/event-e17-leak.png',
+                description: 'Someone in the Pentagon is leaking your classified operational plans to the press. Your authority is being undermined from the inside.',
+                minDay: 15, maxDay: 30,
+                condition: () => SIM.uniqueResource < 40,
                 choices: [
-                    { text: 'Weapons free', effects: { tension: 25, iranAggression: -15, commandAuthority: -10, warPath: 2, domesticApproval: 8 }, flavor: 'Guns open up. Two IRGC boats disabled. The world watches in horror and awe.' },
-                    { text: 'Warning shots only', effects: { tension: 10, iranAggression: -5, commandAuthority: 5 }, flavor: 'Tracer fire across the bow. The boats scatter.' },
-                    { text: 'Do not engage', effects: { commandAuthority: -8, iranAggression: 5, domesticApproval: -5 }, flavor: 'The captain is furious. Crew morale drops.' },
+                    { text: 'Confront the suspect directly', effects: { commandAuthority: 10, fogOfWar: -5 },
+                      flavor: 'Behind closed doors, military to military. 50/50 you got the right person. The leaks stop... or intensify.',
+                      setFlags: { leak_confronted: true } },
+                    { text: 'Formal investigation — by the book', effects: { commandAuthority: 5, diplomaticCapital: 5 },
+                      flavor: 'Takes 5 days. Guaranteed to find the leaker. But the investigation itself generates embarrassing headlines.',
+                      setFlags: { leak_investigation: true }, chainEvent: 'H02_leak_result', chainDelay: 5,
+                      chainHint: 'The investigation will take several days...' },
+                    { text: 'Leak something yourself — poison the well', effects: { diplomaticCapital: 5, fogOfWar: -3 },
+                      flavor: 'Something true but useful. Make all leaks suspect. Clever but ethically questionable.' },
                 ],
             },
             {
-                id: 'senate_hearing', title: 'SENATE ARMED SERVICES HEARING',
-                description: 'Senators grill you on military spending and rules of engagement. Your credibility is on the line.',
-                minDay: 20, maxDay: 75,
-                condition: () => SIM.budget < 800,
+                id: 'H02_leak_result', title: 'INVESTIGATION RESULTS', image: 'assets/event-hegseth-pentagon.png',
+                description: 'The formal investigation identified the leaker: a senior aide with connections to your political opponents.',
+                minDay: 20, maxDay: 40,
+                condition: () => SIM.storyFlags?.leak_investigation,
                 choices: [
-                    { text: 'Warrior testimony — passionate defense', effects: { domesticApproval: 8, commandAuthority: 10, polarization: 5 }, flavor: 'You pound the table. "I will not apologize for defending American interests." Standing ovation from hawks.' },
-                    { text: 'Data-driven briefing', effects: { domesticApproval: 3, commandAuthority: 5, polarization: -3 }, flavor: 'Charts and intel wins over undecided senators.' },
-                    { text: 'Refuse to appear', effects: { domesticApproval: -10, commandAuthority: -10, polarization: 8 }, flavor: 'Constitutional crisis. Media goes nuclear.' },
+                    { text: 'Prosecute — send a message', effects: { commandAuthority: 15, domesticApproval: 5, polarization: 5 },
+                      flavor: 'Court martial. The Pentagon watches. Leaks stop cold. But you\'ve made powerful enemies.' },
+                    { text: 'Quiet reassignment', effects: { commandAuthority: 8, fogOfWar: -5 },
+                      flavor: 'The leaker disappears to a desk in Alaska. No headlines. Problem solved.' },
+                ],
+            },
+            {
+                id: 'H03_shock_and_awe', title: 'SHOCK AND AWE MOMENT', image: 'assets/event-hegseth-shock-awe.png',
+                description: 'The carriers are in position. Your war plan is ready. A massive coordinated strike could end Iran\'s ability to threaten the strait. This is what you trained for.',
+                minDay: 30, maxDay: 50,
+                condition: () => SIM.warPath >= 2 && SIM.uniqueResource > 50,
+                choices: [
+                    { text: 'Launch the full strike package', effects: { tension: 30, warPath: 3, iranAggression: -25, domesticApproval: 15, budget: -50, internationalStanding: -10 },
+                      flavor: 'Operation Southern Strike. 500 sorties. Iranian naval capability shattered. The world holds its breath.' },
+                    { text: 'Surgical strike — IRGC command center only', effects: { tension: 15, warPath: 1, iranAggression: -15, budget: -25, domesticApproval: 8 },
+                      flavor: 'Precision over power. One target. Message sent without crossing the line.' },
+                    { text: 'Stage it visibly but don\'t launch — the bluff', effects: { tension: 10, budget: -10, iranAggression: -10 },
+                      flavor: 'Satellites will see the preparations. The ultimate bluff. If Iran calls it, you\'re exposed.' },
+                ],
+            },
+            {
+                id: 'H04_troop_morale', title: 'TROOP MORALE CRISIS', image: 'assets/event-hegseth-troops.png',
+                description: 'Extended deployment is taking its toll. Sailors are exhausted. Maintenance crews are running on fumes. The fleet needs rest but the crisis isn\'t over.',
+                minDay: 50, maxDay: 70,
+                condition: () => SIM.day > 30,
+                choices: [
+                    { text: 'Visit every deployed unit personally', effects: { commandAuthority: 15, domesticApproval: 10 },
+                      flavor: 'Two days of morale tours. The troops genuinely love this. Your advisors manage without you.' },
+                    { text: 'Order R&R rotation', effects: { budget: -20, commandAuthority: 5, iranAggression: 3 },
+                      flavor: 'Fresh crews in, tired ones home. Operational risk during transition but long-term gain.' },
+                    { text: 'Plan a visible operational success', effects: { commandAuthority: 10, domesticApproval: 8, tension: 8 },
+                      flavor: 'Give the troops a win. Morale through victory. If it works, it\'s brilliant. If it fails, devastating.' },
                 ],
             },
         ],
@@ -286,10 +362,16 @@ const CHARACTERS = [
             uniqueResourceLow: "The brass is losing confidence. I need to show them results, fast.",
             uniqueResourceCritical: "The Joint Chiefs want my resignation. One more mistake and it's over.",
         },
+
+        epilogues: {
+            diplomatic: 'You never expected diplomacy to be your legacy. The war plans were ready. The carriers were in position. But somewhere between the third carrier group and the first ceasefire, you realized that the best victory is the one where your troops come home without a scratch. The Pentagon will never fully accept you, but the troops know. They know you were ready to fight and chose not to.',
+            military: 'The Pentagon will never fully accept you. You know that. The old guard with their Ivy League degrees and their Clausewitz quotes will always see you as the TV guy who got lucky. But the troops know. The ones who were on the Eisenhower when the fast-boats came. The ones who heard your voice on the radio saying "weapons free" and trusted it. You walk the halls of the Pentagon now with a different kind of authority. Not the kind that comes from rings or stars, but the kind that comes from having been right when it mattered. Your memoir will be a bestseller. The chapter on Day 43 will be the one they excerpt.',
+            decline: 'The strait is open but the cost was staggering. Your command authority eroded with every decision that didn\'t produce a clear win. The Joint Chiefs tolerate you now, which is worse than opposing you. The troops still salute, but the enthusiasm is gone. Your Fox News friends stop calling. The memoir deal shrinks. In the end, you managed the crisis without catastrophe, which is another way of saying you didn\'t lose badly enough for anyone to notice.',
+        },
     },
     {
         id: 'kushner', name: 'Jared Kushner', title: 'Senior Advisor',
-        spriteKey: 'portrait_kushner', portraitImage: 'assets/kushner.png',
+        spriteKey: 'portrait_kushner', portraitImage: 'assets/kushner.png', selectImage: 'assets/char-kushner.png',
         ability: 'The Operator',
         abilityDesc: 'Contacts & exposure system. Build trust, avoid leaks. WIN: Enrich yourself and build lasting relationships.',
         lore: 'February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they\'re all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe.',
@@ -301,7 +383,7 @@ const CHARACTERS = [
             { id: 'mbs', name: 'MBS (Saudi Arabia)', trust: 40, maxTrust: 100, unlockCard: 'saudi_deal' },
             { id: 'mbz', name: 'MBZ (UAE)', trust: 35, maxTrust: 100, unlockCard: 'uae_port_access' },
             { id: 'erdogan', name: 'Erdogan (Turkey)', trust: 15, maxTrust: 100, unlockCard: 'bosphorus_leverage' },
-            { id: 'zarif', name: 'Zarif (Iran Moderate)', trust: 5, maxTrust: 100, unlockCard: 'secret_channel' },
+            { id: 'zarif', name: 'Araghchi (Iran Moderate)', trust: 5, maxTrust: 100, unlockCard: 'secret_channel' },
             { id: 'netanyahu', name: 'Netanyahu (Israel)', trust: 50, maxTrust: 100, unlockCard: 'mossad_intel' },
         ],
 
@@ -339,52 +421,90 @@ const CHARACTERS = [
 
         uniqueEvents: [
             {
-                id: 'mbs_deal', title: 'MBS PRIVATE DINNER',
-                description: 'MBS invites you to Riyadh for a private dinner. He wants to discuss a grand bargain — Saudi recognition of Israel in exchange for US security guarantees.',
-                minDay: 8, maxDay: 50,
+                id: 'K01_mbs_calls', title: 'MBS CALLS', image: 'assets/event-kushner-mbs.png',
+                description: 'Mohammed bin Salman is on the line. Just like old times. But now you\'re not just Jared — you\'re the one making decisions.',
+                minDay: 3, maxDay: 8,
+                condition: () => true,
+                choices: [
+                    { text: 'Speaker phone — team present', effects: { diplomaticCapital: 3, internationalStanding: 5 },
+                      flavor: 'Transparent. MBS is cautious — he\'s used to private Jared, not official Jared. He shares less.',
+                      contactEffect: { id: 'mbs', trust: 2 } },
+                    { text: 'Take it alone — just like old times', effects: { fogOfWar: -10, diplomaticCapital: 5, exposure: 5 },
+                      flavor: 'MBS opens up. He has intelligence on Iran that your CIA doesn\'t have. Staff worried about what you\'re not sharing.',
+                      contactEffect: { id: 'mbs', trust: 8 } },
+                    { text: 'Propose a Riyadh summit', effects: { diplomaticCapital: 10, exposure: 15 },
+                      flavor: 'Bring all Gulf leaders to the table. Big play. Big exposure risk.',
+                      contactEffect: { id: 'mbs', trust: 5 },
+                      setFlags: { riyadh_summit_proposed: true }, chainEvent: 'K03_riyadh_summit', chainDelay: 7,
+                      chainHint: 'Summit preparations will take about a week...' },
+                ],
+            },
+            {
+                id: 'K02_exposure_spikes', title: 'EXPOSURE METER SPIKES', image: 'assets/event-kushner-exposure.png',
+                description: 'A Washington Post investigation is connecting the dots on your back-channel communications. Your exposure is dangerously high.',
+                minDay: 20, maxDay: 40,
+                condition: () => SIM.uniqueResource > 50,
+                choices: [
+                    { text: 'Get ahead of it — press conference', effects: { domesticApproval: 5, exposure: -10 },
+                      flavor: 'Frame your back-channel work as strategic genius. If your credibility holds, you control the narrative.' },
+                    { text: 'Go dark — cancel all appearances', effects: { exposure: -5, domesticApproval: -3 },
+                      flavor: 'Let the story die. Opponents fill the vacuum with their narrative.' },
+                    { text: 'Leak your own successes anonymously', effects: { exposure: -8, domesticApproval: 5, internationalStanding: 3 },
+                      flavor: 'Plant stories about breakthroughs without fingerprints. If traced: catastrophic.',
+                      setFlags: { planted_stories: true } },
+                ],
+            },
+            {
+                id: 'K03_riyadh_summit', title: 'THE RIYADH SUMMIT', image: 'assets/event-kushner-summi.png',
+                description: 'Gulf leaders are gathered in Riyadh. MBS is hosting. The eyes of the world are on this room. This is your Abraham Accords moment.',
+                minDay: 15, maxDay: 30,
+                condition: () => SIM.storyFlags?.riyadh_summit_proposed,
+                choices: [
+                    { text: 'Push for joint Gulf statement against Iran', effects: { internationalStanding: 15, diplomaticCapital: 10 },
+                      flavor: 'Unity signal. Iran is isolated. The statement makes front pages worldwide.',
+                      contactEffect: { id: 'mbs', trust: 10 } },
+                    { text: 'Private bilateral meetings — hallway diplomacy', effects: { diplomaticCapital: 10, fogOfWar: -5 },
+                      flavor: 'The real work happens in hallways. No public statement but quiet progress on every front.',
+                      contactEffect: { id: 'mbs', trust: 5 } },
+                    { text: 'Propose economic framework — Abraham Accords II', effects: { diplomaticCapital: 15, exposure: 10, domesticApproval: 5 },
+                      flavor: 'Gulf investment for US security guarantees. The big swing. This is what you came for.',
+                      setFlags: { abraham_accords_2: true } },
+                ],
+            },
+            {
+                id: 'K04_araghchi_gambit', title: 'ARAGHCHI\'S GAMBIT', image: 'assets/vent-kushner-zarif.png',
+                description: 'Iran\'s Foreign Minister Araghchi is offering a comprehensive framework through intermediaries. But he needs something concrete: a sanctions concession.',
+                minDay: 35, maxDay: 55,
                 condition: () => {
-                    const c = SIM.character.contacts?.find(c => c.id === 'mbs');
+                    const c = SIM.character?.contacts?.find(c => c.id === 'zarif');
                     return c && c.trust >= 30;
                 },
                 choices: [
-                    { text: 'Accept and negotiate', effects: { internationalStanding: 10, tension: -8, exposure: 15, diplomaticCapital: 15 }, flavor: 'A historic dinner. The deal framework takes shape. But someone photographed you boarding the Saudi jet.', contactEffect: { id: 'mbs', trust: 20 } },
-                    { text: 'Send a deputy', effects: { diplomaticCapital: 5 }, flavor: 'MBS is insulted. Progress stalls.', contactEffect: { id: 'mbs', trust: -10 } },
-                    { text: 'Decline — too risky', effects: { exposure: -5 }, flavor: 'You stay invisible. The opportunity passes.', contactEffect: { id: 'mbs', trust: -5 } },
+                    { text: 'Meet secretly — accept the risk', effects: { diplomaticCapital: 15, tension: -10, iranAggression: -8, exposure: 15 },
+                      flavor: 'Three hours in a Muscat hotel room. This could end the crisis or end your career.',
+                      contactEffect: { id: 'zarif', trust: 15 },
+                      setFlags: { araghchi_meeting: true }, chainEvent: 'K04_framework', chainDelay: 4,
+                      chainHint: 'Araghchi will take the framework back to Tehran...' },
+                    { text: 'Demand proof first — release the hostages', effects: { diplomaticCapital: -5, tension: 3 },
+                      flavor: 'Test if he actually has power. 40% he delivers a breakthrough. 60% the channel weakens.',
+                      contactEffect: { id: 'zarif', trust: -5 } },
+                    { text: 'Record the meeting secretly — insurance', effects: { exposure: 5, fogOfWar: -5 },
+                      flavor: 'You gain leverage. If discovered, all contacts lose trust and exposure explodes.',
+                      setFlags: { secret_recording: true } },
                 ],
             },
             {
-                id: 'iran_face_to_face', title: 'ZARIF BACK-CHANNEL',
-                description: 'Zarif\'s intermediary offers a secret face-to-face in Oman. Massive risk — massive reward.',
-                minDay: 15, maxDay: 70,
-                condition: () => {
-                    const c = SIM.character.contacts?.find(c => c.id === 'zarif');
-                    return c && c.trust >= 10;
-                },
+                id: 'K04_framework', title: 'THE FRAMEWORK RESPONSE', image: 'assets/event-envoy.png',
+                description: 'Araghchi brought your framework to Tehran. Mojtaba is skeptical. Tangsiri is hostile. But the moderates see an opening.',
+                minDay: 40, maxDay: 60,
+                condition: () => SIM.storyFlags?.araghchi_meeting,
                 choices: [
-                    { text: 'Meet him secretly', effects: { tension: -15, iranAggression: -12, exposure: 25, domesticApproval: -8 }, flavor: 'Three hours in a Muscat hotel room. Breakthrough on prisoner exchange. If this leaks, you\'re done.', contactEffect: { id: 'zarif', trust: 25 } },
-                    { text: 'Send a message through channels', effects: { tension: -5, iranAggression: -3, exposure: 5 }, flavor: 'A modest exchange of positions. Better than nothing.', contactEffect: { id: 'zarif', trust: 5 } },
-                    { text: 'It\'s a trap — decline', effects: { iranAggression: 3 }, flavor: 'Zarif is disappointed. Hardliners gain influence.' },
-                ],
-            },
-            {
-                id: 'journalist_sniffing', title: 'JOURNALIST ON YOUR TRAIL',
-                description: 'A New York Times journalist is asking questions about your back-channel communications. Your exposure is growing.',
-                minDay: 12, maxDay: 75,
-                condition: () => SIM.uniqueResource > 30,
-                choices: [
-                    { text: 'Give an exclusive interview', effects: { exposure: -10, domesticApproval: 5 }, flavor: 'You control the narrative. For now.' },
-                    { text: 'Have allies discredit the reporter', effects: { exposure: -5, internationalStanding: -3, polarization: 3 }, flavor: 'The story is buried. But the reporter is still digging.' },
-                    { text: 'Ignore it', effects: { exposure: 8 }, flavor: 'The story publishes. Questions mount.' },
-                ],
-            },
-            {
-                id: 'wall_street_play', title: 'WALL STREET BACKCHANNEL',
-                description: 'Your Wall Street contacts offer to quietly stabilize oil futures — for a favor later.',
-                minDay: 10, maxDay: 60,
-                condition: () => SIM.oilPrice > 110,
-                choices: [
-                    { text: 'Accept the deal', effects: { oilPrice: -15, exposure: 15, domesticApproval: 5 }, flavor: 'Markets calm. But the favor is a blank check.' },
-                    { text: 'Decline — too dirty', effects: {}, flavor: 'You keep your hands clean. Markets stay volatile.' },
+                    { text: 'Push forward — more concessions', effects: { tension: -15, iranAggression: -12, domesticApproval: -10, diplomaticCapital: 20 },
+                      flavor: 'The framework solidifies. Hawks scream betrayal. But the guns go quiet.' },
+                    { text: 'Hold firm — no more concessions', effects: { tension: -5, diplomaticCapital: 5 },
+                      flavor: 'Progress stalls. Araghchi is frustrated but the channel survives.' },
+                    { text: 'Publicize the framework — force Iran\'s hand', effects: { domesticApproval: 8, exposure: 20, tension: 5, diplomaticCapital: -10 },
+                      flavor: 'The world knows. Iran must respond publicly. Araghchi is burned.' },
                 ],
             },
         ],
@@ -418,10 +538,16 @@ const CHARACTERS = [
             uniqueResourceLow: "We're flying under the radar. Good. Keep it that way.",
             uniqueResourceCritical: "Someone is leaking. If my exposure gets any higher, this all falls apart.",
         },
+
+        epilogues: {
+            diplomatic: 'Nobody knows what you did. That\'s the point. The framework that ended the crisis has seven signatories and zero fingerprints. The Omani intermediary got a medal. Araghchi got promoted. MBS got the security guarantee he wanted. And you got what you always get: the satisfaction of having been in the room when it happened, and the quiet knowledge that without you, there would have been no room. Your exposure meter, miraculously, peaked and receded. The investigations found nothing because there was nothing to find. Just a man making phone calls. Abraham Accords II will be the official name, though the actual accord looks nothing like what you originally envisioned. It\'s better. It\'s real.',
+            military: 'The back-channels went silent when the bombs started falling. Every contact you built, every trust you earned, every whispered conversation in hotel lobbies across the Gulf — all of it evaporated in the first strike package. MBS stopped returning calls. Araghchi disappeared. The framework you spent weeks building became classified wreckage. But the military victory happened anyway, and you survived, which in Washington is its own kind of win. The exposure never quite caught you. The investigations found shadows, not substance. You\'ll be back.',
+            decline: 'The contacts are still there, technically. MBS texts occasionally. The Omani intermediary sends holiday greetings. But the grand framework — the Abraham Accords II, the thing that was going to change everything — never quite materialized. The strait is open. The crisis is managed. Your exposure meter settled at a level that\'s uncomfortable but not fatal. In the end, the shadow diplomat cast no shadow at all. Just a man who almost changed the world, and settled for keeping it from getting worse.',
+        },
     },
     {
         id: 'asmongold', name: 'Asmongold', title: 'Streamer & Analyst',
-        spriteKey: 'portrait_asmongold', portraitImage: 'assets/asmongold.png',
+        spriteKey: 'portrait_asmongold', portraitImage: 'assets/asmongold.png', selectImage: 'assets/char-asmongold.png',
         ability: 'The Analyst',
         abilityDesc: 'Credibility resource. Intel Feed mini-game. WIN: Be right about everything — high credibility, low fog, public loves you.',
         lore: 'February 28, 2026. Chat, this is not a drill. The US just killed Iran\'s Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran\'s response. The intel is flooding in faster than anyone can process. Except you.',
@@ -485,36 +611,75 @@ const CHARACTERS = [
 
         uniqueEvents: [
             {
-                id: 'anomaly_detected', title: 'PORT ANOMALY DETECTED',
-                description: 'Your OSINT network detected unusual activity at Bandar Abbas. Could be a major military buildup — or a commercial cargo operation.',
-                minDay: 5, maxDay: 60,
-                condition: () => SIM.fogOfWar < 65,
-                choices: [
-                    { text: 'Flag it as threat — high confidence', effects: { fogOfWar: -15, tension: 8, credibility: 10 }, flavor: 'Satellite confirmation: you were right. Military convoy spotted. Credibility soars.' },
-                    { text: 'Flag it as threat — low confidence', effects: { fogOfWar: -5, tension: 3, credibility: -5 }, flavor: 'Investigation shows normal shipping. False alarm costs you credibility.' },
-                    { text: 'Monitor and wait', effects: { fogOfWar: -3 }, flavor: 'By the time you confirm, the moment has passed.' },
-                ],
-            },
-            {
-                id: 'chat_found_something', title: 'CHAT FOUND SOMETHING',
-                description: 'Your crowdsourced OSINT community found Iranian fast boat patterns in AIS data. It\'s either brilliant or a security risk.',
-                minDay: 10, maxDay: 70,
+                id: 'A01_osint_discovery', title: 'THE OSINT DISCOVERY', image: 'assets/vent-asmongold-osint.png',
+                description: 'Your crowdsourced OSINT network found something the intelligence community missed: satellite imagery showing Iranian mobile missile launchers dispersing from known bases.',
+                minDay: 3, maxDay: 8,
                 condition: () => true,
                 choices: [
-                    { text: 'Share with Pentagon', effects: { fogOfWar: -20, credibility: 15, domesticApproval: 5 }, flavor: 'The Pentagon is impressed. Your methods are unconventional but effective.' },
-                    { text: 'Verify first', effects: { fogOfWar: -8, credibility: 5 }, flavor: 'After careful analysis, you present verified findings.' },
-                    { text: 'Ignore — too risky to share', effects: { credibility: -3 }, flavor: 'You let it go. Chat is disappointed.' },
+                    { text: 'Share with intelligence community', effects: { fogOfWar: -5, credibility: 5, commandAuthority: 3 },
+                      flavor: 'Teamwork. The IC is impressed but slightly threatened by your methods.' },
+                    { text: 'Publish it yourself — radical transparency', effects: { fogOfWar: -15, credibility: 10, domesticApproval: 8, commandAuthority: -5 },
+                      flavor: 'The public trusts YOU, not the spooks. IC is furious. Your methods work.',
+                      setFlags: { osint_published: true } },
+                    { text: 'Hold it — use as internal leverage', effects: { fogOfWar: -3, credibility: 5 },
+                      flavor: 'You know something they don\'t. That\'s power. You\'re playing their game now.' },
                 ],
             },
             {
-                id: 'cia_contradicts', title: 'CIA CONTRADICTS YOUR ASSESSMENT',
-                description: 'The CIA says your analysis of Iranian intentions is wrong. Your credibility is on the line.',
-                minDay: 15, maxDay: 75,
-                condition: () => SIM.uniqueResource > 30,
+                id: 'A02_disinfo_attack', title: 'THE DISINFORMATION ATTACK', image: 'assets/event-asmongold-disinfo.png',
+                description: 'Iranian state media has launched a coordinated disinformation campaign. Deepfakes of your "classified briefings" are going viral. 200M views and counting.',
+                minDay: 15, maxDay: 30,
+                condition: () => SIM.uniqueResource > 40,
                 choices: [
-                    { text: 'Stand your ground with data', effects: { credibility: 12, tension: 5, fogOfWar: -10 }, flavor: 'Your data proves right. The CIA admits their sources were compromised.' },
-                    { text: 'Defer to the CIA', effects: { credibility: -8, fogOfWar: 5 }, flavor: 'You back down. Later events show you were right. Should have trusted your analysis.' },
-                    { text: 'Propose joint analysis', effects: { credibility: 3, fogOfWar: -5, diplomaticCapital: 3 }, flavor: 'A collaborative approach. Both sides save face.' },
+                    { text: 'Debunk live on stream', effects: { credibility: 10, fogOfWar: -10, domesticApproval: 8 },
+                      flavor: 'Real-time forensic analysis. Chat goes wild. Iran\'s info-ops team regroups — they\'ll try harder.',
+                      setFlags: { disinfo_debunked: true } },
+                    { text: 'Trace to source — expose the network', effects: { credibility: 20, fogOfWar: -20, internationalStanding: 10 },
+                      flavor: 'Three days of work. The entire Iranian disinformation network exposed. Devastating.',
+                      setFlags: { disinfo_network_exposed: true }, chainEvent: 'A02_disinfo_escalation', chainDelay: 5,
+                      chainHint: 'Iran\'s info-ops will escalate after being exposed...' },
+                    { text: 'Counter-narrative — fight fire with fire', effects: { credibility: 5, domesticApproval: 10, fogOfWar: -8 },
+                      flavor: 'Don\'t just debunk, tell a better story. You\'re in the propaganda game now.' },
+                ],
+            },
+            {
+                id: 'A02_disinfo_escalation', title: 'IRAN ESCALATES INFO-WAR', image: 'assets/event-asmongold-disinfo.png',
+                description: 'After you exposed their network, Iran has hired Russian cyber units for a more sophisticated campaign. AI-generated footage of "US war crimes" flooding social media.',
+                minDay: 20, maxDay: 40,
+                condition: () => SIM.storyFlags?.disinfo_network_exposed,
+                choices: [
+                    { text: 'Escalate — full information war', effects: { credibility: 15, fogOfWar: -15, tension: 5, budget: -15 },
+                      flavor: 'You build a counter-disinformation unit. The information battlefield becomes its own front.' },
+                    { text: 'Appeal to platforms — content moderation', effects: { credibility: 8, domesticApproval: -3, internationalStanding: 5 },
+                      flavor: 'Tech companies reluctantly act. Some content removed. Your base calls it censorship.' },
+                ],
+            },
+            {
+                id: 'A03_credibility_test', title: 'THE CREDIBILITY TEST', image: 'assets/event-asmongold-stream.png',
+                description: 'Your credibility is at an all-time high. The question is: what do you spend it on? A presidential address, a UN presentation, or bank it for later?',
+                minDay: 30, maxDay: 50,
+                condition: () => SIM.fogOfWar < 30,
+                choices: [
+                    { text: 'Presidential address — data not rhetoric', effects: { domesticApproval: 15, credibility: 10, fogOfWar: -5 },
+                      flavor: 'Information advantage is overwhelming. Your opponents can\'t compete with your data.' },
+                    { text: 'UN presentation — full transparency', effects: { internationalStanding: 15, diplomaticCapital: 10, fogOfWar: 5 },
+                      flavor: 'Unprecedented transparency at the UN. Methods exposed but the world trusts you.' },
+                    { text: 'Bank it — save for when you really need it', effects: { credibility: 5 },
+                      flavor: 'Wise but boring. The credibility grows slowly. Your moment will come.' },
+                ],
+            },
+            {
+                id: 'A04_chat_demands_action', title: 'CHAT DEMANDS ACTION', image: 'assets/event-asmongold-reddit.png',
+                description: 'Viewer count is dropping. Chat is spamming "DO SOMETHING." Your base expects entertainment alongside governance. The analytics are brutal.',
+                minDay: 20, maxDay: 35,
+                condition: () => SIM.domesticApproval < 50,
+                choices: [
+                    { text: 'Dramatic military action — full livestream', effects: { domesticApproval: 15, tension: 10, warPath: 1 },
+                      flavor: 'Content meets crisis. Either brilliant or catastrophic. Chat explodes either way.' },
+                    { text: 'Push back — explain restraint is strategy', effects: { credibility: 5, domesticApproval: -3 },
+                      flavor: 'Educational content. Some viewers leave. The loyal ones stay harder.' },
+                    { text: 'Pivot to humor — self-deprecating bit', effects: { domesticApproval: 8, credibility: 3 },
+                      flavor: '"Being president is harder than raiding." Viral clip. Opponents don\'t know how to attack a joke.' },
                 ],
             },
         ],
@@ -550,10 +715,16 @@ const CHARACTERS = [
             uniqueResourceLow: "Chat, our credibility is tanking. Nobody trusts our analysis anymore.",
             uniqueResourceCritical: "Dude, if credibility hits zero we're literally done. We need good intel NOW.",
         },
+
+        epilogues: {
+            diplomatic: 'You streamed the final press conference. Twelve million concurrent viewers. The chat was, for once, almost entirely supportive, though someone did manage to post the crab emoji forty thousand times. The intelligence community will study your methods for decades: the fusion of open-source analysis with classified assets, the radical transparency that somehow made secrecy more effective, the way you turned public attention into a strategic weapon. You broke every rule they taught at Langley and got better results than anyone who followed them. The fog of war, for the first time in the history of modern conflict, was lower at the end than at the beginning.',
+            military: 'Chat wanted content and you gave them content. The problem is, the content was a war. Your credibility carried you further than anyone expected, but in the end, the missiles don\'t care about your viewer count. The military victory happened not because of your analysis but despite it — the generals did what generals do, and you provided cover. Your stream of the final operation hit 20 million viewers. The Pentagon banned streaming from classified briefings the next day.',
+            decline: 'The stream is still going but the viewer count is dropping. The crisis ended not with a bang but with a slow fade to normalcy, which is terrible for content. Your credibility is intact but irrelevant — nobody needs an analyst when there\'s nothing to analyze. Chat has moved on to the next thing. The fog of war settled back to its natural state. You go back to gaming, which is fine. But late at night, you pull up the shipping maps and check the strait. Old habits.',
+        },
     },
     {
         id: 'fuentes', name: 'Nick Fuentes', title: 'Political Commentator',
-        spriteKey: 'portrait_fuentes', portraitImage: 'assets/nick.png',
+        spriteKey: 'portrait_fuentes', portraitImage: 'assets/nick.png', selectImage: 'assets/char-fuentes.png',
         ability: 'The Outsider',
         abilityDesc: 'Base Enthusiasm drops without America First cards. WIN: Pull out of the Middle East without losing global power.',
         lore: 'February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You\'re the youngest national security advisor in history.',
@@ -618,47 +789,59 @@ const CHARACTERS = [
 
         uniqueEvents: [
             {
-                id: 'base_demands_withdrawal', title: 'BASE DEMANDS WITHDRAWAL',
-                description: 'Your supporters are demanding you bring the troops home. "We elected you to END foreign wars, not start new ones."',
-                minDay: 8, maxDay: 70,
-                condition: () => SIM.navyShips.length > 3,
-                choices: [
-                    { text: 'Begin withdrawal', effects: { domesticApproval: 12, baseEnthusiasm: 20, internationalStanding: -15, tension: -5, iranAggression: 8 }, flavor: 'Ships turn for home. The base erupts in celebration. Allies are horrified.' },
-                    { text: 'Promise withdrawal "soon"', effects: { baseEnthusiasm: 5, domesticApproval: 3 }, flavor: 'Vague enough to buy time. The base is skeptical but patient.' },
-                    { text: 'Explain the strategic need', effects: { baseEnthusiasm: -10, domesticApproval: -3, internationalStanding: 3 }, flavor: 'The base doesn\'t want to hear it. "You sound like the establishment."' },
-                ],
-            },
-            {
-                id: 'ally_breaks', title: 'ALLY BREAKS WITH YOU',
-                description: 'A key congressional ally publicly breaks with you over foreign policy. Your coalition is fracturing.',
-                minDay: 12, maxDay: 60,
-                condition: () => SIM.internationalStanding > 40,
-                choices: [
-                    { text: 'Attack them publicly', effects: { baseEnthusiasm: 10, polarization: 8, domesticApproval: -5 }, flavor: '"They were never really with us." Your base rallies, but the coalition shrinks.' },
-                    { text: 'Reach out privately', effects: { baseEnthusiasm: -5, polarization: -3 }, flavor: 'A quiet conversation. The ally stays quiet but doesn\'t return.' },
-                    { text: 'Replace them with a loyalist', effects: { baseEnthusiasm: 8, polarization: 5 }, flavor: 'A new voice carries your message. The purge sends a signal.' },
-                ],
-            },
-            {
-                id: 'gulf_self_defense', title: 'GULF STATES SELF-DEFENSE PACT',
-                description: 'Gulf states form their own mutual defense pact, excluding the US. A sign of declining US influence.',
-                minDay: 18, maxDay: 75,
-                condition: () => SIM.internationalStanding < 40,
-                choices: [
-                    { text: 'Celebrate — let them handle it', effects: { baseEnthusiasm: 15, internationalStanding: -10, tension: 5, domesticApproval: 8 }, flavor: '"Finally! Let them defend themselves!" The base loves it.' },
-                    { text: 'Demand a seat at the table', effects: { internationalStanding: 5, baseEnthusiasm: -8 }, flavor: 'Trying to stay relevant. Neither side is happy.' },
-                    { text: 'Offer to lead the pact', effects: { internationalStanding: 8, baseEnthusiasm: -15, domesticApproval: -5 }, flavor: 'Your base screams betrayal. "This is exactly what we voted against!"' },
-                ],
-            },
-            {
-                id: 'isolationist_bill', title: 'AMERICA FIRST ACT',
-                description: 'Your allies in Congress propose the "America First Act" — mandatory withdrawal from Middle East within 90 days.',
-                minDay: 20, maxDay: 80,
+                id: 'F01_base_demands_blood', title: 'THE BASE DEMANDS BLOOD', image: 'assets/event-fuentes-base.png',
+                description: 'Your supporters are in the streets. "BRING THEM HOME." The base that elected you demands you end foreign wars — not manage them.',
+                minDay: 5, maxDay: 12,
                 condition: () => true,
                 choices: [
-                    { text: 'Champion the bill', effects: { baseEnthusiasm: 20, domesticApproval: 10, internationalStanding: -20, tension: -10, iranAggression: 15 }, flavor: 'The bill passes committee. The world watches in disbelief.' },
-                    { text: 'Support in principle, delay in practice', effects: { baseEnthusiasm: 5, domesticApproval: 3 }, flavor: 'You nod along but slow-walk it. Classic Washington.' },
-                    { text: 'Oppose — not the right time', effects: { baseEnthusiasm: -15, domesticApproval: -5, internationalStanding: 5 }, flavor: '"He\'s become one of them." The base turns on you.' },
+                    { text: 'Fiery speech — America First, pull the fleet', effects: { baseEnthusiasm: 15, internationalStanding: -10, oilFlow: -10, iranAggression: 8 },
+                      flavor: 'The base erupts. Allies panic. Oil markets crater. This is what they voted for.' },
+                    { text: 'Walk the line — strength protects freedom', effects: { baseEnthusiasm: 5, internationalStanding: 5, diplomaticCapital: 3 },
+                      flavor: 'Moderate your message. The base is confused but patient. You live to fight another day.' },
+                    { text: 'Redirect anger at defense contractors', effects: { baseEnthusiasm: 10, commandAuthority: -5, domesticApproval: 5 },
+                      flavor: 'Channel anger at the military-industrial complex. Pentagon quietly starts undermining you.' },
+                ],
+            },
+            {
+                id: 'F02_international_pariah', title: 'THE INTERNATIONAL PARIAH MOMENT', image: 'assets/event-fuentes-pariah.png',
+                description: 'The UN General Assembly passed a resolution condemning your policies. European allies have recalled ambassadors. You are internationally isolated.',
+                minDay: 20, maxDay: 40,
+                condition: () => SIM.internationalStanding < 25,
+                choices: [
+                    { text: 'Embrace it — badge of honor', effects: { baseEnthusiasm: 15, internationalStanding: -5, domesticApproval: 8 },
+                      flavor: '"We didn\'t come here to make friends with Davos." Standing floor locks. No recovery.' },
+                    { text: 'Course correct — reach out to one key ally', effects: { internationalStanding: 10, baseEnthusiasm: -5, diplomaticCapital: 5 },
+                      flavor: 'Painful but necessary. One ally is enough to break the isolation.' },
+                    { text: 'Find unconventional allies — Russia, India', effects: { internationalStanding: 5, diplomaticCapital: 5, baseEnthusiasm: -3 },
+                      flavor: 'Outside the Western consensus. New partnerships. Old allies further alienated.' },
+                ],
+            },
+            {
+                id: 'F03_america_first_rally', title: 'THE AMERICA FIRST RALLY', image: 'assets/event-fuentes-isolation.png',
+                description: 'Biggest rally of your career. 80,000 people. Every camera in America pointed at you. This is your moment to define the crisis on your terms.',
+                minDay: 15, maxDay: 30,
+                condition: () => SIM.uniqueResource > 40,
+                choices: [
+                    { text: 'Define the crisis — sovereignty, not oil', effects: { baseEnthusiasm: 20, domesticApproval: 15, internationalStanding: -8, budget: -15 },
+                      flavor: '"This isn\'t about Iranian oil. This is about American sovereignty." The crowd goes wild.' },
+                    { text: 'Surprise everyone — announce peace initiative', effects: { baseEnthusiasm: 10, internationalStanding: 10, diplomaticCapital: 5 },
+                      flavor: 'Reframe peace as strength. The base is confused but comes around. The world is stunned.' },
+                    { text: 'Scorched earth — name domestic enemies', effects: { baseEnthusiasm: 25, internationalStanding: -15, polarization: 15, diplomaticCapital: -10 },
+                      flavor: 'You just burned every bridge in Washington. Your base has never been more loyal.' },
+                ],
+            },
+            {
+                id: 'F04_assassination_whisper', title: 'THE ASSASSINATION WHISPER', image: 'assets/event-fuentes-assassination.png',
+                description: 'Secret Service has intercepted credible threats. Your polarizing stance has made you a target. They recommend reduced public appearances.',
+                minDay: 40, maxDay: 65,
+                condition: () => SIM.uniqueResource < 30 && SIM.internationalStanding < 20,
+                choices: [
+                    { text: 'Accept recommendations — reduce visibility', effects: { baseEnthusiasm: -5, fogOfWar: 3 },
+                      flavor: 'Reduced appearances. The base wonders where you went. Intel resources diverted to protection.' },
+                    { text: 'Defy the threat publicly', effects: { baseEnthusiasm: 10, domesticApproval: 5, assassinationRisk: 15 },
+                      flavor: '"They want me dead because I\'m telling the truth." A speech about courage. Genuine personal risk.' },
+                    { text: 'Weaponize it politically', effects: { baseEnthusiasm: 15, domesticApproval: 8, fogOfWar: 5, diplomaticCapital: -5 },
+                      flavor: 'Release the intelligence to supporters. Rally around the embattled leader. Agencies are furious.' },
                 ],
             },
         ],
@@ -700,6 +883,12 @@ const CHARACTERS = [
             highProxy: "Iran's proxies are attacking us because we're still in the Middle East. Think about it.",
             uniqueResourceLow: "The base is losing faith. We need to show them we're still fighting for THEM.",
             uniqueResourceCritical: "If we lose the base, we lose everything. Address the nation. NOW.",
+        },
+
+        epilogues: {
+            diplomatic: 'You didn\'t fire a shot. That was the promise, and against every prediction, every editorial, every smirking pundit who said the isolationist couldn\'t handle a real crisis, you kept it. The strait is open not because you forced it open but because you made it more expensive for Iran to keep it closed than to let it flow. Your base calls it the greatest foreign policy achievement since... well, they can\'t agree on the comparison, which is fine. Standing at 40 doesn\'t sound impressive until you remember it started at 12 and every expert said it would hit zero. The allies who mocked you are quiet now. They\'re not grateful. They\'ll never be grateful. But they\'re quiet. And the troops are home. Every single one of them.',
+            military: 'You promised America First and delivered America at War. The base fractured the moment the first bomb dropped. Half of them understood that sometimes you fight to protect what matters. The other half never forgave you. The strait is open. Iran is cowed. The troops are coming home, eventually. But the movement you built, the coalition that was supposed to change everything — it didn\'t survive contact with reality. You won the crisis and lost the cause.',
+            decline: 'The troops are coming home because there\'s nothing left to do, not because you brought them home. The crisis fizzled. The strait opened. Iran got bored. Your base takes credit anyway, and you let them. The international standing never recovered, but your base doesn\'t care about international standing, which was always the point. You survived. The establishment is still standing too, which means nobody really won. The next crisis will find a different outsider. Maybe they\'ll do better. Maybe there is no better.',
         },
     },
 ];
@@ -794,10 +983,11 @@ function showCharacterSelect() {
             const advisors = CHARACTERS.slice(1);
 
             function renderCard(ch, i) {
+                const imgSrc = ch.selectImage || ch.portraitImage;
                 return `
                     <div class="char-card ${selectedIdx === i ? 'selected' : ''}" data-idx="${i}">
-                        ${ch.portraitImage
-                            ? `<img class="char-portrait" src="${ch.portraitImage}" alt="${ch.name}" style="image-rendering:pixelated">`
+                        ${imgSrc
+                            ? `<img class="char-portrait" src="${imgSrc}" alt="${ch.name}" style="image-rendering:pixelated">`
                             : `<canvas class="char-portrait" id="char-portrait-${i}" width="56" height="56"></canvas>`
                         }
                         <div class="char-info">
@@ -822,8 +1012,8 @@ function showCharacterSelect() {
 
                     <div class="char-president-row">
                         <div class="char-card char-card-president ${selectedIdx === 0 ? 'selected' : ''}" data-idx="0">
-                            ${trump.portraitImage
-                                ? `<img class="char-portrait char-portrait-lg" src="${trump.portraitImage}" alt="${trump.name}" style="image-rendering:pixelated">`
+                            ${(trump.selectImage || trump.portraitImage)
+                                ? `<img class="char-portrait char-portrait-lg" src="${trump.selectImage || trump.portraitImage}" alt="${trump.name}" style="image-rendering:pixelated">`
                                 : `<canvas class="char-portrait" id="char-portrait-0" width="56" height="56"></canvas>`
                             }
                             <div class="char-info">

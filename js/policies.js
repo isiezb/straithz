@@ -454,8 +454,8 @@ const CONTACT_CARDS = {
         },
     },
     secret_channel: {
-        id: 'secret_channel', name: 'Zarif Direct Line', category: 'diplomatic',
-        description: 'Direct communication with Iranian moderates through Zarif.',
+        id: 'secret_channel', name: 'Araghchi Direct Line', category: 'diplomatic',
+        description: 'Direct communication with Iranian moderates through Araghchi.',
         hint: { low: 'Message exchange', medium: 'Active negotiation', high: 'Framework agreement' },
         effects: {
             low:    { tension: -5, iranAggression: -5, diplomaticCapital: 8 },
@@ -494,7 +494,10 @@ function getStanceEffect(effectName) {
     for (const stance of SIM.activeStances) {
         const card = allCards.find(c => c.id === stance.cardId);
         if (card && card.effects[stance.funding]) {
-            total += (card.effects[stance.funding][effectName] || 0) * mult;
+            const baseEffect = (card.effects[stance.funding][effectName] || 0) * mult;
+            // Apply card level bonus from progression system
+            const levelBonus = (typeof getCardLevel === 'function') ? getCardLevel(stance.cardId).bonus : 0;
+            total += baseEffect * (1 + levelBonus);
         }
     }
     return total;
@@ -512,4 +515,148 @@ function getStanceMax(effectName) {
         }
     }
     return max;
+}
+
+// ======================== CARD SYNERGIES ========================
+// Active when specific card combinations are deployed simultaneously
+
+const CARD_SYNERGIES = [
+    {
+        id: 'smart_pressure',
+        name: 'SMART PRESSURE',
+        description: 'Sanctions + Diplomacy: Sanctions effectiveness +25%, diplomatic overtures carry more weight.',
+        requiredCards: ['sanctions', 'diplomacy'], // Will match any cards with these categories
+        requiredCategories: ['economic', 'diplomatic'], // Alternative: match by category
+        effects: { sanctionsBoost: 0.25, diplomaticBoost: 0.25 },
+        flavor: 'Iran knows the stick is real. The carrot becomes more appealing.',
+    },
+    {
+        id: 'iron_curtain',
+        name: 'IRON CURTAIN',
+        description: 'Naval Patrol + Carrier Group: Intercept chance +15%, combined naval presence creates impenetrable screen.',
+        requiredCards: ['naval_patrol', 'carrier_strike'],
+        effects: { interceptBoost: 0.15 },
+        flavor: 'Nothing gets through the strait without your permission.',
+    },
+    {
+        id: 'hearts_and_minds',
+        name: 'HEARTS AND MINDS',
+        description: 'Humanitarian Aid + Media Campaign: Standing +3/day, approval +2/day, significant budget drain.',
+        requiredCards: ['humanitarian_corridor', 'media_campaign'],
+        effects: { dailyStanding: 3, dailyApproval: 2 },
+        flavor: 'The world sees America at its best. Your accountants see the bill.',
+    },
+    {
+        id: 'shadow_war',
+        name: 'SHADOW WAR',
+        description: 'Cyber Operations + Intelligence Surge: Intel generation doubled, fog reduction doubled. If discovered: massive credibility hit.',
+        requiredCards: ['cyber_ops', 'intel_surge'],
+        effects: { intelMultiplier: 2.0, fogReductionMultiplier: 2.0 },
+        flavor: 'The invisible war. Devastating when it works. Career-ending when it doesn\'t.',
+    },
+    {
+        id: 'fortress_america',
+        name: 'FORTRESS AMERICA',
+        description: 'Missile Defense + Troop Surge: Deterrence +10, tension -5 (defensive posture reads as non-provocative).',
+        requiredCards: ['missile_defense', 'troop_surge'],
+        effects: { dailyDeterrence: 10, dailyTension: -5 },
+        flavor: 'A wall of steel that says "we\'re not here to attack \u2014 we\'re here to stay."',
+    },
+    {
+        id: 'diplomatic_blitz',
+        name: 'DIPLOMATIC BLITZ',
+        description: 'UN Engagement + Allied Coordination: DipCapital generation +50%, UN events succeed more often.',
+        requiredCards: ['un_resolution', 'gulf_coalition'],
+        effects: { dipCapitalMultiplier: 1.5 },
+        flavor: 'The diplomatic machine runs at full speed. But military flexibility suffers.',
+    },
+    {
+        id: 'maximum_pressure',
+        name: 'MAXIMUM PRESSURE',
+        description: 'Sanctions + Carrier Group + Cyber Ops: Iran economy squeezed, faction balance shifts toward moderates. But tension rises.',
+        requiredCards: ['sanctions', 'carrier_strike', 'cyber_ops'],
+        effects: { dailyIranEconomy: -1, dailyFactionShift: 3, dailyTension: 2 },
+        flavor: 'Every lever pulled at once. Iran feels the pressure from all sides. International fatigue sets in after 10 days.',
+    },
+];
+
+/**
+ * Check which card synergies are currently active based on deployed stances
+ * Returns array of active synergy objects
+ */
+function getActiveSynergies() {
+    if (!SIM.activeStances || SIM.activeStances.length === 0) return [];
+
+    const activeCardIds = SIM.activeStances.map(s => s.cardId);
+    const activeSynergies = [];
+
+    for (const synergy of CARD_SYNERGIES) {
+        // Check if all required cards are active
+        const allPresent = synergy.requiredCards.every(reqId => {
+            // Direct ID match
+            if (activeCardIds.includes(reqId)) return true;
+            // Partial match (card ID contains the required string)
+            return activeCardIds.some(id => id.includes(reqId) || reqId.includes(id));
+        });
+
+        if (allPresent) {
+            activeSynergies.push(synergy);
+        }
+    }
+
+    return activeSynergies;
+}
+
+// ======================== CARD PROGRESSION SYSTEM ========================
+// Cards level up with sustained use: 7d->Level 2 (+20%), 14d->Level 3 (+40%), 21d->Mastery (+60%)
+// Deactivating a card resets its progress.
+
+const CARD_LEVEL_THRESHOLDS = [
+    { level: 1, days: 0, bonus: 0, name: 'ACTIVE' },
+    { level: 2, days: 7, bonus: 0.20, name: 'VETERAN' },
+    { level: 3, days: 14, bonus: 0.40, name: 'ELITE' },
+    { level: 4, days: 21, bonus: 0.60, name: 'MASTERY' },
+];
+
+/**
+ * Get the current level and bonus multiplier for an active stance
+ * @param {string} cardId - The card ID to check
+ * @returns {{ level: number, bonus: number, name: string, daysActive: number }}
+ */
+function getCardLevel(cardId) {
+    const activationDay = SIM.stanceActivationDay?.[cardId];
+    if (activationDay === undefined) return { level: 1, bonus: 0, name: 'INACTIVE', daysActive: 0 };
+
+    const daysActive = SIM.day - activationDay;
+    let result = CARD_LEVEL_THRESHOLDS[0];
+
+    for (const threshold of CARD_LEVEL_THRESHOLDS) {
+        if (daysActive >= threshold.days) {
+            result = threshold;
+        }
+    }
+
+    return { ...result, daysActive };
+}
+
+/**
+ * Apply card level bonus to a set of effects
+ * @param {object} effects - The base effects object
+ * @param {string} cardId - The card ID to check level for
+ * @returns {object} - Effects with level bonus applied
+ */
+function applyCardLevelBonus(effects, cardId) {
+    const { bonus } = getCardLevel(cardId);
+    if (bonus === 0) return effects;
+
+    const boosted = {};
+    for (const [key, value] of Object.entries(effects)) {
+        if (typeof value === 'number') {
+            // Boost numeric effects by the level bonus
+            boosted[key] = Math.round(value * (1 + bonus) * 10) / 10;
+        } else {
+            boosted[key] = value;
+        }
+    }
+    return boosted;
 }

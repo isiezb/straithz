@@ -10,135 +10,166 @@ const TERMINAL = document.getElementById('terminal-overlay');
 // ======================== ACTION POINT SYSTEM ========================
 
 const INTERRUPTS = [
-    { text: "IRGC Heydar-class fast boat closing on tanker at 110 knots — intercept?", choices: [
-        { label: "INTERCEPT", effects: { tension: 4, interceptCount: 1, domesticApproval: 3 } },
-        { label: "MONITOR", effects: { tension: -1, oilFlow: -2 } }
+    // ===== INTELLIGENCE (INT-01 to INT-05) =====
+    { text: "NSA flagged unusual encrypted traffic from an IRGC base. Analysts need 2 hours to decode.", choices: [
+        { label: "Divert analysts now", effects: { fogOfWar: -5, budget: -5 } },
+        { label: "Queue for tomorrow", effects: {} }
     ]},
-    { text: "Reporter asks: 'Is the US at war with Iran?'", choices: [
-        { label: "DENY FIRMLY", effects: { domesticApproval: 3, tension: -2 } },
-        { label: "NO COMMENT", effects: { polarization: 1 } }
+    { text: "4-hour weather gap over Bandar Abbas for satellite imagery.", choices: [
+        { label: "Redirect satellite", effects: { budget: -5, fogOfWar: -3 } },
+        { label: "Keep scheduled targets", effects: {} }
     ]},
-    { text: "Japanese ambassador requests emergency meeting on oil supply", choices: [
-        { label: "MEET NOW", effects: { internationalStanding: 4, diplomaticCapital: 3 } },
-        { label: "SCHEDULE FOR TOMORROW", effects: { internationalStanding: -1 } }
+    { text: "Iranian naval officer at Swiss embassy claiming he has operational plans.", choices: [
+        { label: "Send team immediately", effects: { fogOfWar: -8, tension: 3 } },
+        { label: "Vet through channels", effects: { fogOfWar: -3 } }
     ]},
-    { text: "NSA intercept: IRGC Quds Force planning proxy attack", choices: [
-        { label: "ALERT ALL BASES ($10M)", effects: { budget: -10, proxyThreat: -5, fogOfWar: -3 } },
-        { label: "CLASSIFIED BRIEF ONLY", effects: { fogOfWar: -2 } }
+    { text: "IRGC commanders call intercepted. Best translator on leave.", choices: [
+        { label: "Use backup translator", effects: { fogOfWar: -5 } },
+        { label: "Wait for expert", effects: { fogOfWar: -3 } }
     ]},
-    { text: "Congress member leaks classified satellite imagery to media", choices: [
-        { label: "DAMAGE CONTROL", effects: { domesticApproval: -2, fogOfWar: 8 } },
-        { label: "USE IT — SHOW THE WORLD", effects: { internationalStanding: 3, fogOfWar: 5, iranAggression: -2 } }
+    { text: "Telegram accounts posting Iranian military schedules. Could be real or counterintel.", choices: [
+        { label: "Act cautiously on the intel", effects: { fogOfWar: -3 } },
+        { label: "Flag and move on", effects: {} }
     ]},
-    { text: "Navy rescue swimmers save Iranian fishermen from sinking vessel", choices: [
-        { label: "PUBLICIZE WIDELY", effects: { internationalStanding: 4, domesticApproval: 3, tension: -2 } },
-        { label: "KEEP QUIET", effects: {} }
+
+    // ===== DIPLOMATIC (INT-06 to INT-10) =====
+    { text: "French ambassador in your lobby, upset about yesterday's briefing. No appointment.", choices: [
+        { label: "See him now", effects: { internationalStanding: 3 } },
+        { label: "Schedule tomorrow", effects: { internationalStanding: -2 } }
     ]},
-    { text: "Maersk announces permanent rerouting around Cape of Good Hope", choices: [
-        { label: "PROMISE SAFE PASSAGE", effects: { oilFlow: 3, tension: 2, budget: -5 } },
-        { label: "ACKNOWLEDGE REALITY", effects: { oilFlow: -3, oilPrice: 4 } }
+    { text: "Omani intermediary has a time-sensitive message from Araghchi.", choices: [
+        { label: "Read now", effects: { diplomaticCapital: 3, tension: -2 } },
+        { label: "Read after current action", effects: { diplomaticCapital: 1 } }
     ]},
-    { text: "SIGINT picks up Iranian submarine leaving Bandar Abbas", choices: [
-        { label: "ALERT THE FLEET", effects: { tension: 3, fogOfWar: -5, internationalStanding: 2 } },
-        { label: "TRACK SILENTLY", effects: { fogOfWar: -8 } }
+    { text: "UN Secretary General wants to discuss ceasefire framework.", choices: [
+        { label: "Take call", effects: { diplomaticCapital: 3, internationalStanding: 2 } },
+        { label: "Call back later", effects: { internationalStanding: -2 } }
     ]},
-    { text: "Anti-war protest outside White House — 50,000 people", choices: [
-        { label: "ACKNOWLEDGE THEIR RIGHT", effects: { domesticApproval: 3, polarization: -2 } },
-        { label: "IGNORE", effects: { polarization: 3 } }
+    { text: "Russian surveillance ship entered the Persian Gulf.", choices: [
+        { label: "Diplomatic note", effects: { internationalStanding: 2 } },
+        { label: "Shadow with destroyer", effects: { budget: -5, tension: 2 } }
     ]},
-    { text: "Iranian state TV airs footage of captured tanker crew", choices: [
-        { label: "DEMAND RELEASE — FORMAL STATEMENT", effects: { domesticApproval: 5, tension: 5, iranAggression: 2 } },
-        { label: "QUIET DIPLOMACY", effects: { tension: -2, diplomaticCapital: 3 } }
+    { text: "South Korea's trade minister calling. They import 70% of oil through Hormuz.", choices: [
+        { label: "Reassure personally", effects: { internationalStanding: 3, oilFlow: 2 } },
+        { label: "Refer to deputy", effects: {} }
     ]},
-    { text: "Saudi Crown Prince MBS offers $5B for strait operations", choices: [
-        { label: "ACCEPT WITH CONDITIONS", effects: { budget: 50, internationalStanding: 3, domesticApproval: -2 } },
-        { label: "DECLINE — STRINGS ATTACHED", effects: { domesticApproval: 3, internationalStanding: -2 } }
+
+    // ===== MILITARY (INT-11 to INT-15) =====
+    { text: "Radar on USS Eisenhower down. 8-hour repair estimate.", choices: [
+        { label: "Keep on station degraded", effects: { conflictRisk: 3 } },
+        { label: "Pull back for repairs", effects: { budget: -10, conflictRisk: -2 } }
     ]},
-    { text: "Chinese tanker ignoring sanctions — loading Iranian crude at Kharg Island", choices: [
-        { label: "INTERDICT", effects: { chinaRelations: -8, iranEconomy: -3, tension: 5 } },
-        { label: "PHOTOGRAPH AND FILE", effects: { chinaRelations: -2, fogOfWar: -2 } }
+    { text: "Destroyer captain: Iranian speedboats approaching fast, below warning threshold. Wants weapons-free prep.", choices: [
+        { label: "Grant weapons-free", effects: { tension: 3, conflictRisk: 2 } },
+        { label: "Maintain ROE", effects: {} }
     ]},
-    { text: "Pentagon requests $3B emergency supplemental for strait operations", choices: [
-        { label: "APPROVE", effects: { budget: -30, domesticApproval: -2 } },
-        { label: "CUT TO $1.5B", effects: { budget: -15 } }
+    { text: "US patrol nearly fired on UAE Coast Guard. IFF confusion. UAE wants explanation.", choices: [
+        { label: "Apologize, review protocols", effects: { internationalStanding: 3 } },
+        { label: "Blame UAE coordination", effects: { internationalStanding: -5 } }
     ]},
-    { text: "Iranian deepfake video of US attack on civilians goes viral on Telegram", choices: [
-        { label: "RAPID DEBUNK — RELEASE REAL FOOTAGE", effects: { domesticApproval: 3, internationalStanding: 3, fogOfWar: 3 } },
-        { label: "IGNORE — DON'T AMPLIFY", effects: { internationalStanding: -3 } }
+    { text: "SOCOM proposes covert recon of suspected Iranian weapons cache on an island.", choices: [
+        { label: "Approve mission", effects: { budget: -15, fogOfWar: -8, tension: 5 } },
+        { label: "Deny", effects: {} }
     ]},
-    { text: "Oil futures traders driving speculative price spike", choices: [
-        { label: "JAWBONE MARKETS — PUBLIC STATEMENT", effects: { oilPrice: -3, domesticApproval: 2 } },
-        { label: "LET MARKETS WORK", effects: { oilPrice: 2 } }
+    { text: "Patrol vessel detected naval mine in shipping lane.", choices: [
+        { label: "Send minesweeper", effects: { budget: -10, oilFlow: -3 } },
+        { label: "Investigate with drones", effects: { budget: -5, oilFlow: -5 } }
     ]},
-    { text: "IRGC-affiliated APT35 probing US military network perimeters", choices: [
-        { label: "COUNTER-HACK ($15M)", effects: { budget: -15, fogOfWar: -5, iranAggression: -3 } },
-        { label: "HARDEN DEFENSES", effects: { budget: -5 } }
+
+    // ===== DOMESTIC (INT-16 to INT-20) =====
+    { text: 'Senator tweeted classified operational details: "The American people deserve to know."', choices: [
+        { label: "Demand investigation", effects: { domesticApproval: 3, fogOfWar: 2 } },
+        { label: "Brief FBI privately", effects: {} }
     ]},
-    { text: "Indian PM calls — demands guaranteed oil supply or 'will explore alternatives'", choices: [
-        { label: "PROMISE PRIORITY ACCESS", effects: { internationalStanding: 3, oilFlow: 2 } },
-        { label: "LEVERAGE FOR COALITION SUPPORT", effects: { internationalStanding: -2, diplomaticCapital: 5 } }
+    { text: "Trucker convoy blocking highway outside DC over fuel prices.", choices: [
+        { label: "Express sympathy, review subsidies", effects: { domesticApproval: 3, budget: -10 } },
+        { label: "Say nothing", effects: { domesticApproval: -3 } }
     ]},
-    { text: "Houthi drone detected heading toward Red Sea shipping", choices: [
-        { label: "SHOOT IT DOWN", effects: { proxyThreat: -2, tension: 2, budget: -2 } },
-        { label: "TRACK TO SOURCE", effects: { fogOfWar: -3, proxyThreat: 1 } }
+    { text: "SecState and SecDef screaming match in the hallway. Staff shaken.", choices: [
+        { label: "Mediate personally", effects: { polarization: -3 } },
+        { label: "Let them work it out", effects: { polarization: 2 } }
     ]},
-    { text: "Wall Street banks warning of global recession if strait stays closed 60 days", choices: [
-        { label: "REASSURE MARKETS — PRESS CONFERENCE", effects: { domesticApproval: 2, oilPrice: -2 } },
-        { label: "USE URGENCY TO PRESSURE IRAN", effects: { tension: 3, diplomaticCapital: 3 } }
+    { text: "Snap poll dropped. Comms team wants to know if you respond.", choices: [
+        { label: "Rapid response matching mood", effects: { domesticApproval: 2 } },
+        { label: "Stay the course", effects: {} }
     ]},
-    { text: "USS McFaul reports Iranian drone circling at 500 feet — requesting weapons free", choices: [
-        { label: "WEAPONS FREE", effects: { tension: 5, iranAggression: -3, domesticApproval: 3, warPath: 1 } },
-        { label: "ELECTRONIC WARFARE ONLY", effects: { tension: 2, fogOfWar: -2 } }
+    { text: "Major veterans org issued statement on your military posture.", choices: [
+        { label: "Respond publicly", effects: { domesticApproval: 3 } },
+        { label: "No response", effects: {} }
     ]},
-    // NEW INTERRUPTS — based on real March 2026 events
-    { text: "Mojtaba Khamenei broadcasts defiant speech — 'We will drown the enemy in the strait'", choices: [
-        { label: "RESPOND WITH FORCE POSTURE", effects: { tension: 5, domesticApproval: 3, iranAggression: -2 } },
-        { label: "IGNORE THE RHETORIC", effects: { tension: -1 } }
+
+    // ===== CRISIS (INT-21 to INT-25) =====
+    { text: "Damaged tanker leaking crude into the strait. Environmental disaster developing.", choices: [
+        { label: "Divert naval assets to help", effects: { budget: -15, internationalStanding: 5 } },
+        { label: "Let flag state handle it", effects: { internationalStanding: -5, oilFlow: -3 } }
     ]},
-    { text: "Three Iranian Heydar-class fast boats racing toward tanker at 110 knots", choices: [
-        { label: "WEAPONS HOT — ENGAGE", effects: { tension: 8, iranAggression: -5, domesticApproval: 5, warPath: 1 } },
-        { label: "WARNING SHOTS ONLY", effects: { tension: 3, iranAggression: -1, domesticApproval: 2 } }
+    { text: "Qatar Airways 777 deviated into restricted airspace. Both sides scrambling.", choices: [
+        { label: "De-escalate via hotline", effects: { diplomaticCapital: 5, tension: -5 } },
+        { label: "Scramble escort fighters", effects: { tension: 3 } }
     ]},
-    { text: "CENTCOM reports Iranian drone swarm detected — 15+ UAVs heading toward carrier group", choices: [
-        { label: "ACTIVATE AEGIS — FULL DEFENSE", effects: { tension: 8, budget: -5, domesticApproval: 5, iranAggression: -5 } },
-        { label: "ELECTRONIC COUNTERMEASURES", effects: { tension: 3, fogOfWar: -3 } }
+    { text: "6.4 magnitude earthquake in southwestern Iran. Significant casualties.", choices: [
+        { label: "Offer humanitarian aid immediately", effects: { internationalStanding: 10, tension: -8, budget: -10 }, setFlags: { humanitarian_rescue: true } },
+        { label: "Express condolences only", effects: { internationalStanding: -3 } }
     ]},
-    { text: "Turkish FM calls — Erdogan offers to mediate if you ease sanctions on Turkish banks", choices: [
-        { label: "ACCEPT MEDIATION", effects: { tension: -3, diplomaticCapital: 5, domesticApproval: -2 } },
-        { label: "DECLINE — TOO MANY CONDITIONS", effects: { diplomaticCapital: -2, tension: 1 } }
+    { text: "Oil futures spiked 8% on false seizure rumor.", choices: [
+        { label: "Public denial with intel backing", effects: { fogOfWar: -3, oilPrice: -5 } },
+        { label: "Let it ride", effects: { oilPrice: 3 } }
     ]},
-    { text: "Israeli PM shares Mossad intercept: IRGC planning to sink a tanker with torpedo", choices: [
-        { label: "PREEMPTIVE STRIKE ON SUB", effects: { tension: 10, warPath: 1, iranAggression: -8, domesticApproval: 5 } },
-        { label: "REPOSITION FLEET — DEFENSIVE", effects: { tension: 3, fogOfWar: -5, oilFlowProtection: 5 } }
+    { text: "Large crowd at US embassy Baghdad. Hezbollah flags visible.", choices: [
+        { label: "Reinforce security", effects: { budget: -5 } },
+        { label: "Begin evacuation planning", effects: { budget: -10, domesticApproval: -3 } }
     ]},
-    { text: "GCC states demand emergency meeting — threatening to seek Chinese security guarantee", choices: [
-        { label: "REASSURE ALLIES — SEND ENVOY", effects: { internationalStanding: 5, diplomaticCapital: 3, budget: -5 } },
-        { label: "LET THEM POSTURE", effects: { internationalStanding: -3, chinaRelations: -3 } }
-    ]},
-    { text: "Iranian civilian cargo ship requesting safe passage through strait — families aboard", choices: [
-        { label: "GRANT PASSAGE — ESCORT THROUGH", effects: { internationalStanding: 5, tension: -2, domesticApproval: 3 } },
-        { label: "INSPECT FIRST", effects: { tension: 3, fogOfWar: -2, internationalStanding: -1 } }
-    ]},
-    { text: "AP reporter captured by IRGC near Bandar Abbas — State Dept demanding action", choices: [
-        { label: "PUBLIC DEMAND FOR RELEASE", effects: { domesticApproval: 5, tension: 5, internationalStanding: 3 } },
-        { label: "QUIET BACK-CHANNEL", effects: { tension: -1, diplomaticCapital: -3 } }
-    ]},
-    { text: "Pentagon: Iranian ballistic missile launch detected from Shiraz — trajectory unclear", choices: [
-        { label: "ACTIVATE MISSILE DEFENSE", effects: { tension: 8, budget: -5, domesticApproval: 5 } },
-        { label: "WAIT — COULD BE A TEST", effects: { tension: 3, domesticApproval: -2 } }
-    ]},
-    { text: "Oil tanker crew mutiny — refuse to transit strait without military escort", choices: [
-        { label: "PROVIDE ESCORT IMMEDIATELY", effects: { oilFlow: 3, budget: -5, tension: 2, domesticApproval: 2 } },
-        { label: "NOT OUR PROBLEM", effects: { oilFlow: -3, oilPrice: 3, domesticApproval: -2 } }
-    ]},
-    { text: "Fox News anchor: 'Is the President losing control of the situation?'", choices: [
-        { label: "SEND SPOKESPERSON — STRONG MESSAGE", effects: { domesticApproval: 3, polarization: -2 } },
-        { label: "NO RESPONSE", effects: { domesticApproval: -2, polarization: 2 } }
-    ]},
-    { text: "Iran claims to have captured a US underwater drone near Qeshm Island", choices: [
-        { label: "DEMAND RETURN", effects: { tension: 5, domesticApproval: 3, internationalStanding: 2 } },
-        { label: "DENY IT'S OURS", effects: { tension: 2, fogOfWar: 3 } }
-    ]},
+
+    // ===== CHARACTER-SPECIFIC (INT-26 to INT-35) =====
+    { text: "You posted an internal strategy memo to Truth Social instead of group chat. Up for 47 seconds.", choices: [
+        { label: "Claim intentional \u2014 4D chess", effects: { domesticApproval: 3, fogOfWar: 5 } },
+        { label: "Delete and deny", effects: { domesticApproval: -3 } }
+    ], condition: () => SIM.character?.id === 'trump' },
+
+    { text: "Major donor calling from Mar-a-Lago, demanding to know why oil stocks are down.", choices: [
+        { label: "Schmooze", effects: { domesticApproval: 2 } },
+        { label: "Have assistant handle it", effects: { domesticApproval: -2 } }
+    ], condition: () => SIM.character?.id === 'trump' },
+
+    { text: "Marine unit challenges you to PT on carrier visit. Cameras rolling.", choices: [
+        { label: "Accept and crush it", effects: { domesticApproval: 5, internationalStanding: 3 } },
+        { label: "Politely decline", effects: { domesticApproval: -2 } }
+    ], condition: () => SIM.character?.id === 'hegseth' },
+
+    { text: "Generals split 50/50 on next move. They're looking at you.", choices: [
+        { label: "Decide immediately", effects: { tension: 3 } },
+        { label: "Ask for more analysis", effects: { diplomaticCapital: 2 } }
+    ], condition: () => SIM.character?.id === 'hegseth' },
+
+    { text: 'Unknown number sent coordinates in Dubai: "Tomorrow. 3pm. Come alone. \u2014Z"', choices: [
+        { label: "Go", effects: { fogOfWar: -10, diplomaticCapital: 5 } },
+        { label: "Trace number first", effects: { fogOfWar: -3 } }
+    ], condition: () => SIM.character?.id === 'kushner' },
+
+    { text: "Your father-in-law wants a full briefing over dinner. He has opinions.", choices: [
+        { label: "Brief honestly", effects: { domesticApproval: 3 } },
+        { label: "Sanitized version", effects: {} }
+    ], condition: () => SIM.character?.id === 'kushner' },
+
+    { text: "Someone in your intel briefing is leaking to a hostile Twitch streamer.", choices: [
+        { label: "Find the source", effects: { fogOfWar: -5 } },
+        { label: "Feed false intel through leak", effects: { fogOfWar: -3 } }
+    ], condition: () => SIM.character?.id === 'asmongold' },
+
+    { text: "A subreddit crowdsourced satellite analysis and found something your IC missed.", choices: [
+        { label: "Engage, give credit", effects: { domesticApproval: 5, fogOfWar: -3 } },
+        { label: "Classify it", effects: { fogOfWar: -3, domesticApproval: -5 } }
+    ], condition: () => SIM.character?.id === 'asmongold' },
+
+    { text: 'Prominent figure in your movement denounced you as "globalist capitulation."', choices: [
+        { label: "Attack back, purge", effects: { domesticApproval: -5, polarization: 5 } },
+        { label: "Reach out privately", effects: { domesticApproval: 5 } }
+    ], condition: () => SIM.character?.id === 'fuentes' },
+
+    { text: "Nobody will co-sponsor your resolution. Party leadership won't call back.", choices: [
+        { label: "Bypass Congress, national address", effects: { domesticApproval: 5, polarization: 3 } },
+        { label: "Compromise with Congress", effects: { domesticApproval: -3, internationalStanding: 3 } }
+    ], condition: () => SIM.character?.id === 'fuentes' },
 ];
 
 const _intelSnippets = [
@@ -199,7 +230,243 @@ const ACTION_TIPS = {
     'emergency-coalition':{ desc: 'Form an emergency multinational coalition for strait operations.', effect: 'Standing +5, Budget +15' },
     'escalate':         { desc: 'Increase military escalation level. Unlocks more aggressive options.', effect: 'Escalation +1' },
     'deescalate':       { desc: 'Reduce military escalation. Locks out aggressive options but eases tension.', effect: 'Escalation -1, Tension -5' },
+    // Bible actions
+    'prisoner_exchange':   { desc: 'Propose a hostage/prisoner swap through intermediaries.', effect: 'Tension -5, Approval +5' },
+    'covert_operation':    { desc: 'Plan and execute a clandestine mission against Iranian assets.', effect: 'Iran aggr. -8, Fog -10' },
+    'emergency_budget':    { desc: 'Go to Congress for emergency funding.', effect: 'Budget +200' },
+    'media_offensive':     { desc: 'Coordinated media blitz to shape the narrative.', effect: 'Fog -8, Approval +5' },
+    'backchannel_message': { desc: 'Send a private message to Iran through intermediaries.', effect: 'Tension -3' },
+    'allied_consultation': { desc: 'Conference call with allied leaders to build coalition support.', effect: 'Standing +3, Diplo +3' },
+    'sanctions_adjustment':{ desc: 'Fine-tune sanctions: tighten or loosen specific measures. Delayed effects.', effect: 'Iran econ -3, delayed -5' },
+    'intel_sharing':       { desc: 'Share classified intel with allies to build trust.', effect: 'Standing +5, Diplo +3' },
+    'humanitarian_corridor':{ desc: 'Establish safe passage for civilian vessels and aid.', effect: 'Standing +10, Tension -3' },
+    'economic_stimulus':   { desc: 'Domestic economic action to offset crisis impacts.', effect: 'Approval +8, Oil price -5' },
+    'cyber_recon':         { desc: 'Probe Iranian digital infrastructure for vulnerabilities.', effect: 'Fog -10' },
+    'war_powers_consult':  { desc: 'Brief Congressional leadership on military escalation.', effect: 'Approval +3, Polariz. -3' },
+    'regional_flyover':    { desc: 'Visible show of force with strategic bombers over the Gulf.', effect: 'Tension +5, Iran aggr. -5' },
+    'summit_proposal':     { desc: 'Propose a major international summit on the strait crisis.', effect: 'Standing +8, Diplo -10' },
+    'press_embargo':       { desc: 'Request media blackout on sensitive operations.', effect: 'Fog -5, Approval -2' },
 };
+
+// ======================== BIBLE ACTIONS (Content Bible expansion) ========================
+
+const BIBLE_ACTIONS = [
+    {
+        id: 'prisoner_exchange',
+        name: 'PRISONER EXCHANGE',
+        category: 'diplomacy',
+        ap: 2, cost: 20,
+        condition: () => SIM.seizureCount > 0,
+        execute: function() {
+            const success = SIM.diplomaticCapital > 30 && SIM.iranFactionBalance > 40;
+            if (success) {
+                _applyEffects({ tension: -8, domesticApproval: 10, diplomaticCapital: -8, iranAggression: -5 });
+                addHeadline('BREAKING: Prisoner exchange agreed — crew coming home', 'good');
+                showToast('Prisoner exchange successful!', 'good');
+            } else {
+                _applyEffects({ tension: 3, diplomaticCapital: -5 });
+                addHeadline('Prisoner exchange talks collapse — Iran demands more concessions', 'bad');
+                showToast('Exchange negotiations failed', 'bad');
+            }
+        },
+    },
+    {
+        id: 'covert_operation',
+        name: 'COVERT OPERATION',
+        category: 'intelligence',
+        ap: 3, cost: 25,
+        condition: () => SIM.fogOfWar < 50,
+        execute: function() {
+            const success = Math.random() < 0.7;
+            if (success) {
+                _applyEffects({ iranAggression: -10, fogOfWar: -15, tension: 5, conflictRisk: 3 });
+                addHeadline('Reports of explosion at Iranian military facility — cause unknown', 'neutral');
+                showToast('Covert operation: SUCCESS', 'good');
+            } else {
+                _applyEffects({ tension: 15, internationalStanding: -10, iranAggression: 10, fogOfWar: 5 });
+                addHeadline('Iran claims to have captured US special operations personnel', 'critical');
+                showToast('Covert operation: COMPROMISED', 'bad');
+            }
+        },
+    },
+    {
+        id: 'emergency_budget',
+        name: 'EMERGENCY BUDGET REQUEST',
+        category: 'domestic',
+        ap: 1, cost: 0,
+        condition: () => SIM.budget < 100,
+        execute: function() {
+            const success = SIM.domesticApproval > 40;
+            if (success) {
+                _applyEffects({ budget: 200, domesticApproval: -3, polarization: 3 });
+                addHeadline('Congress approves $200M emergency appropriation for strait operations', 'good');
+                showToast('+$200M budget approved', 'good');
+            } else {
+                _applyEffects({ budget: 50, domesticApproval: -5, polarization: 5 });
+                addHeadline('Congress slashes emergency budget request — only $50M approved', 'bad');
+                showToast('Budget request partially denied', 'bad');
+            }
+        },
+    },
+    {
+        id: 'media_offensive',
+        name: 'MEDIA OFFENSIVE',
+        category: 'domestic',
+        ap: 2, cost: 10,
+        condition: () => SIM.fogOfWar > 60,
+        execute: function() {
+            _applyEffects({ fogOfWar: -8, domesticApproval: 5, internationalStanding: 3, polarization: -2 });
+            addHeadline('White House launches coordinated media offensive on strait crisis', 'neutral');
+            showToast('Media offensive launched', 'good');
+        },
+    },
+    {
+        id: 'backchannel_message',
+        name: 'BACK-CHANNEL MESSAGE',
+        category: 'diplomacy',
+        ap: 1, cost: 0,
+        condition: () => SIM.storyFlags?.backchannel_accepted || SIM.diplomaticCapital > 20,
+        execute: function() {
+            _applyEffects({ tension: -3, diplomaticCapital: -2, iranAggression: -2 });
+            addHeadline('Sources: back-channel communications between Washington and Tehran ongoing', 'neutral');
+            showToast('Message sent through intermediaries', 'good');
+        },
+    },
+    {
+        id: 'allied_consultation',
+        name: 'ALLIED CONSULTATION',
+        category: 'diplomacy',
+        ap: 1, cost: 0,
+        condition: () => SIM.internationalStanding > 30,
+        execute: function() {
+            _applyEffects({ internationalStanding: 3, diplomaticCapital: 3 });
+            addHeadline('Allied leaders express support for US strait strategy in joint call', 'good');
+            showToast('Allied consultation complete', 'good');
+        },
+    },
+    {
+        id: 'sanctions_adjustment',
+        name: 'SANCTIONS ADJUSTMENT',
+        category: 'economic',
+        ap: 1, cost: 0,
+        condition: () => true,
+        execute: function() {
+            _applyEffects({ iranEconomy: -3, tension: 2, iranAggression: 2, internationalStanding: -2 });
+            SIM.pendingEffects.push({
+                cardId: 'sanctions_adj', cardName: 'Sanctions Adjustment', category: 'economic',
+                effects: { iranEconomy: -5, iranAggression: -3 },
+                activateOnDay: SIM.day + 3,
+            });
+            addHeadline('Treasury announces targeted sanctions adjustments on Iranian entities', 'neutral');
+            showToast('Sanctions adjusted — effects in 3 days', 'good');
+        },
+    },
+    {
+        id: 'intel_sharing',
+        name: 'INTELLIGENCE SHARING',
+        category: 'intelligence',
+        ap: 1, cost: 0,
+        condition: () => SIM.fogOfWar < 40 && SIM.internationalStanding > 30,
+        execute: function() {
+            _applyEffects({ internationalStanding: 5, diplomaticCapital: 3, fogOfWar: 3 });
+            addHeadline('US shares classified strait intelligence with coalition partners', 'good');
+            showToast('Intel shared with allies', 'good');
+        },
+    },
+    {
+        id: 'humanitarian_corridor',
+        name: 'HUMANITARIAN CORRIDOR',
+        category: 'diplomacy',
+        ap: 2, cost: 15,
+        condition: () => SIM.warPath >= 2,
+        execute: function() {
+            _applyEffects({ internationalStanding: 10, tension: -3, domesticApproval: 3, oilFlow: 5 });
+            addHeadline('US establishes humanitarian corridor through Strait of Hormuz', 'good');
+            showToast('Humanitarian corridor established', 'good');
+        },
+    },
+    {
+        id: 'economic_stimulus',
+        name: 'ECONOMIC STIMULUS',
+        category: 'economic',
+        ap: 1, cost: 30,
+        condition: () => SIM.oilPrice > 120,
+        execute: function() {
+            _applyEffects({ domesticApproval: 8, oilPrice: -5, budget: -30 });
+            addHeadline('President announces economic stimulus package to offset oil crisis', 'good');
+            showToast('Economic stimulus deployed', 'good');
+        },
+    },
+    {
+        id: 'cyber_recon',
+        name: 'CYBER RECONNAISSANCE',
+        category: 'intelligence',
+        ap: 1, cost: 10,
+        condition: () => SIM.fogOfWar > 30,
+        execute: function() {
+            _applyEffects({ fogOfWar: -10 });
+            const discovery = Math.random() < 0.3;
+            if (discovery) {
+                _applyEffects({ fogOfWar: -10 });
+                addHeadline('NSA cyber reconnaissance reveals Iranian naval operation plans', 'good');
+                showToast('Major intelligence breakthrough!', 'good');
+            } else {
+                addHeadline('Cyber reconnaissance gathering data on Iranian networks', 'neutral');
+                showToast('Cyber recon complete', 'good');
+            }
+        },
+    },
+    {
+        id: 'war_powers_consult',
+        name: 'WAR POWERS CONSULTATION',
+        category: 'domestic',
+        ap: 1, cost: 0,
+        condition: () => SIM.warPath >= 3,
+        execute: function() {
+            _applyEffects({ domesticApproval: 3, polarization: -3, internationalStanding: 3 });
+            SIM.storyFlags.war_powers_briefed = true;
+            addHeadline('President briefs Congressional Gang of Eight on military operations', 'neutral');
+            showToast('Congress briefed — war powers satisfied', 'good');
+        },
+    },
+    {
+        id: 'regional_flyover',
+        name: 'REGIONAL FLYOVER',
+        category: 'military',
+        ap: 1, cost: 15,
+        condition: () => true,
+        execute: function() {
+            _applyEffects({ tension: 5, iranAggression: -5, domesticApproval: 3, internationalStanding: -2 });
+            addHeadline('B-52 strategic bombers conduct visible flyover of Persian Gulf', 'neutral');
+            showToast('Show of force: B-52 flyover', 'good');
+        },
+    },
+    {
+        id: 'summit_proposal',
+        name: 'SUMMIT PROPOSAL',
+        category: 'diplomacy',
+        ap: 2, cost: 20,
+        condition: () => SIM.diplomaticCapital > 40,
+        execute: function() {
+            _applyEffects({ diplomaticCapital: -10, internationalStanding: 8, tension: -5, domesticApproval: 3 });
+            SIM.storyFlags.summit_proposed = true;
+            addHeadline('US proposes international summit on Strait of Hormuz crisis', 'good');
+            showToast('Summit proposed — diplomatic momentum building', 'good');
+        },
+    },
+    {
+        id: 'press_embargo',
+        name: 'PRESS EMBARGO',
+        category: 'domestic',
+        ap: 1, cost: 0,
+        condition: () => SIM.fogOfWar > 50,
+        execute: function() {
+            _applyEffects({ fogOfWar: -5, domesticApproval: -2, polarization: 2 });
+            addHeadline('White House requests voluntary media embargo on strait operations', 'neutral');
+            showToast('Press embargo requested', 'good');
+        },
+    },
+];
 
 // ======================== COLLAPSIBLE SECTION STATE ========================
 
@@ -961,12 +1228,43 @@ function showDailyReport() {
     const arcHtml = arc ? `<div class="story-arc-header" style="color:${arc.color}; font-size:9px; letter-spacing:3px; margin-bottom:2px">\u2501 ${arc.name} \u2501</div>
         <div class="term-line dim" style="font-size:10px; margin-bottom:8px; font-style:italic">${arc.brief}</div>` : '';
 
+    // Active synergies
+    let synergyHtml = '';
+    if (typeof getActiveSynergies === 'function') {
+        const synergies = getActiveSynergies();
+        if (synergies.length > 0) {
+            synergyHtml = `<div style="margin:6px 0; border-top:1px solid #224; padding-top:4px">
+                <div style="font-size:9px; letter-spacing:2px; color:#888; margin-bottom:2px">ACTIVE SYNERGIES</div>
+                ${synergies.map(s => `<div style="color:#ddaa44; font-size:10px">\u2605 ${s.name}: ${s.description}</div>`).join('')}
+            </div>`;
+        }
+    }
+
+    // Card level-ups
+    let levelUpHtml = '';
+    if (typeof getCardLevel === 'function' && SIM.activeStances.length > 0) {
+        const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
+        const levelUps = SIM.activeStances.map(s => {
+            const card = allCards.find(c => c.id === s.cardId);
+            const lvl = getCardLevel(s.cardId);
+            return { card, lvl };
+        }).filter(({ lvl }) => lvl.level >= 2);
+        if (levelUps.length > 0) {
+            levelUpHtml = `<div style="margin:4px 0">
+                ${levelUps.map(({ card, lvl }) => `<div style="color:#44dd88; font-size:10px">\u25B2 ${card ? card.name : '?'}: ${lvl.name} (+${Math.round(lvl.bonus * 100)}%)</div>`).join('')}
+            </div>`;
+        }
+    }
+
     openTerminal(`
         ${arcHtml}
         <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
         <div class="term-line dim" style="margin:4px 0">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
         <div class="term-line ${hlClass}" style="margin:4px 0">${topHeadline.text}</div>
+        ${SIM.iranVisibleMoves && SIM.iranVisibleMoves.length > 0 ? `<div style="margin:4px 0; font-size:10px; color:#dd6644">\u26A0 IRAN: ${SIM.iranVisibleMoves[SIM.iranVisibleMoves.length - 1].text}</div>` : ''}
         <div class="term-line" style="color:#ddaa44;margin:8px 0">\u25B6 ${recommendation}</div>
+        ${synergyHtml}
+        ${levelUpHtml}
 
         <div class="term-btn-row">
             <button class="term-btn" id="btn-maintain">[ BEGIN DAY ]</button>
@@ -1297,6 +1595,34 @@ function showActionPanel() {
             return `<button class="ap-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${action}">${label}${costStr}${tip(action)}</button>`;
         }
 
+        // Generate bible actions grouped by category
+        function _getBibleActionsHtml() {
+            const catColors = { intelligence: '#44dd88', diplomacy: '#4488dd', military: '#dd4444', domestic: '#aa88dd', economic: '#ddaa44' };
+            const catLabels = { intelligence: 'INTELLIGENCE+', diplomacy: 'DIPLOMACY+', military: 'MILITARY+', domestic: 'DOMESTIC+', economic: 'ECONOMIC+' };
+            const available = BIBLE_ACTIONS.filter(a => {
+                try { return a.condition(); } catch(e) { return false; }
+            });
+            if (available.length === 0) return '';
+            const grouped = {};
+            available.forEach(a => {
+                if (!grouped[a.category]) grouped[a.category] = [];
+                grouped[a.category].push(a);
+            });
+            let html = '<div class="ap-category"><div class="ap-cat-header" style="color:#88ddaa;cursor:pointer" id="bible-actions-toggle">\u25B6 MORE ACTIONS</div><div id="bible-actions-list" style="display:none">';
+            for (const cat of Object.keys(grouped)) {
+                html += `<div class="ap-cat-header" style="color:${catColors[cat] || '#888'};font-size:9px;margin-top:6px">${catLabels[cat] || cat.toUpperCase()}</div>`;
+                grouped[cat].forEach(a => {
+                    const costStr = a.cost ? ` <span class="ap-cost">$${a.cost}M</span>` : '';
+                    const apStr = a.ap > 1 ? ` <span class="ap-cost">${a.ap}AP</span>` : '';
+                    const budgetOk = !a.cost || SIM.budget >= a.cost;
+                    const apOk = ap >= a.ap;
+                    html += `<button class="ap-btn ${!apOk || !budgetOk ? 'disabled' : ''}" data-action="bible_${a.id}">${a.name}${costStr}${apStr}${tip(a.id)}</button>`;
+                });
+            }
+            html += '</div></div>';
+            return html;
+        }
+
         // Can escalate if not already at max and AP available
         const canEscalate = esc < 5 && ap > 0;
         const nextEsc = ESCALATION_LADDER[Math.min(esc + 1, 5)];
@@ -1365,6 +1691,7 @@ function showActionPanel() {
 
                 ${specialHtml}
                 ${_getCharacterActions(ap)}
+                ${_getBibleActionsHtml()}
             </div>
 
             <div class="ap-win-hint">
@@ -1395,6 +1722,19 @@ function showActionPanel() {
             swapBtn.addEventListener('click', () => {
                 hideActionPanel();
                 showAdjustStrategy();
+            });
+        }
+
+        // Wire up MORE ACTIONS toggle
+        const bibleToggle = panel.querySelector('#bible-actions-toggle');
+        if (bibleToggle) {
+            bibleToggle.addEventListener('click', () => {
+                const list = panel.querySelector('#bible-actions-list');
+                if (list) {
+                    const hidden = list.style.display === 'none';
+                    list.style.display = hidden ? '' : 'none';
+                    bibleToggle.textContent = (hidden ? '\u25BC' : '\u25B6') + ' MORE ACTIONS';
+                }
             });
         }
     }
@@ -2005,6 +2345,27 @@ function _executeAction(actionId, rerenderFn) {
             break;
 
         default:
+            // Bible actions (content bible expansion)
+            if (actionId.startsWith('bible_')) {
+                const bibleId = actionId.replace('bible_', '');
+                const bibleAction = BIBLE_ACTIONS.find(a => a.id === bibleId);
+                if (!bibleAction) return;
+                if (SIM.actionPoints < bibleAction.ap) return;
+                if (bibleAction.cost && SIM.budget < bibleAction.cost) return;
+                try { if (!bibleAction.condition()) return; } catch(e) { return; }
+                if (bibleAction.cost) {
+                    SIM.budget -= bibleAction.cost;
+                    showFloatingNumber('budget', -bibleAction.cost);
+                }
+                // Bible actions spend their own AP amount (may be >1)
+                // We subtract (ap - 1) here because the common code below subtracts 1
+                if (bibleAction.ap > 1) {
+                    SIM.actionPoints = Math.max(0, SIM.actionPoints - (bibleAction.ap - 1));
+                }
+                bibleAction.execute();
+                toastMsg = ''; // execute() handles its own toasts
+                break;
+            }
             // Kushner contact calls
             if (actionId.startsWith('call-contact-')) {
                 const contactId = actionId.replace('call-contact-', '');
@@ -2106,7 +2467,9 @@ function showInterrupt(afterCallback) {
     const panel = document.getElementById('action-panel');
     if (!panel) { if (afterCallback) afterCallback(); return; }
 
-    const interrupt = INTERRUPTS[Math.floor(Math.random() * INTERRUPTS.length)];
+    const eligible = INTERRUPTS.filter(i => !i.condition || i.condition());
+    if (eligible.length === 0) { if (afterCallback) afterCallback(); return; }
+    const interrupt = eligible[Math.floor(Math.random() * eligible.length)];
     if (typeof SFX !== 'undefined') SFX.klaxon();
 
     // Create interrupt overlay inside the action panel
@@ -2137,6 +2500,13 @@ function showInterrupt(afterCallback) {
 
             // Apply effects
             _applyEffects(choice.effects);
+
+            // Apply story flags if present
+            if (choice.setFlags && SIM.storyFlags) {
+                for (const [flag, val] of Object.entries(choice.setFlags)) {
+                    SIM.storyFlags[flag] = val;
+                }
+            }
 
             const gaugesAfter = calculateGauges();
 
@@ -2569,6 +2939,29 @@ function showGameOverScreen() {
         ? _getReactionImage('victory')
         : _getReactionImage('defeat');
 
+    // Determine epilogue from character
+    let epilogueText = '';
+    let epilogueImg = '';
+    if (SIM.character?.epilogues) {
+        const ep = SIM.character.epilogues;
+        if (SIM.gameWon && SIM.warPath <= 1 && ep.diplomatic) {
+            epilogueText = ep.diplomatic;
+            epilogueImg = 'assets/epilogue-diplomatic.png';
+        } else if (SIM.gameWon && SIM.warPath >= 2 && ep.military) {
+            epilogueText = ep.military;
+            epilogueImg = 'assets/epilogue-military.png';
+        } else if (!SIM.gameWon && ep.decline) {
+            epilogueText = ep.decline;
+            epilogueImg = 'assets/epilogue-managed-decline.png';
+        } else if (SIM.gameWon && ep.diplomatic) {
+            epilogueText = ep.diplomatic;
+            epilogueImg = 'assets/epilogue-diplomatic.png';
+        }
+    }
+    if (!SIM.gameWon && !epilogueText) {
+        epilogueImg = 'assets/epilogue-defeat.png';
+    }
+
     openTerminal(`
         <img src="${outcomeImg}" class="gameover-art" alt="${SIM.gameWon ? 'Victory' : 'Defeat'}">
 
@@ -2584,6 +2977,12 @@ function showGameOverScreen() {
         <div class="gameover-gauge-breakdown">${gaugeBreakdown}</div>
 
         <div class="gameover-reason">${SIM.gameOverReason}</div>
+
+        ${epilogueText ? `<div class="term-section">
+            <div class="term-section-label">EPILOGUE</div>
+            ${epilogueImg ? `<img src="${epilogueImg}" class="gameover-epilogue-art" alt="Epilogue" style="width:100%; max-width:480px; image-rendering:pixelated; margin:8px auto; display:block">` : ''}
+            <div class="gameover-epilogue" style="color:#44dd88; font-style:italic; line-height:1.6; padding:8px 0">${epilogueText}</div>
+        </div>` : ''}
 
         <div class="term-section">
             <div class="term-section-label">FINAL STATS</div>
