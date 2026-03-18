@@ -44,6 +44,7 @@ function resizeCanvas() {
 }
 
 function renderMap() {
+    if (SIM.phase === 'dayplay' || SIM.phase === 'morning' || SIM.phase === 'event' || SIM.phase === 'overnight') return;
     // Sync canvas resolution with CSS size every frame
     resizeCanvas();
 

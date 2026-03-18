@@ -260,6 +260,12 @@ body {
     max-width: 800px;
     position: relative;
     border-bottom: none;
+    animation: nfFadeIn 0.3s ease-out;
+}
+
+@keyframes nfFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .nf-entry.nf-has-portrait {
@@ -301,8 +307,9 @@ body {
 
 /* Scene entries: primary narrative, clean paragraphs */
 .nf-scene {
-    border-left: none;
-    padding-left: 0;
+    border-left: 3px solid #55aa77;
+    padding-left: 12px;
+    background: rgba(85, 170, 119, 0.03);
 }
 
 .nf-scene-text {
@@ -313,8 +320,8 @@ body {
 
 /* Dialogue entries: bright green speaker name */
 .nf-dialogue {
-    border-left: none;
-    padding-left: 0;
+    border-left: 3px solid #448866;
+    padding-left: 16px;
 }
 
 .nf-dialogue.nf-has-portrait {
@@ -347,17 +354,18 @@ body {
     display: none; /* remove prefix squares */
 }
 
-.nf-alert-critical { color: var(--red); font-size: 15px; }
-.nf-alert-warning  { color: var(--yellow); font-size: 15px; }
-.nf-alert-good     { color: var(--green); font-size: 15px; }
+.nf-alert-critical { color: var(--red); font-size: 15px; border-left: 3px solid #ff3333; padding-left: 12px; background: rgba(255, 50, 50, 0.05); }
+.nf-alert-warning  { color: var(--yellow); font-size: 15px; border-left: 3px solid #ddaa44; padding-left: 12px; background: rgba(221, 170, 68, 0.03); }
+.nf-alert-good     { color: var(--green); font-size: 15px; border-left: 3px solid #44dd88; padding-left: 12px; }
 
 /* Stat entries: very small, dim, barely visible */
 .nf-stat {
     font-size: 11px;
     opacity: 0.35;
-    padding: 1px 0;
+    padding: 2px 12px;
     margin-bottom: 0;
     color: #2a5a3a;
+    border-left: none;
 }
 
 .nf-stat-indicator {
@@ -370,7 +378,13 @@ body {
 
 /* Headline entries */
 .nf-headline {
-    padding: 2px 0;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: #88aa88;
+    border-left: 3px solid #335533;
+    padding: 2px 0 2px 12px;
+    opacity: 0.8;
 }
 
 .nf-headline-text {
@@ -383,8 +397,11 @@ body {
 /* Day breaks */
 .nf-day-break {
     text-align: center;
+    border-left: none;
     padding: 12px 0;
     margin: 8px 0;
+    border-top: 1px solid #223322;
+    border-bottom: 1px solid #223322;
 }
 
 .nf-day-break-line {
@@ -497,7 +514,7 @@ body {
 
 #char-panel {
     flex-shrink: 1;
-    max-height: 130px;
+    max-height: 120px;
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
     display: flex;
@@ -507,8 +524,8 @@ body {
 }
 
 .chp-portrait {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
     image-rendering: auto;
     border: 1px solid var(--border);
@@ -589,6 +606,7 @@ body {
 /* ======================== TACTICAL MAP ======================== */
 
 #map-sidebar {
+    display: none;
     flex: 1 1 200px;
     min-height: 100px;
     max-height: 200px;

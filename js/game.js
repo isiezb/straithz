@@ -66,7 +66,9 @@
 
                 // Render tactical map in sidebar
                 if (typeof renderMap === 'function' && MAP.canvas && MAP.canvas.offsetParent !== null) {
-                    renderMap();
+                    if (SIM.phase !== 'dayplay' && SIM.phase !== 'morning' && SIM.phase !== 'event' && SIM.phase !== 'overnight') {
+                        renderMap();
+                    }
                 }
 
                 // Clean up expired effects

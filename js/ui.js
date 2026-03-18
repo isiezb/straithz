@@ -3782,6 +3782,27 @@ function resolveDecision(event, choiceIdx, customScene) {
         }
     }
 
+    // Echo event scene + character flavor + consequence to narrative feed
+    const eventScenes = DATA['event-scenes'];
+    if (eventScenes && eventScenes.scenes && eventScenes.scenes[event.id]) {
+        const sceneData = eventScenes.scenes[event.id];
+        // Scene description
+        if (sceneData.scene) {
+            addNarrative('scene', sceneData.scene);
+        }
+        // Character flavor
+        if (sceneData.characterFlavor && SIM.character && sceneData.characterFlavor[SIM.character.id]) {
+            addNarrative('advisor', sceneData.characterFlavor[SIM.character.id], {
+                speaker: SIM.character.name,
+                portrait: SIM.character.id
+            });
+        }
+        // Consequence text for chosen option
+        if (sceneData.consequences && sceneData.consequences[choiceIdx]) {
+            addNarrative('consequence', sceneData.consequences[choiceIdx]);
+        }
+    }
+
     // Chain event hint
     const chainHint = choice.chainEvent
         ? `<div class="de-chain-hint">${choice.chainHint || 'This decision will have consequences...'}</div>`
