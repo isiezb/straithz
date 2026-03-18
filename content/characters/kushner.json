@@ -138,8 +138,12 @@
     "uniqueResourceLow": "Exposure is low. Good. The back-channels work best when nobody's watching.",
     "uniqueResourceCritical": "Someone is leaking. Exposure is critical. If the back-channels get exposed, every deal collapses."
   },
-  "restrictedCards": [],
-  "restrictionRefusals": {},
+  "restrictedCards": ["missile_strike", "active_intercept", "shock_awe"],
+  "restrictionRefusals": {
+    "missile_strike": "[Kushner closes the briefing folder with a quiet snap] 'Missile strikes destroy more than targets — they destroy relationships. Every contact I've built in the Gulf goes dark the moment Tomahawks fly. Years of trust, gone in a news cycle. Find another way.'",
+    "active_intercept": "[Kushner removes his glasses, polishes them slowly] 'Active intercepts put American vessels in direct confrontation with Iranian boats. The moment CNN has footage of a naval clash, every back-channel in the region shuts down. My contacts don't work with cowboys.'",
+    "shock_awe": "[Kushner's voice drops, almost gentle] 'Shock and awe. You know what that looks like from Riyadh? From Abu Dhabi? It looks like America choosing bombs over deals. MBS calls me because I'm the alternative to this. Take this off the table.'"
+  },
   "epilogues": {
     "diplomatic": "Nobody knows what you did. That's the point. The framework that ended the crisis has seven signatories and zero fingerprints. The Omani intermediary got a medal. Araghchi got promoted. MBS got the security guarantee he wanted. And you got what you always get: the satisfaction of having been in the room when it happened, and the quiet knowledge that without you, there would have been no room. Your exposure meter, miraculously, peaked and receded. The investigations found nothing because there was nothing to find. Just a man making phone calls. Abraham Accords II will be the official name, though the actual accord looks nothing like what you originally envisioned. It's better. It's real.",
     "military": "The back-channels went silent when the bombs started falling. Every contact you built, every trust you earned, every whispered conversation in hotel lobbies across the Gulf — all of it evaporated in the first strike package. MBS stopped returning calls. Araghchi disappeared. The framework you spent weeks building became classified wreckage. But the military victory happened anyway, and you survived, which in Washington is its own kind of win. The exposure never quite caught you. The investigations found shadows, not substance. You'll be back.",

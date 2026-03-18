@@ -132,8 +132,11 @@
     "uniqueResourceLow": "Political capital is draining. The donor calls are getting shorter. We need a win the media can't spin away.",
     "uniqueResourceCritical": "Congress is drafting articles. The donors are pulling out. One more public win or it's over."
   },
-  "restrictedCards": [],
-  "restrictionRefusals": {},
+  "restrictedCards": ["humanitarian_corridor", "war_crimes_tribunal"],
+  "restrictionRefusals": {
+    "humanitarian_corridor": "[Trump waves his hand dismissively] 'Humanitarian corridor? You want me to send aid convoys to people who burn American flags? That's not strength — that's a photo op for the other side. Next.'",
+    "war_crimes_tribunal": "[Trump leans back, arms crossed, jaw set] 'War crimes tribunal. Let me tell you something about international courts — they're set up to go after US. Not Iran, not China — us. I'm not handing them the ammunition. Absolutely not.'"
+  },
   "epilogues": {
     "diplomatic": "They said you couldn't do it. They said you were too unpredictable, too brash, too everything. And maybe they were right about all of that. But the deal is signed. Not the grand deal. You learned that grand deals are for Nobel speeches, not for the Persian Gulf. The deal that worked was smaller, uglier, full of compromises your base doesn't love and Iran's hardliners hate. But tankers are sailing. Oil is flowing. And on the cover of Time magazine, for the third time (but who's counting), is your face, with the headline: \"The Deal Nobody Wanted.\" You frame it anyway.",
     "military": "The carrier group is coming home. You're on the flight deck for the photo op, obviously. The sailors love you. The polls love you. The defense contractors really love you. Iran's navy is functionally neutered, Tangsiri is under house arrest, and the strait is open under American escort. It cost more than anyone will publicly admit, in dollars, in standing, in the quiet funerals that didn't make the news. But you learned something in this crisis that surprised even you: sometimes the threat of the deal is more powerful than the deal itself. You'll never say that out loud, of course.",

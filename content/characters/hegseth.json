@@ -138,8 +138,11 @@
     "uniqueResourceLow": "The brass is questioning my judgment. I need clean operations and visible results to rebuild command authority.",
     "uniqueResourceCritical": "The Joint Chiefs have lost confidence. One more clean operation or they ask for my stars."
   },
-  "restrictedCards": [],
-  "restrictionRefusals": {},
+  "restrictedCards": ["back_channel", "summit_proposal"],
+  "restrictionRefusals": {
+    "back_channel": "[Hegseth sets his jaw, voice flat] 'Back-channel diplomacy. You want me to send someone to whisper in Tehran's ear while our sailors are in harm's way? That's not how warriors solve problems. You negotiate from a position of strength, not from the shadows.'",
+    "summit_proposal": "[Hegseth shakes his head slowly] 'A summit. You want me to sit across a table from the people who seized our ships and smile for cameras. The troops would lose all respect for this office. We meet the enemy on the battlefield, not at a banquet.'"
+  },
   "epilogues": {
     "diplomatic": "You never expected diplomacy to be your legacy. The war plans were ready. The carriers were in position. But somewhere between the third carrier group and the first ceasefire, you realized that the best victory is the one where your troops come home without a scratch. The Pentagon will never fully accept you, but the troops know. They know you were ready to fight and chose not to.",
     "military": "The Pentagon will never fully accept you. You know that. The old guard with their Ivy League degrees and their Clausewitz quotes will always see you as the TV guy who got lucky. But the troops know. The ones who were on the Eisenhower when the fast-boats came. The ones who heard your voice on the radio saying \"weapons free\" and trusted it. You walk the halls of the Pentagon now with a different kind of authority. Not the kind that comes from rings or stars, but the kind that comes from having been right when it mattered. Your memoir will be a bestseller. The chapter on Day 43 will be the one they excerpt.",

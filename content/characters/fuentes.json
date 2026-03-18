@@ -138,8 +138,13 @@
     "uniqueResourceLow": "The base is getting impatient. They need to see troops coming home, not more deployments.",
     "uniqueResourceCritical": "We're losing the base. If they stop showing up to rallies, Congress smells blood. Address the nation NOW."
   },
-  "restrictedCards": [],
-  "restrictionRefusals": {},
+  "restrictedCards": ["gulf_coalition", "un_resolution", "humanitarian_corridor", "summit_proposal"],
+  "restrictionRefusals": {
+    "gulf_coalition": "[Fuentes slams his palm on the desk] 'A COALITION? With who — the Saudis? The Emirates? Every 'coalition' in history has been America paying the bills while other countries take credit. The whole point of America First is that we stop being the world's ATM.'",
+    "un_resolution": "[Fuentes laughs bitterly] 'A UN resolution. You want to go begging to an organization where Iran has a seat, China has a veto, and America pays 22% of the budget for the privilege of being lectured. The UN is a globalist theater. We don't perform there.'",
+    "humanitarian_corridor": "[Fuentes stands, voice rising] 'Not a single dollar of American taxpayer money leaves this country to fund humanitarian corridors for people who celebrate when Americans die. That's not isolationism — that's common sense. The aid stays home.'",
+    "summit_proposal": "[Fuentes crosses his arms, immovable] 'A summit legitimizes the enemy. You sit down with Iran, you're telling the world they're our equals. The base didn't elect us to shake hands with mullahs. They elected us to bring our people HOME. No summits.'"
+  },
   "epilogues": {
     "diplomatic": "You didn't fire a shot. That was the promise, and against every prediction, every editorial, every smirking pundit who said the isolationist couldn't handle a real crisis, you kept it. The strait is open not because you forced it open but because you made it more expensive for Iran to keep it closed than to let it flow. Your base calls it the greatest foreign policy achievement since... well, they can't agree on the comparison, which is fine. Standing at 40 doesn't sound impressive until you remember it started at 12 and every expert said it would hit zero. The allies who mocked you are quiet now. They're not grateful. They'll never be grateful. But they're quiet. And the troops are home. Every single one of them.",
     "military": "You promised America First and delivered America at War. The base fractured the moment the first bomb dropped. Half of them understood that sometimes you fight to protect what matters. The other half never forgave you. The strait is open. Iran is cowed. The troops are coming home, eventually. But the movement you built, the coalition that was supposed to change everything — it didn't survive contact with reality. You won the crisis and lost the cause.",

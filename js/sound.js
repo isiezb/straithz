@@ -80,6 +80,23 @@ const SFX = {
         }
     },
 
+    /** Error buzz — denied/refused action */
+    error() {
+        if (!this._ctx || this._muted) return;
+        const t = this._ctx.currentTime;
+        const osc = this._ctx.createOscillator();
+        const gain = this._gain(0.3);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.linearRampToValueAtTime(100, t + 0.15);
+        gain.gain.setValueAtTime(0.04, t);
+        gain.gain.linearRampToValueAtTime(0.04, t + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        osc.connect(gain);
+        osc.start(t);
+        osc.stop(t + 0.2);
+    },
+
     /** Phone ring — diplomatic call */
     phone() {
         if (!this._ctx || this._muted) return;

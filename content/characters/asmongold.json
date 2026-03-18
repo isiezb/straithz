@@ -138,8 +138,12 @@
     "uniqueResourceLow": "Chat, credibility is dropping. Our analysis isn't landing. We need a correct prediction or we lose the audience.",
     "uniqueResourceCritical": "Credibility is almost gone. One wrong call and nobody trusts us. We need a verified prediction NOW."
   },
-  "restrictedCards": [],
-  "restrictionRefusals": {},
+  "restrictedCards": ["missile_strike", "carrier_strike", "shock_awe"],
+  "restrictionRefusals": {
+    "missile_strike": "[Asmongold holds up both hands] 'Dude, no. Chat, he wants to launch missiles. I'm a content creator who got elected on a meme — I am NOT the guy who starts pressing the red buttons. We do intelligence, we do OSINT, we do not do Tomahawk diplomacy.'",
+    "carrier_strike": "[Asmongold spins his chair away from the screen] 'A carrier strike group? Chat, I don't even know what half the buttons on that thing do. You want me to order a floating city to start shooting? That's a skill issue I'm not willing to test. Hard pass.'",
+    "shock_awe": "[Asmongold stares at the camera, dead serious for once] 'OK real talk chat, this is the one card that could literally end the world and also my channel. I got here by being the guy who EXPOSES bad decisions, not the guy who MAKES them. This stays in the deck.'"
+  },
   "epilogues": {
     "diplomatic": "You streamed the final press conference. Twelve million concurrent viewers. The chat was, for once, almost entirely supportive, though someone did manage to post the crab emoji forty thousand times. The intelligence community will study your methods for decades: the fusion of open-source analysis with classified assets, the radical transparency that somehow made secrecy more effective, the way you turned public attention into a strategic weapon. You broke every rule they taught at Langley and got better results than anyone who followed them. The fog of war, for the first time in the history of modern conflict, was lower at the end than at the beginning.",
     "military": "Chat wanted content and you gave them content. The problem is, the content was a war. Your credibility carried you further than anyone expected, but in the end, the missiles don't care about your viewer count. The military victory happened not because of your analysis but despite it — the generals did what generals do, and you provided cover. Your stream of the final operation hit 20 million viewers. The Pentagon banned streaming from classified briefings the next day.",

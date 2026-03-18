@@ -1611,14 +1611,20 @@ function _showCardReaction(card) {
  * Show a character restriction reaction in the narrative feed when a
  * restricted card category is encountered.
  */
-function _showCardRestrictionReaction() {
+function _showCardRestrictionReaction(cardId) {
     if (!SIM.character) return;
     const charId = SIM.character.id;
     const restrictions = DATA.dialogue && DATA.dialogue.cardRestrictions;
     if (!restrictions || !restrictions[charId]) return;
 
-    const text = restrictions[charId];
+    const charRefusals = restrictions[charId];
+    // Per-card lookup with _default fallback (legacy: plain string)
+    const text = typeof charRefusals === 'string'
+        ? charRefusals
+        : (charRefusals[cardId] || charRefusals._default || null);
     if (!text) return;
+
+    if (typeof SFX !== 'undefined' && SFX.error) SFX.error();
 
     if (typeof addNarrative === 'function') {
         addNarrative('dialogue', text, { speaker: SIM.character.name || charId.toUpperCase(), portrait: charId + '-angry' });
@@ -1700,10 +1706,11 @@ function showAdjustStrategy() {
                         </div>`;
                     }).join('') : '<div class="term-line dim">No replacements available.</div>'}
                     ${restrictedCards.length > 0 ? restrictedCards.map((card, i) => {
-                        return `<div class="adjust-card restricted" data-restricted="${i}" style="opacity:0.35;cursor:not-allowed;border-color:#553333">
-                            <div class="adjust-card-cat" style="color:#884444">${card.category.toUpperCase()} <span style="font-size:9px;color:#884444">[RESTRICTED]</span></div>
-                            <div class="adjust-card-name" style="color:#666">${card.name}</div>
-                            <div class="adjust-card-desc" style="color:#444">${card.description}</div>
+                        const charColor = SIM.character ? ({trump:'#dd8844',hegseth:'#44aa88',kushner:'#8888dd',asmongold:'#aa44dd',fuentes:'#dd4444'}[SIM.character.id] || '#553333') : '#553333';
+                        return `<div class="adjust-card restricted" data-restricted="${i}" data-restricted-card="${card.id}" style="opacity:0.5;cursor:pointer;border-color:${charColor};border-style:dashed">
+                            <div class="adjust-card-cat" style="color:#884444">${card.category.toUpperCase()} <span style="font-size:9px;color:${charColor}">[REFUSED]</span></div>
+                            <div class="adjust-card-name" style="color:#777">${card.name}</div>
+                            <div class="adjust-card-desc" style="color:#555">${card.description}</div>
                         </div>`;
                     }).join('') : ''}
                 </div>
@@ -1743,11 +1750,11 @@ function showAdjustStrategy() {
             });
         });
 
-        // Restricted card click — show character refusal
+        // Restricted card click — show character refusal in their voice
         TERMINAL.querySelectorAll('[data-restricted]').forEach(el => {
             el.addEventListener('click', () => {
-                _showCardRestrictionReaction();
-                showToast('Card restricted for this character', 'warning');
+                const cardId = el.dataset.restrictedCard;
+                _showCardRestrictionReaction(cardId);
             });
         });
 
@@ -3190,6 +3197,13 @@ function _executeAction(actionId, rerenderFn) {
         }
     });
 
+    // Track playstyle tendency from action effects
+    if (typeof classifyPlaystyleFromEffects === 'function') {
+        const efx = {};
+        _scaledKeys.forEach(k => { efx[k] = SIM[k] - _snap[k]; });
+        classifyPlaystyleFromEffects(efx);
+    }
+
     // --- Narrative scene for this action ---
     if (typeof addNarrative === 'function') {
         _narrateAction(actionId, _snap, _scaledKeys);
@@ -4184,6 +4198,11 @@ function resolveDecision(event, choiceIdx, customScene) {
         type: event.crisis ? 'crisis' : 'decision',
     });
 
+    // Track playstyle tendency from decision effects
+    if (typeof classifyPlaystyleFromEffects === 'function') {
+        classifyPlaystyleFromEffects(choice.effects);
+    }
+
     addHeadline(`Decision: ${event.title} \u2014 ${choice.text}`, 'normal');
 
     SIM.decisionHistory.push({
@@ -4412,6 +4431,40 @@ function generatePostMortem() {
     return breakdownHtml + decisionHtml;
 }
 
+// ======================== ROADS NOT TAKEN ========================
+
+function _buildRoadsNotTaken() {
+    if (!SIM.decisionHistory || SIM.decisionHistory.length === 0) return '';
+    const allEvents = typeof CRISIS_EVENTS !== 'undefined'
+        ? DECISION_EVENTS.concat(CRISIS_EVENTS) : DECISION_EVENTS;
+
+    const entries = [];
+    for (const d of SIM.decisionHistory) {
+        const ev = allEvents.find(e => e.id === d.id);
+        if (!ev || !ev.choices || ev.choices.length < 2) continue;
+        const rejected = ev.choices
+            .filter(c => c.text !== d.choiceText && c.text)
+            .map(c => c.text);
+        if (rejected.length === 0) continue;
+        entries.push({ title: d.title, day: d.day, chosen: d.choiceText, rejected });
+    }
+
+    if (entries.length === 0) return '';
+
+    // Show up to 5 most impactful (latest = most dramatic in the arc)
+    const shown = entries.slice(-5).reverse();
+    let html = '<div class="term-section"><div class="term-section-label">ROADS NOT TAKEN</div>';
+    for (const e of shown) {
+        html += `<div class="term-line" style="margin-bottom:8px">`;
+        html += `<span class="dim">Day ${e.day}:</span> <span style="color:#44dd88">${e.title}</span><br>`;
+        html += `<span class="dim">You chose:</span> ${e.chosen}<br>`;
+        html += `<span class="dim">Instead of:</span> <span style="color:#ddaa44">${e.rejected.join(' / ')}</span>`;
+        html += `</div>`;
+    }
+    html += '</div>';
+    return html;
+}
+
 // ======================== GAME OVER ========================
 
 function showGameOverScreen() {
@@ -4524,6 +4577,8 @@ function showGameOverScreen() {
             <div class="term-section-label">PERFORMANCE</div>
             ${postMortem}
         </div>
+
+        ${_buildRoadsNotTaken()}
 
         <div class="term-btn-row">
             <button class="term-btn" id="btn-restart">[ PLAY AGAIN ]</button>

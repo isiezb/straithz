@@ -133,6 +133,12 @@ function advanceToMorning() {
         }
     }
     if (typeof updateNarrativeHeader === 'function') updateNarrativeHeader();
+
+    // Debug: log playstyle tendency at end of each day
+    if (SIM.playstyleTendency) {
+        console.log('Playstyle:', SIM.playstyleTendency, '| Dominant:', typeof getDominantPlaystyle === 'function' ? getDominantPlaystyle() : 'N/A');
+    }
+
     showDailyReport();
 }
 

@@ -46,7 +46,7 @@ const CHARACTERS = [
             allCards: true,        // Sees ALL cards, not category-filtered
             effectMultiplier: 1.5, // All card effects amplified
             maxPicks: 4,           // Picks 4 instead of 3
-            restricted: [],
+            restricted: ['humanitarian_corridor', 'war_crimes_tribunal'],
             exclusiveIds: ['art_of_deal'],
         },
 
@@ -231,7 +231,7 @@ const CHARACTERS = [
             effectMultiplier: 1.0,
             maxPicks: 3,
             militaryAuthorityCost: true, // Military cards cost authority
-            restricted: [],
+            restricted: ['back_channel', 'summit_proposal'],
             exclusiveIds: ['shock_awe'],
         },
 

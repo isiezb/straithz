@@ -5,7 +5,7 @@
  * Reads organized content files from content/ directory
  * and compiles them into the 12 runtime JSON files in data/
  * 
- * Usage: node content/build.js [--out data/] [--validate] [--dry-run]
+ * Usage: node content/build.js [--out data/] [--validate] [--dry-run] [--watch]
  */
 
 const fs = require('fs');
@@ -21,6 +21,7 @@ const args = process.argv.slice(2);
 const outDir = args.includes('--out') ? args[args.indexOf('--out') + 1] : DEFAULT_OUT;
 const validateOnly = args.includes('--validate');
 const dryRun = args.includes('--dry-run');
+const watchMode = args.includes('--watch');
 
 // --- HELPERS ---
 const warnings = [];
@@ -209,6 +210,17 @@ function buildDialogueJSON(chars) {
   // Load UI text fields (titleScreen, characterSelect, loreScreen, resourceTiers, cardRestrictions)
   const uiText = readJSON('dialogue/ui-text.json') || {};
 
+  // Build per-card restriction refusals from character files, with ui-text fallbacks
+  const cardRestrictions = {};
+  for (const [id, c] of Object.entries(chars)) {
+    if (c.restrictionRefusals && Object.keys(c.restrictionRefusals).length > 0) {
+      cardRestrictions[id] = c.restrictionRefusals;
+    } else if (uiText.cardRestrictions && uiText.cardRestrictions[id]) {
+      // Fallback: wrap generic string as _default
+      cardRestrictions[id] = { _default: uiText.cardRestrictions[id] };
+    }
+  }
+
   return {
     advisorReactions,
     ...(uiText.resourceTiers && { resourceTiers: uiText.resourceTiers }),
@@ -217,7 +229,7 @@ function buildDialogueJSON(chars) {
     ...(uiText.loreScreen && { loreScreen: uiText.loreScreen }),
     idleAsides,
     cardReactions,
-    ...(uiText.cardRestrictions && { cardRestrictions: uiText.cardRestrictions })
+    cardRestrictions
   };
 }
 
@@ -397,7 +409,7 @@ function validate(chars, events, manifest) {
   
   for (const evt of events) {
     if (!evt.id) { error(`Event missing 'id'`); continue; }
-    if (eventIds.has(evt.id)) warn(`Duplicate event ID: '${evt.id}'`);
+    if (eventIds.has(evt.id)) error(`Duplicate event ID: '${evt.id}'`);
     eventIds.add(evt.id);
     
     if (!evt.title) warn(`${evt.id}: missing 'title'`);
@@ -422,6 +434,48 @@ function validate(chars, events, manifest) {
     }
   }
   
+  // Validate choice effects reference known SIM properties
+  const KNOWN_METRICS = new Set([
+    'tension', 'oilFlow', 'oilPrice', 'domesticApproval', 'internationalStanding',
+    'budget', 'fogOfWar', 'warPath', 'conflictRisk', 'iranAggression',
+    'diplomaticCapital', 'seizureCount', 'interceptCount', 'aipacPressure',
+    'uniqueResource', 'dealValue'
+  ]);
+  for (const evt of events) {
+    if (!evt.choices) continue;
+    for (let i = 0; i < evt.choices.length; i++) {
+      const choice = evt.choices[i];
+      if (!choice.effects || Object.keys(choice.effects).length === 0) {
+        warn(`${evt.id}: choice ${i} has no effects`);
+      }
+      for (const key of Object.keys(choice.effects || {})) {
+        if (!KNOWN_METRICS.has(key)) warn(`${evt.id}: choice ${i} references unknown metric '${key}'`);
+      }
+    }
+  }
+
+  // Validate advisor reactions cover all characters for key event types
+  for (const id of CHARACTERS) {
+    const c = chars[id];
+    if (!c) continue;
+    if (!c.advisorReactions) { warn(`${id}: missing advisorReactions entirely`); continue; }
+    const required = ['uniqueResourceLow', 'uniqueResourceCritical'];
+    for (const r of required) {
+      if (!c.advisorReactions[r]) warn(`${id}: missing advisorReaction '${r}'`);
+    }
+  }
+
+  // Check event images exist on disk
+  if (manifest && manifest.events) {
+    for (const [evtId, imgData] of Object.entries(manifest.events)) {
+      const imgPath = typeof imgData === 'string' ? imgData : imgData.default;
+      if (imgPath) {
+        const fullPath = path.resolve(__dirname, '..', imgPath);
+        if (!fs.existsSync(fullPath)) warn(`Image '${imgPath}' for event '${evtId}' not found on disk`);
+      }
+    }
+  }
+
   // Check synergies reference valid card IDs
   const synergies = readJSON('cards/synergies.json');
   const strategy = readJSON('cards/strategy.json');
@@ -464,7 +518,7 @@ function main() {
   console.log('═══════════════════════════════════════\n');
   console.log(`  Content dir: ${CONTENT_DIR}`);
   console.log(`  Output dir:  ${outDir}`);
-  console.log(`  Mode:        ${dryRun ? 'DRY RUN' : validateOnly ? 'VALIDATE ONLY' : 'BUILD'}\n`);
+  console.log(`  Mode:        ${dryRun ? 'DRY RUN' : validateOnly ? 'VALIDATE ONLY' : watchMode ? 'BUILD + WATCH' : 'BUILD'}\n`);
   
   // Load source content
   console.log('📂 Loading content...');
@@ -514,3 +568,32 @@ function main() {
 }
 
 main();
+
+// --- WATCH MODE ---
+if (watchMode && !validateOnly && !dryRun) {
+  console.log('👁  Watch mode — rebuilding on content changes...\n');
+  const debounceMs = 300;
+  let timer = null;
+  const rebuild = (filename) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      console.log(`\n♻  Change detected: ${filename}`);
+      warnings.length = 0;
+      errors.length = 0;
+      try { main(); } catch (e) { console.error('Build error:', e.message); }
+    }, debounceMs);
+  };
+  // Watch content directory recursively for .json files
+  fs.watch(CONTENT_DIR, { recursive: true }, (eventType, filename) => {
+    if (filename && filename.endsWith('.json')) rebuild(filename);
+  });
+  // Watch content subdirectories
+  for (const sub of ['characters', 'events', 'headlines', 'images']) {
+    const dir = path.join(CONTENT_DIR, sub);
+    if (fs.existsSync(dir)) {
+      fs.watch(dir, { recursive: true }, (eventType, filename) => {
+        if (filename) rebuild(path.join(sub, filename));
+      });
+    }
+  }
+}

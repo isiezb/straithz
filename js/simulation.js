@@ -205,6 +205,8 @@ const SIM_DEFAULTS = {
     _aipacApprovalPenaltyDays: 0,
     _aipacDiplomaticRestrictionDays: 0,
     _proxyIgnoredDays: 0,
+    // Playstyle tendency tracking (for arc branching)
+    playstyleTendency: { hawk: 0, diplomat: 0, dove: 0 },
 };
 
 const ESCALATION_LADDER = [
@@ -262,6 +264,28 @@ const STORY_ARCS = [
 
 function getCurrentStoryArc() {
     return STORY_ARCS.find(a => SIM.day >= a.startDay && SIM.day <= a.endDay) || STORY_ARCS[0];
+}
+
+// Playstyle tendency helper
+function getDominantPlaystyle() {
+    const t = SIM.playstyleTendency;
+    if (t.hawk >= t.diplomat && t.hawk >= t.dove) return 'hawk';
+    if (t.diplomat >= t.hawk && t.diplomat >= t.dove) return 'diplomat';
+    return 'dove';
+}
+
+function classifyPlaystyleFromEffects(effects) {
+    if (!effects) return;
+    const e = effects;
+    // Hawk: increases tension, warPath, conflictRisk, military actions
+    if (e.tension > 0 || e.warPath > 0 || e.conflictRisk > 0 || e.iranAggression > 3)
+        SIM.playstyleTendency.hawk++;
+    // Diplomat: increases diplomaticCapital, decreases tension, diplomatic actions
+    if (e.diplomaticCapital > 0 || e.tension < 0 || e.iranAggression < -3)
+        SIM.playstyleTendency.diplomat++;
+    // Dove: decreases warPath, increases standing, humanitarian
+    if (e.warPath < 0 || e.internationalStanding > 3 || e.oilFlow > 5)
+        SIM.playstyleTendency.dove++;
 }
 
 // 4 Composite Gauges (0-100)
@@ -1055,33 +1079,45 @@ function dailyUpdate() {
         const resVal = SIM.uniqueResource;
         const isInverted = SIM.character.uniqueResource.inverted;
         const _resTierDialogue = typeof pickResourceTierDialogue === 'function' ? pickResourceTierDialogue() : null;
+        const _resName = SIM.character.uniqueResource.name;
+        const _resSpeaker = { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id };
+        const _resNarrate = () => { if (_resTierDialogue && typeof addNarrative === 'function') addNarrative('dialogue', _resTierDialogue.text, _resSpeaker); };
+
         if (isInverted) {
-            // For exposure: high is bad
-            if (resVal > 60 && resVal <= 63) {
-                addHeadline(`${SIM.character.uniqueResource.name} rising — be careful`, 'warning');
-                if (_resTierDialogue && typeof addNarrative === 'function') {
-                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
-                }
-            }
-            if (resVal > 75 && resVal <= 78) {
-                addHeadline(`${SIM.character.uniqueResource.name} critical — one more leak and it's over`, 'critical');
-                if (_resTierDialogue && typeof addNarrative === 'function') {
-                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
-                }
+            // For exposure: low is excellent, high is critical
+            if (resVal < 20 && resVal >= 17) {
+                addHeadline(`${_resName} minimal — operating in the shadows`, 'good');
+                _resNarrate();
+            } else if (resVal >= 20 && resVal <= 23) {
+                addHeadline(`${_resName} manageable — stay cautious`, 'normal');
+                _resNarrate();
+            } else if (resVal > 50 && resVal <= 53) {
+                addHeadline(`${_resName} rising — visibility increasing`, 'warning');
+                _resNarrate();
+            } else if (resVal > 75 && resVal <= 78) {
+                addHeadline(`${_resName} dangerous — one more leak could end everything`, 'critical');
+                _resNarrate();
+            } else if (resVal > 85 && resVal <= 88) {
+                addHeadline(`${_resName} critical — fully exposed`, 'critical');
+                _resNarrate();
             }
         } else {
-            // For normal resources: low is bad
-            if (resVal < 30 && resVal >= 27) {
-                addHeadline(`${SIM.character.uniqueResource.name} dropping — ${getAdvisorReaction('uniqueResourceLow')}`, 'warning');
-                if (_resTierDialogue && typeof addNarrative === 'function') {
-                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
-                }
-            }
-            if (resVal < 15 && resVal >= 12) {
-                addHeadline(`${SIM.character.uniqueResource.name} critical — ${getAdvisorReaction('uniqueResourceCritical')}`, 'critical');
-                if (_resTierDialogue && typeof addNarrative === 'function') {
-                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
-                }
+            // For normal resources: high is excellent, low is critical
+            if (resVal > 80 && resVal <= 83) {
+                addHeadline(`${_resName} at peak — capitalize on this strength`, 'good');
+                _resNarrate();
+            } else if (resVal > 50 && resVal <= 53) {
+                addHeadline(`${_resName} solid — holding steady`, 'normal');
+                _resNarrate();
+            } else if (resVal < 30 && resVal >= 27) {
+                addHeadline(`${_resName} strained — ${getAdvisorReaction('uniqueResourceLow')}`, 'warning');
+                _resNarrate();
+            } else if (resVal < 15 && resVal >= 12) {
+                addHeadline(`${_resName} critical — ${getAdvisorReaction('uniqueResourceCritical')}`, 'critical');
+                _resNarrate();
+            } else if (resVal < 8 && resVal >= 5) {
+                addHeadline(`${_resName} collapsed — point of no return`, 'critical');
+                _resNarrate();
             }
         }
     }
