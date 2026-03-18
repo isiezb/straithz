@@ -1235,6 +1235,17 @@ function applyStances(selected) {
 
 // ======================== DAILY REPORT (merged morning + overnight) ========================
 
+function _getCharacterBriefingFrame(charId) {
+    const frames = {
+        trump: 'You sit down and they start talking:',
+        hegseth: 'The morning brief begins:',
+        kushner: 'Your phone buzzes with the overnight summary:',
+        asmongold: 'You pull up the morning feeds:',
+        fuentes: 'Your team gathers for the morning call:'
+    };
+    return frames[charId] || '<span class="mb-advisor-name">Your advisor</span> steps to the podium:';
+}
+
 function showDailyReport() {
     // Day 1: show immersive first morning instead of generic report
     if (SIM.day === 1) {
@@ -1319,14 +1330,37 @@ function showDailyReport() {
         aipacHtml = `<div class="mb-iran-intel"><span class="mb-intel-prefix" style="color:#44dd88">\u25B2 HILL</span> ${charNote}</div>`;
     }
 
-    // Situation room description varies by tension
+    // Situation room description varies by tension and character voice
+    const isCharVoiced = briefing && briefing.isCharacterVoiced;
     let sitRoomDesc = '';
-    if (SIM.tension < 40) {
-        sitRoomDesc = 'The Situation Room is quiet this morning. Overnight watch reports nothing unusual.';
-    } else if (SIM.tension < 70) {
-        sitRoomDesc = 'You enter the Situation Room. The overnight team looks tired. Multiple screens show developing situations.';
+    if (isCharVoiced) {
+        // Character-voiced: use character-appropriate framing
+        const charFramings = {
+            trump: SIM.tension >= 70 ? 'You walk into the room and everyone stands. They always stand. The overnight folder is thick today.'
+                 : SIM.tension >= 40 ? 'You settle into the chair and they start handing you folders. The usual morning routine — except nothing about this is usual.'
+                 : 'Morning in the West Wing. You got here before most of them, which you like. Gives you time to read the room before the room reads you.',
+            hegseth: SIM.tension >= 70 ? 'Pentagon, E-Ring, 0630. Fifth coffee. The ops center was running hot all night and you can feel it in the corridors.'
+                   : SIM.tension >= 40 ? 'You arrive at the Pentagon early. The overnight watch team briefs you in the corridor before the formal session. Habit from the field.'
+                   : 'Standard morning at the Pentagon. You hit the gym at 0530, coffee at 0600, desk at 0630. The routine keeps you sharp.',
+            kushner: SIM.tension >= 70 ? 'Your phone has been buzzing since 4 AM. Three continents, six time zones, everyone wants to talk. You let the calls queue and read the overnight cables first.'
+                   : SIM.tension >= 40 ? 'Morning espresso, Bloomberg terminal, overnight contact summary. You review the relationship matrix before the formal briefing begins.'
+                   : 'A quiet morning to work the pipeline. You have two calls scheduled before the briefing — one to the Gulf, one to the back-channel in Muscat.',
+            asmongold: SIM.tension >= 70 ? 'You pull up the feeds and immediately wish you hadn\'t. Every screen is red. Chat is losing its mind. The Discord is a wall of pings.'
+                     : SIM.tension >= 40 ? 'Morning stream prep. You pull up the dashboard, check the overnight numbers, scan the feeds. The situation is developing and the content is writing itself.'
+                     : 'You settle into the chair with your drink and start the morning scroll. Feeds are quiet. Chat is quiet. Time to figure out what to do when the world isn\'t on fire.',
+            fuentes: SIM.tension >= 70 ? 'The morning call starts tense. Your team has been monitoring the overnight developments on every channel — Telegram, the briefing feeds, allied comms. The establishment is panicking.'
+                   : SIM.tension >= 40 ? 'Your team gathers for the morning call. The briefing materials are ready alongside the movement analytics. Two realities, side by side.'
+                   : 'Morning call with the team. Quiet news day, which means it\'s a planning day. The base doesn\'t need drama to stay engaged — they need direction.'
+        };
+        sitRoomDesc = (charFramings[SIM.character.id] || charFramings.trump);
     } else {
-        sitRoomDesc = 'The Situation Room is buzzing when you arrive. Staffers are on phones, the threat board is lit up. Something happened overnight.';
+        if (SIM.tension < 40) {
+            sitRoomDesc = 'The Situation Room is quiet this morning. Overnight watch reports nothing unusual.';
+        } else if (SIM.tension < 70) {
+            sitRoomDesc = 'You enter the Situation Room. The overnight team looks tired. Multiple screens show developing situations.';
+        } else {
+            sitRoomDesc = 'The Situation Room is buzzing when you arrive. Staffers are on phones, the threat board is lit up. Something happened overnight.';
+        }
     }
 
     // Overnight developments from yesterday's headlines
@@ -1372,7 +1406,7 @@ function showDailyReport() {
 
         <div class="mb-briefing">
             <div class="mb-prose" style="font-style:italic; opacity:0.7; margin-bottom:6px">${sitRoomDesc}</div>
-            <div class="mb-advisor-line"><span class="mb-advisor-name">${advisorName}</span> steps to the podium:</div>
+            <div class="mb-advisor-line">${isCharVoiced ? _getCharacterBriefingFrame(SIM.character.id) : `<span class="mb-advisor-name">${advisorName}</span> steps to the podium:`}</div>
             <div class="mb-prose">${openingText}</div>
             ${overnightHtml}
             ${iranIntel ? `<div class="mb-iran-intel"><span class="mb-intel-prefix">\u26A0 IRAN</span> ${iranIntel}</div>` : ''}
@@ -1408,7 +1442,8 @@ function showDailyReport() {
 
     // Also push the briefing to the narrative feed
     if (typeof addNarrative === 'function' && briefing) {
-        addNarrative('scene', openingText, { portrait: advisorName });
+        const narrativePortrait = isCharVoiced ? SIM.character.id : advisorName;
+        addNarrative('scene', openingText, { portrait: narrativePortrait });
         if (iranIntel) addNarrative('dialogue', iranIntel, { speaker: advisorName, portrait: advisorName });
         // Resource tier dialogue — character's emotional state based on unique resource
         if (briefing.resourceDialogue) {

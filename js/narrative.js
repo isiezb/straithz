@@ -548,7 +548,30 @@ function generateMorningBriefing() {
     // --- Evaluate conditions and rank by priority ---
     const conditions = _evaluateBriefingConditions();
     const openingKey = conditions.length > 0 ? conditions[0] : 'calmDay';
-    const opening = _pickVariant(b.openings, openingKey, _usedOpenings);
+
+    // --- Try character-voiced opening first, fall back to neutral ---
+    let opening = null;
+    let isCharacterVoiced = false;
+    const charId = SIM.character ? SIM.character.id : null;
+    if (charId && b.characterOpenings && b.characterOpenings[charId]) {
+        const charOpenings = b.characterOpenings[charId];
+        // Try each condition in priority order for a character-voiced match
+        for (let i = 0; i < conditions.length && !opening; i++) {
+            if (charOpenings[conditions[i]] && charOpenings[conditions[i]].length > 0) {
+                opening = _pickVariant(charOpenings, conditions[i], _usedOpenings);
+                isCharacterVoiced = true;
+            }
+        }
+        // Try character default
+        if (!opening && charOpenings['default'] && charOpenings['default'].length > 0) {
+            opening = _pickVariant(charOpenings, 'default', _usedOpenings);
+            isCharacterVoiced = true;
+        }
+    }
+    // Fall back to neutral openings
+    if (!opening) {
+        opening = _pickVariant(b.openings, openingKey, _usedOpenings);
+    }
 
     // --- Iran intel note ---
     const iranIntel = _pickIranIntel(b.iranIntel);
@@ -567,7 +590,7 @@ function generateMorningBriefing() {
     // --- Resource tier dialogue (emotional state based on unique resource) ---
     const resourceDialogue = pickResourceTierDialogue();
 
-    return { advisor, opening, iranIntel, closer, characterNote, resourceDialogue, gauges: g, rating: r };
+    return { advisor, opening, iranIntel, closer, characterNote, resourceDialogue, isCharacterVoiced, gauges: g, rating: r };
 }
 
 function _pickCharacterBriefingLine(charBriefings) {

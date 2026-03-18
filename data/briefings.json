@@ -458,5 +458,217 @@
         "Prediction content outperforms everything else by 3x. The audience wants you making calls, not playing it safe."
       ]
     }
+  },
+  "characterOpenings": {
+    "trump": {
+      "highTension": [
+        "The situation room is hot when you walk in — everybody nervous, papers everywhere. Good. Let them be nervous. You've been in worse rooms. 'Give me the numbers,' you say, and they do. Tension through the roof. Iran thinks they're winning. They're not.",
+        "Fox is running the carrier footage again — beautiful shot, very presidential. But the numbers underneath tell a different story. Tension's spiking. The generals want more assets. The Hill wants answers. You want results."
+      ],
+      "calmDay": [
+        "Quiet morning. You like quiet mornings — gives you time to think, time to plan, time to get ahead of everybody else. The briefers look almost disappointed they don't have a crisis to hand you. You flip through the overnight report. Numbers are stable. Good. Stable is underrated.",
+        "You walk in and nobody's panicking. That's new. The overnight watch was uneventful, the strait is quiet, and your people look like they actually slept. You pour your Diet Coke, settle into the chair, and for once the morning brief reads like something from a normal presidency. Enjoy it while it lasts."
+      ],
+      "lowApproval": [
+        "Hannity called three times last night. That's never good. Your morning brief lands on the desk and the approval numbers are right there on top — they know what you look for first. Not great. Could be better. Definitely should be better.",
+        "You check Truth Social before the briefing — mistake. The replies are rough. Even the bots seem half-hearted. Approval is sliding and everyone in the building knows it. You can smell it in how they talk to you — too careful, too polite."
+      ],
+      "budgetCrisis": [
+        "The budget page is on top of the briefing folder. They always bury bad news in the middle, so when it's on top, it means the number is too ugly to hide. You look. It's ugly. Somebody's been spending like a Democrat and you need to find out who.",
+        "Treasury called the Chief of Staff at 2 AM. You know because the Chief of Staff called you at 2:15 AM. The money is running out faster than anybody projected and the supplemental is stuck in Congress. You've built buildings on tighter margins than this, but buildings don't shoot missiles."
+      ],
+      "lowOilFlow": [
+        "The oil chart is the first thing on the wall and it looks like a ski slope going the wrong direction. Tankers aren't moving, prices are screaming, and every gas station in America is about to become a campaign ad against you. You built an economy on cheap energy. This is personal.",
+        "You turn on Fox and the gas price graphic is in the corner of every segment. $6, $7 — numbers that end presidencies. The strait is barely trickling and the world's blaming you. Not Iran, not OPEC — you. Time to change that narrative fast."
+      ],
+      "diplomaticProgress": [
+        "The diplomatic guys actually look happy for once, which is suspicious. You don't trust happy diplomats — usually means they gave something away. But no, the back-channels are producing. Tehran's talking. Tension's cooling. You could claim credit for this. You should claim credit for this.",
+        "Ambassador comes in with what she calls 'genuine momentum' on the diplomatic track. Translation: somebody in Tehran blinked. The polls will love a deal story. You start thinking about the Rose Garden ceremony — podium placement, camera angles, the whole thing. First, make sure the deal is actually good."
+      ],
+      "proxyThreats": [
+        "They're hitting you from every direction — Houthis, Hezbollah, Iraqi militias. Iran's using its whole roster and pretending its hands are clean. You know proxies. You've used proxies. This is a franchise operation and Tehran is the head office.",
+        "The proxy briefing is three pages long and every page is a different country with a different Iranian-backed group causing problems. It's like a franchisee revolt except the franchises have rockets. You need to hit the head office, not the branches."
+      ],
+      "highEscalation": [
+        "The generals are using words like 'kinetic' and 'escalation dominance' which means things are getting real. Strikes have happened. More are being planned. You're in the part of the crisis where the history books start paying attention. Make sure they write it right.",
+        "The war room has that energy — the focused, electric kind where everyone's moving fast and talking quiet. Escalation is high and climbing. You're past the point of tweets and sanctions. This is the real thing, and everyone in the building knows you're the one deciding how far it goes."
+      ],
+      "straitOpening": [
+        "The oil guys are smiling. The shipping guys are smiling. Even the Navy guys look less constipated than usual. Oil is flowing, the strait's been open for days, and you're closer to winning this thing than anyone thought possible. Don't let the media steal this from you.",
+        "The numbers are beautiful — oil flow up, tension down, shipping lanes open and busy. Fourteen days is the magic number and you can feel it getting close. This could be the biggest foreign policy win since — well, you'd say since your last one, and you'd be right."
+      ],
+      "default": [
+        "Another morning, another briefing. You sit down, they hand you the folder, and you scan it like you scan a balance sheet — looking for the number that doesn't belong. Nothing jumps out. The strait situation is what it is. Not great, not terrible. You've seen worse deals.",
+        "The morning brief is fine. Not exciting, not catastrophic — fine. You've been in this chair long enough to know that fine is temporary. Something's always about to happen. You drink your Diet Coke and start thinking about what moves to make before the situation makes them for you."
+      ]
+    },
+    "hegseth": {
+      "highTension": [
+        "0600 brief. Third coffee. The overnight watch commander flagged four separate incidents in the strait — fast-boat harassment, a radar lock, two close passes on commercial shipping. You read each one twice. These are the kinds of incidents that start wars when people aren't paying attention. You're paying attention.",
+        "The Pentagon ops center has been running hot since 0300. You walked through on your way up — analysts hunched over screens, phones ringing, that particular hum of controlled urgency. The tension numbers confirm what the floor already told you. CENTCOM needs decisions and they need them today."
+      ],
+      "calmDay": [
+        "Quiet morning at the Pentagon. You got in early — old habit from Fox, when the 5 AM call time trained your body to reject sleep. The overnight reports are clean. No incidents, no provocations, normal patrol patterns. You pour another coffee and allow yourself a moment to think strategically instead of reactively.",
+        "The morning brief is mercifully short. Nothing exploded, nobody got shot at, and the strait is operating within normal parameters. You've learned to appreciate mornings like this — they're when the real work happens. Planning, positioning, making sure your people have what they need before the next crisis hits."
+      ],
+      "lowApproval": [
+        "You catch CNN in the gym at 0500 — they're running the approval graphic every fifteen minutes. The number hurts. Not because of vanity — because the troops see it. A SecDef without public backing is a SecDef whose orders carry less weight, and everyone in the chain of command knows it.",
+        "The morning brief starts, but you're still thinking about the focus group transcript your aide slipped you last night. 'Reckless.' 'In over his head.' 'Should have stayed on TV.' You've been called worse by drill sergeants, but this cuts different when it comes from the people you're trying to protect."
+      ],
+      "budgetCrisis": [
+        "The comptroller's report is on your desk before the intelligence brief — that's how you know it's bad. Numbers in red. Operational funding projected to zero in days, not weeks. You've commanded units on a shoestring before, but this is the Department of Defense, not a forward operating base. The scale of the shortfall is staggering.",
+        "Fourth coffee, and the budget brief hasn't gotten better since the first. Carrier operations alone are eating through funds at a rate that makes the bean counters physically ill. You need to either cut operations or find money, and cutting operations in the middle of a strait crisis is how people die."
+      ],
+      "lowOilFlow": [
+        "Admiral Reeves sent the maritime traffic overlay to your personal terminal at 0430. The strait looks empty. Not quiet-empty — abandoned-empty. Commercial shipping has effectively ceased and oil flow is at crisis levels. You've studied enough military history to know that economic strangulation triggers wars. That's where you're headed.",
+        "The morning energy brief reads like a casualty report. Oil flow through the strait has collapsed. Global supply chains are seizing up. You think about the fuel depots at every naval base in the Gulf — full now, but for how long? An oil crisis isn't just an economic problem. It's a logistics problem, and logistics wins wars."
+      ],
+      "diplomaticProgress": [
+        "The State Department liaison is actually smiling when she walks into the morning brief, which is unusual enough to be noteworthy. Diplomatic channels are producing. Tension is easing. You've spent your career being skeptical of diplomats, but these numbers don't lie — somebody talked to somebody and it worked.",
+        "The diplomatic track is showing results, and you can see it in the force posture reports. Iranian patrols are pulling back, the engagement tempo is down, and your captains are reporting calmer waters. You'll never love diplomacy the way you love a clear chain of command, but you respect what works."
+      ],
+      "proxyThreats": [
+        "The proxy threat brief is a page and a half of bad news from five different countries. Houthis in Yemen, Kata'ib Hezbollah in Iraq, Hezbollah maritime activity off Lebanon — Iran's fighting you through cutouts and every one of them is getting bolder. It's death by a thousand cuts and the cuts are getting deeper.",
+        "You read the proxy report the way you'd read an enemy order of battle — force strength, disposition, capability. The picture is concerning. Iranian-backed groups are coordinating across theaters in ways that suggest centralized command. This isn't random militia activity. This is a campaign, and you need to treat it like one."
+      ],
+      "highEscalation": [
+        "The escalation brief is classified at a level that means the room clears to four people. Strikes have been exchanged. Both sides have taken hits. The targeting packages on your desk have 'DESTROY' written on the cover pages and the coordinates are real places where real people work. You've sent soldiers into combat before. This is different. This is everything.",
+        "You didn't sleep last night. The escalation ladder is missing rungs above you and the military machine is generating its own momentum. Target lists, sortie rates, ammunition expenditure — the language of war has replaced the language of deterrence. You need to decide if you're riding this escalation or trying to stop it."
+      ],
+      "straitOpening": [
+        "The maritime traffic map looks like a highway again — shipping lanes full, tankers transiting, oil flowing. Your patrols are holding the line and the numbers are proving it. Fourteen consecutive days of open passage is the benchmark, and every morning the count ticks up is a morning you can look your people in the eye.",
+        "The ops center mood has shifted. Guardedly optimistic — which for military intelligence analysts is basically a standing ovation. The strait is open, flow is recovering, and the force posture is working. You allow yourself a moment of professional pride. Then you pour another coffee and start thinking about what could go wrong."
+      ],
+      "default": [
+        "Standard morning brief. You've developed a routine — 0530 gym, 0600 coffee, 0630 Pentagon. The overnight reports are on your desk in the same manila folder they always are. Situation stable, no dramatic changes, ops tempo normal. You read every word anyway. Complacency kills more soldiers than bullets.",
+        "Another day in the E-Ring. You settle into the brief, scan the force readiness reports, check the overnight incident log. Nothing urgent, nothing critical, nothing that demands an immediate decision. You know these are the mornings that matter most — the ones where you get to think ahead instead of react."
+      ]
+    },
+    "kushner": {
+      "highTension": [
+        "Your phone has seventeen missed calls and it's not yet 7 AM. MBS texted at 3 AM Riyadh time — a single line: 'We need to talk.' The FT's lead story is the carrier deployment. Tension is spiking and every contact in your network is recalculating their exposure. High tension means high demand for the kind of back-channel work only you can do.",
+        "The overnight summary hits your inbox at 6:15 and it reads like a risk exposure report. Tension elevated across every metric, regional partners hedging, oil markets in distress. You scan the contact trust dashboard — some relationships will strengthen under pressure, others will crack. The next 24 hours will reveal which is which."
+      ],
+      "calmDay": [
+        "Quiet morning. You use it. Two calls to Abu Dhabi before the formal briefing, a text to the Omani back-channel, a review of the deal pipeline over espresso. Calm days are deal-making days — when counterparts aren't panicked, they think clearly, and clear thinking produces frameworks. You update the contact trust matrix and plan your outreach.",
+        "The markets are flat, the strait is quiet, and your phone isn't buzzing with crisis calls. You spend the early morning reviewing exposure metrics and relationship health across the Gulf network. Everything looks manageable. These are the mornings when you build the architecture that holds when things get bad again."
+      ],
+      "lowApproval": [
+        "The domestic polling memo is on your desk but you're more interested in what it means for the deal pipeline. Low approval in Washington means low credibility in Riyadh, Abu Dhabi, and Doha. Gulf partners invest in strength — when the numbers drop, the trust accounts drain with them. You need to manage the perception gap.",
+        "MBS didn't return last night's call. That's a data point. When your domestic numbers drop, the Gulf capitals notice — they have better polling operations than CNN. Low approval makes every commitment you've made look shaky, and these are partners who price political risk the way Goldman prices credit risk."
+      ],
+      "budgetCrisis": [
+        "The budget shortfall is, counterintuitively, an opportunity. You draft a framework memo before the morning brief: Gulf co-financing, sovereign wealth fund participation, burden-sharing structures that give partners equity in the outcome. MBS has been looking for a way to demonstrate the alliance's value. The budget crisis is the door.",
+        "Treasury's emergency memo arrives at 5:30 AM. The numbers are dire but your mind is already running scenarios. The Emiratis proposed a joint financing facility last month — you shelved it because the optics were tricky. The optics of insolvency are worse. Time to make the call."
+      ],
+      "lowOilFlow": [
+        "The Bloomberg terminal on your desk is a wall of red. Oil flow collapsed, Brent spiking, Asian buyers scrambling. You've been on the phone with three sovereign wealth fund managers since 5 AM — they're scared, which means they're motivated. A supply crisis creates the conditions for the kind of grand bargain you've been architecting since day one.",
+        "Oil flow is critical and every energy minister in the Gulf is on the phone with someone. The question is whether that someone is you. You check the contact dashboard — trust levels with key OPEC+ players are solid. Time to convert relationship capital into supply commitments. The crisis is the catalyst."
+      ],
+      "diplomaticProgress": [
+        "The Omani back-channel delivered overnight — Tehran's negotiating posture has shifted from performative to substantive. You read the transcript three times, mapping each concession against your framework. The deal architecture is holding. Diplomatic momentum is real and you built the track it's running on.",
+        "The morning brings confirmation of what your contacts telegraphed last week: diplomatic progress is accelerating. Trust levels across the network are at their highest point since the crisis began. You allow yourself a quiet satisfaction — not celebration, satisfaction. Deals close in silence, not at press conferences."
+      ],
+      "proxyThreats": [
+        "The proxy threat report complicates the deal pipeline. Every Iranian-backed attack gives hardliners on both sides ammunition to kill the diplomatic track. You map the proxy activity against your contact network — two relationships are directly threatened by the Houthi escalation. Damage control first, then recalibration.",
+        "Iranian proxies are escalating and your Gulf contacts are spooked. MBS views proxy threats as existential — the Houthi campaign hit his airports, his refineries, his sense of security. You need to demonstrate that your framework addresses proxies, not just the strait. Otherwise the trust erodes from the edges in."
+      ],
+      "highEscalation": [
+        "The escalation report reads like a term sheet for a deal nobody wants. Strikes exchanged, forces committed, sunk costs accumulating on both sides. You've seen deals die this way — when both parties have invested too much to back down. The off-ramp needs to give Tehran a way to de-escalate without looking like they lost. You start drafting.",
+        "Every contact in the network called overnight. Not to share intelligence — to ask whether you can still deliver a resolution. High escalation tests trust like nothing else. You spend the early morning on calls, reinforcing commitments, managing expectations, quietly reminding partners that the framework holds even under fire."
+      ],
+      "straitOpening": [
+        "Oil is flowing and the deal pipeline is flowing with it. Every open day builds trust, trust builds frameworks, and frameworks build lasting architecture. You review the normalization timeline against the strait metrics — the convergence is remarkable. If this holds for fourteen days, you've built something that outlasts this crisis.",
+        "The strait is open and the Gulf network is humming with cautious optimism. You spend the morning updating the relationship matrix — trust levels ticking up, exposure metrics ticking down. This is what the architecture was designed to produce. Now the question is whether you can lock it in before the next disruption."
+      ],
+      "default": [
+        "Morning espresso, overnight cables, contact trust dashboard review. The standard routine of a back-channel operator in a forward position. Nothing dramatic in the overnight reporting, which gives you space to work the relationship pipeline — three outreach calls scheduled before the formal briefing, each one carefully calibrated.",
+        "You review the morning intelligence summary the way an investor reviews a portfolio — scanning for risk, opportunity, and correlation. The strait situation is unchanged, which in deal-making terms means the table is set. Time to decide which relationship to invest in today."
+      ]
+    },
+    "asmongold": {
+      "highTension": [
+        "You pull up the dashboard and the tension graph looks like your viewer count during a world-first raid — straight vertical. Chat is going absolutely insane. The Discord is pinging every three seconds. This is peak content and also, apparently, peak global crisis. The disconnect between your gaming chair and the nuclear submarine tracking screen has never felt more surreal.",
+        "Reddit's front page is wall-to-wall strait content and half the comments are tagging you. Tension is through the roof and the engagement metrics are unprecedented. You take a sip of your drink and stare at the situation room feed on your monitor. This is the most unhinged content arc imaginable and somehow you're in charge of it."
+      ],
+      "calmDay": [
+        "Quiet day. Chat's gonna get bored. You scroll through the overnight analytics — nothing popped, no incidents, no drama. The strait is calm and so is the content. You could use this time to theory-craft, build some longer-term plays, but the audience wants action. 'ResidentSleeper' is already appearing in chat.",
+        "You pull up the feeds and there's nothing. No explosions, no seizures, no Iranian fast boats doing anything interesting. The numbers are flat and so is the content. You lean back in the chair and think about what play to make when the world isn't generating content for you. Time to manufacture some."
+      ],
+      "lowApproval": [
+        "The viewer count is dropping and it's not because of your content schedule. Low approval means the normies are turning on you — the casual audience that doesn't understand the meta. Chat's split between 'trust the process' and 'uninstall.' You've rebuilt communities before but this feels different when the stakes are real.",
+        "You check the analytics and the approval graph looks like a sub count after a bad take. The community is fracturing and the Reddit threads have turned hostile. Some of it is bot-driven, some of it is real. Either way, the audience is telling you something and you need to listen before the bleed-out is permanent."
+      ],
+      "budgetCrisis": [
+        "The budget screen looks like a raid wipe — everything's in red and the resources are gone. You've speedrun games with no gold before but this is different. Every action costs real money you don't have and there's no farming route to grind it back. Time to min-max harder than you've ever min-maxed anything.",
+        "You pull up the budget and start doing the math out loud, the way you do on stream when you're theory-crafting a build. The numbers don't work. No matter how you optimize, you're spending more than you have. Chat would call this a soft-lock. The question is whether you can sequence-break your way out."
+      ],
+      "lowOilFlow": [
+        "Oil flow is in the gutter and it's the kind of stat that affects everything downstream. You pull up the economic cascade model — it's like watching a chain pull in a raid where one missed mechanic wipes the whole group. Gas prices, supply chains, allied confidence — everything flows from the strait and the strait is barely flowing.",
+        "You're staring at the oil flow graph and it looks like a speedrun that hit a game-breaking bug. The number is way too low, the economy is hemorrhaging, and every minute it stays like this compounds the damage. Chat's spamming 'F' and they're not entirely wrong. This needs a fix and it needs one now."
+      ],
+      "diplomaticProgress": [
+        "The diplomacy stats are actually going up, which feels like when a run suddenly starts going well after hours of resets. You don't trust it — good RNG always feels like it's about to end. But the numbers are real: tension down, diplomatic capital up, actual progress. Chat's cautiously optimistic, which for chat is basically euphoria.",
+        "Diplomatic track is producing results and the analytics confirm it — the engagement is high but the tone has shifted from 'we're all gonna die' to 'actually this might work.' You've seen enough comeback arcs to know this is the dangerous part. The audience expects a twist. Don't give them one."
+      ],
+      "proxyThreats": [
+        "The proxy threat map looks like a multiplayer lobby where everyone picked the same faction against you. Houthis, Hezbollah, Iraqi militias — Iran basically opened a second, third, and fourth front and none of them have their name on it. Chat's trying to explain asymmetric warfare in Twitch terms and honestly they're not wrong.",
+        "You pull up the proxy report and it reads like patch notes for the worst update ever. Multiple Iranian-backed groups escalating simultaneously, coordinated timing, no direct attribution. It's the geopolitical equivalent of a multi-boxer griefing your server. You need to figure out if you hit the alts or go after the main."
+      ],
+      "highEscalation": [
+        "The escalation level on the dashboard has a color you haven't seen before and it's not green. Strikes have happened. Real strikes, on real targets, with real consequences. Chat went from meme-posting to dead silent in about thirty seconds. This is the part of the run where one wrong input ends everything.",
+        "You're looking at the escalation brief and your hands are doing the thing they do before a difficult boss pull — slight tremor, hyper-focus. The game has shifted from strategy to execution. Mistakes at this escalation level don't have respawns. Chat knows it. You know it. The engagement metrics are through the roof but nobody's laughing."
+      ],
+      "straitOpening": [
+        "The strait metrics are green and trending greener. Oil flowing, shipping moving, days ticking up toward the win condition. You've watched enough progress bars to know the last 10% takes the longest, but the math is working. Chat is counting down with you. If you hit fourteen days, the clip will break the internet.",
+        "The run is going well. Too well, maybe — you've been burned by false hope before, but the numbers don't lie. Strait open, oil flowing, win condition approaching. The community is hype. The content is hype. You just need to not throw it in the final stretch, which historically is exactly when you throw it."
+      ],
+      "default": [
+        "You settle into the chair, pull up the feeds, and start scanning. Nothing dramatic, nothing catastrophic, nothing that's going to generate a clip by itself. Just another day of reading reports, checking metrics, and trying to figure out the optimal play. The content isn't making itself today — you'll have to make it.",
+        "Morning feeds are up. The situation is what it is — not great, not terrible, just the ongoing grind of a crisis that doesn't have a clear meta. You check chat sentiment, review the analytics, and start planning moves. The audience is watching. They always are. Time to give them something worth watching."
+      ]
+    },
+    "fuentes": {
+      "highTension": [
+        "The tension numbers are screaming and the Telegram channels are on fire. Your people see it clearly — decades of interventionist foreign policy created this exact crisis, and now the establishment wants to solve it with more intervention. The base is watching to see if you fold under pressure or stand firm. You won't fold.",
+        "You pull up the briefing and the tension is exactly where the war hawks want it — high enough to justify escalation, high enough to make withdrawal look weak. That's the trap. The establishment has been building this trap for years. Your base didn't send you here to walk into it. They sent you here to burn it down."
+      ],
+      "calmDay": [
+        "Quiet morning. The regime wants you to think quiet means safe, but you know better. Quiet means they're planning. The establishment uses calm days to consolidate, to move pieces into position, to set the table for the next manufactured crisis. You use them to build. Rally planning, messaging strategy, base activation.",
+        "The briefing is calm. Good. Calm days are when you do the real work — the work the cameras don't see. Base organizing, Telegram strategy, building the parallel communication structure that bypasses the establishment media. Every quiet day is a gift for movement-building. Use it."
+      ],
+      "lowApproval": [
+        "The approval numbers are a lie. You know it, the base knows it, and deep down the pollsters know it. They oversample the coasts, they weight for demographics that don't reflect real America, and they publish numbers designed to demoralize. The rallies tell the real story. The Telegram engagement tells the real story.",
+        "Low approval is the establishment's weapon. They manufacture consent through polls, then use the polls to justify removing you. You've seen this playbook before — they ran it on every America First candidate who got too close to power. The base isn't demoralized. The base is angry. Good. Angry people show up."
+      ],
+      "budgetCrisis": [
+        "The budget is bleeding out and every dollar is going overseas. This is exactly what you campaigned against — American treasure poured into foreign adventures while American cities crumble. The budget crisis isn't a policy failure. It's the inevitable result of empire, and the only solution is contraction. Bring the money home.",
+        "Every line item in the budget report is proof. Carrier operations: billions. Intelligence operations: billions. Diplomatic missions: billions. And for what? To keep the strait open for oil that mostly goes to China and Europe. The base sees these numbers. The base knows who's paying. And the base is done paying."
+      ],
+      "lowOilFlow": [
+        "Oil flow is collapsing and the establishment is panicking because their entire world order runs on cheap Persian Gulf crude. But you've been saying it for years: energy independence. Drill at home. Pipeline at home. The strait shouldn't matter to Americans and the fact that it does is a policy choice the globalists made, not an inevitability.",
+        "The oil crisis is the establishment's crisis, not yours. Real Americans understand that dependence on Middle Eastern oil is a chain they put around our necks, and the solution isn't more gunboats in the strait — it's domestic production. Every barrel that doesn't flow through Hormuz is a barrel that proves the America First case."
+      ],
+      "diplomaticProgress": [
+        "The diplomats are celebrating their 'progress' and you're skeptical. You've seen these deals before — they give away American leverage, they commit American resources, and they dissolve the moment the cameras turn off. Real progress means bringing troops home, not signing frameworks that keep them deployed.",
+        "The diplomatic track is producing what the establishment calls results. The base calls it something else: entanglement. Every framework, every protocol, every multilateral agreement is another thread tying America to a region where it doesn't belong. Diplomacy that leads to withdrawal is progress. Everything else is a trap."
+      ],
+      "proxyThreats": [
+        "Iranian proxies are hitting across five countries and the war hawks are using every attack to argue for deeper intervention. This is the strategy — create enemies everywhere so the military-industrial complex always has a justification. The proxies exist because America is in the region. Remove America, remove the target.",
+        "The proxy threat briefing is the establishment's favorite document because it makes the case for permanent presence. Houthis in Yemen, militias in Iraq, Hezbollah in Lebanon — an endless enemies list that requires an endless military commitment. Your base sees through it. The question is whether you can make the country see through it too."
+      ],
+      "highEscalation": [
+        "The escalation report confirms everything the movement warned about. This is where interventionism leads — always, inevitably, to the brink of war. The establishment marched America to this cliff and now they want you to jump. The base is watching. The country is watching. This is the moment that defines whether America First means something.",
+        "Strikes have happened. American weapons hitting Iranian targets, Iranian weapons hitting American interests. This is what the neocons wanted all along — a hot war in the Gulf that justifies the next twenty years of military spending and foreign entanglement. You have a choice: be their war president, or be the one who stops it."
+      ],
+      "straitOpening": [
+        "The strait is open and oil is flowing, which the establishment will claim as vindication of their strategy. Don't let them rewrite history. The crisis happened because America was over-committed in the region. The resolution should be withdrawal, not entrenchment. Winning means coming home, not staying forever.",
+        "Oil flow is up and the win condition is approaching, but winning means different things to different people. The establishment wants to win and stay. America First means winning and leaving. Every open day should bring troops one step closer to home, not cement another decade of presence."
+      ],
+      "default": [
+        "Another morning in the machine. You scan the briefing while your team preps the day's messaging. The situation in the strait is what it is — a crisis manufactured by decades of interventionism, managed by an establishment that profits from it. Your job is to break the cycle. The base is counting on it.",
+        "You pull up the morning briefing alongside the Telegram analytics. The establishment gives you their version of reality; the base gives you theirs. The truth is somewhere in between but closer to the base than the briefers would ever admit. Time to figure out today's play and make sure the movement stays ahead of the narrative."
+      ]
+    }
   }
 }
