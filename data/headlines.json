@@ -1,0 +1,490 @@
+{
+  "initial": [
+    "FEB 28: US-Israel joint strikes hit 500 targets across Iran — Khamenei killed",
+    "Iran retaliates with 500+ ballistic missiles and 2,000 drones — 60% targeting US forces",
+    "IRGC Navy deploys across strait — tanker MV Advantage Sweet seized with $50M cargo",
+    "IRIS Dena frigate sunk by US Navy in first major naval engagement since 1988",
+    "Oil surges past $110/barrel — Lloyd's suspends war risk coverage for Gulf transit",
+    "Three US carrier strike groups deployed: Lincoln, Truman, Carl Vinson",
+    "Mojtaba Khamenei emerges as likely Supreme Leader successor — IRGC backs him",
+    "KC-135 tanker crashes during combat ops — 3 airmen killed"
+  ],
+  "simulation": {
+    "mine_hazards": [
+      "BREAKING: Tanker {tankerId} strikes mine near strait"
+    ],
+    "tanker_release": [
+      "Iran releases tanker {tankerId} after pressure"
+    ],
+    "intercept": [
+      "USN intercepts IRGC attempt on tanker — seizure prevented"
+    ],
+    "seizure": [
+      "BREAKING: IRGC seizes tanker {tankerId} ({tankerFlag}-flagged)"
+    ],
+    "roe_aggressive": [
+      "Aggressive ROE leads to dangerous confrontation"
+    ],
+    "carrier_deploy": [
+      "USS Eisenhower carrier strike group enters Gulf of Oman"
+    ],
+    "carrier_withdraw": [
+      "Carrier strike group withdraws from region"
+    ],
+    "mine_detection": [
+      "Intel detects Iranian mine-laying in strait"
+    ],
+    "drone_mine_neutralize": [
+      "Drone surveillance neutralizes naval mine"
+    ],
+    "crisis_deescalate": [
+      "Crisis de-escalated. Tensions returning to baseline."
+    ],
+    "weekly_cooldown": [
+      "Weekly diplomatic cool-down reduces escalation level"
+    ],
+    "unique_resource_warning_inverted": [
+      "{uniqueResourceName} rising — be careful",
+      "{uniqueResourceName} critical — one more leak and it's over"
+    ],
+    "unique_resource_warning_normal": [
+      "{uniqueResourceName} dropping — {advisorReaction}",
+      "{uniqueResourceName} critical — {advisorReaction}"
+    ],
+    "polarization_warnings": [
+      "Protests erupt in major cities over war policy",
+      "Armed militias mobilize — domestic tensions critical"
+    ],
+    "assassination_warning": [
+      "Intel: credible threat against senior officials detected"
+    ],
+    "approval_warnings": [
+      "Congressional allies distancing — approval dangerously low",
+      "Impeachment proceedings discussed behind closed doors"
+    ],
+    "international_standing_warning": [
+      "Major allies publicly criticize US actions"
+    ],
+    "strait_stability": [
+      "STRAIT STABLE {straitOpenDays}/7 DAYS — maintain course!",
+      "Strait stability disrupted — progress {progressStatus}"
+    ],
+    "story_arc_transition": [
+      "━━━ {arcName} ━━━"
+    ],
+    "iran_faction_hardliner_moves": [
+      "IRGC fast-boats conducted exercises 12nm from USS Eisenhower. They practiced formation attacks.",
+      "Iranian state media aired a documentary glorifying the IRGC Navy. Tangsiri appeared in uniform.",
+      "New anti-ship missile batteries moved to coastal positions. Satellite shows launch-ready config.",
+      "IRGC social media posted training videos of boarding operations. Caption: \"The strait is ours.\"",
+      "Tangsiri gave a speech: \"Every American vessel in our waters is a legitimate target.\"",
+      "Iranian naval exercises announced near the strait. Largest since 2019.",
+      "IRGC proxy channels activated. Houthi rhetoric matches Tehran talking points word-for-word.",
+      "Mojtaba Khamenei visited IRGC Navy HQ. Photos show him inspecting fast-attack craft."
+    ],
+    "iran_faction_moderate_moves": [
+      "Iran's foreign ministry called for \"dialogue without preconditions.\" Analysts note the phrase echoes 2015.",
+      "Araghchi gave an interview to Al Jazeera emphasizing \"mutual respect and diplomatic solutions.\"",
+      "Iran released two detained foreign nationals from Evin prison. No demands were made.",
+      "Iranian state media ran an editorial criticizing unnamed military officials for \"unnecessary provocations.\"",
+      "Araghchi was seen meeting the Omani ambassador. Back-channel activity suspected.",
+      "Iranian moderate newspapers published op-eds calling for economic normalization with the West.",
+      "Mojtaba Khamenei praised \"the wisdom of patience\" in a Friday sermon. Analysts are divided.",
+      "Iran offered to allow IAEA access to a previously restricted site. Conditions unclear."
+    ],
+    "iran_faction_ambiguous_moves": [
+      "The Supreme Leader gave a sermon praising both military strength and patience. Analysts divided.",
+      "Iran announced a new oil barter deal with China, bypassing US sanctions entirely.",
+      "IRGC and Foreign Ministry issued contradictory statements within hours. Power struggle visible.",
+      "Iranian parliament debated the crisis openly for the first time. Both factions claimed support."
+    ],
+    "iran_faction_headline_prefix": "TEHRAN: {moveText}",
+    "crisis_escalation": [
+      "CRISIS: Iran deploys additional naval assets to strait",
+      "MAJOR CRISIS: Iran announces mining of shipping channels",
+      "WAR FOOTING: Iran mobilizes ground forces along coast"
+    ],
+    "proxy_events": [
+      "Houthi forces attack commercial vessel in Red Sea",
+      "Iraqi militia rockets hit US base in region",
+      "Hezbollah threatens Israel border — regional escalation"
+    ],
+    "card_consequence_prefix": "[{cardName}] {consequenceText}",
+    "card_consequences": {
+      "carrier_strike": [
+        "Iran test-fires anti-ship missiles in response to carrier deployment",
+        "Carrier presence deters IRGC patrols — shipping confidence rises",
+        "Carrier deployment dominates the news cycle — public rallies behind the mission",
+        "F-35 from carrier shoots down Iranian Shahed drone approaching task force",
+        "Iran deploys anti-ship ballistic missiles in response to carrier — \"carrier killer\" threat"
+      ],
+      "naval_patrol": [
+        "USN patrol intercepts suspicious vessel — clear signal to Iran",
+        "Patrol encounters IRGC fast boats — tense standoff",
+        "Patrol discovers Iranian explosive drone boats drifting in shipping lane",
+        "USS destroyer escorts tanker through strait — insurance companies take notice"
+      ],
+      "active_intercept": [
+        "Aggressive ROE triggers near-miss with Iranian vessel",
+        "Active intercept prevents tanker seizure"
+      ],
+      "missile_strike": [
+        "Precision strike footage goes viral — world holds its breath",
+        "Iran vows retaliation for strikes on sovereign territory"
+      ],
+      "regional_deterrence": [
+        "Joint ops degrade Houthi launch capabilities",
+        "Regional deterrence operations strain alliances"
+      ],
+      "back_channel": [
+        "Back-channel produces a small breakthrough — Iran releases two detained sailors",
+        "Back-channel talks leaked to press — hawks on both sides furious"
+      ],
+      "gulf_coalition": [
+        "Allied naval forces conduct joint patrol — show of unity",
+        "Coalition partner demands more say in rules of engagement",
+        "Japan reluctantly sends two destroyers after arm-twisting — coalition grows",
+        "Coalition allies refuse burden-sharing — US carries 80% of costs"
+      ],
+      "un_resolution": [
+        "UN debate isolates Iran diplomatically"
+      ],
+      "summit_proposal": [
+        "Iran considers summit proposal — hardliners debate internally",
+        "Critics call summit proposal \"appeasement\""
+      ],
+      "humanitarian_corridor": [
+        "Humanitarian aid reaches affected populations — viral footage"
+      ],
+      "targeted_sanctions": [
+        "Sanctioned IRGC commander vows revenge — Iran seizes a tanker",
+        "Sanctions bite — Iranian economy contracts further",
+        "China quietly increases Iranian oil purchases to circumvent sanctions",
+        "Dark fleet tanker caught doing ship-to-ship transfer of Iranian oil",
+        "Secondary sanctions catch a Chinese bank — Beijing protests formally"
+      ],
+      "maximum_pressure": [
+        "Maximum pressure pushes Iran into a corner — provocations spike",
+        "Secondary sanctions anger European allies",
+        "Oil prices surge on maximum pressure announcement",
+        "Iran's currency collapses 15% — street protests in Tehran and Isfahan",
+        "Iran accelerates uranium enrichment in response to pressure"
+      ],
+      "reserve_release": [
+        "Reserve release calms oil markets — gas prices drop"
+      ],
+      "trade_incentives": [
+        "Trade incentives spark debate — \"rewarding bad behavior?\"",
+        "Iran moderates gain leverage from trade talks"
+      ],
+      "sigint_sweep": [
+        "SIGINT intercept reveals IRGC mine-laying plans"
+      ],
+      "cyber_operation": [
+        "Cyber op disrupts IRGC comms — boats go silent for hours",
+        "Iran detects cyber intrusion — retaliates with own cyber attack",
+        "Cyber op disables IRGC naval command network for 48 hours — boats go dark",
+        "Iran's APT33 retaliates — hits US port systems with wiper malware"
+      ],
+      "drone_surveillance": [
+        "Drone reveals Iranian military buildup at Bandar Abbas",
+        "Iran shoots down a surveillance drone",
+        "MQ-9 Reaper tracks Iranian minelayer — coordinates shared with minesweepers"
+      ],
+      "media_blitz": [
+        "Media campaign goes viral — public sentiment shifts"
+      ],
+      "congressional_briefing": [
+        "Bipartisan support emerges after classified briefing"
+      ],
+      "america_first": [
+        "Iran sees withdrawal signals — aggression increases",
+        "Troops coming home makes front page — base energized",
+        "Allies panic at withdrawal rhetoric — coalition fractures"
+      ],
+      "mine_countermeasures": [
+        "MCM vessel clears 3 mines from shipping lane — safe transit restored",
+        "Combat diver killed disarming Iranian mine — first MCM casualty",
+        "Drone submarine maps entire Iranian minefield — invaluable data"
+      ],
+      "submarine_warfare": [
+        "US submarine tracks Iranian Kilo-class sub for 72 hours — full pattern of life",
+        "Near-collision between US and Iranian submarines in shallow waters",
+        "Submarine intelligence reveals IRGC coastal battery locations"
+      ],
+      "ballistic_missile_defense": [
+        "Patriot battery intercepts Iranian ballistic missile targeting Al Udeid — system works",
+        "THAAD deployment reassures Gulf allies — Bahrain and UAE increase cooperation",
+        "Interceptor miss — debris falls in populated area. 3 civilian casualties"
+      ],
+      "oil_diplomacy": [
+        "Saudi Arabia announces 2M barrel/day production increase — markets rally",
+        "OPEC+ deal falls apart — Russia blocks the increase",
+        "IEA coordinated reserve release calms speculation"
+      ],
+      "insurance_backstop": [
+        "Government insurance restores tanker traffic — 12 ships transit in 24 hours",
+        "Insurance program cost overruns — $3B more than projected"
+      ],
+      "humint_iran": [
+        "Asset inside IRGC reveals planned seizure operation — preempted",
+        "HUMINT asset compromised — Iran arrests double agent. Source network at risk",
+        "Iranian defector provides detailed order of battle for IRGC Navy"
+      ],
+      "electronic_warfare": [
+        "EA-18G Growler jams IRGC command frequency — fast boats lose coordination",
+        "Iran adapts to jamming — switches to fiber optic landlines",
+        "Full spectrum EW blinds IRGC radar network for 6 hours — shipping transits freely"
+      ],
+      "war_crimes_tribunal": [
+        "ICC fact-finding team documents Iranian mine-laying — legal case builds",
+        "Tribunal investigation also scrutinizes US civilian casualties — awkward"
+      ]
+    },
+    "ambient_events": [
+      "Oil markets react to regional instability",
+      "Gulf states increase oil production",
+      "Insurance premiums for strait transit increase",
+      "China urges restraint",
+      "Gas prices at pump hit 5-year high in US",
+      "Iranian moderates push for diplomatic solution",
+      "India declares energy emergency — LPG diverted from industry to households",
+      "Japan warns of rolling blackouts if strait remains closed",
+      "South Korea sends intelligence-sharing liaison to CENTCOM",
+      "Lloyd's of London raises war risk premiums 300% for strait transit",
+      "Iranian rial crashes to historic low — street protests erupt",
+      "Russia quietly ships advanced anti-ship missiles to Iran via Caspian route",
+      "Global shipping companies announce permanent rerouting via Cape of Good Hope",
+      "OPEC+ emergency meeting called — Saudi Arabia offers to increase production",
+      "Iran offers to \"down-blend\" enriched uranium as diplomatic gesture",
+      "Pentagon confirms Iran retains 80-90% of naval fast boat fleet despite strikes",
+      "US trucking industry warns of supply chain collapse if oil stays above $140",
+      "Chinese spy ship detected in Gulf of Oman — sharing data with IRGC?",
+      "European Central Bank emergency meeting — strait crisis threatening EU economy",
+      "Iranian rial hits record low — 800,000 to the dollar",
+      "Bahrain closes US Naval Forces Central Command to non-essential personnel",
+      "Norway sends frigate to join coalition — first Arctic nation contribution",
+      "Iranian diaspora protests in London, Berlin, and Toronto — \"Regime must fall\"",
+      "US trucking industry halts non-essential routes — diesel rationing begins",
+      "Australian PM pledges naval support — HMAS Hobart en route",
+      "IRGC propaganda video shows missile strike simulation on US carrier",
+      "Gold hits $3,200/oz as investors flee to safe havens",
+      "Iranian FM Araghchi offers \"conditional ceasefire\" through Swiss intermediary",
+      "Pentagon confirms Iran using North Korean missile technology in latest launches"
+    ],
+    "iran_provocations": [
+      "IRGC Navy conducts aggressive maneuvers near shipping",
+      "Iran test-fires anti-ship missiles in exercise",
+      "Iranian patrol boats shadow US Navy vessel",
+      "Iran threatens to close strait if sanctions continue",
+      "Iranian drone flies close to US carrier group",
+      "Iran announces new military exercises in Persian Gulf",
+      "IRGC deploys fast attack boats in shipping lane",
+      "IRGC commissions Heydar-class fast boats — \"fastest combat boats on earth\"",
+      "Iranian drone carrier IRIS Shahid Bagheri detected deploying fast attack craft",
+      "Iran transfers long-range ballistic missiles to Iraqi militias",
+      "Iranian submarine detected leaving Bandar Abbas — heading toward strait",
+      "IRGC seizes a second tanker in 24 hours — pattern of systematic seizures",
+      "Iran announces live-fire naval exercise in strait shipping lanes",
+      "Iranian state media broadcasts footage of anti-ship missile test",
+      "IRGC deploys explosive-laden drone boats in shipping channel",
+      "Iran launches anti-ship ballistic missile into Gulf — splashes 5nm from tanker convoy",
+      "IRGC underwater divers detected attaching limpet mines to tanker hull",
+      "Iranian Fateh-class submarine surfaces aggressively near US destroyer",
+      "Mojtaba Khamenei orders IRGC to \"prepare for the final battle\"",
+      "Iran blocks Omani diplomatic aircraft from landing — escalation of isolation",
+      "IRGC fires warning shots at commercial helicopter servicing oil platforms"
+    ],
+    "overnight_news_filler": [
+      "A quiet day in the strait. Tankers transit normally.",
+      "Diplomatic channels remain open. No major incidents.",
+      "Markets hold steady. The situation is unchanged.",
+      "Intelligence gathering continues. No surprises."
+    ],
+    "overnight_gauge_changes": {
+      "stability_drop": "Stability deteriorated sharply today.",
+      "stability_rise": "Significant stability improvements.",
+      "economy_drop": "Economic indicators fell today.",
+      "economy_rise": "Markets rallied on improved conditions.",
+      "support_drop": "Public support dropped significantly.",
+      "intel_rise": "Intelligence picture improved."
+    },
+    "pending_effects_announcements": {
+      "military": "SITREP {dtg}: {cardName} operational — all units report ready",
+      "diplomatic": "STATE CABLE // CONFIDENTIAL: {cardName} initiative now active",
+      "economic": "TREASURY NOTICE: {cardName} sanctions package in effect",
+      "intelligence": "CIA OPS NOTICE [TS//SI]: {cardName} collection active",
+      "domestic": "WHITE HOUSE: {cardName} program launched",
+      "default": "{cardName} now active"
+    },
+    "card_queued": "{cardName} ({fundingLevel}) ordered — takes effect {delayLabel}",
+    "endgame_reason": "{reason}"
+  },
+  "actions": {
+    "gather_intel": [
+      "CIA OPS NOTICE [TS//SI]: Intelligence collection operation conducted."
+    ],
+    "analyze_threats": [
+      "Threat analysis conducted."
+    ],
+    "phone_call": [
+      "Diplomatic phone call made."
+    ],
+    "draft_proposal": [
+      "Diplomatic proposal circulated to allies."
+    ],
+    "reposition_fleet": [
+      "Naval fleet repositioned in the strait."
+    ],
+    "change_roe": [
+      "Rules of engagement changed to {roe}."
+    ],
+    "press_conference": [
+      "White House holds press conference on strait crisis."
+    ],
+    "brief_congress": [
+      "Classified briefing delivered to Congress."
+    ],
+    "adjust_sanctions": [
+      "New sanctions imposed on Iranian entities."
+    ],
+    "market_intervention": [
+      "Strategic petroleum reserve release authorized."
+    ],
+    "escort_tankers": [
+      "USN begins tanker escort operations through Strait of Hormuz."
+    ],
+    "precision_strike": [
+      "BREAKING: US precision strike destroys IRGC fast boat pens at Bandar Abbas"
+    ],
+    "spec_ops_raid": [
+      "SOCOM: Special operations forces conduct raid on Iranian mining assets"
+    ],
+    "air_strikes": [
+      "FLASH: US launches sustained air strikes against Iranian military targets"
+    ],
+    "sead_mission": [
+      "US Wild Weasel missions knock out Iranian air defense network along coast"
+    ],
+    "ground_troops": [
+      "FLASH: US ground forces land on Iranian coast — Bandar Abbas secured"
+    ],
+    "seize_islands": [
+      "FLASH: USMC amphibious assault seizes Iranian-held islands in Strait of Hormuz"
+    ],
+    "full_mobilization": [
+      "FLASH: President orders full military mobilization. Draft authorization sent to Congress."
+    ],
+    "demand_un_session": [
+      "US demands emergency UN Security Council session on Strait of Hormuz."
+    ],
+    "escalate": [
+      "ESCALATION: US military posture elevated to {escalationName}"
+    ],
+    "deescalate": [
+      "DE-ESCALATION: US military posture lowered to {escalationName}"
+    ],
+    "issue_ultimatum": [
+      "US issues formal ultimatum to Iran on strait freedom of navigation."
+    ],
+    "emergency_coalition": [
+      "Emergency coalition meeting convened on strait crisis."
+    ],
+    "deploy_marines": [
+      "US Marines deployed to secure strait positions."
+    ],
+    "combat_air_patrol": [
+      "Combat air patrols established over the strait."
+    ],
+    "rally_base": [
+      "Populist rally energizes the base."
+    ],
+    "media_blitz": [
+      "Media blitz pushes America First messaging."
+    ],
+    "kushner_contact_call": [
+      "Back-channel call to {contactName}."
+    ],
+    "special_action": [
+      "Special action: {actionName}"
+    ],
+    "strategy_change": [
+      "Strategy changed: {removedCard} → {replacementCard}"
+    ],
+    "strategy_deployed_instant": [
+      "SITREP: {cardName} ({fundingLevel}) operational"
+    ],
+    "strategy_deployed_fallback": [
+      "Strategy deployed: {cardName} ({funding})"
+    ],
+    "interrupt_resolved": [
+      "Interrupt: {interruptTextTruncated}... — {choiceLabel}"
+    ],
+    "decision_resolved": [
+      "Decision: {eventTitle} — {choiceText}"
+    ],
+    "decision_flavor": "{flavorText}",
+    "contact_trust": [
+      "{contactName}: trust increased to {trustLevel}"
+    ]
+  },
+  "bible_actions": {
+    "prisoner_exchange": {
+      "success": "BREAKING: Prisoner exchange agreed — crew coming home",
+      "failure": "Prisoner exchange talks collapse — Iran demands more concessions"
+    },
+    "covert_operation": {
+      "success": "Reports of explosion at Iranian military facility — cause unknown",
+      "failure": "Iran claims to have captured US special operations personnel"
+    },
+    "emergency_budget": {
+      "success": "Congress approves $200M emergency appropriation for strait operations",
+      "failure": "Congress slashes emergency budget request — only $50M approved"
+    },
+    "media_offensive": [
+      "White House launches coordinated media offensive on strait crisis"
+    ],
+    "backchannel_message": [
+      "Sources: back-channel communications between Washington and Tehran ongoing"
+    ],
+    "allied_consultation": [
+      "Allied leaders express support for US strait strategy in joint call"
+    ],
+    "sanctions_adjustment": [
+      "Treasury announces targeted sanctions adjustments on Iranian entities"
+    ],
+    "intel_sharing": [
+      "US shares classified strait intelligence with coalition partners"
+    ],
+    "humanitarian_corridor": [
+      "US establishes humanitarian corridor through Strait of Hormuz"
+    ],
+    "economic_stimulus": [
+      "President announces economic stimulus package to offset oil crisis"
+    ],
+    "cyber_recon": {
+      "discovery": "NSA cyber reconnaissance reveals Iranian naval operation plans",
+      "routine": "Cyber reconnaissance gathering data on Iranian networks"
+    },
+    "war_powers_consult": [
+      "President briefs Congressional Gang of Eight on military operations"
+    ],
+    "regional_flyover": [
+      "B-52 strategic bombers conduct visible flyover of Persian Gulf"
+    ],
+    "summit_proposal": [
+      "US proposes international summit on Strait of Hormuz crisis"
+    ],
+    "press_embargo": [
+      "White House requests voluntary media embargo on strait operations"
+    ]
+  },
+  "characters": {
+    "hegseth_override": [
+      "SecDef overrides chain of command — direct military action ordered"
+    ],
+    "fuentes_address_nation": [
+      "National address: \"America First, America Always.\" Base rallies."
+    ]
+  }
+}

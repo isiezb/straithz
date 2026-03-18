@@ -1,0 +1,893 @@
+{
+  "decisionEvents": {
+    "impounded_tanker": {
+      "title": "THE IMPOUNDED TANKER",
+      "description": "An Iranian Revolutionary Guard fast-boat swarm harassed a commercial tanker three days ago. The crew is safe but the ship is impounded in Bandar Abbas. Your predecessor resigned in disgrace. You are the replacement. Nobody expects you to last.",
+      "choices": [
+        { "label": "Demand release through official channels", "flavor": "You follow process. The world sees restraint. Iran sees an opening." },
+        { "label": "Send a destroyer to loiter outside Bandar Abbas", "flavor": "You say nothing. The image speaks. IRGC commanders take note." },
+        { "label": "Call the flag-state directly — propose a joint response", "flavor": "Shared burden, shared credit. The coalition option opens." }
+      ]
+    },
+    "predecessors_ghost": {
+      "title": "THE PREDECESSOR'S GHOST",
+      "description": "A classified folder sits on your desk — your predecessor's secret negotiations with Tehran. Reading it is knowledge. Burning it is a clean start. The contents are radioactive either way.",
+      "choices": [
+        { "label": "Read the classified file", "flavor": "You now know Iran's real red line. This knowledge will matter — if it doesn't destroy you first." },
+        { "label": "Burn the file — start clean", "flavor": "The public trusts a clean break. But you'll discover Iran's red line the hard way — through a crisis." }
+      ]
+    },
+    "admirals_warning": {
+      "title": "THE ADMIRAL'S WARNING",
+      "description": "Your first real briefing. Admiral Chen stands at the podium with satellite imagery of Iranian naval movements. \"We need to increase patrol tempo immediately,\" he says. Your civilian advisors shift uncomfortably.",
+      "choices": [
+        { "label": "Defer to the Admiral — increase patrols", "flavor": "The Admiral nods. Your civilian advisors resent being sidelined. The Pentagon respects the energy." },
+        { "label": "Convene your full team before deciding", "flavor": "The Admiral respects the process. Barely. Your team appreciates being heard." },
+        { "label": "Override — propose a diplomatic signal instead", "flavor": "The Admiral begins quietly briefing Congress about your \"lack of seriousness.\" But Araghchi notices." }
+      ]
+    },
+    "journalists_call": {
+      "title": "THE JOURNALIST'S CALL",
+      "description": "A New York Times reporter is on the line. She's working on a piece about your first 72 hours. Off-the-record, she says. But you know how that goes.",
+      "choices": [
+        { "label": "Give an off-the-record briefing", "flavor": "You shape the narrative. But there's a 20% chance she burns you." },
+        { "label": "Written statement through press office", "flavor": "\"Administration stonewalling\" runs above the fold. Safe but unhelpful." },
+        { "label": "\"No comment\" — hang up", "flavor": "She becomes hostile. Future media events will be harder." }
+      ]
+    },
+    "british_pm_call": {
+      "title": "ALLY ON THE LINE: THE BRITISH PM",
+      "description": "The British Prime Minister is offering a joint naval task force. Shared command, shared rules of engagement. It's generous — suspiciously so. Nothing is free in the special relationship.",
+      "choices": [
+        { "label": "Accept — joint task force", "flavor": "Shared command means shared veto. You lose unilateral strike capability. But the coalition is real." },
+        { "label": "Counter with parallel operations — same area, separate commands", "flavor": "You keep your freedom. The UK is mildly insulted but professional." },
+        { "label": "Ask what they want in return", "flavor": "The PM wants your vote on a UN trade resolution. Opens a side-negotiation." }
+      ]
+    },
+    "first_seizure_attempt": {
+      "title": "THE FIRST SEIZURE ATTEMPT",
+      "description": "FLASH traffic from CENTCOM: IRGC fast-boats converging on the MV Pacific Meridian, a Liberian-flagged tanker carrying Japanese electronics. This is the game's first real test.",
+      "choices": [
+        { "label": "Scramble jets — verbal warning over radio", "flavor": "70% chance the seizure is deterred. Standard procedure. If it fails, you own the failure." },
+        { "label": "Authorize warning shots across the bow", "flavor": "The world watches nervously. 90% chance Iran backs down. But escalation is real." },
+        { "label": "Let it happen — document everything for the UN", "flavor": "The tanker is seized. It's painful. But the footage at the UN will be devastating for Iran." }
+      ]
+    },
+    "oil_markets_panic": {
+      "title": "OIL MARKETS PANIC",
+      "description": "Oil futures jumped $15/barrel overnight. The Energy Secretary is on the phone. Gas prices are on every cable news chyron. The Saudi Energy Minister might increase production — if you ask nicely.",
+      "choices": [
+        { "label": "Release strategic petroleum reserves", "flavor": "Markets calm immediately. But reserves are finite — you've bought 10 days, not a solution." },
+        { "label": "Call Saudi — beg for increased production", "flavor": "MBS agrees — for a price you'll pay later. The humiliating leak comes on Day 20." },
+        { "label": "Let markets find their own level", "flavor": "Pain now, stability later. The opposition runs \"gas prices\" attack ads within hours." }
+      ]
+    },
+    "un_showdown": {
+      "title": "UN SECURITY COUNCIL SHOWDOWN",
+      "description": "The Security Council is in emergency session. You have one shot to get a binding resolution. Russia is leaning veto. China is undecided. Your ambassador is waiting for instructions.",
+      "choices": [
+        { "label": "Push for binding resolution with sanctions", "flavor": "Russia abstains. China follows. The resolution passes. Iran is formally isolated." },
+        { "label": "Non-binding statement of concern — play it safe", "flavor": "Safe, symbolic, useless. Your team is demoralized." },
+        { "label": "Dramatic intelligence presentation — name IRGC commanders", "flavor": "The room is shocked. Iran scrambles. But you just burned intelligence sources." }
+      ]
+    },
+    "proxy_ignition": {
+      "title": "PROXY IGNITION: HOUTHI STRIKE",
+      "description": "Houthis launched anti-ship missiles at a commercial vessel in the Red Sea. The crisis is no longer contained to the strait — it's metastasizing. Your budget is burning and allies are nervous.",
+      "choices": [
+        { "label": "Strike the Houthi launch site", "flavor": "Proportional. Professional. Saudi Arabia is grateful. But you just opened a second front." },
+        { "label": "Intercept missiles — let proxies tire themselves out", "flavor": "Defense only. The Houthis try again in 3 days." },
+        { "label": "Tell Iran through channels: proxy attacks = Tehran's responsibility", "flavor": "A red line. If Iran believes you, this changes everything. If they don't, it changes nothing." }
+      ]
+    },
+    "the_leak": {
+      "title": "THE LEAK",
+      "description": "The Washington Post has your classified strategy memo. Every detail of your Iran approach is now public. Someone in your inner circle betrayed you. The press is circling.",
+      "choices": [
+        { "label": "Launch an aggressive investigation — find the leaker", "flavor": "You burn political capital hunting the mole. If you find them, credibility skyrockets." },
+        { "label": "Spin it — frame the leak as showing your brilliant strategy", "flavor": "Bold. Iran now knows your playbook. But your base thinks you're playing 4D chess." },
+        { "label": "Ignore it — refuse to dignify leaks", "flavor": "The news cycle moves on. But your staff knows there are no consequences for betrayal." }
+      ]
+    },
+    "congressional_hearing_big": {
+      "title": "THE CONGRESSIONAL HEARING",
+      "description": "Senate Armed Services Committee. Live on C-SPAN. The chairman opens with: \"The American people deserve to know why we're spending $50 million a day on a crisis that's getting worse.\" The cameras are rolling.",
+      "choices": [
+        { "label": "Testify personally — face the music", "flavor": "You came prepared. The viral clip is you calmly dismantling the chairman's argument with classified data." },
+        { "label": "Send your deputy — you're managing a crisis", "flavor": "Congress is insulted. Future funding requests just got harder." },
+        { "label": "Testify AND declassify satellite imagery live on camera", "flavor": "The room gasps. Iran scrambles. The Pentagon is furious about the declassification. But the public is with you." }
+      ]
+    },
+    "iran_ultimatum": {
+      "title": "IRAN'S ULTIMATUM",
+      "description": "Mojtaba Khamenei appears on state television: \"Lift sanctions on our central bank within 72 hours, or the next vessel we seize will fly the American flag.\" Tangsiri stands behind him, arms crossed. The clock is ticking.",
+      "choices": [
+        { "label": "Call the bluff publicly — \"America does not respond to threats\"", "flavor": "If Iran follows through, this gets catastrophic. If they back down, you win the crisis." },
+        { "label": "Counter-propose through channels — mutual step-down", "flavor": "50% Iran accepts. Araghchi is pushing for it internally. Tangsiri wants blood." },
+        { "label": "Prepare quietly — move assets, brief allies, say nothing", "flavor": "Iran is uncertain. Their own internal debate intensifies. Sometimes silence is the loudest response." }
+      ]
+    },
+    "intel_breakthrough": {
+      "title": "THE INTELLIGENCE BREAKTHROUGH",
+      "description": "A SIGINT intercept combined with a HUMINT source has revealed Iran's true strategic objective. This isn't about the strait — it's about forcing recognition of Iran's regional hegemony. Every move they've made was building toward this moment. The question is what you do with the knowledge.",
+      "choices": [
+        { "label": "Share with allies — build a coalition response", "flavor": "Allies are galvanized. But your intelligence methods are exposed. Future intel quality degrades." },
+        { "label": "Keep it classified — act unilaterally", "flavor": "You know something nobody else does. That's power. But allies will feel blindsided later." },
+        { "label": "Leak to a trusted journalist — shape the narrative", "flavor": "The public needs to know. Iran changes plans. The intelligence becomes partly obsolete. But public pressure on Iran surges." }
+      ]
+    },
+    "journalist_returns": {
+      "title": "THE JOURNALIST RETURNS",
+      "description": "Remember the Times reporter? She's back. This time she wants to be embedded with your team for 48 hours. Radical transparency — or radical exposure. Your relationship with her determines how this plays out.",
+      "choices": [
+        { "label": "Full on-the-record interview — you've earned it", "flavor": "Your narrative is coherent. The piece is fair. For once, the press is on your side." },
+        { "label": "Embed her with your team for 48 hours", "flavor": "She sees everything — including your mistakes. But the transparency is powerful. 70% chance of a glowing profile." },
+        { "label": "Feed her a specific story you want published", "flavor": "It works — this time. But journalists have long memories about being used." }
+      ]
+    },
+    "carrier_incident": {
+      "title": "THE CARRIER INCIDENT",
+      "description": "An Iranian drone buzzed the USS Eisenhower's flight deck at 50 feet. Sailors hit the deck. Gun cameras captured everything. CENTCOM wants to release the footage. Iran claims it was \"routine surveillance.\"",
+      "choices": [
+        { "label": "Issue formal protest through military channels", "flavor": "Professionals talk to professionals. Iran absorbs the protest. IRGC internally: \"They flinched.\"" },
+        { "label": "Declassify footage — release to CNN", "flavor": "The footage goes viral. Iran is embarrassed globally. But Tangsiri remembers the humiliation." },
+        { "label": "Retaliate — disable the drone command facility", "flavor": "Precision strike. Clean hit. The world holds its breath. Iran goes silent for 48 hours." }
+      ]
+    },
+    "secret_talks": {
+      "title": "SECRET BACK-CHANNEL",
+      "description": "Iranian moderates have reached out through Omani intermediaries. They propose secret talks — but if leaked, hawks on both sides will be furious.",
+      "choices": [
+        { "label": "Accept the talks", "flavor": "The back-channel opens. Both sides agree to a cooling-off period." },
+        { "label": "Reject — too risky", "flavor": "The opportunity passes. Iranian hardliners use the rejection as propaganda." },
+        { "label": "Leak it to the press", "flavor": "You gain public credit but burn the diplomatic bridge." }
+      ]
+    },
+    "congress_pressure": {
+      "title": "CONGRESSIONAL HEARING",
+      "description": "Senate Armed Services Committee demands testimony. They threaten to cut your budget.",
+      "choices": [
+        { "label": "Justify with intelligence", "flavor": "You declassify key intel. Congress is satisfied — for now." },
+        { "label": "Promise to cut spending", "flavor": "Congress relents but expects follow-through." },
+        { "label": "Stonewall the committee", "flavor": "Refusing backfires. Media coverage turns hostile." }
+      ]
+    },
+    "allied_request": {
+      "title": "ALLIED NAVAL REQUEST",
+      "description": "Japan requests dedicated US Navy escort for their tanker fleet. It strengthens the alliance but costs resources.",
+      "choices": [
+        { "label": "Assign escorts", "flavor": "Japanese tankers sail with USN escorts. Tokyo publicly thanks Washington." },
+        { "label": "Decline politely", "flavor": "Japan is disappointed but understanding." }
+      ]
+    },
+    "humanitarian": {
+      "title": "HUMANITARIAN CRISIS",
+      "description": "An Iranian fishing vessel capsized near the strait. 40 fishermen in the water. Your destroyer is 15 minutes away.",
+      "choices": [
+        { "label": "Rescue immediately", "flavor": "Your sailors pull 38 survivors from the water. The footage goes viral." },
+        { "label": "Coordinate with Iran", "flavor": "Joint effort saves most of the crew." },
+        { "label": "Stay on mission", "flavor": "Iranian state media reports US ships watched fishermen drown." }
+      ]
+    },
+    "media_crisis": {
+      "title": "MEDIA FIRESTORM",
+      "description": "Footage of a near-collision between US and Iranian vessels. Cable news running it 24/7.",
+      "choices": [
+        { "label": "Release full video", "flavor": "Unedited footage shows Iranian provocation. Narrative shifts in your favor." },
+        { "label": "Downplay the incident", "flavor": "The story fades. Both sides quietly move on." },
+        { "label": "Blame Iran publicly", "flavor": "Forceful condemnation rallies base but inflames Iran." }
+      ]
+    },
+    "intel_reveal": {
+      "title": "INTELLIGENCE BREAKTHROUGH",
+      "description": "Your agents located Iran's mine-laying operations. Acting on it would burn the source.",
+      "choices": [
+        { "label": "Strike the mine depot", "flavor": "Cruise missiles destroy the depot. Mine threat neutralized." },
+        { "label": "Share with allies quietly", "flavor": "Coalition partners mine-sweep the areas. Source stays safe." },
+        { "label": "Hold the intelligence", "flavor": "You file it for future use." }
+      ]
+    },
+    "china_mediation": {
+      "title": "CHINESE MEDIATION OFFER",
+      "description": "Beijing proposes brokering a deal: they'll pressure Iran if you ease tech restrictions on Chinese firms.",
+      "choices": [
+        { "label": "Accept the deal", "flavor": "China delivers. Iran pulls back. But tech concessions draw criticism." },
+        { "label": "Counter-propose", "flavor": "Negotiations drag on. Modest gains." },
+        { "label": "Reject outright", "flavor": "Hawks applaud. China is annoyed." }
+      ]
+    },
+    "houthi_attack": {
+      "title": "HOUTHI RED SEA ATTACK",
+      "description": "Houthi forces have struck a commercial vessel in the Red Sea with an anti-ship missile. Iran's proxy war is expanding.",
+      "choices": [
+        { "label": "Strike Houthi launch sites", "flavor": "Precision strikes destroy launch infrastructure. Houthis go quiet briefly." },
+        { "label": "Ask Saudi Arabia to handle it", "flavor": "Riyadh engages. Results are mixed but it shares the burden." },
+        { "label": "Condemn and do nothing", "flavor": "Critics ask why you're not responding to attacks on global shipping." }
+      ]
+    },
+    "militia_attack": {
+      "title": "MILITIA BASE ATTACK",
+      "description": "Iraqi militia rockets hit a US base in the region. Two soldiers wounded. CENTCOM wants authorization to retaliate.",
+      "choices": [
+        { "label": "Retaliatory strike", "flavor": "Precision strikes hit militia warehouses. A clear message sent." },
+        { "label": "Increase base security", "flavor": "You absorb the attack. Some call it restraint, others weakness." },
+        { "label": "Withdraw from the base", "flavor": "The withdrawal is spun as a retreat. Iran claims victory." }
+      ]
+    },
+    "assassination_intel": {
+      "title": "CREDIBLE THREAT DETECTED",
+      "description": "Intelligence agencies detect a credible assassination threat against senior officials. The source is unclear — could be Iranian or domestic.",
+      "choices": [
+        { "label": "Increase security protocols", "flavor": "Security is tightened. Operations slow but the threat is contained." },
+        { "label": "Public announcement", "flavor": "Going public rallies support but raises tensions." },
+        { "label": "Ignore — focus on the mission", "flavor": "You choose to focus on the strait. The risk remains." }
+      ]
+    },
+    "domestic_unrest": {
+      "title": "DOMESTIC UNREST",
+      "description": "Protests erupt in major cities over war spending and the strait crisis. The National Guard is requesting authorization.",
+      "choices": [
+        { "label": "Address the nation", "flavor": "Your speech calls for unity. Polls stabilize temporarily." },
+        { "label": "Deploy National Guard", "flavor": "The crackdown makes headlines worldwide. Things get worse." },
+        { "label": "Announce peace initiative", "flavor": "A bold move. Moderates applaud, hawks protest." }
+      ]
+    },
+    "hostage": {
+      "title": "HOSTAGE SITUATION",
+      "description": "Iran is holding 12 crew members from a seized tanker. Families are on every news channel.",
+      "choices": [
+        { "label": "Negotiate release", "flavor": "You open a channel through Swiss intermediaries. The crew is alive but scared." },
+        { "label": "Demand unconditional release", "flavor": "You increase pressure. International opinion turns against Iran." },
+        { "label": "Offer quiet concession", "flavor": "A minor sanctions waiver. The crew comes home. Nobody talks about the price." }
+      ]
+    },
+    "oil_spike": {
+      "title": "OIL MARKET PANIC",
+      "description": "Oil futures jumped $15/barrel. Energy Secretary is on the phone — should you release reserves?",
+      "choices": [
+        { "label": "Release reserves", "flavor": "SPR release calms markets. Prices stabilize." },
+        { "label": "Verbal intervention only", "flavor": "Your press conference helps a little. Markets remain jittery." },
+        { "label": "Let markets correct", "flavor": "Gas prices soar. Critics call you out of touch." }
+      ]
+    },
+    "gulf_offer": {
+      "title": "GULF STATE OFFER",
+      "description": "Saudi Arabia and UAE offer to fund 60% of your operations — but they want a say in rules of engagement.",
+      "choices": [
+        { "label": "Accept with conditions", "flavor": "Gulf funding flows in. You retain operational control." },
+        { "label": "Accept fully", "flavor": "Generous funding helps but critics question who's calling the shots." },
+        { "label": "Decline", "flavor": "You maintain independence but miss burden-sharing." }
+      ]
+    },
+    "drone_shootdown": {
+      "title": "DRONE SHOOT-DOWN",
+      "description": "Iran shot down your surveillance drone over international waters. Joint Chiefs want a proportional response.",
+      "choices": [
+        { "label": "Strike the missile battery", "flavor": "Precision strike destroys the SAM site. The world holds its breath." },
+        { "label": "Respond with more drones", "flavor": "You flood the area with drones. Iran doesn't dare shoot again." },
+        { "label": "Stand down — it was unmanned", "flavor": "You absorb the loss. Some call it wise, others call it weak." }
+      ]
+    },
+    "un_vote": {
+      "title": "UN RESOLUTION VOTE",
+      "description": "A resolution condemning Iran is up for vote. Russia will veto unless you water it down.",
+      "choices": [
+        { "label": "Push strong resolution", "flavor": "Russia vetoes. But the debate isolates Iran diplomatically." },
+        { "label": "Accept watered-down version", "flavor": "Passes unanimously. Symbolic but shows unity." },
+        { "label": "Withdraw the resolution", "flavor": "Allies are confused by the retreat." }
+      ]
+    },
+    "cyber_attack_decision": {
+      "title": "CYBER OPERATION PROPOSAL",
+      "description": "NSA can disable Iran's naval command network for 48 hours. If attributed, it's an act of war.",
+      "choices": [
+        { "label": "Approve the operation", "flavor": "Iran's boats go silent for two days. They suspect sabotage." },
+        { "label": "Too dangerous — deny", "flavor": "You shelve the plan. Better to save that card." }
+      ]
+    },
+    "election_pressure": {
+      "title": "ELECTION YEAR PRESSURE",
+      "description": "Your party is down in polls. Advisors want a dramatic move before midterms.",
+      "choices": [
+        { "label": "Stage a naval exercise", "flavor": "Carriers look great on camera. Polls bump. Iran calls it provocation." },
+        { "label": "Focus on diplomacy", "flavor": "Not flashy. Pundits debate whether it's leadership or weakness." },
+        { "label": "Ignore the advisors", "flavor": "You stay the course. The polls are what they are." }
+      ]
+    },
+    "pipeline_sabotage": {
+      "title": "PIPELINE SABOTAGE",
+      "description": "An underwater pipeline feeding a major terminal has been damaged. Could be Iran, could be an accident.",
+      "choices": [
+        { "label": "Blame Iran, escalate", "flavor": "The accusation rallies allies but stokes the fire." },
+        { "label": "Investigate first", "flavor": "Measured response. The investigation takes time." },
+        { "label": "Offer joint investigation", "flavor": "Surprisingly, Iran agrees. A thread of trust forms." }
+      ]
+    },
+    "russia_arms_deal": {
+      "title": "RUSSIAN ARMS SHIPMENT",
+      "description": "Intel shows Russia is shipping advanced anti-ship missiles to Iran. If they're deployed, the strait becomes deadlier.",
+      "choices": [
+        { "label": "Intercept the shipment", "flavor": "The ship is turned back. Russia is furious. Iran doesn't get the weapons." },
+        { "label": "Diplomatic protest", "flavor": "A formal protest. The shipment arrives but world opinion shifts." },
+        { "label": "Ignore it", "flavor": "The missiles are deployed. Iranian capabilities increase." }
+      ]
+    },
+    "iran_internal": {
+      "title": "IRANIAN POWER STRUGGLE",
+      "description": "Intel suggests moderates within Iran's government are challenging IRGC hardliners. You could tip the balance.",
+      "choices": [
+        { "label": "Covert support for moderates", "flavor": "Quiet support shifts the internal debate. IRGC loses influence." },
+        { "label": "Public endorsement", "flavor": "Your endorsement backfires — moderates are tainted by US association." },
+        { "label": "Stay out of it", "flavor": "You let Iranian politics play out on their own." }
+      ]
+    },
+    "tanker_escort": {
+      "title": "ESCORT CONVOY REQUEST",
+      "description": "Multiple shipping companies request military escort through the strait. It would restore confidence but stretch your forces.",
+      "choices": [
+        { "label": "Full escort operations", "flavor": "Convoys resume under military escort. Oil markets stabilize." },
+        { "label": "Limited escort for allies only", "flavor": "Allied flagged ships get protection. Others are on their own." },
+        { "label": "Decline — too risky", "flavor": "Shipping companies reroute. Costs skyrocket." }
+      ]
+    },
+    "wargame_leak": {
+      "title": "WARGAME SIMULATION LEAKED",
+      "description": "A Pentagon wargame simulation showing US casualties in a strait conflict was leaked to the press. Public is alarmed.",
+      "choices": [
+        { "label": "Downplay and investigate leak", "flavor": "The story dominates the news cycle. The leak investigation goes nowhere." },
+        { "label": "Use it as a warning", "flavor": "You frame it as evidence for de-escalation. Public opinion shifts toward diplomacy." },
+        { "label": "Double down on readiness", "flavor": "\"We train for worst cases so they never happen.\" Hawks love it." }
+      ]
+    },
+    "stena_imperative": {
+      "title": "TANKER ESCAPE — USS MCFAUL",
+      "description": "Six IRGC gunboats are converging on the tanker Stena Imperative. USS McFaul (DDG-74) is 12 minutes away. The tanker captain is requesting emergency escort.",
+      "choices": [
+        { "label": "Full speed intercept — weapons hot", "flavor": "McFaul arrives at flank speed. F-35 overhead shoots down an Iranian Shahed drone. IRGC boats scatter. The tanker escapes." },
+        { "label": "Intercept but weapons tight", "flavor": "McFaul positions between the tanker and gunboats. Tense standoff. IRGC withdraws after 40 minutes." },
+        { "label": "Monitor only — avoid provocation", "flavor": "IRGC boards and seizes the Stena Imperative. Video goes viral. \"Where was the Navy?\"" }
+      ]
+    },
+    "insurance_crisis": {
+      "title": "MARITIME INSURANCE COLLAPSE",
+      "description": "Lloyd's of London and major maritime insurers have cancelled all war risk coverage in the Persian Gulf. No insurance = no tankers transit. Oil markets are panicking.",
+      "choices": [
+        { "label": "Government-backed insurance program ($20B)", "flavor": "A $20B government guarantee backstops the market. Tankers resume transit. Chubb signs as lead underwriter." },
+        { "label": "Pressure insurers to resume coverage", "flavor": "Arm-twisting produces limited coverage at 300% premiums. Some tankers resume." },
+        { "label": "Let the market sort itself out", "flavor": "Transit drops 70%. 150+ ships anchored outside the strait. Gas hits $6/gallon." }
+      ]
+    },
+    "nuclear_breakout": {
+      "title": "NUCLEAR BREAKOUT WARNING",
+      "description": "IAEA reports Iran has moved enriched uranium to the underground Fordow facility. At 60% enrichment with 440kg stockpile, weapons-grade material is 72 hours away.",
+      "choices": [
+        { "label": "Strike Fordow — bunker busters", "flavor": "B-2 bombers drop GBU-57 MOPs on the mountain facility. Iran vows \"devastating retaliation.\" The nuclear clock resets." },
+        { "label": "Emergency UN session — demand inspections", "flavor": "The Security Council convenes. Russia and China abstain rather than veto. New inspections demanded." },
+        { "label": "Offer down-blend deal", "flavor": "You offer sanctions relief in exchange for down-blending to 3.67%. Hawks call it appeasement. Iran considers it." }
+      ]
+    },
+    "abqaiq_redux": {
+      "title": "SAUDI ARAMCO ATTACK",
+      "description": "Drone swarm strikes Abqaiq-Khurais oil processing facility. 5.7 million barrels/day knocked offline — half of Saudi production. Oil futures spike 15% overnight.",
+      "choices": [
+        { "label": "Retaliatory strikes on Iranian launch sites", "flavor": "Cruise missiles hit IRGC drone bases. Iran denies involvement. The region braces for war." },
+        { "label": "Coordinate with Saudi air defense", "flavor": "You deploy Patriot batteries and THAAD. Future attacks are intercepted. Production resumes in 10 days." },
+        { "label": "Condemn and investigate", "flavor": "The investigation drags on. Oil prices stay elevated. Critics ask \"What are you waiting for?\"" }
+      ]
+    },
+    "houthi_restart": {
+      "title": "HOUTHI RED SEA CAMPAIGN RESUMES",
+      "description": "After months of quiet, Houthi forces launch anti-ship missiles at three commercial vessels in the Red Sea. Container shipping drops 90% through Bab el-Mandeb.",
+      "choices": [
+        { "label": "Deploy carrier group to Red Sea", "flavor": "Air strikes degrade Houthi launch sites. But now your forces are split between two theaters." },
+        { "label": "Ask Saudi Arabia to handle it", "flavor": "Riyadh engages but results are mixed. The Houthis are experienced guerrilla fighters." },
+        { "label": "Focus on the strait — ignore Red Sea", "flavor": "Shipping reroutes via Cape of Good Hope. 10 extra days, $1M fuel per voyage. Global supply chains buckle." }
+      ]
+    },
+    "mine_laying_detected": {
+      "title": "IRAN BEGINS MINING THE STRAIT",
+      "description": "CNN confirms: Iranian vessels are actively laying mines in the Strait of Hormuz shipping channels. CENTCOM identifies 12+ minelayers operating under cover of darkness.",
+      "choices": [
+        { "label": "Sink the minelayers", "flavor": "US forces sink 16 Iranian minelayers in a single night. Iran retains 80% of its small boat fleet." },
+        { "label": "Deploy minesweepers — clear lanes", "flavor": "Allied minesweepers begin clearing operations. Transit resumes under escort within 72 hours." },
+        { "label": "Establish exclusion zone", "flavor": "Any vessel in the exclusion zone will be engaged. Iran calls it an act of war." }
+      ]
+    },
+    "drone_carrier": {
+      "title": "IRIS SHAHID BAGHERI DETECTED",
+      "description": "Intelligence identifies the IRIS Shahid Bagheri — a converted container ship functioning as Iran's first drone carrier. It can deploy 30+ fast attack craft and explosive drone boats from inside the hull.",
+      "choices": [
+        { "label": "Strike it before it deploys", "flavor": "Harpoon missiles destroy the vessel. Iran calls it an attack on a \"civilian cargo ship.\" Satellite photos prove otherwise." },
+        { "label": "Track and monitor", "flavor": "You let it sail, gaining valuable intel on Iran's doctrine. But those drone boats could strike at any time." },
+        { "label": "Leak intel to media", "flavor": "World media covers the \"ghost carrier.\" Iran forced to dock it. But they know you're watching." }
+      ]
+    },
+    "china_oil_deal": {
+      "title": "CHINA'S SHADOW FLEET",
+      "description": "Satellite imagery shows 15 Chinese-flagged tankers loading Iranian oil at Kharg Island. 11.7 million barrels shipped to China since the crisis began. Your sanctions are being openly defied.",
+      "choices": [
+        { "label": "Secondary sanctions on Chinese banks", "flavor": "SWIFT cuts off three Chinese banks. Beijing is furious. Iran's revenue collapses. Trade war escalates." },
+        { "label": "Quiet diplomatic pressure", "flavor": "Beijing makes promises. The shadow fleet shrinks slightly. It's not enough." },
+        { "label": "Look the other way", "flavor": "Pragmatism over principle. Iran keeps selling. Hawks in Congress are furious." }
+      ]
+    },
+    "oman_talks": {
+      "title": "MUSCAT BACK-CHANNEL",
+      "description": "Omani intermediaries report Iran's Foreign Minister Araghchi says a nuclear deal is \"within reach.\" He proposes secret talks in Muscat. Three days later, your intelligence says IRGC is planning a major provocation.",
+      "choices": [
+        { "label": "Send negotiators to Muscat", "flavor": "Three hours of talks produce a framework. But is the IRGC on the same page as the Foreign Ministry?" },
+        { "label": "Demand preconditions first", "flavor": "You insist on a tanker release before talks. Iran walks away. The window narrows." },
+        { "label": "It's a distraction — reject", "flavor": "Hawks applaud. Doves despair. The IRGC provocation happens anyway." }
+      ]
+    },
+    "asian_energy_crisis": {
+      "title": "ASIAN ENERGY EMERGENCY",
+      "description": "India, Japan, and South Korea declare energy emergencies. 89% of strait oil goes to Asia. India invokes emergency powers to redirect LPG from industry to households. Tokyo warns of rolling blackouts.",
+      "choices": [
+        { "label": "Coordinate allied reserve release", "flavor": "IEA coordinates the largest coordinated reserve release in history. Markets stabilize briefly." },
+        { "label": "Prioritize US allies", "flavor": "Allied tankers get priority escort. India and others are left scrambling." },
+        { "label": "Use as leverage for coalition", "flavor": "\"You want oil? Send warships.\" Japan and South Korea reluctantly agree to contribute naval assets." }
+      ]
+    },
+    "gas_price_crisis": {
+      "title": "GAS HITS $6 PER GALLON",
+      "description": "Average US gas price breaks $6/gallon. Trucking companies halt routes. Airlines cancel flights. The economic pain is no longer abstract — it's at every pump in America.",
+      "choices": [
+        { "label": "Emergency SPR release + price cap", "flavor": "Gas drops to $5.20. Temporary relief. But the reserve is running low." },
+        { "label": "Blame Iran — rally patriotism", "flavor": "\"Iran is attacking YOUR wallet.\" The message resonates but doesn't lower prices." },
+        { "label": "Fast-track domestic drilling", "flavor": "Environmental groups protest. Production won't increase for months. But it's a signal." }
+      ]
+    },
+    "war_powers_vote": {
+      "title": "WAR POWERS RESOLUTION",
+      "description": "Both chambers of Congress have drafted War Powers Resolutions. If passed, your military options are severely constrained. The vote is in 48 hours.",
+      "choices": [
+        { "label": "Lobby to defeat it", "flavor": "Republicans rally. The resolution fails narrowly in the Senate. Democrats vow to try again." },
+        { "label": "Declassify intel to justify actions", "flavor": "Senators see the classified briefing. The resolution is tabled. But Iran now knows what you know." },
+        { "label": "Accept constraints — show respect for process", "flavor": "Critics call it weakness. Allies call it maturity. Your military options narrow but legitimacy grows." }
+      ]
+    },
+    "tanker_war_echoes": {
+      "title": "OPERATION EARNEST WILL 2.0",
+      "description": "Pentagon proposes a formal convoy escort operation through the strait — echoing the 1987-88 Tanker War. Reflagging allied tankers under US flag for legal protection.",
+      "choices": [
+        { "label": "Launch Earnest Will 2.0", "flavor": "Reflagged tankers sail under the Stars and Stripes. Any attack is now an attack on America. Oil markets respond." },
+        { "label": "Coalition-led escort (share the burden)", "flavor": "UK, France, and Australia contribute escorts. Slower to organize but spreads the risk." },
+        { "label": "Too provocative — decline", "flavor": "Shipping companies continue rerouting via Cape of Good Hope. Transit times and costs skyrocket." }
+      ]
+    },
+    "cyber_port_attack": {
+      "title": "IRANIAN CYBER ATTACK — FUJAIRAH PORT",
+      "description": "APT33 (IRGC-affiliated) has hit Fujairah port systems with wiper malware. Terminal operating systems are down. 40+ tankers can't load or unload. It's the digital equivalent of mining the strait.",
+      "choices": [
+        { "label": "Counter-cyber operation — hit Iranian ports", "flavor": "NSA retaliates. Bandar Abbas port goes dark for 72 hours. Cyber escalation spiral begins." },
+        { "label": "Restore systems — defensive posture", "flavor": "US Cyber Command deploys incident response teams. Systems back online in 5 days. Vulnerability patched." },
+        { "label": "Public attribution and sanctions", "flavor": "You name and shame APT33 operators. Sanctions on IRGC Cyber Command. Allies express solidarity." }
+      ]
+    },
+    "second_carrier": {
+      "title": "SECOND CARRIER DEPLOYMENT",
+      "description": "CENTCOM requests deployment of a second carrier strike group — USS Gerald R. Ford. It would be the largest naval buildup since 2003. The signal is unmistakable.",
+      "choices": [
+        { "label": "Deploy the Ford — show maximum force", "flavor": "Two carrier strike groups in the Gulf. Iran's navy stays in port. The world hasn't seen this since Iraq." },
+        { "label": "Position Ford in Arabian Sea (standoff)", "flavor": "Close enough to matter, far enough to avoid provocation. A balanced signal." },
+        { "label": "Deny the request — one carrier is enough", "flavor": "CENTCOM is unhappy but complies. The Ford stays in the Mediterranean." }
+      ]
+    },
+    "truth_social_armada": {
+      "title": "\"MASSIVE ARMADA HEADING TO IRAN\"",
+      "description": "The President posts on Truth Social: \"A massive Armada is heading to Iran. They will learn!\" The post has 50 million views. Iran's Supreme Leader responds within the hour.",
+      "choices": [
+        { "label": "Double down — back it with action", "flavor": "You mobilize visibly. Iran calls it bluffing until the first carrier arrives. Then they go quiet." },
+        { "label": "Walk it back through spokespersons", "flavor": "\"The President was speaking metaphorically.\" Nobody buys it. Iran smells weakness." },
+        { "label": "Use the chaos as cover for diplomacy", "flavor": "While the world watches the tweet storm, back-channel talks advance quietly." }
+      ]
+    },
+    "iran_internal_struggle": {
+      "title": "IRANIAN MODERATES VS IRGC",
+      "description": "Iran's civilian government and IRGC are openly clashing. The Foreign Ministry wants negotiations. The IRGC is planning more seizures. Your intel shows the split is real.",
+      "choices": [
+        { "label": "Covert support for moderates", "flavor": "Quiet channels funnel support. The moderates gain ground in internal debates. IRGC funding gets questioned." },
+        { "label": "Tighten sanctions — squeeze both sides", "flavor": "Maximum pressure doesn't discriminate. The moderates are weakened along with the IRGC." },
+        { "label": "Public overture to moderates", "flavor": "Your public endorsement backfires. Moderates are labeled American puppets. IRGC hardens." }
+      ]
+    },
+    "fast_boat_swarm": {
+      "title": "IRGC FAST BOAT SWARM",
+      "description": "TWENTY-FIVE Heydar-class fast boats — the fastest combat boats on earth at 110 knots — are converging on a tanker convoy. This is Iran's signature tactic: overwhelm with speed and numbers.",
+      "choices": [
+        { "label": "Weapons free — engage the swarm", "flavor": "Phalanx CIWS and .50 cal fire. Eight boats destroyed. The rest scatter. First naval combat since 1988." },
+        { "label": "Warning shots and countermeasures", "flavor": "Flares, warning shots, and acoustic devices. The swarm breaks off. For now." },
+        { "label": "Evasive maneuvers — protect the convoy", "flavor": "The convoy scatters. One tanker is boarded. \"Why didn't we shoot?\" headlines dominate." }
+      ]
+    },
+    "hezbollah_front": {
+      "title": "HEZBOLLAH OPENS SECOND FRONT",
+      "description": "Hezbollah launches missiles and drones into northern Israel from Lebanon. Iran's proxy war is expanding beyond the Gulf. Israel demands US support.",
+      "choices": [
+        { "label": "Support Israel — provide intel and munitions", "flavor": "US munitions flow to Israel. Hezbollah positions are degraded. But the US is now fighting on two fronts." },
+        { "label": "Call for ceasefire through UN", "flavor": "The UN resolution passes. Hezbollah pauses. But everyone knows it's temporary." },
+        { "label": "Stay out — this is Israel's fight", "flavor": "Israel is disappointed but capable. The conflict expands without direct US involvement." }
+      ]
+    },
+    "cape_route_crisis": {
+      "title": "CAPE OF GOOD HOPE BOTTLENECK",
+      "description": "With the strait effectively closed, 150+ tankers are rerouting via the Cape of Good Hope — adding 11,000 nautical miles, 10 days, and $1M fuel per voyage. Ports in South Africa are overwhelmed.",
+      "choices": [
+        { "label": "Subsidize rerouting costs", "flavor": "Government subsidies keep tankers moving. It's expensive but it works." },
+        { "label": "Demand strait reopening as red line", "flavor": "A formal ultimatum. Iran has 72 hours to guarantee safe passage. The clock ticks." },
+        { "label": "Accept the new normal", "flavor": "Markets price in the permanent disruption. The \"new Suez\" route becomes standard. Costs cascade through the global economy." }
+      ]
+    },
+    "minab_school_strike": {
+      "title": "MINAB SCHOOL STRIKE",
+      "description": "Reports emerge of a US airstrike hitting a school in Minab, southern Iran. 47 civilians reported killed including children. Iran broadcasting footage globally. UN demands investigation.",
+      "choices": [
+        { "label": "Express regret — open investigation", "flavor": "You acknowledge the tragedy. The investigation finds mixed-use targeting. International pressure eases slightly." },
+        { "label": "Deny — claim it was a military site", "flavor": "Pentagon releases grainy satellite photos. Nobody is convinced. Global protests erupt." },
+        { "label": "Pause air operations for review", "flavor": "A 72-hour pause. Hawks scream. Allies exhale. Iran uses the time to reposition forces." }
+      ]
+    },
+    "mojtaba_succession": {
+      "title": "SUPREME LEADER SUCCESSION CRISIS",
+      "description": "With Khamenei dead, his son Mojtaba is consolidating power with IRGC backing. But the Assembly of Experts is divided. Iran's internal chaos creates both danger and opportunity.",
+      "choices": [
+        { "label": "Covert ops to empower moderates", "flavor": "CIA channels support Raisi-faction moderates. The succession battle intensifies. IRGC is distracted." },
+        { "label": "Publicly demand democratic transition", "flavor": "Your call for democracy rallies Western opinion but unites Iranian factions against external meddling." },
+        { "label": "Exploit the chaos — escalate strikes", "flavor": "You hit command centers while leadership is in disarray. Effective but brutal. The world recoils." }
+      ]
+    },
+    "joe_kent_resignation": {
+      "title": "NSA KENT RESIGNS",
+      "description": "National Security Advisor Joe Kent has resigned, citing disagreements over escalation. He goes on Fox News within the hour. \"The President is being misled by hawks who've never seen combat.\"",
+      "choices": [
+        { "label": "Attack Kent publicly", "flavor": "A public feud dominates the news cycle. Your war cabinet looks fractured." },
+        { "label": "Replace quietly — project unity", "flavor": "The new NSA takes over smoothly. But Kent's book deal is already signed." },
+        { "label": "Reach out — bring him back with concessions", "flavor": "Kent returns with a mandate for restraint. Hawks are furious but the team is reunited." }
+      ]
+    },
+    "gcc_attacks": {
+      "title": "GCC BASES UNDER FIRE",
+      "description": "Iran launches ballistic missiles at Al Udeid (Qatar) and Al Dhafra (UAE). Both house US forces. Patriot batteries intercept most but three impact inside Al Udeid. 8 US casualties.",
+      "choices": [
+        { "label": "Massive retaliation — hit IRGC bases", "flavor": "B-2s and Tomahawks devastate IRGC coastal bases. Iran's ability to project force is degraded. But the war deepens." },
+        { "label": "Proportional response — missile batteries only", "flavor": "Precision strikes eliminate the launch sites. Measured but firm. Allies approve." },
+        { "label": "Evacuate non-essential personnel", "flavor": "You pull back from exposed positions. Critics call it retreat. Families of the fallen demand action." }
+      ]
+    },
+    "iris_dena_aftermath": {
+      "title": "IRIS DENA WRECKAGE",
+      "description": "The Iranian frigate IRIS Dena was sunk on Day 1. Now bodies and wreckage are washing up on Omani beaches. Al Jazeera is broadcasting it live. International pressure mounts.",
+      "choices": [
+        { "label": "Express regret — offer humanitarian assistance", "flavor": "A rare gesture of humanity in wartime. Some call it weakness. Others call it leadership." },
+        { "label": "Blame Iran for putting sailors in harm's way", "flavor": "The messaging works at home. Internationally, it falls flat." },
+        { "label": "No comment — focus on operations", "flavor": "The silence speaks volumes. The story dominates for 48 hours." }
+      ]
+    },
+    "three_carriers": {
+      "title": "THREE CARRIER GROUPS IN THEATER",
+      "description": "Lincoln, Truman, and Carl Vinson are all in the Arabian Sea. 200+ aircraft, 30 warships, 25,000 sailors. The largest US naval deployment since Iraq 2003. The world is watching.",
+      "choices": [
+        { "label": "Launch sustained air campaign", "flavor": "Operation Southern Watch II begins. 200 sorties per day. Iran's military infrastructure is systematically degraded." },
+        { "label": "Maintain pressure — deterrence posture", "flavor": "The carriers patrol. Iran's navy stays in port. The mere presence changes the calculus." },
+        { "label": "Withdraw one carrier — signal restraint", "flavor": "Vinson returns to the Pacific. A signal that you're not seeking war. Allies approve. Iran is uncertain." }
+      ]
+    },
+    "china_mediation_real": {
+      "title": "BEIJING CEASEFIRE PROPOSAL",
+      "description": "Chinese FM Wang Yi proposes a 5-point ceasefire framework: mutual de-escalation, UN peacekeepers in strait, sanctions relief timeline, nuclear talks restart, regional security forum. Beijing is serious.",
+      "choices": [
+        { "label": "Accept the framework as starting point", "flavor": "Talks begin in Beijing. Hawks rage about \"selling out to China.\" But the guns go quiet for the first time in weeks." },
+        { "label": "Counter-propose (US-led framework)", "flavor": "You reject Chinese mediation but propose your own plan. Beijing is annoyed but the diplomatic track opens." },
+        { "label": "Reject — China is not a neutral broker", "flavor": "Hawks applaud. China retaliates with arms sales to Iran. The diplomatic window narrows." }
+      ]
+    },
+    "russia_intel_leak": {
+      "title": "RUSSIAN INTELLIGENCE LEAK",
+      "description": "An FSB defector reveals Russia has been sharing US military intelligence with Iran — satellite passes, carrier positions, submarine locations. Your operational security is compromised.",
+      "choices": [
+        { "label": "Expel Russian diplomats", "flavor": "15 diplomats expelled. NATO allies follow suit. Russia retaliates but the leak is plugged." },
+        { "label": "Exploit the defector — feed disinformation", "flavor": "You turn the leak into an advantage. False intelligence flows to Tehran through Moscow. Iran chases ghosts." },
+        { "label": "Quiet protest — preserve the channel", "flavor": "A stern demarche. Russia denies everything. But the intelligence sharing slows." }
+      ]
+    },
+    "nowruz_ceasefire": {
+      "title": "NOWRUZ CEASEFIRE WINDOW",
+      "description": "Iranian New Year (Nowruz) is in 3 days. Iranian moderates propose a 5-day ceasefire for the holiday. IRGC hasn't objected. This could be the off-ramp.",
+      "choices": [
+        { "label": "Accept — extend to 10 days", "flavor": "Both sides stand down. Tankers transit. The ceasefire holds. Diplomats work feverishly to make it permanent." },
+        { "label": "Accept 5 days only", "flavor": "A brief respite. Oil flows. Markets rally. But everyone knows the clock is ticking." },
+        { "label": "Reject — no pause while tankers are held", "flavor": "You demand tanker release as precondition. Iran calls you unreasonable. The fighting continues through Nowruz." }
+      ]
+    },
+    "hezbollah_ceasefire_break": {
+      "title": "HEZBOLLAH BREAKS CEASEFIRE",
+      "description": "Hezbollah launches 150 rockets into northern Israel, breaking the Lebanon ceasefire. Israel retaliates immediately. Iran's proxy network is activating across the region.",
+      "choices": [
+        { "label": "Support Israel — joint strikes on Hezbollah", "flavor": "US and Israeli jets hit Hezbollah positions. The proxy front collapses. But you're now fighting a multi-front war." },
+        { "label": "Demand ceasefire restoration through UN", "flavor": "French-led mediation produces a fragile truce. Hezbollah pulls back. For now." },
+        { "label": "Focus on strait — Israel can handle it", "flavor": "You keep your eyes on the prize. Israel is capable. But the multi-front pressure on Iran lessens." }
+      ]
+    },
+    "houthi_escalation": {
+      "title": "HOUTHIS TARGET US WARSHIP",
+      "description": "Houthi anti-ship ballistic missile targets USS Gravely (DDG-107) in the Red Sea. SM-2 intercept at 8nm. The closest a Houthi missile has come to hitting a US warship.",
+      "choices": [
+        { "label": "Massive strike on Houthi infrastructure", "flavor": "B-2s flatten Houthi missile storage. The Red Sea calms. Yemen civilians pay the price." },
+        { "label": "Tighten the naval screen", "flavor": "More AEGIS destroyers deployed. An expensive but defensive solution." },
+        { "label": "Pressure Saudi to negotiate with Houthis", "flavor": "Riyadh reopens the Yemen peace track. Slow but addresses root causes." }
+      ]
+    },
+    "kc135_crash": {
+      "title": "KC-135 CRASH — COMBAT LOSSES MOUNT",
+      "description": "A KC-135 aerial refueling tanker crashes during combat operations, killing all 3 crew. It's the first US aircraft loss. Cable news shows the wreckage on loop.",
+      "choices": [
+        { "label": "Honor the fallen — steel resolve", "flavor": "A solemn ceremony at Dover. The nation mourns but rallies. \"Their sacrifice will not be in vain.\"" },
+        { "label": "Review operations — reduce tempo", "flavor": "Sortie rates drop 40%. Safety improves. Hawks worry about losing momentum." },
+        { "label": "Escalate — make their sacrifice count", "flavor": "The loss fuels a surge. More targets struck. The cycle accelerates." }
+      ]
+    },
+    "war_crimes_tribunal": {
+      "title": "ICC WAR CRIMES INVESTIGATION",
+      "description": "The International Criminal Court announces an investigation into both US and Iranian conduct. Warrants could be issued for senior officials. European allies are divided.",
+      "choices": [
+        { "label": "Reject ICC jurisdiction — sanction the court", "flavor": "America First crowd loves it. Europeans are horrified. The legal threat remains for allied officials." },
+        { "label": "Cooperate partially — show good faith", "flavor": "You provide limited documentation. It buys goodwill. The investigation slows." },
+        { "label": "Use it as leverage against Iran", "flavor": "You frame it as mutual accountability. Iran's crimes are documented alongside yours. A diplomatic tool emerges." }
+      ]
+    },
+    "mojtaba_consolidation": {
+      "title": "MOJTABA KHAMENEI POWER GRAB",
+      "description": "Intelligence confirms Mojtaba Khamenei — the dead Supreme Leader's son — has consolidated IRGC support. He's demanding revenge strikes and threatening to close the strait permanently.",
+      "choices": [
+        { "label": "Offer to recognize new leadership in exchange for de-escalation", "flavor": "A bitter pill. Recognizing Khamenei's son feels like losing. But the back-channel opens." },
+        { "label": "Target Mojtaba with a kill order", "flavor": "Decapitation strike 2.0. If you miss, it's war. If you hit, there's nobody left to negotiate with." },
+        { "label": "Ignore him — focus on the military threat", "flavor": "You treat the political question as irrelevant. The IRGC reads this as weakness." }
+      ]
+    },
+    "al_udeid_attack": {
+      "title": "AL UDEID BASE UNDER FIRE",
+      "description": "Iranian ballistic missiles hit Al Udeid Air Base in Qatar — the forward HQ of CENTCOM. 3 US personnel killed, 22 wounded. Qatar is demanding you relocate operations.",
+      "choices": [
+        { "label": "Retaliatory strike on launch site", "flavor": "Tomahawks fly within 20 minutes. The base is avenged. But the escalation ladder climbs." },
+        { "label": "Relocate to Al Dhafra (UAE)", "flavor": "Expensive but pragmatic. UAE welcomes the business. Qatar is relieved." },
+        { "label": "Harden defenses and stay", "flavor": "THAAD batteries deployed. The troops feel exposed. Morale drops." }
+      ]
+    },
+    "indian_energy_crisis": {
+      "title": "INDIA ENERGY EMERGENCY",
+      "description": "India declares a national energy emergency. They import 80% of their oil through the Strait. PM Modi is calling — demanding action or they will negotiate directly with Iran.",
+      "choices": [
+        { "label": "Promise priority escort for Indian tankers", "flavor": "Indian-flagged tankers get USN escorts. Modi is grateful. Other nations want the same deal." },
+        { "label": "Support India-Iran bilateral talks", "flavor": "India opens a line to Tehran. Hawks accuse you of outsourcing diplomacy." },
+        { "label": "Tell India to wait", "flavor": "Modi goes public with his frustration. India begins rationing. Blame falls on you." }
+      ]
+    },
+    "carrier_near_miss": {
+      "title": "USS EISENHOWER NEAR MISS",
+      "description": "An Iranian anti-ship ballistic missile splashes 200 meters from the USS Eisenhower. The closest a hostile weapon has come to a US carrier since WWII. The crew is shaken.",
+      "choices": [
+        { "label": "Destroy Iran's coastal missile batteries", "flavor": "Operation Burning Light. 48 cruise missiles eliminate Iran's anti-ship capability. The carrier group is safe. For now." },
+        { "label": "Pull the carrier back to the Gulf of Oman", "flavor": "Retreat. The IRGC celebrates. Your Navy commanders are furious." },
+        { "label": "Stay on station — increase air defense posture", "flavor": "Aegis systems go to maximum alert. The next shot might not miss." }
+      ]
+    },
+    "iran_moderate_coup": {
+      "title": "MODERATE FACTION REACHES OUT",
+      "description": "An encrypted message through Swiss channels: Iran's moderate faction is planning to sideline the IRGC hardliners. They need 72 hours — and a gesture of good faith.",
+      "choices": [
+        { "label": "Pause operations for 72 hours", "flavor": "Radio silence. The moderate faction moves. Three IRGC commanders are placed under house arrest. A breakthrough." },
+        { "label": "Give them intel on hardliner positions", "flavor": "Sharing intelligence with a foreign faction. If this leaks, it's an international scandal. But it works." },
+        { "label": "This is a trap — intensify operations", "flavor": "You don't trust it. Operations continue. The moderate window closes." }
+      ]
+    },
+    "kc135_crew_rescue": {
+      "title": "DOWNED KC-135 CREW",
+      "description": "The KC-135 tanker shot down on Day 1 — search teams have located 2 surviving crew members on an Iranian island. IRGC is closing in.",
+      "choices": [
+        { "label": "SEAL team rescue — extract at all costs", "flavor": "Spec ops infiltrate under cover of darkness. Both Americans rescued alive. The nation rallies." },
+        { "label": "Negotiate through Oman", "flavor": "Slow, agonizing negotiations. The crew becomes a bargaining chip. Families go on CNN." },
+        { "label": "Deny the crew exists — classify everything", "flavor": "The cover-up doesn't hold. When the truth emerges, the fallout is devastating." }
+      ]
+    },
+    "european_split": {
+      "title": "NATO FRACTURES",
+      "description": "France breaks with the US — Macron calls the Iran strikes \"disproportionate\" and blocks NATO solidarity statement. Germany is wavering. The UK stands with you — for now.",
+      "choices": [
+        { "label": "Bilateral with the UK — bypass NATO", "flavor": "The \"special relationship\" holds. But NATO is weaker than it's been since Suez." },
+        { "label": "Offer Europe a seat at the negotiating table", "flavor": "Macron gets his summit. NATO cohesion is preserved. The diplomatic path opens wider." },
+        { "label": "Publicly shame France", "flavor": "\"Freedom fries\" is trending. The base loves it. Diplomats are horrified." }
+      ]
+    },
+    "backchannel_progress": {
+      "title": "BACK-CHANNEL UPDATE",
+      "description": "Your Omani intermediary reports back. The Iranian delegation showed up — a significant signal. They presented a list of demands: sanctions relief on medical supplies, return of frozen assets, and a public statement acknowledging Iranian sovereignty. In exchange, they offer a 48-hour shipping ceasefire and the release of 4 detained crew members.",
+      "choices": [
+        { "label": "Accept the ceasefire deal", "flavor": "Both sides stand down. For the first time in weeks, the strait is quiet. But hawks on both sides are furious." },
+        { "label": "Counter-offer: ceasefire first, then talks", "flavor": "A reasonable position. The Omanis carry it back. Now you wait." },
+        { "label": "Reject — these terms are weakness", "flavor": "The channel goes dark. Iran's moderates lose face. The hardliners say \"we told you so.\"" }
+      ]
+    },
+    "backchannel_ceasefire_test": {
+      "title": "CEASEFIRE UNDER PRESSURE",
+      "description": "Day two of the ceasefire. IRGC fast boats are still patrolling — technically not a violation, but provocative. Then: an IRGC commander's nephew is caught planting a limpet mine on a Kuwaiti-flagged tanker. Iran claims he acted alone. Your military advisors want to respond. The Omani mediator begs you not to.",
+      "choices": [
+        { "label": "Hold the ceasefire — accept Iran's explanation", "flavor": "You absorb the political cost. But the ceasefire holds. Oil begins to flow. The Omanis call it \"a brave choice.\"" },
+        { "label": "Demand Iran arrest the commander publicly", "flavor": "Iran refuses. The ceasefire technically holds but trust is damaged. Both sides are watching for the next provocation." },
+        { "label": "Strike the IRGC base — ceasefire is over", "flavor": "Tomahawks hit Bandar Abbas. The ceasefire is dead. Iran's moderates are silenced for a generation." }
+      ]
+    },
+    "backchannel_counteroffer_response": {
+      "title": "IRAN'S RESPONSE",
+      "description": "The Omani intermediary returns. Iran's counter-counter-proposal: they'll reduce IRGC patrols by 50% for 72 hours as a \"gesture of goodwill,\" but no formal ceasefire. They want reciprocity — pull one carrier group back to show good faith. The moderates are sticking their necks out. This is their last offer.",
+      "choices": [
+        { "label": "Accept — pull a carrier back", "flavor": "USS Truman moves to the Arabian Sea. IRGC boats thin out. A fragile de-escalation begins." },
+        { "label": "Agree to patrol reduction but keep carriers", "flavor": "A half-measure that satisfies neither side fully. But the shooting stops, for now." },
+        { "label": "Reject — Iran must concede first", "flavor": "The channel collapses. The Omani ambassador says \"we tried.\" Iran's moderates won't recover from this." }
+      ]
+    },
+    "hostage_situation_escalates": {
+      "title": "HOSTAGE CRISIS DEEPENS",
+      "description": "Three of the 12 detained crew members appear on Iranian state TV, reading prepared statements calling for America to \"stop its aggression.\" Intelligence suggests they're being held at Evin Prison, not a military facility — a signal Iran wants to negotiate. The families are on CNN demanding action. A retired admiral is calling for a rescue operation on Fox News.",
+      "choices": [
+        { "label": "Send a private envoy to Tehran", "flavor": "A former diplomat boards a flight to Muscat, then Tehran. Total media blackout. If this leaks, it's a political disaster." },
+        { "label": "Authorize a rescue operation", "flavor": "Delta Force operators begin mission planning. The risk is enormous. If it fails, you own it." },
+        { "label": "Impose personal sanctions on IRGC commanders", "flavor": "A measured response that satisfies nobody fully. The families are disappointed. Iran is unmoved." }
+      ]
+    },
+    "hostage_envoy_result": {
+      "title": "THE ENVOY REPORTS",
+      "description": "Your envoy spent 72 hours in Tehran. The news is mixed. Iran will release 8 of the 12 crew — but they're keeping 4 \"for investigation into espionage.\" The price: unfreeze $2 billion in Iranian assets and issue a joint statement about \"mutual respect for maritime sovereignty.\" The envoy says the moderates were sincere but scared. The IRGC was listening to every word.",
+      "choices": [
+        { "label": "Accept the partial release", "flavor": "8 crew members land at Ramstein. The families cry on camera. But 4 remain. The opposition calls it \"paying ransom.\"" },
+        { "label": "All 12 or no deal", "flavor": "You draw the line. Iran goes silent. The 4 are moved to an unknown location." }
+      ]
+    },
+    "hostage_rescue_result": {
+      "title": "OPERATION EAGLE CLAW II",
+      "description": "The rescue force launched at 0200 local time. Two MH-60 Black Hawks, 24 operators, supported by AC-130 gunships. They reached Evin Prison and breached the facility. But Iranian intelligence was waiting.",
+      "choices": [
+        { "label": "Read the after-action report", "flavor": "3 operators KIA. 2 hostages killed in crossfire. 6 rescued. Iran parades the wreckage on TV. The world recoils. This is your Desert One." }
+      ]
+    },
+    "mojtaba_power_play": {
+      "title": "MOJTABA CONSOLIDATES",
+      "description": "Mojtaba Khamenei has purged three senior IRGC commanders who opposed his succession. Satellite imagery shows Republican Guard units redeploying to Tehran — not to the Gulf. Intelligence suggests he's more afraid of internal rivals than of you. A CIA source inside the Guardian Council reports he might be open to a deal if it helps him consolidate power.",
+      "choices": [
+        { "label": "Reach out through CIA channels", "flavor": "Your message reaches Mojtaba through three cutouts. He doesn't respond — but he doesn't shut it down either." },
+        { "label": "Exploit the chaos — increase pressure", "flavor": "While Iran fights itself, you tighten the noose. Sanctions hit harder when the government is distracted." },
+        { "label": "Publicly support Iranian moderates", "flavor": "Your speech is played on BBC Persian. Iranian moderates are now accused of being American agents. You meant well." }
+      ]
+    },
+    "mojtaba_secret_deal": {
+      "title": "THE SUPREME LEADER'S OFFER",
+      "description": "Mojtaba's people made contact. The proposal is extraordinary: Iran will reopen the strait and halt enrichment above 20% — permanently. In exchange, they want recognition of the new Supreme Leader, removal of all personal sanctions on Mojtaba, and a secret $5 billion reconstruction fund. The CIA says he's genuine. The risk: if Congress finds out, it's Iran-Contra 2.0.",
+      "choices": [
+        { "label": "Accept the grand bargain", "flavor": "You make a deal with the devil you don't know. The strait opens. Oil flows. But the secret eats at you. One leak and it's over." },
+        { "label": "Accept partially — strait for sanctions relief only", "flavor": "Mojtaba gets less than he wanted but more than he had. The strait reopens gradually. Both sides claim victory." },
+        { "label": "Report to Congress and decline", "flavor": "You do the right thing. Congress applauds your transparency. Iran's moderates collapse. Mojtaba becomes a hardliner overnight." }
+      ]
+    },
+    "nuclear_inspection_crisis": {
+      "title": "IAEA DEMANDS ACCESS",
+      "description": "Following your push for international inspection, the IAEA team arrived at Fordow — and was turned away. Iran claims \"construction\" prevents access. Satellite imagery shows new tunneling activity. The IAEA chief calls you directly: \"They're 2-3 weeks from enough material for a device. Maybe less.\" Israel is moving Jericho missiles to launch positions.",
+      "choices": [
+        { "label": "Coordinate strikes with Israel on Fordow", "flavor": "Bunker busters penetrate 80 meters of rock. Fordow is destroyed. Iran vows revenge \"for a thousand years.\" The nuclear program is set back 5 years — or 5 months." },
+        { "label": "Threaten strikes unless Iran admits inspectors", "flavor": "An ultimatum with teeth. The world watches." },
+        { "label": "Propose a new deal — enrichment caps for sanctions relief", "flavor": "Critics call it \"JCPOA 2.0.\" Supporters call it \"the only path that doesn't end in mushroom clouds.\"" }
+      ]
+    },
+    "nuclear_ultimatum_response": {
+      "title": "IRAN'S 72-HOUR RESPONSE",
+      "description": "The deadline passes. Iran's response comes not through diplomats but through actions: they move centrifuge cascades to a new, unknown facility. Meanwhile, Mojtaba appears on television and says, \"Iran will never bow to nuclear blackmail — we seek peaceful energy, and we will defend our rights.\" The IAEA says they've lost track of 8kg of enriched uranium.",
+      "choices": [
+        { "label": "Launch strikes on all known nuclear sites", "flavor": "Operation Olympic Games. B-2s from Whiteman, Tomahawks from the Gulf. 47 targets in one night. The region will never be the same." },
+        { "label": "Accept the new reality — contain and deter", "flavor": "You choose containment over war. History will judge whether this was wisdom or cowardice." }
+      ]
+    },
+    "assassination_crisis": {
+      "title": "[ IMMINENT THREAT ]",
+      "description": "Multiple intelligence agencies confirm a credible, imminent assassination plot. You have minutes to decide.",
+      "choices": [
+        { "label": "Full lockdown — cancel all public appearances", "flavor": "You go underground. The threat is neutralized but you look weak." },
+        { "label": "Counter-strike on the plotters", "flavor": "Special forces neutralize the cell. The message is clear." },
+        { "label": "Ignore it — show strength", "flavor": "You appear in public defiantly. The risk remains." }
+      ]
+    },
+    "nuclear_threshold": {
+      "title": "[ NUCLEAR THRESHOLD ]",
+      "description": "IAEA reports Iran at 90% enrichment with 440kg stockpile. Israel is on the phone. \"We strike in 12 hours unless you act.\" Russia warns any strike will be treated as aggression against their ally.",
+      "choices": [
+        { "label": "Green-light Israeli strike", "flavor": "Israeli F-35s hit Fordow and Natanz. Iran vows \"devastating retaliation.\" Russia recalls ambassador. The nuclear clock resets but the war clock accelerates." },
+        { "label": "US strike — bunker busters on Fordow", "flavor": "B-2 bombers drop GBU-57 MOPs. The mountain facility is destroyed. You own this escalation now." },
+        { "label": "Emergency UN session — buy time", "flavor": "The Security Council convenes. Israel fumes. Iran enriches. You bought 72 hours — at most." },
+        { "label": "Call Tehran directly", "flavor": "A stunning phone call. Iran agrees to freeze enrichment for 30 days. Hawks call it \"the worst deal since Munich.\" But the bombs stay in their bays." },
+        { "label": "Do nothing — call the bluff", "flavor": "Israel strikes alone 11 hours later. The fallout — literal and political — is now your problem without the credit." }
+      ]
+    },
+    "three_seizures": {
+      "title": "[ MASS SEIZURE EVENT ]",
+      "description": "IRGC Navy seizes THREE tankers simultaneously — Norwegian, Japanese, and Greek-flagged. 67 hostages. This is not a provocation. This is a coordinated operation. The world is watching your response in real time.",
+      "choices": [
+        { "label": "Immediate military rescue operation", "flavor": "SEALs board two tankers. The third is too far. 4 hostages wounded, 1 killed. Iran calls it piracy. Fox News calls you a hero." },
+        { "label": "Naval blockade of Iranian ports", "flavor": "\"Nothing enters or leaves Iranian waters until our people are free.\" A classic escalation. Effective but the world economy shudders." },
+        { "label": "Hostage negotiation through Oman", "flavor": "Negotiations begin. Iran demands sanctions relief. Day 1 passes. Day 2. The families are on every channel. \"WHERE ARE YOU?\"" },
+        { "label": "Authorize \"all necessary force\"", "flavor": "Congress grants authorization. The US is now legally at war with Iran in all but name." }
+      ]
+    },
+    "friendly_fire": {
+      "title": "[ FRIENDLY FIRE INCIDENT ]",
+      "description": "USS Vella Gulf (CG-72) has engaged and destroyed a vessel in the strait. It was an Emirati coast guard cutter. 11 UAE personnel killed. The UAE ambassador is on the phone. Al Jazeera has the footage.",
+      "choices": [
+        { "label": "Immediate public apology + compensation", "flavor": "You own it immediately. $500M compensation. The UAE accepts but Al Udeid base access is \"under review.\" Trust is damaged." },
+        { "label": "Blame fog of war — express regret", "flavor": "\"In the fog of war, terrible mistakes happen.\" The UAE pulls their ambassador. Gulf coalition fractures." },
+        { "label": "Classify the incident — suppress footage", "flavor": "The cover-up lasts 36 hours before a sailor leaks the bridge recording. Now it's a scandal AND a tragedy." },
+        { "label": "Stand down all operations for 48 hours", "flavor": "A full operational pause. Iran exploits the gap. But no more mistakes. The Navy resets its ROE." }
+      ]
+    },
+    "cascade_crisis": {
+      "title": "[ CASCADE FAILURE ]",
+      "description": "Houthi anti-ship missile hits LNG tanker in Bab el-Mandeb. Tanker is on fire, crew abandoning ship. Simultaneously, IRGC mines detonate under a VLCC in Hormuz. AND Iraqi militias are rocketing Al Asad. Three theaters. One response.",
+      "choices": [
+        { "label": "Prioritize Hormuz — it's the jugular", "flavor": "You save the VLCC crew and clear the mines. The LNG tanker burns. Al Asad takes hits. You can't be everywhere." },
+        { "label": "Retaliate everywhere — show no weakness", "flavor": "Tomahawks hit all three fronts simultaneously. Iran's proxy network is degraded. Your budget is cratered. The region is on fire." },
+        { "label": "Call emergency NATO Article 5", "flavor": "First Article 5 invocation since 9/11. NATO responds — eventually. The bureaucracy buys Iran 72 hours to dig in." },
+        { "label": "Emergency ceasefire offer to Iran", "flavor": "You offer to stop all strikes if Iran reins in proxies. Iran says yes. Then the Houthis fire again the next day. \"They don't control their own proxies.\"" }
+      ]
+    },
+    "carrier_hit": {
+      "title": "[ CARRIER UNDER ATTACK ]",
+      "description": "FLASH: USS Abraham Lincoln reports missile impact. Iranian anti-ship ballistic missile. Flight deck damaged. 23 casualties. The carrier is NOT sinking but air operations are suspended. This is the first hit on a US carrier since WWII.",
+      "choices": [
+        { "label": "Massive retaliation — destroy Iran's missile capability", "flavor": "200 Tomahawks in a single salvo. Every known missile site hit. Iran's offensive capability is shattered. The war is now total." },
+        { "label": "Proportional response — hit the launch site", "flavor": "Cruise missiles destroy the specific battery that fired. Measured. Professional. But 23 families want more." },
+        { "label": "Withdraw the Lincoln — save the crew", "flavor": "The Lincoln limps to Fujairah. Iran celebrates. \"We drove the Americans from our waters.\" Your deterrence is in ruins." },
+        { "label": "Invoke Article II — address the nation", "flavor": "\"23 Americans were attacked today. We will respond at a time and manner of our choosing.\" The nation rallies. Iran waits." }
+      ]
+    }
+  },
+  "escalationLadder": [
+    { "name": "DIPLOMATIC TENSIONS", "description": "Sanctions and rhetoric. No military engagement." },
+    { "name": "NAVAL STANDOFF", "description": "Warships deployed. Seizures and standoffs. Limited skirmishes." },
+    { "name": "LIMITED STRIKES", "description": "Precision strikes on military targets. Tit-for-tat." },
+    { "name": "AIR CAMPAIGN", "description": "Sustained air operations. Infrastructure targeted. Civilian risk." },
+    { "name": "GROUND INVASION", "description": "Ground forces deployed. Draft considered. Regional war." },
+    { "name": "TOTAL WAR", "description": "Nuclear threshold. Chemical weapons. Civilization at stake." }
+  ],
+  "iranEscalation": [
+    { "name": "RESTRAINED", "triggers": ["aggression < 25"] },
+    { "name": "PROBING", "triggers": ["aggression 25-50", "fast boats and seizures"] },
+    { "name": "PROXY WAR", "triggers": ["aggression 50-65", "Houthis + Iraqi militias activated"] },
+    { "name": "DIRECT ENGAGEMENT", "triggers": ["aggression 65-80", "missile strikes", "mine-laying"] },
+    { "name": "NUCLEAR LEVERAGE", "triggers": ["aggression 80-90", "breakout threats", "enrichment acceleration"] },
+    { "name": "ALL-OUT", "triggers": ["aggression > 90", "mass missile/drone swarm", "suicide boats"] }
+  ],
+  "storyArcs": {
+    "the_spark": { "name": "THE SPARK", "brief": "You inherit a crisis in motion. Nobody expects you to last." },
+    "the_squeeze": { "name": "THE SQUEEZE", "brief": "Iran tightens. A second vessel seized. Your opposition smells blood." },
+    "diplomatic_window": { "name": "THE DIPLOMATIC WINDOW", "brief": "A brief thaw. Iran releases crew. The UN convenes. Choose wisely." },
+    "false_dawn": { "name": "THE FALSE DAWN", "brief": "Whatever progress you made gets complicated. Every path leads to a setback." },
+    "proxy_season": { "name": "PROXY SEASON", "brief": "Houthis. Hezbollah. Iraqi militias. The crisis is metastasizing." },
+    "pressure_cooker": { "name": "THE PRESSURE COOKER", "brief": "Congressional hearings. Leaked documents. Iran issues an ultimatum." },
+    "crossroads": { "name": "CROSSROADS", "brief": "The ultimatum expires. What happens depends on what you've built." },
+    "the_grind": { "name": "THE GRIND", "brief": "The world adjusts. The crisis becomes chronic. Fatigue sets in." },
+    "endgame_setup": { "name": "ENDGAME", "brief": "A breakthrough reveals Iran's true objective. The board reshapes." },
+    "resolution": { "name": "RESOLUTION", "brief": "Diplomatic resolution, military victory, or managed decline. History is watching." }
+  },
+  "winLoseReasons": {
+    "win_strait_open": "The Strait of Hormuz has been open and stable for 7 consecutive days. Crisis resolved through [masterful diplomacy / strong leadership / persistent strategy].",
+    "win_day91_stable": "After 13 weeks of crisis management, the situation has stabilized enough for a diplomatic resolution.",
+    "lose_approval": "Congress has initiated removal proceedings. Your approval collapsed to [X]% and stayed there. Your time in the Situation Room is over.",
+    "lose_assassination_extreme": "Despite warnings, the threat was not contained. A sophisticated attack succeeds. The crisis claims its highest-profile casualty.",
+    "lose_international": "The international community has turned against you. Allies recall ambassadors. Sanctions against the United States are being discussed. You are a global pariah.",
+    "lose_polarization": "Domestic unrest has reached a breaking point. The military is split. The crisis abroad has ignited a crisis at home. Civil order collapses.",
+    "lose_war": "Too many unresolved military incidents. The escalation spiral is irreversible. Armed conflict erupts in the Strait of Hormuz. A regional war has begun.",
+    "lose_day91_unstable": "After 13 weeks, the situation remains unstable. You failed to open the strait."
+  },
+  "overnightNewsFiller": [
+    "A quiet day in the strait. Tankers transit normally.",
+    "Diplomatic channels remain open. No major incidents.",
+    "Markets hold steady. The situation is unchanged.",
+    "Intelligence gathering continues. No surprises."
+  ]
+}

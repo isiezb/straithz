@@ -11,195 +11,171 @@ const TERMINAL = document.getElementById('terminal-overlay');
 
 const INTERRUPTS = [
     // ===== INTELLIGENCE (INT-01 to INT-05) =====
-    { text: "NSA flagged unusual encrypted traffic from an IRGC base. Analysts need 2 hours to decode.", choices: [
-        { label: "Divert analysts now", effects: { fogOfWar: -5, budget: -5 } },
-        { label: "Queue for tomorrow", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -5, budget: -5 } },
+        { label: '', effects: {} }
     ]},
-    { text: "4-hour weather gap over Bandar Abbas for satellite imagery.", choices: [
-        { label: "Redirect satellite", effects: { budget: -5, fogOfWar: -3 } },
-        { label: "Keep scheduled targets", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { budget: -5, fogOfWar: -3 } },
+        { label: '', effects: {} }
     ]},
-    { text: "Iranian naval officer at Swiss embassy claiming he has operational plans.", choices: [
-        { label: "Send team immediately", effects: { fogOfWar: -8, tension: 3 } },
-        { label: "Vet through channels", effects: { fogOfWar: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -8, tension: 3 } },
+        { label: '', effects: { fogOfWar: -3 } }
     ]},
-    { text: "IRGC commanders call intercepted. Best translator on leave.", choices: [
-        { label: "Use backup translator", effects: { fogOfWar: -5 } },
-        { label: "Wait for expert", effects: { fogOfWar: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -5 } },
+        { label: '', effects: { fogOfWar: -3 } }
     ]},
-    { text: "Telegram accounts posting Iranian military schedules. Could be real or counterintel.", choices: [
-        { label: "Act cautiously on the intel", effects: { fogOfWar: -3 } },
-        { label: "Flag and move on", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -3 } },
+        { label: '', effects: {} }
     ]},
 
     // ===== DIPLOMATIC (INT-06 to INT-10) =====
-    { text: "French ambassador in your lobby, upset about yesterday's briefing. No appointment.", choices: [
-        { label: "See him now", effects: { internationalStanding: 3 } },
-        { label: "Schedule tomorrow", effects: { internationalStanding: -2 } }
+    { text: '', choices: [
+        { label: '', effects: { internationalStanding: 3 } },
+        { label: '', effects: { internationalStanding: -2 } }
     ]},
-    { text: "Omani intermediary has a time-sensitive message from Araghchi.", choices: [
-        { label: "Read now", effects: { diplomaticCapital: 3, tension: -2 } },
-        { label: "Read after current action", effects: { diplomaticCapital: 1 } }
+    { text: '', choices: [
+        { label: '', effects: { diplomaticCapital: 3, tension: -2 } },
+        { label: '', effects: { diplomaticCapital: 1 } }
     ]},
-    { text: "UN Secretary General wants to discuss ceasefire framework.", choices: [
-        { label: "Take call", effects: { diplomaticCapital: 3, internationalStanding: 2 } },
-        { label: "Call back later", effects: { internationalStanding: -2 } }
+    { text: '', choices: [
+        { label: '', effects: { diplomaticCapital: 3, internationalStanding: 2 } },
+        { label: '', effects: { internationalStanding: -2 } }
     ]},
-    { text: "Russian surveillance ship entered the Persian Gulf.", choices: [
-        { label: "Diplomatic note", effects: { internationalStanding: 2 } },
-        { label: "Shadow with destroyer", effects: { budget: -5, tension: 2 } }
+    { text: '', choices: [
+        { label: '', effects: { internationalStanding: 2 } },
+        { label: '', effects: { budget: -5, tension: 2 } }
     ]},
-    { text: "South Korea's trade minister calling. They import 70% of oil through Hormuz.", choices: [
-        { label: "Reassure personally", effects: { internationalStanding: 3, oilFlow: 2 } },
-        { label: "Refer to deputy", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { internationalStanding: 3, oilFlow: 2 } },
+        { label: '', effects: {} }
     ]},
 
     // ===== MILITARY (INT-11 to INT-15) =====
-    { text: "Radar on USS Eisenhower down. 8-hour repair estimate.", choices: [
-        { label: "Keep on station degraded", effects: { conflictRisk: 3 } },
-        { label: "Pull back for repairs", effects: { budget: -10, conflictRisk: -2 } }
+    { text: '', choices: [
+        { label: '', effects: { conflictRisk: 3 } },
+        { label: '', effects: { budget: -10, conflictRisk: -2 } }
     ]},
-    { text: "Destroyer captain: Iranian speedboats approaching fast, below warning threshold. Wants weapons-free prep.", choices: [
-        { label: "Grant weapons-free", effects: { tension: 3, conflictRisk: 2 } },
-        { label: "Maintain ROE", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { tension: 3, conflictRisk: 2 } },
+        { label: '', effects: {} }
     ]},
-    { text: "US patrol nearly fired on UAE Coast Guard. IFF confusion. UAE wants explanation.", choices: [
-        { label: "Apologize, review protocols", effects: { internationalStanding: 3 } },
-        { label: "Blame UAE coordination", effects: { internationalStanding: -5 } }
+    { text: '', choices: [
+        { label: '', effects: { internationalStanding: 3 } },
+        { label: '', effects: { internationalStanding: -5 } }
     ]},
-    { text: "SOCOM proposes covert recon of suspected Iranian weapons cache on an island.", choices: [
-        { label: "Approve mission", effects: { budget: -15, fogOfWar: -8, tension: 5 } },
-        { label: "Deny", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { budget: -15, fogOfWar: -8, tension: 5 } },
+        { label: '', effects: {} }
     ]},
-    { text: "Patrol vessel detected naval mine in shipping lane.", choices: [
-        { label: "Send minesweeper", effects: { budget: -10, oilFlow: -3 } },
-        { label: "Investigate with drones", effects: { budget: -5, oilFlow: -5 } }
+    { text: '', choices: [
+        { label: '', effects: { budget: -10, oilFlow: -3 } },
+        { label: '', effects: { budget: -5, oilFlow: -5 } }
     ]},
 
     // ===== DOMESTIC (INT-16 to INT-20) =====
-    { text: 'Senator tweeted classified operational details: "The American people deserve to know."', choices: [
-        { label: "Demand investigation", effects: { domesticApproval: 3, fogOfWar: 2 } },
-        { label: "Brief FBI privately", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 3, fogOfWar: 2 } },
+        { label: '', effects: {} }
     ]},
-    { text: "Trucker convoy blocking highway outside DC over fuel prices.", choices: [
-        { label: "Express sympathy, review subsidies", effects: { domesticApproval: 3, budget: -10 } },
-        { label: "Say nothing", effects: { domesticApproval: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 3, budget: -10 } },
+        { label: '', effects: { domesticApproval: -3 } }
     ]},
-    { text: "SecState and SecDef screaming match in the hallway. Staff shaken.", choices: [
-        { label: "Mediate personally", effects: { polarization: -3 } },
-        { label: "Let them work it out", effects: { polarization: 2 } }
+    { text: '', choices: [
+        { label: '', effects: { polarization: -3 } },
+        { label: '', effects: { polarization: 2 } }
     ]},
-    { text: "Snap poll dropped. Comms team wants to know if you respond.", choices: [
-        { label: "Rapid response matching mood", effects: { domesticApproval: 2 } },
-        { label: "Stay the course", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 2 } },
+        { label: '', effects: {} }
     ]},
-    { text: "Major veterans org issued statement on your military posture.", choices: [
-        { label: "Respond publicly", effects: { domesticApproval: 3 } },
-        { label: "No response", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 3 } },
+        { label: '', effects: {} }
     ]},
 
     // ===== CRISIS (INT-21 to INT-25) =====
-    { text: "Damaged tanker leaking crude into the strait. Environmental disaster developing.", choices: [
-        { label: "Divert naval assets to help", effects: { budget: -15, internationalStanding: 5 } },
-        { label: "Let flag state handle it", effects: { internationalStanding: -5, oilFlow: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { budget: -15, internationalStanding: 5 } },
+        { label: '', effects: { internationalStanding: -5, oilFlow: -3 } }
     ]},
-    { text: "Qatar Airways 777 deviated into restricted airspace. Both sides scrambling.", choices: [
-        { label: "De-escalate via hotline", effects: { diplomaticCapital: 5, tension: -5 } },
-        { label: "Scramble escort fighters", effects: { tension: 3 } }
+    { text: '', choices: [
+        { label: '', effects: { diplomaticCapital: 5, tension: -5 } },
+        { label: '', effects: { tension: 3 } }
     ]},
-    { text: "6.4 magnitude earthquake in southwestern Iran. Significant casualties.", choices: [
-        { label: "Offer humanitarian aid immediately", effects: { internationalStanding: 10, tension: -8, budget: -10 }, setFlags: { humanitarian_rescue: true } },
-        { label: "Express condolences only", effects: { internationalStanding: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { internationalStanding: 10, tension: -8, budget: -10 }, setFlags: { humanitarian_rescue: true } },
+        { label: '', effects: { internationalStanding: -3 } }
     ]},
-    { text: "Oil futures spiked 8% on false seizure rumor.", choices: [
-        { label: "Public denial with intel backing", effects: { fogOfWar: -3, oilPrice: -5 } },
-        { label: "Let it ride", effects: { oilPrice: 3 } }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -3, oilPrice: -5 } },
+        { label: '', effects: { oilPrice: 3 } }
     ]},
-    { text: "Large crowd at US embassy Baghdad. Hezbollah flags visible.", choices: [
-        { label: "Reinforce security", effects: { budget: -5 } },
-        { label: "Begin evacuation planning", effects: { budget: -10, domesticApproval: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { budget: -5 } },
+        { label: '', effects: { budget: -10, domesticApproval: -3 } }
     ]},
 
     // ===== CHARACTER-SPECIFIC (INT-26 to INT-35) =====
-    { text: "You posted an internal strategy memo to Truth Social instead of group chat. Up for 47 seconds.", choices: [
-        { label: "Claim intentional \u2014 4D chess", effects: { domesticApproval: 3, fogOfWar: 5 } },
-        { label: "Delete and deny", effects: { domesticApproval: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 3, fogOfWar: 5 } },
+        { label: '', effects: { domesticApproval: -3 } }
     ], condition: () => SIM.character?.id === 'trump' },
 
-    { text: "Major donor calling from Mar-a-Lago, demanding to know why oil stocks are down.", choices: [
-        { label: "Schmooze", effects: { domesticApproval: 2 } },
-        { label: "Have assistant handle it", effects: { domesticApproval: -2 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 2 } },
+        { label: '', effects: { domesticApproval: -2 } }
     ], condition: () => SIM.character?.id === 'trump' },
 
-    { text: "Marine unit challenges you to PT on carrier visit. Cameras rolling.", choices: [
-        { label: "Accept and crush it", effects: { domesticApproval: 5, internationalStanding: 3 } },
-        { label: "Politely decline", effects: { domesticApproval: -2 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 5, internationalStanding: 3 } },
+        { label: '', effects: { domesticApproval: -2 } }
     ], condition: () => SIM.character?.id === 'hegseth' },
 
-    { text: "Generals split 50/50 on next move. They're looking at you.", choices: [
-        { label: "Decide immediately", effects: { tension: 3 } },
-        { label: "Ask for more analysis", effects: { diplomaticCapital: 2 } }
+    { text: '', choices: [
+        { label: '', effects: { tension: 3 } },
+        { label: '', effects: { diplomaticCapital: 2 } }
     ], condition: () => SIM.character?.id === 'hegseth' },
 
-    { text: 'Unknown number sent coordinates in Dubai: "Tomorrow. 3pm. Come alone. \u2014Z"', choices: [
-        { label: "Go", effects: { fogOfWar: -10, diplomaticCapital: 5 } },
-        { label: "Trace number first", effects: { fogOfWar: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -10, diplomaticCapital: 5 } },
+        { label: '', effects: { fogOfWar: -3 } }
     ], condition: () => SIM.character?.id === 'kushner' },
 
-    { text: "Your father-in-law wants a full briefing over dinner. He has opinions.", choices: [
-        { label: "Brief honestly", effects: { domesticApproval: 3 } },
-        { label: "Sanitized version", effects: {} }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 3 } },
+        { label: '', effects: {} }
     ], condition: () => SIM.character?.id === 'kushner' },
 
-    { text: "Someone in your intel briefing is leaking to a hostile Twitch streamer.", choices: [
-        { label: "Find the source", effects: { fogOfWar: -5 } },
-        { label: "Feed false intel through leak", effects: { fogOfWar: -3 } }
+    { text: '', choices: [
+        { label: '', effects: { fogOfWar: -5 } },
+        { label: '', effects: { fogOfWar: -3 } }
     ], condition: () => SIM.character?.id === 'asmongold' },
 
-    { text: "A subreddit crowdsourced satellite analysis and found something your IC missed.", choices: [
-        { label: "Engage, give credit", effects: { domesticApproval: 5, fogOfWar: -3 } },
-        { label: "Classify it", effects: { fogOfWar: -3, domesticApproval: -5 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 5, fogOfWar: -3 } },
+        { label: '', effects: { fogOfWar: -3, domesticApproval: -5 } }
     ], condition: () => SIM.character?.id === 'asmongold' },
 
-    { text: 'Prominent figure in your movement denounced you as "globalist capitulation."', choices: [
-        { label: "Attack back, purge", effects: { domesticApproval: -5, polarization: 5 } },
-        { label: "Reach out privately", effects: { domesticApproval: 5 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: -5, polarization: 5 } },
+        { label: '', effects: { domesticApproval: 5 } }
     ], condition: () => SIM.character?.id === 'fuentes' },
 
-    { text: "Nobody will co-sponsor your resolution. Party leadership won't call back.", choices: [
-        { label: "Bypass Congress, national address", effects: { domesticApproval: 5, polarization: 3 } },
-        { label: "Compromise with Congress", effects: { domesticApproval: -3, internationalStanding: 3 } }
+    { text: '', choices: [
+        { label: '', effects: { domesticApproval: 5, polarization: 3 } },
+        { label: '', effects: { domesticApproval: -3, internationalStanding: 3 } }
     ], condition: () => SIM.character?.id === 'fuentes' },
 ];
 
 const _intelSnippets = [
-    'SIGINT intercept: IRGC naval base at Bandar Abbas showing surge activity.',
-    'Satellite imagery: Heydar-110 fast boats deployed to forward position near Larak Island.',
-    'HUMINT report: Iranian commander expressing doubts about escalation — moderates gaining.',
-    'Intercepted comms: IRGC supply convoy scheduled for next 48 hours via Kish Island.',
-    'MQ-9 Reaper footage: mine-laying vessel spotted in western shipping lane.',
-    'Signal analysis: Iranian C2 network traffic spike — possible operation imminent.',
-    'Asset report: IRGC and Foreign Ministry in open disagreement over strategy.',
-    'NSA intercept: Chinese tankers negotiating alternate route via Pakistani port.',
-    'Satellite: IRIS Shahid Bagheri drone carrier has left port — heading southeast.',
-    'HUMINT: Iran stockpiling enriched uranium at underground Fordow facility.',
-    'Intercepted call: Iraqi militia commander receiving targeting data from Tehran.',
-    'Imagery: New anti-ship missile battery activated at Qeshm Island — 30km from shipping lane.',
-    'SIGINT: Houthi leadership in contact with IRGC Quds Force — coordinating Red Sea ops.',
-    'Asset report: Iranian regime concerned about public unrest over economic collapse.',
-    'Satellite: Russia-flagged cargo vessel entered Bandar Abbas with military containers.',
-    'NSA: APT33 staging infrastructure for cyberattack on Gulf state port systems.',
-    'HUMINT: Mojtaba Khamenei consolidating IRGC loyalty — purging moderates from command.',
-    'Satellite: Three carrier groups now visible in Arabian Sea — Lincoln, Truman, Carl Vinson.',
-    'SIGINT: IRGC Navy switching to burst transmissions — harder to intercept.',
-    'Asset report: Iranian civilian protests in Isfahan over economic collapse and war.',
-    'Imagery: New IRGC fast boat base detected on Farur Island — 20+ Heydar-class vessels.',
-    'NSA intercept: Russian military advisors detected at IRGC Aerospace Force HQ.',
-    'HUMINT: Chinese ambassador in Tehran offering "comprehensive strategic package" to Iran.',
-    'Satellite: Iranian mobile missile launchers dispersing from known bases — targeting unknown.',
-    'SIGINT: Houthi commanders receiving encrypted satellite phones from IRGC Quds Force.',
-    'Asset report: IRGC Quds Force activating sleeper cells in Bahrain and Kuwait.',
-    'Imagery: IRIS Shahid Bagheri drone carrier detected deploying explosive drone boats.',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '',
 ];
 
 // Floating number stack counter for positioning
@@ -207,45 +183,45 @@ const _intelSnippets = [
 // ======================== ACTION TOOLTIPS ========================
 
 const ACTION_TIPS = {
-    'gather-intel':     { desc: 'Deploy CIA assets to reduce fog of war. Better intel means better decisions.', effect: 'Fog -8' },
-    'analyze-threats':  { desc: 'Review current intelligence for actionable patterns and forecasts.', effect: 'Fog -3 (if fog low)' },
-    'phone-call':       { desc: 'Call a foreign leader. Builds diplomatic capital and can shift alliances.', effect: 'Diplomacy +4, Tension -2' },
-    'draft-proposal':   { desc: 'Draft a formal diplomatic proposal. Slow but powerful for international standing.', effect: 'Standing +5' },
-    'demand-un-session':{ desc: 'Demand emergency UN Security Council session on the strait crisis.', effect: 'Standing +3, Tension -3' },
-    'reposition-fleet': { desc: 'Move naval assets to deter Iranian aggression or protect shipping lanes.', effect: 'Tension +3, Iran aggr. -2' },
-    'change-roe':       { desc: 'Cycle rules of engagement: Defensive → Moderate → Aggressive. Affects all engagements.', effect: 'Changes ROE' },
-    'escort-tankers':   { desc: 'Assign warships to escort oil tankers through the strait. Protects oil flow.', effect: 'Oil flow +3, Tension +2' },
-    'precision-strike': { desc: 'Strike a specific military target. Effective but escalatory.', effect: 'Iran aggr. -5, Tension +8' },
-    'spec-ops-raid':    { desc: 'Special forces raid on Iranian military assets. High risk, high reward.', effect: 'Iran aggr. -6, Fog -5' },
-    'air-strikes':      { desc: 'Launch sustained air campaign against Iranian military infrastructure.', effect: 'Iran aggr. -10, WarPath +1' },
-    'sead-mission':     { desc: 'Suppress enemy air defenses. Enables further air operations.', effect: 'Tension +5, Fog -5' },
-    'ground-troops':    { desc: 'Deploy ground forces to Iranian-held territory. Major escalation.', effect: 'Iran aggr. -15, WarPath +1' },
-    'seize-islands':    { desc: 'Seize strategic Iranian islands controlling the strait.', effect: 'Iran aggr. -12, WarPath +1' },
-    'full-mobilization':{ desc: 'Full military mobilization. Total commitment to war footing.', effect: 'All military metrics shift' },
-    'press-conference': { desc: 'Hold a press conference to shape the narrative and boost approval.', effect: 'Approval +3, Polarization -2' },
-    'brief-congress':   { desc: 'Brief congressional leaders. Builds political support for your strategy.', effect: 'Approval +2' },
-    'adjust-sanctions': { desc: 'Tighten or loosen sanctions on Iran. Affects their economy and aggression.', effect: 'Iran econ ±5' },
-    'market-intervention':{ desc: 'Release strategic oil reserves or subsidize fuel to stabilize markets.', effect: 'Oil price -5' },
-    'issue-ultimatum':  { desc: 'Deliver a public ultimatum to Iran. Dramatic but polarizing.', effect: 'Tension +8, Approval +5' },
-    'emergency-coalition':{ desc: 'Form an emergency multinational coalition for strait operations.', effect: 'Standing +5, Budget +15' },
-    'escalate':         { desc: 'Increase military escalation level. Unlocks more aggressive options.', effect: 'Escalation +1' },
-    'deescalate':       { desc: 'Reduce military escalation. Locks out aggressive options but eases tension.', effect: 'Escalation -1, Tension -5' },
+    'gather-intel':     { desc: '', effect: '' },
+    'analyze-threats':  { desc: '', effect: '' },
+    'phone-call':       { desc: '', effect: '' },
+    'draft-proposal':   { desc: '', effect: '' },
+    'demand-un-session':{ desc: '', effect: '' },
+    'reposition-fleet': { desc: '', effect: '' },
+    'change-roe':       { desc: '', effect: '' },
+    'escort-tankers':   { desc: '', effect: '' },
+    'precision-strike': { desc: '', effect: '' },
+    'spec-ops-raid':    { desc: '', effect: '' },
+    'air-strikes':      { desc: '', effect: '' },
+    'sead-mission':     { desc: '', effect: '' },
+    'ground-troops':    { desc: '', effect: '' },
+    'seize-islands':    { desc: '', effect: '' },
+    'full-mobilization':{ desc: '', effect: '' },
+    'press-conference': { desc: '', effect: '' },
+    'brief-congress':   { desc: '', effect: '' },
+    'adjust-sanctions': { desc: '', effect: '' },
+    'market-intervention':{ desc: '', effect: '' },
+    'issue-ultimatum':  { desc: '', effect: '' },
+    'emergency-coalition':{ desc: '', effect: '' },
+    'escalate':         { desc: '', effect: '' },
+    'deescalate':       { desc: '', effect: '' },
     // Bible actions
-    'prisoner_exchange':   { desc: 'Propose a hostage/prisoner swap through intermediaries.', effect: 'Tension -5, Approval +5' },
-    'covert_operation':    { desc: 'Plan and execute a clandestine mission against Iranian assets.', effect: 'Iran aggr. -8, Fog -10' },
-    'emergency_budget':    { desc: 'Go to Congress for emergency funding.', effect: 'Budget +200' },
-    'media_offensive':     { desc: 'Coordinated media blitz to shape the narrative.', effect: 'Fog -8, Approval +5' },
-    'backchannel_message': { desc: 'Send a private message to Iran through intermediaries.', effect: 'Tension -3' },
-    'allied_consultation': { desc: 'Conference call with allied leaders to build coalition support.', effect: 'Standing +3, Diplo +3' },
-    'sanctions_adjustment':{ desc: 'Fine-tune sanctions: tighten or loosen specific measures. Delayed effects.', effect: 'Iran econ -3, delayed -5' },
-    'intel_sharing':       { desc: 'Share classified intel with allies to build trust.', effect: 'Standing +5, Diplo +3' },
-    'humanitarian_corridor':{ desc: 'Establish safe passage for civilian vessels and aid.', effect: 'Standing +10, Tension -3' },
-    'economic_stimulus':   { desc: 'Domestic economic action to offset crisis impacts.', effect: 'Approval +8, Oil price -5' },
-    'cyber_recon':         { desc: 'Probe Iranian digital infrastructure for vulnerabilities.', effect: 'Fog -10' },
-    'war_powers_consult':  { desc: 'Brief Congressional leadership on military escalation.', effect: 'Approval +3, Polariz. -3' },
-    'regional_flyover':    { desc: 'Visible show of force with strategic bombers over the Gulf.', effect: 'Tension +5, Iran aggr. -5' },
-    'summit_proposal':     { desc: 'Propose a major international summit on the strait crisis.', effect: 'Standing +8, Diplo -10' },
-    'press_embargo':       { desc: 'Request media blackout on sensitive operations.', effect: 'Fog -5, Approval -2' },
+    'prisoner_exchange':   { desc: '', effect: '' },
+    'covert_operation':    { desc: '', effect: '' },
+    'emergency_budget':    { desc: '', effect: '' },
+    'media_offensive':     { desc: '', effect: '' },
+    'backchannel_message': { desc: '', effect: '' },
+    'allied_consultation': { desc: '', effect: '' },
+    'sanctions_adjustment':{ desc: '', effect: '' },
+    'intel_sharing':       { desc: '', effect: '' },
+    'humanitarian_corridor':{ desc: '', effect: '' },
+    'economic_stimulus':   { desc: '', effect: '' },
+    'cyber_recon':         { desc: '', effect: '' },
+    'war_powers_consult':  { desc: '', effect: '' },
+    'regional_flyover':    { desc: '', effect: '' },
+    'summit_proposal':     { desc: '', effect: '' },
+    'press_embargo':       { desc: '', effect: '' },
 };
 
 // ======================== BIBLE ACTIONS (Content Bible expansion) ========================
@@ -253,7 +229,7 @@ const ACTION_TIPS = {
 const BIBLE_ACTIONS = [
     {
         id: 'prisoner_exchange',
-        name: 'PRISONER EXCHANGE',
+        name: '',
         category: 'diplomacy',
         ap: 2, cost: 20,
         condition: () => SIM.seizureCount > 0,
@@ -261,8 +237,8 @@ const BIBLE_ACTIONS = [
             const success = SIM.diplomaticCapital > 30 && SIM.iranFactionBalance > 40;
             if (success) {
                 _applyEffects({ tension: -8, domesticApproval: 10, diplomaticCapital: -8, iranAggression: -5 });
-                addHeadline('BREAKING: Prisoner exchange agreed — crew coming home', 'good');
-                showToast('Prisoner exchange successful!', 'good');
+                addHeadline('', 'good');
+                showToast('', 'good');
             } else {
                 _applyEffects({ tension: 3, diplomaticCapital: -5 });
                 addHeadline('Prisoner exchange talks collapse — Iran demands more concessions', 'bad');
@@ -272,7 +248,7 @@ const BIBLE_ACTIONS = [
     },
     {
         id: 'covert_operation',
-        name: 'COVERT OPERATION',
+        name: '',
         category: 'intelligence',
         ap: 3, cost: 25,
         condition: () => SIM.fogOfWar < 50,
@@ -280,8 +256,8 @@ const BIBLE_ACTIONS = [
             const success = Math.random() < 0.7;
             if (success) {
                 _applyEffects({ iranAggression: -10, fogOfWar: -15, tension: 5, conflictRisk: 3 });
-                addHeadline('Reports of explosion at Iranian military facility — cause unknown', 'neutral');
-                showToast('Covert operation: SUCCESS', 'good');
+                addHeadline('', 'neutral');
+                showToast('', 'good');
             } else {
                 _applyEffects({ tension: 15, internationalStanding: -10, iranAggression: 10, fogOfWar: 5 });
                 addHeadline('Iran claims to have captured US special operations personnel', 'critical');
@@ -291,7 +267,7 @@ const BIBLE_ACTIONS = [
     },
     {
         id: 'emergency_budget',
-        name: 'EMERGENCY BUDGET REQUEST',
+        name: '',
         category: 'domestic',
         ap: 1, cost: 0,
         condition: () => SIM.budget < 100,
@@ -299,8 +275,8 @@ const BIBLE_ACTIONS = [
             const success = SIM.domesticApproval > 40;
             if (success) {
                 _applyEffects({ budget: 200, domesticApproval: -3, polarization: 3 });
-                addHeadline('Congress approves $200M emergency appropriation for strait operations', 'good');
-                showToast('+$200M budget approved', 'good');
+                addHeadline('', 'good');
+                showToast('', 'good');
             } else {
                 _applyEffects({ budget: 50, domesticApproval: -5, polarization: 5 });
                 addHeadline('Congress slashes emergency budget request — only $50M approved', 'bad');
@@ -310,43 +286,43 @@ const BIBLE_ACTIONS = [
     },
     {
         id: 'media_offensive',
-        name: 'MEDIA OFFENSIVE',
+        name: '',
         category: 'domestic',
         ap: 2, cost: 10,
         condition: () => SIM.fogOfWar > 60,
         execute: function() {
             _applyEffects({ fogOfWar: -8, domesticApproval: 5, internationalStanding: 3, polarization: -2 });
-            addHeadline('White House launches coordinated media offensive on strait crisis', 'neutral');
-            showToast('Media offensive launched', 'good');
+            addHeadline('', 'neutral');
+            showToast('', 'good');
         },
     },
     {
         id: 'backchannel_message',
-        name: 'BACK-CHANNEL MESSAGE',
+        name: '',
         category: 'diplomacy',
         ap: 1, cost: 0,
         condition: () => SIM.storyFlags?.backchannel_accepted || SIM.diplomaticCapital > 20,
         execute: function() {
             _applyEffects({ tension: -3, diplomaticCapital: -2, iranAggression: -2 });
-            addHeadline('Sources: back-channel communications between Washington and Tehran ongoing', 'neutral');
-            showToast('Message sent through intermediaries', 'good');
+            addHeadline('', 'neutral');
+            showToast('', 'good');
         },
     },
     {
         id: 'allied_consultation',
-        name: 'ALLIED CONSULTATION',
+        name: '',
         category: 'diplomacy',
         ap: 1, cost: 0,
         condition: () => SIM.internationalStanding > 30,
         execute: function() {
             _applyEffects({ internationalStanding: 3, diplomaticCapital: 3 });
-            addHeadline('Allied leaders express support for US strait strategy in joint call', 'good');
-            showToast('Allied consultation complete', 'good');
+            addHeadline('', 'good');
+            showToast('', 'good');
         },
     },
     {
         id: 'sanctions_adjustment',
-        name: 'SANCTIONS ADJUSTMENT',
+        name: '',
         category: 'economic',
         ap: 1, cost: 0,
         condition: () => true,
@@ -357,49 +333,49 @@ const BIBLE_ACTIONS = [
                 effects: { iranEconomy: -5, iranAggression: -3 },
                 activateOnDay: SIM.day + 3,
             });
-            addHeadline('Treasury announces targeted sanctions adjustments on Iranian entities', 'neutral');
-            showToast('Sanctions adjusted — effects in 3 days', 'good');
+            addHeadline('', 'neutral');
+            showToast('', 'good');
         },
     },
     {
         id: 'intel_sharing',
-        name: 'INTELLIGENCE SHARING',
+        name: '',
         category: 'intelligence',
         ap: 1, cost: 0,
         condition: () => SIM.fogOfWar < 40 && SIM.internationalStanding > 30,
         execute: function() {
             _applyEffects({ internationalStanding: 5, diplomaticCapital: 3, fogOfWar: 3 });
-            addHeadline('US shares classified strait intelligence with coalition partners', 'good');
-            showToast('Intel shared with allies', 'good');
+            addHeadline('', 'good');
+            showToast('', 'good');
         },
     },
     {
         id: 'humanitarian_corridor',
-        name: 'HUMANITARIAN CORRIDOR',
+        name: '',
         category: 'diplomacy',
         ap: 2, cost: 15,
         condition: () => SIM.warPath >= 2,
         execute: function() {
             _applyEffects({ internationalStanding: 10, tension: -3, domesticApproval: 3, oilFlow: 5 });
-            addHeadline('US establishes humanitarian corridor through Strait of Hormuz', 'good');
-            showToast('Humanitarian corridor established', 'good');
+            addHeadline('', 'good');
+            showToast('', 'good');
         },
     },
     {
         id: 'economic_stimulus',
-        name: 'ECONOMIC STIMULUS',
+        name: '',
         category: 'economic',
         ap: 1, cost: 30,
         condition: () => SIM.oilPrice > 120,
         execute: function() {
             _applyEffects({ domesticApproval: 8, oilPrice: -5, budget: -30 });
-            addHeadline('President announces economic stimulus package to offset oil crisis', 'good');
-            showToast('Economic stimulus deployed', 'good');
+            addHeadline('', 'good');
+            showToast('', 'good');
         },
     },
     {
         id: 'cyber_recon',
-        name: 'CYBER RECONNAISSANCE',
+        name: '',
         category: 'intelligence',
         ap: 1, cost: 10,
         condition: () => SIM.fogOfWar > 30,
@@ -411,59 +387,59 @@ const BIBLE_ACTIONS = [
                 addHeadline('NSA cyber reconnaissance reveals Iranian naval operation plans', 'good');
                 showToast('Major intelligence breakthrough!', 'good');
             } else {
-                addHeadline('Cyber reconnaissance gathering data on Iranian networks', 'neutral');
-                showToast('Cyber recon complete', 'good');
+                addHeadline('', 'neutral');
+                showToast('', 'good');
             }
         },
     },
     {
         id: 'war_powers_consult',
-        name: 'WAR POWERS CONSULTATION',
+        name: '',
         category: 'domestic',
         ap: 1, cost: 0,
         condition: () => SIM.warPath >= 3,
         execute: function() {
             _applyEffects({ domesticApproval: 3, polarization: -3, internationalStanding: 3 });
             SIM.storyFlags.war_powers_briefed = true;
-            addHeadline('President briefs Congressional Gang of Eight on military operations', 'neutral');
-            showToast('Congress briefed — war powers satisfied', 'good');
+            addHeadline('', 'neutral');
+            showToast('', 'good');
         },
     },
     {
         id: 'regional_flyover',
-        name: 'REGIONAL FLYOVER',
+        name: '',
         category: 'military',
         ap: 1, cost: 15,
         condition: () => true,
         execute: function() {
             _applyEffects({ tension: 5, iranAggression: -5, domesticApproval: 3, internationalStanding: -2 });
-            addHeadline('B-52 strategic bombers conduct visible flyover of Persian Gulf', 'neutral');
-            showToast('Show of force: B-52 flyover', 'good');
+            addHeadline('', 'neutral');
+            showToast('', 'good');
         },
     },
     {
         id: 'summit_proposal',
-        name: 'SUMMIT PROPOSAL',
+        name: '',
         category: 'diplomacy',
         ap: 2, cost: 20,
         condition: () => SIM.diplomaticCapital > 40,
         execute: function() {
             _applyEffects({ diplomaticCapital: -10, internationalStanding: 8, tension: -5, domesticApproval: 3 });
             SIM.storyFlags.summit_proposed = true;
-            addHeadline('US proposes international summit on Strait of Hormuz crisis', 'good');
-            showToast('Summit proposed — diplomatic momentum building', 'good');
+            addHeadline('', 'good');
+            showToast('', 'good');
         },
     },
     {
         id: 'press_embargo',
-        name: 'PRESS EMBARGO',
+        name: '',
         category: 'domestic',
         ap: 1, cost: 0,
         condition: () => SIM.fogOfWar > 50,
         execute: function() {
             _applyEffects({ fogOfWar: -5, domesticApproval: -2, polarization: 2 });
-            addHeadline('White House requests voluntary media embargo on strait operations', 'neutral');
-            showToast('Press embargo requested', 'good');
+            addHeadline('', 'neutral');
+            showToast('', 'good');
         },
     },
 ];
@@ -634,7 +610,7 @@ function updateCenterPanel() {
 
     // AP dots
     const ap = SIM.actionPoints || 0;
-    const apDots = Array.from({ length: 5 }, (_, i) => i < ap
+    const apDots = Array.from({ length: 3 }, (_, i) => i < ap
         ? '<span class="ap-dot filled">\u25CF</span>'
         : '<span class="ap-dot empty">\u25CB</span>'
     ).join('');
@@ -905,22 +881,23 @@ function setGauge(id, value, delta) {
 // ======================== ADVISOR RECOMMENDATION ========================
 
 function getAdvisorRecommendation() {
+    const rec = DATA.intel.advisorRecommendations;
     if (SIM.tension > 70 && SIM.iranAggression > 60) {
-        return 'Diplomatic approach recommended \u2014 military escalation risks war.';
+        return rec.highTensionHighAggression;
     }
     if (SIM.oilFlow < 30) {
-        return 'Priority: restore oil flow. Naval patrol and coalition recommended.';
+        return rec.lowOilFlow;
     }
     if (SIM.fogOfWar > 70) {
-        return 'Intelligence is critical. Deploy surveillance assets.';
+        return rec.highFogOfWar;
     }
     if (SIM.domesticApproval < 35) {
-        return 'Domestic support collapsing. Consider media campaign.';
+        return rec.lowApproval;
     }
     if (SIM.budget < 300) {
-        return 'Budget critical. Cut costs or negotiate burden-sharing.';
+        return rec.lowBudget;
     }
-    return 'Stay the course. Monitor the situation.';
+    return rec.default;
 }
 
 // ======================== KEY DRIVERS (why gauges changed) ========================
@@ -928,31 +905,32 @@ function getAdvisorRecommendation() {
 function _getKeyDrivers() {
     const drivers = [];
     // Tension drivers
-    if (SIM.crisisLevel >= 1) drivers.push({ text: `Crisis Level ${SIM.crisisLevel} adding tension`, cls: 'down-bad' });
-    if (SIM.diplomaticCapital > 60) drivers.push({ text: 'Strong diplomacy reducing tension', cls: 'up-good' });
+    const kd = DATA.intel.keyDrivers;
+    if (SIM.crisisLevel >= 1) drivers.push({ text: kd.crisisLevel.replace('{value}', SIM.crisisLevel), cls: 'down-bad' });
+    if (SIM.diplomaticCapital > 60) drivers.push({ text: kd.strongDiplomacy, cls: 'up-good' });
     // Oil
-    if (SIM.oilFlow < 40) drivers.push({ text: `Oil flow low (${Math.round(SIM.oilFlow)}%) — prices rising`, cls: 'down-bad' });
-    if (SIM.proxyThreat > 30) drivers.push({ text: `Proxy attacks disrupting shipping (threat: ${Math.round(SIM.proxyThreat)})`, cls: 'down-bad' });
+    if (SIM.oilFlow < 40) drivers.push({ text: kd.oilFlowLow.replace('{value}', Math.round(SIM.oilFlow)), cls: 'down-bad' });
+    if (SIM.proxyThreat > 30) drivers.push({ text: kd.proxyThreat.replace('{value}', Math.round(SIM.proxyThreat)), cls: 'down-bad' });
     const seized = SIM.tankers.filter(t => t.seized).length;
-    if (seized > 0) drivers.push({ text: `${seized} tanker${seized > 1 ? 's' : ''} seized — flow and approval hit`, cls: 'down-bad' });
+    if (seized > 0) drivers.push({ text: kd.tankersSeized.replace('{count}', seized), cls: 'down-bad' });
     // Approval
-    if (SIM.budget < 200) drivers.push({ text: 'Budget crisis hurting approval', cls: 'down-bad' });
-    if (SIM.oilFlow < 30) drivers.push({ text: 'Gas prices crushing domestic support', cls: 'down-bad' });
+    if (SIM.budget < 200) drivers.push({ text: kd.budgetCrisis, cls: 'down-bad' });
+    if (SIM.oilFlow < 30) drivers.push({ text: kd.gasPrices, cls: 'down-bad' });
     // Iran
-    if (SIM.iranEconomy < 30) drivers.push({ text: 'Iran economy collapsed — aggression rising', cls: 'down-bad' });
-    if (SIM.chinaRelations < 30) drivers.push({ text: 'China buying Iranian oil — sanctions less effective', cls: 'down-bad' });
+    if (SIM.iranEconomy < 30) drivers.push({ text: kd.iranEconomyCollapsed, cls: 'down-bad' });
+    if (SIM.chinaRelations < 30) drivers.push({ text: kd.chinaBuyingOil, cls: 'down-bad' });
     // Positive
-    if (SIM.interceptCount > 0) drivers.push({ text: `${SIM.interceptCount} intercepts boosting approval`, cls: 'up-good' });
-    if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/7 days toward victory`, cls: 'up-good' });
+    if (SIM.interceptCount > 0) drivers.push({ text: kd.interceptsBoosting.replace('{count}', SIM.interceptCount), cls: 'up-good' });
+    if (SIM.straitOpenDays > 0) drivers.push({ text: kd.straitOpen.replace('{days}', SIM.straitOpenDays), cls: 'up-good' });
     // Player deltas
     const pd = SIM.playerDeltas;
-    if (pd.tension < -3) drivers.push({ text: 'Your actions are reducing tension', cls: 'up-good' });
-    if (pd.tension > 3) drivers.push({ text: 'Your actions are increasing tension', cls: 'down-bad' });
-    if (pd.oilFlow > 3) drivers.push({ text: 'Your actions are improving oil flow', cls: 'up-good' });
-    if (pd.domesticApproval > 3) drivers.push({ text: 'Your actions are boosting approval', cls: 'up-good' });
-    if (pd.domesticApproval < -3) drivers.push({ text: 'Your actions are hurting approval', cls: 'down-bad' });
+    if (pd.tension < -3) drivers.push({ text: kd.playerReducingTension, cls: 'up-good' });
+    if (pd.tension > 3) drivers.push({ text: kd.playerIncreasingTension, cls: 'down-bad' });
+    if (pd.oilFlow > 3) drivers.push({ text: kd.playerImprovingOilFlow, cls: 'up-good' });
+    if (pd.domesticApproval > 3) drivers.push({ text: kd.playerBoostingApproval, cls: 'up-good' });
+    if (pd.domesticApproval < -3) drivers.push({ text: kd.playerHurtingApproval, cls: 'down-bad' });
 
-    if (drivers.length === 0) drivers.push({ text: 'Situation holding steady', cls: 'stable' });
+    if (drivers.length === 0) drivers.push({ text: kd.holdingSteady, cls: 'stable' });
 
     return drivers.slice(0, 5).map(d =>
         `<div class="morning-news-item" style="font-size:11px"><span class="og-delta ${d.cls}">\u25CF</span> ${d.text}</div>`
@@ -1006,11 +984,11 @@ function showFirstMorning() {
     const ordersEl = document.getElementById('fm-orders');
     const buttonsRow = document.getElementById('fm-buttons');
 
-    const wireText = 'US-Israel joint strikes hit 500 targets across Iran. Supreme Leader Khamenei confirmed killed. Iran retaliating with 500+ ballistic missiles and 2,000 drones — 60% targeting US forces in region. IRGC Navy deploying across Strait of Hormuz. Tanker MV Advantage Sweet seized. Oil surges past $110. Lloyd\'s suspends all war risk coverage. Three carrier strike groups en route.';
+    const wireText = DATA.intel.firstMorning.wireText;
 
-    const sitrepText = 'IRIS Dena frigate sunk — first major naval engagement since 1988. KC-135 tanker down, 3 KIA. Al Udeid and Al Dhafra bases under ballistic missile attack. Mojtaba Khamenei emerging as Supreme Leader successor with full IRGC backing. Houthis resuming Red Sea attacks. Hezbollah mobilizing on Lebanese border. China and Russia calling emergency UNSC session.';
+    const sitrepText = DATA.intel.firstMorning.sitrepText;
 
-    const ordersText = `You are ${charName}. The strait is closed. Oil is spiking. Three carrier groups are in theater. Iran\'s leadership is in chaos but its military is retaliating hard. The world is watching what you do in the next 24 hours. There are no good options — only less bad ones.`;
+    const ordersText = DATA.intel.firstMorning.ordersText.replace('{charName}', charName);
 
     let skipped = false;
 
@@ -1208,14 +1186,27 @@ function showDailyReport() {
         return;
     }
 
-    const recommendation = getAdvisorRecommendation();
+    // Generate narrative briefing
+    const briefing = typeof generateMorningBriefing === 'function' ? generateMorningBriefing() : null;
 
-    // Top headline from overnight
-    const todayHeadlines = SIM.headlines.filter(h => h.day === SIM.day);
-    const topHeadline = todayHeadlines.filter(h => h.level !== 'normal').slice(-1)[0]
-        || todayHeadlines.slice(-1)[0]
-        || { text: 'No major developments overnight.', level: 'normal' };
-    const hlClass = topHeadline.level === 'critical' ? 'wire-flash' : topHeadline.level === 'warning' ? 'wire-urgent' : '';
+    // Gauge display helper
+    function gaugeBar(label, val, max) {
+        max = max || 100;
+        const pct = Math.round((val / max) * 100);
+        const cls = pct >= 60 ? 'good' : pct >= 35 ? 'warning' : 'danger';
+        return `<div class="mb-gauge">
+            <span class="mb-gauge-label">${label}</span>
+            <div class="mb-gauge-track"><div class="mb-gauge-fill gauge-fill ${cls}" style="width:${pct}%"></div></div>
+            <span class="mb-gauge-val ${cls}">${Math.round(val)}</span>
+        </div>`;
+    }
+
+    const g = briefing ? briefing.gauges : (typeof calculateGauges === 'function' ? calculateGauges() : { stability: 50, economy: 50, support: 50, intel: 50 });
+    const r = briefing ? briefing.rating : (typeof calculateRating === 'function' ? calculateRating() : { grade: 'C', score: 50 });
+
+    // Story arc header
+    const arc = typeof getCurrentStoryArc === 'function' ? getCurrentStoryArc() : null;
+    const arcHtml = arc ? `<div class="story-arc-header" style="color:${arc.color}; font-size:9px; letter-spacing:3px; margin-bottom:2px">\u2501 ${arc.name} \u2501</div>` : '';
 
     // Special action button
     let specialActionHtml = '';
@@ -1223,48 +1214,44 @@ function showDailyReport() {
         specialActionHtml = `<button class="term-btn" id="btn-special-action">[ ${SIM.character.specialAction.name.toUpperCase()} ]</button>`;
     }
 
-    // Story arc header
-    const arc = typeof getCurrentStoryArc === 'function' ? getCurrentStoryArc() : null;
-    const arcHtml = arc ? `<div class="story-arc-header" style="color:${arc.color}; font-size:9px; letter-spacing:3px; margin-bottom:2px">\u2501 ${arc.name} \u2501</div>
-        <div class="term-line dim" style="font-size:10px; margin-bottom:8px; font-style:italic">${arc.brief}</div>` : '';
-
-    // Active synergies
+    // Synergies (compact)
     let synergyHtml = '';
     if (typeof getActiveSynergies === 'function') {
         const synergies = getActiveSynergies();
         if (synergies.length > 0) {
-            synergyHtml = `<div style="margin:6px 0; border-top:1px solid #224; padding-top:4px">
-                <div style="font-size:9px; letter-spacing:2px; color:#888; margin-bottom:2px">ACTIVE SYNERGIES</div>
-                ${synergies.map(s => `<div style="color:#ddaa44; font-size:10px">\u2605 ${s.name}: ${s.description}</div>`).join('')}
+            synergyHtml = `<div class="mb-synergies">
+                ${synergies.map(s => `<span class="mb-synergy">\u2605 ${s.name}</span>`).join('')}
             </div>`;
         }
     }
 
-    // Card level-ups
-    let levelUpHtml = '';
-    if (typeof getCardLevel === 'function' && SIM.activeStances.length > 0) {
-        const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
-        const levelUps = SIM.activeStances.map(s => {
-            const card = allCards.find(c => c.id === s.cardId);
-            const lvl = getCardLevel(s.cardId);
-            return { card, lvl };
-        }).filter(({ lvl }) => lvl.level >= 2);
-        if (levelUps.length > 0) {
-            levelUpHtml = `<div style="margin:4px 0">
-                ${levelUps.map(({ card, lvl }) => `<div style="color:#44dd88; font-size:10px">\u25B2 ${card ? card.name : '?'}: ${lvl.name} (+${Math.round(lvl.bonus * 100)}%)</div>`).join('')}
-            </div>`;
-        }
-    }
+    // Build the narrative briefing terminal
+    const advisorName = briefing ? briefing.advisor : 'Your advisor';
+    const openingText = briefing ? briefing.opening : 'Situation unchanged from yesterday.';
+    const iranIntel = briefing ? briefing.iranIntel : '';
+    const closerText = briefing ? briefing.closer : '';
 
     openTerminal(`
         ${arcHtml}
         <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
-        <div class="term-line dim" style="margin:4px 0">"${_getMorningBrief()}" \u2014 ${SIM.character.name}</div>
-        <div class="term-line ${hlClass}" style="margin:4px 0">${topHeadline.text}</div>
-        ${SIM.iranVisibleMoves && SIM.iranVisibleMoves.length > 0 ? `<div style="margin:4px 0; font-size:10px; color:#dd6644">\u26A0 IRAN: ${SIM.iranVisibleMoves[SIM.iranVisibleMoves.length - 1].text}</div>` : ''}
-        <div class="term-line" style="color:#ddaa44;margin:8px 0">\u25B6 ${recommendation}</div>
+
+        <div class="mb-briefing">
+            <div class="mb-advisor-line"><span class="mb-advisor-name">${advisorName}</span> steps to the podium:</div>
+            <div class="mb-prose">${openingText}</div>
+            ${iranIntel ? `<div class="mb-iran-intel"><span class="mb-intel-prefix">\u26A0 IRAN</span> ${iranIntel}</div>` : ''}
+        </div>
+
+        <div class="mb-gauges-row">
+            ${gaugeBar('STABILITY', g.stability)}
+            ${gaugeBar('ECONOMY', g.economy)}
+            ${gaugeBar('SUPPORT', g.support)}
+            ${gaugeBar('INTEL', g.intel)}
+            <div class="mb-rating"><span class="mb-rating-label">RATING</span><span class="mb-rating-grade ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
+        </div>
+
         ${synergyHtml}
-        ${levelUpHtml}
+
+        <div class="mb-closer">\u25B6 ${closerText}</div>
 
         <div class="term-btn-row">
             <button class="term-btn" id="btn-maintain">[ BEGIN DAY ]</button>
@@ -1274,6 +1261,13 @@ function showDailyReport() {
     `);
 
     fadeInButtons(TERMINAL, 400);
+
+    // Also push the briefing to the narrative feed
+    if (typeof addNarrative === 'function' && briefing) {
+        addNarrative('scene', openingText);
+        if (iranIntel) addNarrative('dialogue', iranIntel, { speaker: advisorName });
+        if (closerText) addNarrative('scene', closerText);
+    }
 
     document.getElementById('btn-maintain').addEventListener('click', () => {
         closeTerminal();
@@ -1472,12 +1466,13 @@ function showAdjustStrategy() {
 // ======================== ACTION PANEL (replaces Quick Actions) ========================
 
 function resetActionPoints() {
-    SIM.actionPoints = 5;
+    SIM.actionPoints = 3;
     SIM.swapsToday = 0;
     if (SIM.roe === undefined) SIM.roe = 'defensive';
 }
 
-function _applyEffect(key, val) {
+function _applyEffect(key, val, multiplier) {
+    if (multiplier) val = Math.round(val * multiplier * 10) / 10;
     // Apply the immediate effect
     if (key === 'oilFlow') SIM.oilFlow = Math.max(10, Math.min(100, SIM.oilFlow + val));
     else if (key === 'oilPrice') SIM.oilPrice = Math.max(40, SIM.oilPrice + val);
@@ -1509,9 +1504,9 @@ function _applyEffect(key, val) {
     }
 }
 
-function _applyEffects(effects) {
+function _applyEffects(effects, multiplier) {
     for (const [key, val] of Object.entries(effects)) {
-        _applyEffect(key, val);
+        _applyEffect(key, val, multiplier);
     }
     showEffectSummary(effects);
     updateGauges();
@@ -1545,7 +1540,7 @@ function showActionPanel() {
 
     function renderPanel() {
         const ap = SIM.actionPoints || 0;
-        const apDots = Array.from({ length: 5 }, (_, i) => i < ap
+        const apDots = Array.from({ length: 3 }, (_, i) => i < ap
             ? '<span class="ap-dot filled">\u25CF</span>'
             : '<span class="ap-dot empty">\u25CB</span>'
         ).join('');
@@ -1632,7 +1627,7 @@ function showActionPanel() {
                 <div class="ap-title">ACTIONS</div>
                 <div class="ap-points">AP: ${apDots}</div>
                 <div class="ap-budget">${budgetStr}</div>
-                ${SIM.character?.id === 'trump' ? `<div class="ap-budget" style="color:#ddaa44">PC: ${Math.round(SIM.uniqueResource)} (-2/action)</div>` : ''}
+                ${SIM.character?.id === 'trump' ? `<div class="ap-budget" style="color:#ddaa44">PC: ${Math.round(SIM.uniqueResource)} (-3/action)</div>` : ''}
             </div>
 
             <div class="ap-escalation-bar">
@@ -1761,27 +1756,27 @@ const _GUIDE_STEPS = [
     {
         anchor: 'gauge-bar',
         position: 'below',
-        title: 'ADVISOR BRIEFING',
-        text: 'These are your <em>4 key gauges</em>: Stability, Economy, Support, and Intel. Keep them balanced. If any drops critically low, you lose.',
+        title: '',
+        text: '',
     },
     {
         anchor: 'situation-panel',
         position: 'right',
-        title: 'SITUATION PANEL',
-        text: 'Your intelligence dashboard. The <em>Situation Report</em> at top shows the essentials. Click section headers to expand details like Force Disposition and Wire Feed.',
+        title: '',
+        text: '',
     },
     {
         anchor: 'action-panel',
         position: 'left',
-        title: 'ACTIONS',
-        text: 'You get <em>5 Action Points</em> per day. Each action costs 1 AP. Some also cost budget. You can swap up to 2 cards per day. When done, hit END DAY.',
+        title: '',
+        text: '',
     },
     {
         anchor: 'action-panel',
         position: 'left',
         offsetY: 200,
-        title: 'ESCALATION',
-        text: 'The <em>Escalation Ladder</em> controls which military options are available. Higher escalation unlocks stronger actions but brings you closer to war.',
+        title: '',
+        text: '',
     },
 ];
 
@@ -1883,16 +1878,129 @@ function _getCharacterActions(ap) {
     return '';
 }
 
+// Track recently used scene indices per action to reduce repetition
+const _sceneHistory = {};
+const _reactionHistory = {};
+
+function _maybeReactiveNews() {
+    if (Math.random() >= 0.4) return;
+    const reactions = DATA.reactions;
+    if (!reactions) return;
+
+    // Build candidate pool based on current game state
+    const pool = [];
+    const s = SIM;
+
+    if (s.tension > 60 && reactions.highTension) pool.push(...reactions.highTension);
+    if (s.tension < 40 && reactions.lowTension) pool.push(...reactions.lowTension);
+    if (s.diplomaticCapital > 50 && s.tension < 50 && reactions.diplomaticProgress) pool.push(...reactions.diplomaticProgress);
+    if (s.warPath >= 3 && reactions.militaryEscalation) pool.push(...reactions.militaryEscalation);
+    if (s.proxyThreat > 50 && reactions.proxyThreats) pool.push(...reactions.proxyThreats);
+    if (s.oilFlow < 30 && reactions.oilCrisis) pool.push(...reactions.oilCrisis);
+    if (s.budget < 200 && reactions.budgetPressure) pool.push(...reactions.budgetPressure);
+    if (s.domesticApproval < 35 && reactions.domesticUnrest) pool.push(...reactions.domesticUnrest);
+    if (s.iranFactionBalance < 35 && reactions.iranHardliner) pool.push(...reactions.iranHardliner);
+    if (s.iranFactionBalance > 65 && reactions.iranModerate) pool.push(...reactions.iranModerate);
+    if (s.internationalStanding < 25 && reactions.internationalIsolation) pool.push(...reactions.internationalIsolation);
+    if (s.internationalStanding > 70 && reactions.strongCoalition) pool.push(...reactions.strongCoalition);
+    if (s.fogOfWar > 65 && reactions.fogHigh) pool.push(...reactions.fogHigh);
+    if (s.day < 5 && reactions.earlyGame) pool.push(...reactions.earlyGame);
+    if (s.day > 25 && reactions.lateGame) pool.push(...reactions.lateGame);
+
+    // Fallback to general pool
+    if (pool.length === 0 && reactions.general) pool.push(...reactions.general);
+    if (pool.length === 0) return;
+
+    // Pick one, avoiding last used
+    let idx;
+    const poolKey = pool.length;
+    if (pool.length === 1) {
+        idx = 0;
+    } else {
+        const last = _reactionHistory[poolKey];
+        do { idx = Math.floor(Math.random() * pool.length); } while (idx === last && pool.length > 1);
+    }
+    _reactionHistory[poolKey] = idx;
+
+    addNarrative('headline', pool[idx], { level: 'normal' });
+}
+
+function _narrateAction(actionId, snap, scaledKeys) {
+    const scenes = DATA['action-scenes'];
+    if (!scenes) return;
+
+    // Resolve the scene key
+    let sceneKey = actionId;
+    let pool = null;
+
+    if (actionId.startsWith('bible_')) {
+        const bibleId = actionId.replace('bible_', '');
+        pool = scenes.bible && scenes.bible[bibleId];
+        sceneKey = 'bible_' + bibleId;
+    } else if (actionId.startsWith('call-contact-')) {
+        pool = scenes.contacts && scenes.contacts.generic;
+        sceneKey = 'call-contact';
+    } else if (actionId === 'change-roe') {
+        // Pick sub-variant based on current ROE
+        const roeKey = 'change-roe-' + (SIM.roe || 'defensive');
+        pool = scenes.actions && (scenes.actions[roeKey] || scenes.actions['change-roe']);
+        sceneKey = roeKey;
+    } else {
+        pool = scenes.actions && scenes.actions[actionId];
+    }
+
+    if (!pool || pool.length === 0) return;
+
+    // Pick a variant, avoiding the last-used index
+    let idx;
+    if (pool.length === 1) {
+        idx = 0;
+    } else {
+        const last = _sceneHistory[sceneKey];
+        do { idx = Math.floor(Math.random() * pool.length); } while (idx === last && pool.length > 1);
+    }
+    _sceneHistory[sceneKey] = idx;
+
+    // Write the scene
+    addNarrative('scene', pool[idx]);
+
+    // Write stat changes beneath the scene
+    for (const k of scaledKeys) {
+        const delta = Math.round((SIM[k] - snap[k]) * 10) / 10;
+        if (delta !== 0) {
+            addNarrative('stat', '', { metric: k, delta: delta });
+        }
+    }
+    // Budget and warPath (not in scaledKeys, not scaled by 1.5x)
+    if (snap._budget !== undefined) {
+        const bDelta = Math.round(SIM.budget - snap._budget);
+        if (bDelta !== 0) addNarrative('stat', '', { metric: 'budget', delta: bDelta });
+    }
+    if (snap._warPath !== undefined) {
+        const wDelta = SIM.warPath - snap._warPath;
+        if (wDelta !== 0) addNarrative('stat', '', { metric: 'warPath', delta: wDelta });
+    }
+}
+
 function _executeAction(actionId, rerenderFn) {
     if (SIM.actionPoints <= 0) return;
 
-    // Trump: AP actions cost Political Capital
+    // Trump: AP actions cost Political Capital (3 per action × 3 AP ≈ 9/day)
     if (SIM.character?.id === 'trump' && actionId !== 'special') {
-        SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 2);
+        SIM.uniqueResource = Math.max(0, SIM.uniqueResource - 3);
     }
 
     let toastMsg = '';
     let toastLevel = 'normal';
+
+    // Snapshot stats before action — deltas will be scaled by 1.5x after
+    const _scaledKeys = ['tension', 'oilFlow', 'oilPrice', 'domesticApproval', 'internationalStanding',
+        'iranAggression', 'iranEconomy', 'fogOfWar', 'diplomaticCapital', 'conflictRisk',
+        'proxyThreat', 'chinaRelations', 'polarization', 'assassinationRisk'];
+    const _snap = {};
+    _scaledKeys.forEach(k => _snap[k] = SIM[k]);
+    _snap._budget = SIM.budget;
+    _snap._warPath = SIM.warPath;
 
     switch (actionId) {
         case 'gather-intel':
@@ -2383,6 +2491,23 @@ function _executeAction(actionId, rerenderFn) {
             return;
     }
 
+    // Scale direct action stat deltas by 1.5x (compensates for 3 AP instead of 5)
+    const ACTION_MULT = 1.5;
+    _scaledKeys.forEach(k => {
+        const delta = SIM[k] - _snap[k];
+        if (delta !== 0) {
+            SIM[k] = _snap[k] + delta * ACTION_MULT;
+            if (k === 'oilPrice') SIM[k] = Math.max(40, SIM[k]);
+            else SIM[k] = Math.max(0, Math.min(100, SIM[k]));
+        }
+    });
+
+    // --- Narrative scene for this action ---
+    if (typeof addNarrative === 'function') {
+        _narrateAction(actionId, _snap, _scaledKeys);
+        _maybeReactiveNews();
+    }
+
     // Spend AP
     SIM.actionPoints = Math.max(0, SIM.actionPoints - 1);
 
@@ -2403,8 +2528,8 @@ function _executeAction(actionId, rerenderFn) {
         return;
     }
 
-    // Random interrupt check (30% chance)
-    if (Math.random() < 0.3) {
+    // Random interrupt check (50% chance — compensates for fewer AP per day)
+    if (Math.random() < 0.5) {
         setTimeout(() => {
             showInterrupt(rerenderFn);
         }, 400);
@@ -2416,7 +2541,98 @@ function _executeAction(actionId, rerenderFn) {
 function _endDay() {
     hideActionPanel();
     if (typeof SFX !== 'undefined') SFX.transition();
+    _writeDayEndScene();
     advanceDay();
+}
+
+const _dayEndHistory = {};
+
+function _writeDayEndScene() {
+    if (typeof addNarrative !== 'function') return;
+    const endings = DATA['day-endings'];
+    if (!endings) return;
+
+    const charId = SIM.character ? SIM.character.id : null;
+    const reflections = endings.reflections && charId ? endings.reflections[charId] : null;
+    const cliffhangers = endings.cliffhangers;
+    if (!reflections && !cliffhangers) return;
+
+    // --- Pick reflection based on game state ---
+    let reflectionKey = 'default';
+    if (SIM.tension > 65) reflectionKey = 'highTension';
+    else if (SIM.tension < 35) reflectionKey = 'lowTension';
+    else if (SIM.warPath >= 3 || SIM.warPath > (SIM._prevWarPath || 0)) reflectionKey = 'militaryAction';
+    else if (SIM.diplomaticCapital > 50 && SIM.tension < 50) reflectionKey = 'diplomaticDay';
+    else if (SIM.budget < 200) reflectionKey = 'budgetTight';
+    else if (SIM.domesticApproval < 35) reflectionKey = 'approvalDrop';
+
+    let reflectionText = '';
+    if (reflections) {
+        const pool = reflections[reflectionKey] || reflections['default'] || [];
+        if (pool.length > 0) {
+            reflectionText = _pickFromPool(pool, 'refl_' + charId + '_' + reflectionKey);
+        }
+    }
+
+    // --- Pick cliffhanger based on actual simulation state ---
+    let cliffKey = 'default';
+    if (SIM.scheduledEvents && SIM.scheduledEvents.length > 0) {
+        const upcoming = SIM.scheduledEvents.find(se => se.triggerDay <= SIM.day + 2);
+        if (upcoming) cliffKey = 'scheduledEvent';
+    }
+    if (cliffKey === 'default') {
+        // Check what changed today or what's brewing
+        if (SIM._prevIranFaction !== undefined && SIM.iranFactionBalance < SIM._prevIranFaction - 3) {
+            cliffKey = 'iranHardlinerShift';
+        } else if (SIM._prevIranFaction !== undefined && SIM.iranFactionBalance > SIM._prevIranFaction + 3) {
+            cliffKey = 'iranModerateShift';
+        } else if (SIM.tension > 75 && (!SIM._prevTensionBracket || SIM._prevTensionBracket <= 75)) {
+            cliffKey = 'tensionCrossedHigh';
+        } else if (SIM.tension < 40 && (!SIM._prevTensionBracket || SIM._prevTensionBracket >= 40)) {
+            cliffKey = 'tensionCrossedLow';
+        } else if (SIM.oilFlow < 30) {
+            cliffKey = 'oilCrisis';
+        } else if (SIM.warPath >= 3) {
+            cliffKey = 'warPathRising';
+        } else if (SIM.domesticApproval < 30) {
+            cliffKey = 'approvalCrisis';
+        } else if (SIM.proxyThreat > 50) {
+            cliffKey = 'proxyActivity';
+        } else if (SIM.fogOfWar > 70) {
+            cliffKey = 'fogHigh';
+        } else if (SIM.straitOpenDays > 3 && SIM.oilFlow > 55) {
+            cliffKey = 'straitProgress';
+        }
+    }
+
+    let cliffText = '';
+    if (cliffhangers) {
+        const pool = cliffhangers[cliffKey] || cliffhangers['default'] || [];
+        if (pool.length > 0) {
+            cliffText = _pickFromPool(pool, 'cliff_' + cliffKey);
+        }
+    }
+
+    // Write to narrative feed
+    if (reflectionText) {
+        addNarrative('scene', reflectionText);
+    }
+    if (cliffText) {
+        addNarrative('alert', cliffText, { level: 'warning' });
+    }
+
+    // Snapshot for tomorrow's cliffhanger comparisons
+    SIM._prevIranFaction = SIM.iranFactionBalance;
+    SIM._prevTensionBracket = SIM.tension;
+}
+
+function _pickFromPool(pool, historyKey) {
+    if (pool.length === 1) return pool[0];
+    const last = _dayEndHistory[historyKey];
+    let idx;
+    do { idx = Math.floor(Math.random() * pool.length); } while (idx === last && pool.length > 1);
+    _dayEndHistory[historyKey] = idx;
+    return pool[idx];
 }
 
 function _getWinProgress() {
@@ -2425,15 +2641,16 @@ function _getWinProgress() {
         const pct = Math.min(100, Math.round((SIM.straitOpenDays / 7) * 100));
         // Daily checklist
         const recentSeizures = SIM.recentSeizureDays ? SIM.recentSeizureDays.filter(d => SIM.day - d <= 3).length : 0;
+        const wpl = DATA.intel.winProgressLabels.generic;
         const checks = [
-            { label: 'Oil Flow > 55%', ok: SIM.oilFlow > 55 },
-            { label: 'Tension < 45', ok: SIM.tension < 45 },
-            { label: 'No seizures (3d)', ok: recentSeizures === 0 },
-            { label: 'No active crisis', ok: SIM.crisisLevel === 0 },
+            { label: wpl.checks.oilFlow, ok: SIM.oilFlow > 55 },
+            { label: wpl.checks.tension, ok: SIM.tension < 45 },
+            { label: wpl.checks.noSeizures, ok: recentSeizures === 0 },
+            { label: wpl.checks.noCrisis, ok: SIM.crisisLevel === 0 },
         ];
         const checkHtml = checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ');
         return `<div class="win-progress">
-            <div class="win-progress-label">OBJECTIVE: STRAIT OPEN 7 DAYS</div>
+            <div class="win-progress-label">${wpl.objective}</div>
             <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%"></div></div>
             <div class="win-progress-text">${SIM.straitOpenDays}/7 days</div>
             <div style="font-size:9px;margin-top:4px;line-height:1.6">${checkHtml}</div>
@@ -2447,14 +2664,8 @@ function _getWinProgress() {
 
     // Build a readable condition summary
     const charId = SIM.character.id;
-    const labels = {
-        trump: 'WIN BIG: High approval + oil flowing + low tension',
-        hegseth: 'TOTAL VICTORY: Escalation 4+ + approval 55+ + Iran crushed',
-        kushner: 'THE DEAL: Exposure 55+ + diplomacy 50+ + budget 400+',
-        asmongold: 'CALLED IT: Credibility 70+ + approval 60+ + fog low',
-        fuentes: 'AMERICA FIRST: Escalation 1- + standing 40+ + base 60+',
-    };
-    const label = labels[charId] || 'Complete your objective';
+    const wplChar = DATA.intel.winProgressLabels;
+    const label = wplChar[charId] || 'Complete your objective';
 
     return `<div class="win-progress">
         <div class="win-progress-label">${label}</div>
@@ -2608,22 +2819,24 @@ function showDecisionEvent(event) {
     let countdownInterval = null;
     const isCrisis = event.crisis === true;
 
+    // --- Build narrative scene for the feed ---
+    const eventScenes = DATA['event-scenes'] || {};
+    const customScene = eventScenes.scenes && eventScenes.scenes[event.id];
+    const sceneText = _buildEventScene(event, customScene, eventScenes);
+
+    // Write scene to narrative feed
+    if (typeof addNarrative === 'function') {
+        addNarrative('scene', sceneText);
+    }
+
+    // --- Build choice panel (overlays the feed) ---
     function renderEvent() {
         const btnClass = isCrisis ? 'crisis-choice' : 'decision-choice';
 
         const choicesHtml = event.choices.map((choice, i) => {
-            const hints = Object.entries(choice.effects).map(([key, val]) => {
-                if (val === 0) return '';
-                const isNeg = ['tension', 'iranAggression', 'conflictRisk', 'fogOfWar', 'polarization', 'assassinationRisk', 'warPath', 'proxyThreat', 'exposure'].includes(key)
-                    ? val > 0 : val < 0;
-                const arrow = Math.abs(val) > 10 ? (val > 0 ? '\u25B2\u25B2' : '\u25BC\u25BC') : (val > 0 ? '\u25B2' : '\u25BC');
-                return `<span class="${isNeg ? 'negative' : 'positive'}">${formatEffectName(key)} ${arrow}</span>`;
-            }).filter(Boolean).join(' ');
-
             return `
                 <button class="${btnClass}" data-idx="${i}">
                     <span class="choice-text">${choice.text}</span>
-                    <span class="choice-effects">${hints || 'No immediate effects'}</span>
                 </button>
             `;
         }).join('');
@@ -2633,20 +2846,31 @@ function showDecisionEvent(event) {
         const titleStyle = isCrisis ? 'color:#dd4444;text-shadow:0 0 10px rgba(221,68,68,0.4)' : '';
         const eventImg = _getEventCategoryImage(event);
 
+        // Urgency line for timed events
+        let urgencyHtml = '';
+        if (countdown > 0) {
+            const urgencyText = (customScene && customScene.urgency)
+                ? customScene.urgency
+                : (eventScenes.timedUrgency
+                    ? eventScenes.timedUrgency[Math.floor(Math.random() * eventScenes.timedUrgency.length)]
+                    : 'They need your answer now.');
+            urgencyHtml = `<div class="de-urgency">\u23F1 ${urgencyText}</div>`;
+        }
+
         openTerminal(`
             ${crisisHeader}
             ${eventImg ? `<img src="${eventImg}" class="event-category-art" alt="Event">` : ''}
             ${countdown > 0 ? `<div class="decision-timer">${countdown}s</div>` : ''}
             <div class="term-header" style="${headerStyle}">DAY ${SIM.day} \u2014 ${isCrisis ? 'CRISIS' : 'DECISION REQUIRED'}</div>
             <div class="term-title" style="${titleStyle}">${event.title}</div>
-            <div class="term-line" style="margin-bottom:16px${isCrisis ? ';color:#dd8888' : ''}">${event.description}</div>
+            <div class="de-scene-prose">${sceneText}</div>
+            ${urgencyHtml}
             <div class="term-section">
-                <div class="term-section-label" ${isCrisis ? 'style="color:#dd4444"' : ''}>${isCrisis ? 'NO SAFE OPTIONS' : 'OPTIONS'}</div>
+                <div class="term-section-label" ${isCrisis ? 'style="color:#dd4444"' : ''}>${isCrisis ? 'NO SAFE OPTIONS' : 'WHAT DO YOU DO?'}</div>
                 ${choicesHtml}
             </div>
         `);
 
-        // Add crisis styling to terminal
         if (isCrisis) TERMINAL.classList.add('crisis-terminal');
         else TERMINAL.classList.remove('crisis-terminal');
 
@@ -2654,7 +2878,7 @@ function showDecisionEvent(event) {
             btn.addEventListener('click', () => {
                 if (countdownInterval) clearInterval(countdownInterval);
                 TERMINAL.classList.remove('crisis-terminal');
-                resolveDecision(event, parseInt(btn.dataset.idx));
+                resolveDecision(event, parseInt(btn.dataset.idx), customScene);
             });
         });
     }
@@ -2669,50 +2893,34 @@ function showDecisionEvent(event) {
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 TERMINAL.classList.remove('crisis-terminal');
-                resolveDecision(event, 0);
+                resolveDecision(event, 0, customScene);
             }
         }, 1000);
     }
 }
 
-function _buildImpactSummary(effects, gaugesBefore, gaugesAfter) {
-    // Raw effect lines
-    const effectLines = Object.entries(effects)
-        .filter(([k, v]) => v !== 0)
-        .map(([k, v]) => {
-            const name = formatEffectName(k);
-            const badIfUp = ['tension', 'iranAggression', 'conflictRisk', 'fogOfWar', 'polarization',
-                             'assassinationRisk', 'warPath', 'proxyThreat', 'exposure', 'oilPrice'];
-            const isGood = badIfUp.includes(k) ? v < 0 : v > 0;
-            const color = isGood ? '#44dd88' : '#dd4444';
-            const sign = v > 0 ? '+' : '';
-            return `<span style="color:${color}">${name} ${sign}${v}</span>`;
-        });
-
-    // Gauge deltas
-    const gaugeNames = { stability: 'STABILITY', economy: 'ECONOMY', support: 'SUPPORT', intel: 'INTEL' };
-    const gaugeDeltaLines = [];
-    for (const [key, label] of Object.entries(gaugeNames)) {
-        const delta = gaugesAfter[key] - gaugesBefore[key];
-        if (delta !== 0) {
-            const color = delta > 0 ? '#44dd88' : '#dd4444';
-            const sign = delta > 0 ? '+' : '';
-            gaugeDeltaLines.push(`<span style="color:${color}">${label} ${sign}${delta}</span>`);
-        }
+function _buildEventScene(event, customScene, eventScenes) {
+    // Use custom expanded scene if available
+    if (customScene && customScene.scene) {
+        return customScene.scene;
     }
 
-    if (effectLines.length === 0 && gaugeDeltaLines.length === 0) return '';
+    // Fallback: prefix the existing description with atmospheric context
+    const prefixes = eventScenes.atmospherePrefix || {};
+    let pool;
+    if (event.crisis) pool = prefixes.crisis;
+    else {
+        // Detect category from event content
+        const text = ((event.title || '') + ' ' + (event.description || '')).toLowerCase();
+        if (text.match(/strike|navy|military|missile|bomb|attack|drone|mine|carrier|fleet/)) pool = prefixes.military;
+        else if (text.match(/diplomat|talk|negotiate|un |ceasefire|summit|channel|treaty/)) pool = prefixes.diplomatic;
+        else if (text.match(/oil|sanction|econom|price|trade|budget|barrel|market/)) pool = prefixes.economic;
+        else if (text.match(/intel|spy|cyber|surveil|sigint|humint|leak|source|classified/)) pool = prefixes.intel;
+    }
+    if (!pool || pool.length === 0) pool = prefixes['default'] || [];
 
-    let html = '<div class="impact-summary">';
-    html += '<div class="impact-label">IMMEDIATE IMPACT</div>';
-    if (effectLines.length > 0) {
-        html += '<div class="impact-effects">' + effectLines.join(' &middot; ') + '</div>';
-    }
-    if (gaugeDeltaLines.length > 0) {
-        html += '<div class="impact-gauges">' + gaugeDeltaLines.join(' &middot; ') + '</div>';
-    }
-    html += '</div>';
-    return html;
+    const prefix = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] + ' ' : '';
+    return prefix + (event.description || '');
 }
 
 function _buildDecisionLogHtml() {
@@ -2757,7 +2965,7 @@ function _buildDecisionLogHtml() {
     </div>`;
 }
 
-function resolveDecision(event, choiceIdx) {
+function resolveDecision(event, choiceIdx, customScene) {
     const choice = event.choices[choiceIdx];
     const gaugesBefore = calculateGauges();
 
@@ -2809,25 +3017,42 @@ function resolveDecision(event, choiceIdx) {
     });
 
     addHeadline(`Decision: ${event.title} \u2014 ${choice.text}`, 'normal');
-    if (choice.flavor) addHeadline(choice.flavor, 'good');
 
     SIM.decisionHistory.push({
         id: event.id, title: event.title,
         choiceText: choice.text, day: SIM.day,
     });
 
-    // Build impact summary for result screen
-    const impactHtml = _buildImpactSummary(choice.effects, gaugesBefore, gaugesAfter);
+    // --- Build consequence narrative ---
+    let consequenceText = '';
+    if (customScene && customScene.consequences && customScene.consequences[choiceIdx]) {
+        consequenceText = customScene.consequences[choiceIdx];
+    } else if (choice.flavor) {
+        consequenceText = choice.flavor;
+    } else {
+        consequenceText = 'The decision is made. Your staff moves to implement it immediately.';
+    }
+
+    // Write consequence to narrative feed
+    if (typeof addNarrative === 'function') {
+        addNarrative('scene', consequenceText);
+        // Stat changes as subtle indicators
+        for (const [key, val] of Object.entries(choice.effects)) {
+            if (val !== 0) {
+                addNarrative('stat', '', { metric: key, delta: val });
+            }
+        }
+    }
 
     // Chain event hint
-    const chainHint = choice.chainEvent ? `<div class="term-line dim" style="margin-top:8px; font-style:italic; color:#ddaa44">${choice.chainHint || 'This decision will have consequences...'}</div>` : '';
+    const chainHint = choice.chainEvent
+        ? `<div class="de-chain-hint">${choice.chainHint || 'This decision will have consequences...'}</div>`
+        : '';
 
-    // Show result
+    // Show consequence result screen
     openTerminal(`
         <div class="term-header">DECISION MADE</div>
-        <div class="term-title">${choice.text.toUpperCase()}</div>
-        <div class="term-line" style="margin-top:12px">${choice.flavor || ''}</div>
-        ${impactHtml}
+        <div class="de-consequence-prose">${consequenceText}</div>
         ${chainHint}
         <div class="term-btn-row">
             <button class="term-btn" id="btn-decision-continue">[ CONTINUE ]</button>
@@ -3050,6 +3275,8 @@ function restartGame() {
     resetActionPoints();
     SIM.roe = 'defensive';
 
+    if (typeof clearNarrative === 'function') clearNarrative();
+
     initSimulation();
     updateGauges();
     showDailyReport();
@@ -3116,15 +3343,8 @@ function _getDateString() {
 }
 
 function _getBriefingTitle() {
-    if (!SIM.character) return 'DAILY BRIEFING';
-    switch (SIM.character.id) {
-        case 'trump': return 'PRESIDENTIAL DAILY BRIEF';
-        case 'hegseth': return 'SECDEF MORNING SITREP';
-        case 'kushner': return 'DIPLOMATIC TRAFFIC SUMMARY';
-        case 'asmongold': return 'MOD-CURATED INTEL FEED';
-        case 'fuentes': return 'AMERICA FIRST DAILY BRIEF';
-        default: return 'DAILY BRIEFING';
-    }
+    if (!SIM.character) return DATA.intel.briefingTitles['default'];
+    return DATA.intel.briefingTitles[SIM.character.id] || DATA.intel.briefingTitles['default'];
 }
 
 function _getMorningBrief() {
@@ -3144,21 +3364,7 @@ function _getEscalationName() {
 }
 
 function formatEffectName(key) {
-    const names = {
-        tension: 'Tension', oilFlowProtection: 'Oil Protection', oilPrice: 'Oil Price',
-        domesticApproval: 'Approval', internationalStanding: 'Standing',
-        iranAggression: 'Iran Aggression', iranEconomy: 'Iran Economy',
-        cost: 'Cost', conflictRisk: 'Conflict Risk', fogOfWar: 'Fog of War',
-        diplomaticCapital: 'Diplomacy', proxyThreat: 'Proxy Threat',
-        chinaRelations: 'China',
-        polarization: 'Polarization', assassinationRisk: 'Assassination Risk',
-        warPath: 'Escalation', navalPresence: 'Naval Presence',
-        blockadeLevel: 'Blockade', intelLevel: 'Intel Level', carrier: 'Carrier',
-        politicalCapital: 'Political Capital', commandAuthority: 'Command Auth',
-        credibility: 'Credibility', baseEnthusiasm: 'Base', exposure: 'Exposure',
-        oilFlow: 'Oil Flow', budget: 'Budget', interceptCount: 'Intercepts',
-    };
-    return names[key] || key;
+    return DATA.intel.effectNames[key] || key.replace(/([A-Z])/g,' $1').trim();
 }
 
 // ======================== REACTION PORTRAITS ========================
@@ -3209,4 +3415,50 @@ function _getEventCategoryImage(event) {
 
 function _injectActionPanelStyles() {
     // Styles moved to css/style.css
+}
+
+// ======================== HYDRATE UI FROM DATA ========================
+
+function hydrateUI() {
+    const int = DATA.interrupts;
+    const intel = DATA.intel;
+
+    // Interrupts
+    int.interrupts.forEach((t, i) => {
+        if (!INTERRUPTS[i]) return;
+        INTERRUPTS[i].text = t.text;
+        if (t.choices) {
+            INTERRUPTS[i].choices.forEach((c, j) => {
+                if (t.choices[j]) c.label = t.choices[j].label;
+            });
+        }
+    });
+
+    // Intel snippets
+    intel.intelSnippets.forEach((t, i) => {
+        if (i < _intelSnippets.length) _intelSnippets[i] = t;
+    });
+
+    // Action tips
+    Object.keys(int.actionTips).forEach(k => {
+        if (ACTION_TIPS[k]) {
+            ACTION_TIPS[k].desc = int.actionTips[k].desc;
+            ACTION_TIPS[k].effect = int.actionTips[k].effect;
+        }
+    });
+
+    // Bible actions
+    int.bibleActions.forEach((t, i) => {
+        if (!BIBLE_ACTIONS[i]) return;
+        BIBLE_ACTIONS[i].name = t.name;
+        BIBLE_ACTIONS[i].headline = t.headline;
+        BIBLE_ACTIONS[i].toast = t.toast;
+    });
+
+    // Guide steps
+    int.guideSteps.forEach((t, i) => {
+        if (!_GUIDE_STEPS[i]) return;
+        _GUIDE_STEPS[i].title = t.title;
+        _GUIDE_STEPS[i].text = t.text;
+    });
 }

@@ -254,6 +254,144 @@ body {
     margin-right: 6px;
 }
 
+/* ======================== Narrative Feed ======================== */
+#narrative-feed {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    max-height: 45vh;
+}
+.nf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: rgba(10, 10, 10, 0.9);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.nf-header-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--green-dim);
+}
+.nf-header-day {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green-dim);
+}
+.nf-feed {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 16px 16px;
+    background: rgba(2, 4, 2, 0.85);
+}
+.nf-feed::-webkit-scrollbar { width: 4px; }
+.nf-feed::-webkit-scrollbar-track { background: transparent; }
+.nf-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Entry base */
+.nf-entry {
+    padding: 4px 0;
+    line-height: 1.55;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(26, 58, 42, 0.1);
+    animation: nf-fadein 0.4s ease;
+}
+.nf-entry:last-child { border-bottom: none; }
+@keyframes nf-fadein {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Timestamp */
+.nf-time {
+    font-size: 8px;
+    color: #1e4e30;
+    margin-right: 8px;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Scene — primary narrative prose */
+.nf-scene {
+    color: var(--text);
+}
+.nf-scene-text {
+    color: #a0ccb0;
+}
+
+/* Dialogue — NPC speech */
+.nf-dialogue {
+    color: var(--text);
+    padding-left: 12px;
+    border-left: 2px solid var(--green-dim);
+}
+.nf-speaker {
+    color: var(--yellow);
+    font-weight: bold;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+.nf-dialogue-text {
+    color: #c0ddcc;
+    font-style: italic;
+}
+
+/* Alert — urgent interrupts */
+.nf-alert {
+    padding: 5px 0;
+}
+.nf-alert-prefix {
+    font-size: 9px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-right: 6px;
+}
+.nf-alert-critical { color: var(--red); }
+.nf-alert-warning  { color: var(--yellow); }
+.nf-alert-good     { color: var(--green); }
+
+/* Stat — subtle metric change */
+.nf-stat {
+    padding: 2px 0 2px 20px;
+    font-size: 9px;
+    border-bottom: none;
+}
+.nf-stat-indicator {
+    letter-spacing: 1px;
+}
+.nf-stat-up      { color: #2a7a4a; }
+.nf-stat-down    { color: #7a3a2a; }
+.nf-stat-neutral { color: #3a4a3a; }
+
+/* Headline — news ticker style */
+.nf-headline {
+    padding: 3px 0;
+}
+.nf-headline-text {
+    color: #6a9a7a;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Day separator */
+.nf-day-break {
+    text-align: center;
+    padding: 10px 0 6px;
+    border-bottom: none;
+}
+.nf-day-break-line {
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: var(--green-dim);
+}
+
 /* Threat meter */
 .cp-threat {
     background: rgba(10, 10, 10, 0.7);
@@ -401,33 +539,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Impact summary on decision result screen */
-.impact-summary {
-    margin-top: 14px;
-    padding: 10px;
-    border: 1px solid rgba(26, 58, 42, 0.5);
-    background: rgba(10, 10, 10, 0.4);
-}
-.impact-label {
-    font-size: 9px;
-    color: #5a6e80;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-}
-.impact-effects {
-    font-size: 10px;
-    line-height: 1.6;
-    margin-bottom: 4px;
-}
-.impact-gauges {
-    font-size: 11px;
-    font-weight: bold;
-    line-height: 1.6;
-}
-
-/* Legacy canvas classes — no longer used */
-#game-canvas.with-sitpanel { display: none; }
-#game-canvas.with-both { display: none; }
 
 /* ======================== GAUGE BAR ======================== */
 
@@ -1038,6 +1149,105 @@ body {
 .conf-low { color: #2a6a4a; font-weight: bold; }
 .conf-wrong { color: #2a6a4a; font-style: italic; }
 
+/* ======================== NARRATIVE MORNING BRIEFING ======================== */
+.mb-briefing {
+    margin: 12px 0;
+    padding: 10px 14px;
+    border-left: 2px solid var(--green-dim);
+    background: rgba(10, 30, 20, 0.3);
+}
+.mb-advisor-line {
+    font-size: 10px;
+    color: var(--green-dim);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+.mb-advisor-name {
+    color: var(--yellow);
+    font-weight: bold;
+}
+.mb-prose {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #a0ccb0;
+    margin-bottom: 8px;
+}
+.mb-iran-intel {
+    font-size: 10px;
+    color: #dd6644;
+    padding: 4px 8px;
+    border-left: 2px solid #dd6644;
+    margin-top: 8px;
+}
+.mb-intel-prefix {
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-right: 6px;
+}
+.mb-gauges-row {
+    display: flex;
+    gap: 6px;
+    margin: 12px 0;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.mb-gauge {
+    flex: 1;
+    min-width: 80px;
+}
+.mb-gauge-label {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--green-dim);
+    margin-bottom: 2px;
+}
+.mb-gauge-track {
+    height: 6px;
+    background: #0d1a10;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 1px;
+}
+.mb-gauge-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+.mb-gauge-val {
+    font-size: 10px;
+    color: var(--text);
+}
+.mb-rating {
+    text-align: center;
+    min-width: 50px;
+}
+.mb-rating-label {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--green-dim);
+    margin-bottom: 2px;
+}
+.mb-rating-grade {
+    font-size: 22px;
+    font-weight: bold;
+}
+.mb-synergies {
+    margin: 4px 0;
+    font-size: 10px;
+}
+.mb-synergy {
+    color: var(--yellow);
+    margin-right: 10px;
+}
+.mb-closer {
+    color: var(--yellow);
+    font-size: 11px;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
 /* Pending orders in daily report */
 .pending-order {
     display: flex;
@@ -1092,8 +1302,6 @@ body {
     box-shadow: 0 0 8px rgba(221, 68, 68, 0.15);
 }
 .crisis-choice .choice-text { color: #dd4444; }
-.crisis-choice .choice-effects .positive { color: #44dd88; }
-.crisis-choice .choice-effects .negative { color: #dd4444; }
 
 /* ======================== STRATEGY ADJUST ======================== */
 
@@ -1283,16 +1491,45 @@ body {
     display: block;
 }
 
-.choice-effects {
-    font-size: 11px;
-    color: #336644;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+/* Narrative decision event scene */
+.de-scene-prose {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #a0ccb0;
+    margin: 10px 0 14px;
+    padding: 10px 14px;
+    border-left: 2px solid var(--green-dim);
+    background: rgba(10, 30, 20, 0.3);
 }
-
-.choice-effects .positive { color: #44dd88; }
-.choice-effects .negative { color: #dd4444; }
+.de-urgency {
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 1px;
+    margin: 6px 0 12px;
+    padding: 4px 8px;
+    border-left: 2px solid var(--red);
+    animation: de-pulse 1.5s ease infinite;
+}
+@keyframes de-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+.de-consequence-prose {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #a0ccb0;
+    margin: 12px 0;
+    padding: 10px 14px;
+    border-left: 2px solid var(--yellow);
+    background: rgba(30, 20, 10, 0.2);
+}
+.de-chain-hint {
+    font-size: 10px;
+    font-style: italic;
+    color: var(--yellow);
+    margin: 8px 0;
+    opacity: 0.8;
+}
 
 /* ======================== OVERNIGHT ======================== */
 
@@ -2538,6 +2775,8 @@ body {
     #action-panel { top: 44px; }
     #center-panel { top: 44px; }
     .cp-forces { grid-template-columns: 1fr; }
+    #narrative-feed { max-height: 35vh; }
+    .nf-entry { font-size: 10px; }
 }
 
 @media (max-height: 600px) {

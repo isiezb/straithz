@@ -1,0 +1,401 @@
+{
+  "strategyCards": {
+    "carrier_strike": {
+      "name": "Carrier Strike Group",
+      "description": "Deploy carrier strike group to the Gulf of Oman.",
+      "hint": {
+        "low": "Show the flag \u2014 moderate deterrence",
+        "med": "Full battle group \u2014 strong deterrence",
+        "high": "Maximum projection \u2014 high cost, high risk"
+      }
+    },
+    "naval_patrol": {
+      "name": "Naval Patrol",
+      "description": "Routine destroyer patrols through strait shipping lanes.",
+      "hint": {
+        "low": "Light patrol presence",
+        "med": "Regular patrols with escort authority",
+        "high": "Aggressive patrol with intercept orders"
+      }
+    },
+    "active_intercept": {
+      "name": "Active Intercept",
+      "description": "Authorize aggressive rules of engagement against hostile vessels.",
+      "hint": {
+        "low": "Warning shots only",
+        "med": "Disable hostile craft near tankers",
+        "high": "Full combat authorization \u2014 one step from war"
+      }
+    },
+    "missile_strike": {
+      "name": "Precision Strike",
+      "description": "Cruise missile strikes on Iranian military targets.",
+      "hint": {
+        "low": "Strike radar sites",
+        "med": "Hit missile batteries and bases",
+        "high": "Full degradation of coastal defenses"
+      }
+    },
+    "regional_deterrence": {
+      "name": "Regional Deterrence",
+      "description": "Counter Iranian proxy forces \u2014 Houthis, militias, Hezbollah.",
+      "hint": {
+        "low": "Intel sharing with allies",
+        "med": "Joint ops against proxies",
+        "high": "Full suppression campaign"
+      }
+    },
+    "back_channel": {
+      "name": "Back-Channel Talks",
+      "description": "Secret negotiations with Iranian moderates through Oman.",
+      "hint": {
+        "low": "Exploratory contacts",
+        "med": "Structured talks with agenda",
+        "high": "Full engagement \u2014 risk of leak"
+      }
+    },
+    "gulf_coalition": {
+      "name": "Gulf Coalition",
+      "description": "Build international maritime coalition with allied navies.",
+      "hint": {
+        "low": "Outreach to key allies",
+        "med": "Joint patrols with UK, France, Japan",
+        "high": "Full multinational coalition"
+      }
+    },
+    "un_resolution": {
+      "name": "UN Resolution",
+      "description": "Push for Security Council resolution condemning Iran. Mostly symbolic \u2014 political cover at best.",
+      "hint": {
+        "low": "Statement of concern \u2014 nobody reads it",
+        "med": "Binding resolution \u2014 Russia vetoes anyway",
+        "high": "Chapter VII \u2014 dead on arrival, but you tried"
+      }
+    },
+    "summit_proposal": {
+      "name": "Summit Proposal",
+      "description": "Propose direct leader-to-leader talks to resolve the crisis.",
+      "hint": {
+        "low": "Float the idea publicly",
+        "med": "Formal invitation",
+        "high": "Public commitment to peace summit"
+      }
+    },
+    "humanitarian_corridor": {
+      "name": "Humanitarian Corridor",
+      "description": "Establish protected aid passage for affected civilian populations.",
+      "hint": {
+        "low": "Medical supplies only",
+        "med": "Full relief corridor",
+        "high": "Major humanitarian operation"
+      }
+    },
+    "targeted_sanctions": {
+      "name": "Targeted Sanctions",
+      "description": "Freeze assets and ban travel for IRGC leadership.",
+      "hint": {
+        "low": "Sanction a few commanders",
+        "med": "Hit the IRGC financial network",
+        "high": "Maximum pressure \u2014 pushes China away"
+      }
+    },
+    "maximum_pressure": {
+      "name": "Maximum Pressure",
+      "description": "Full economic blockade with secondary sanctions.",
+      "hint": {
+        "low": "Tighten existing sanctions",
+        "med": "Secondary sanctions on partners",
+        "high": "Total isolation \u2014 allies furious"
+      }
+    },
+    "reserve_release": {
+      "name": "Strategic Reserve Release",
+      "description": "Release oil from Strategic Petroleum Reserve to stabilize markets.",
+      "hint": {
+        "low": "Partial release",
+        "med": "Major release to cap prices",
+        "high": "Emergency dump \u2014 reserves drain fast"
+      }
+    },
+    "trade_incentives": {
+      "name": "Trade Incentives",
+      "description": "Offer sanctions relief in exchange for de-escalation.",
+      "hint": {
+        "low": "Minor sanctions waiver",
+        "med": "Structured trade deal",
+        "high": "Major economic package"
+      }
+    },
+    "sigint_sweep": {
+      "name": "SIGINT Sweep",
+      "description": "Signals intelligence collection across Iranian military comms.",
+      "hint": {
+        "low": "Passive monitoring",
+        "med": "Active intercept of networks",
+        "high": "Full spectrum dominance"
+      }
+    },
+    "cyber_operation": {
+      "name": "Cyber Operation",
+      "description": "Offensive and defensive cyber ops against Iranian networks.",
+      "hint": {
+        "low": "Defensive cyber shield",
+        "med": "Disrupt IRGC command & control",
+        "high": "Full offensive \u2014 near act of war"
+      }
+    },
+    "drone_surveillance": {
+      "name": "Drone Surveillance",
+      "description": "Deploy MQ-9 and RQ-4 UAVs over the strait.",
+      "hint": {
+        "low": "Limited recon",
+        "med": "Persistent surveillance",
+        "high": "Saturated coverage \u2014 may get shot down"
+      }
+    },
+    "mine_countermeasures": {
+      "name": "Mine Countermeasures",
+      "description": "Deploy MCM vessels and underwater drones to clear mines from shipping lanes.",
+      "hint": {
+        "low": "Survey operations only",
+        "med": "Active sweeping of shipping lanes",
+        "high": "Full clearance with combat divers"
+      }
+    },
+    "submarine_warfare": {
+      "name": "Submarine Warfare",
+      "description": "Deploy Los Angeles-class attack submarines to shadow Iranian naval assets.",
+      "hint": {
+        "low": "Single sub on station",
+        "med": "Hunter-killer patrols",
+        "high": "Submarine blockade of Iranian ports"
+      }
+    },
+    "ballistic_missile_defense": {
+      "name": "Missile Defense",
+      "description": "Deploy THAAD and Patriot batteries to protect Gulf bases and allied territory.",
+      "hint": {
+        "low": "Point defense for US bases",
+        "med": "Integrated air defense umbrella",
+        "high": "Full theater missile shield"
+      }
+    },
+    "war_crimes_tribunal": {
+      "name": "War Crimes Tribunal",
+      "description": "Push for international tribunal to document Iranian violations. Legal warfare.",
+      "hint": {
+        "low": "Fact-finding mission",
+        "med": "Formal ICC referral",
+        "high": "Full tribunal with allied backing"
+      }
+    },
+    "oil_diplomacy": {
+      "name": "Oil Diplomacy",
+      "description": "Coordinate with OPEC+ and IEA to stabilize global oil markets.",
+      "hint": {
+        "low": "Talk to Saudi Arabia",
+        "med": "OPEC+ production increase deal",
+        "high": "Global coordinated reserve release"
+      }
+    },
+    "insurance_backstop": {
+      "name": "Insurance Backstop",
+      "description": "Government-backed maritime insurance to keep tankers transiting the strait.",
+      "hint": {
+        "low": "Partial guarantees",
+        "med": "Full government backstop",
+        "high": "Sovereign insurance program"
+      }
+    },
+    "humint_iran": {
+      "name": "HUMINT Iran",
+      "description": "Deploy human intelligence assets inside Iran to understand leadership intentions.",
+      "hint": {
+        "low": "Cultivate existing contacts",
+        "med": "Recruit new assets in IRGC",
+        "high": "Deep penetration of Iranian command"
+      }
+    },
+    "electronic_warfare": {
+      "name": "Electronic Warfare",
+      "description": "Deploy EA-18G Growlers and shipboard EW systems to jam Iranian communications.",
+      "hint": {
+        "low": "Passive monitoring",
+        "med": "Active jamming of IRGC comms",
+        "high": "Full spectrum dominance \u2014 blind them"
+      }
+    },
+    "media_blitz": {
+      "name": "Media Campaign",
+      "description": "Coordinate messaging to control the narrative at home and abroad.",
+      "hint": {
+        "low": "Press briefings",
+        "med": "Full media strategy",
+        "high": "Information dominance"
+      }
+    },
+    "congressional_briefing": {
+      "name": "Congressional Briefing",
+      "description": "Brief congressional leadership to maintain political support.",
+      "hint": {
+        "low": "Informal update",
+        "med": "Formal classified briefing",
+        "high": "Full congressional address"
+      }
+    },
+    "america_first": {
+      "name": "America First",
+      "description": "Reduce overseas commitments. Focus on domestic energy.",
+      "hint": {
+        "low": "Rhetoric shift toward restraint",
+        "med": "Begin drawdown",
+        "high": "Full withdrawal \u2014 popular but risky"
+      }
+    }
+  },
+  "characterBonusCards": {
+    "art_of_deal": {
+      "name": "Art of the Deal",
+      "description": "Demand Gulf states pay for protection or lose it.",
+      "hint": {
+        "low": "Casual ask",
+        "med": "Firm demand",
+        "high": "Ultimatum \u2014 pay or we leave"
+      }
+    },
+    "abraham_accords": {
+      "name": "Abraham Accords II",
+      "description": "Leverage Gulf relationships for regional peace framework.",
+      "hint": {
+        "low": "Quiet conversations",
+        "med": "Formal framework",
+        "high": "Historic agreement"
+      }
+    },
+    "shock_awe": {
+      "name": "Shock & Awe",
+      "description": "Overwhelming military demonstration. Every asset, visible and loud.",
+      "hint": {
+        "low": "Large-scale exercise",
+        "med": "Full fleet formation",
+        "high": "Combat-ready posture with live fire"
+      }
+    },
+    "osint_flood": {
+      "name": "OSINT Flood",
+      "description": "Crowdsource intelligence using open-source analysis. Chat does the work.",
+      "hint": {
+        "low": "Monitor feeds",
+        "med": "Coordinate OSINT community",
+        "high": "Full crowd-intel platform"
+      }
+    },
+    "populist_rally": {
+      "name": "America First Rally",
+      "description": "Massive domestic rally. Frame crisis as us vs. the establishment.",
+      "hint": {
+        "low": "Social media campaign",
+        "med": "Rally series in key states",
+        "high": "National movement"
+      }
+    }
+  },
+  "contactCards": {
+    "saudi_deal": {
+      "name": "Saudi Grand Bargain",
+      "description": "MBS commits Saudi resources and influence to resolve the crisis.",
+      "hint": {
+        "low": "Quiet Saudi support",
+        "med": "Public Saudi partnership",
+        "high": "Full Saudi commitment"
+      }
+    },
+    "uae_port_access": {
+      "name": "UAE Port Access",
+      "description": "MBZ grants full access to Fujairah port for US operations.",
+      "hint": {
+        "low": "Resupply rights",
+        "med": "Forward operating base",
+        "high": "Full military partnership"
+      }
+    },
+    "bosphorus_leverage": {
+      "name": "Turkish Leverage",
+      "description": "Erdogan applies pressure on Iran through economic and military channels.",
+      "hint": {
+        "low": "Diplomatic signals",
+        "med": "Economic pressure",
+        "high": "Military posturing on border"
+      }
+    },
+    "secret_channel": {
+      "name": "Araghchi Direct Line",
+      "description": "Direct communication with Iranian moderates through Araghchi.",
+      "hint": {
+        "low": "Message exchange",
+        "med": "Active negotiation",
+        "high": "Framework agreement"
+      }
+    },
+    "mossad_intel": {
+      "name": "Mossad Intelligence",
+      "description": "Netanyahu shares Mossad intelligence on Iranian operations.",
+      "hint": {
+        "low": "Satellite imagery",
+        "med": "HUMINT assets",
+        "high": "Full intelligence sharing"
+      }
+    }
+  },
+  "synergies": {
+    "smart_pressure": {
+      "name": "SMART PRESSURE",
+      "description": "Sanctions + Diplomacy: Sanctions effectiveness +25%, diplomatic overtures carry more weight.",
+      "flavor": "Iran knows the stick is real. The carrot becomes more appealing."
+    },
+    "iron_curtain": {
+      "name": "IRON CURTAIN",
+      "description": "Naval Patrol + Carrier Group: Intercept chance +15%, combined naval presence creates impenetrable screen.",
+      "flavor": "Nothing gets through the strait without your permission."
+    },
+    "hearts_and_minds": {
+      "name": "HEARTS AND MINDS",
+      "description": "Humanitarian Aid + Media Campaign: Standing +3/day, approval +2/day, significant budget drain.",
+      "flavor": "The world sees America at its best. Your accountants see the bill."
+    },
+    "shadow_war": {
+      "name": "SHADOW WAR",
+      "description": "Cyber Operations + Intelligence Surge: Intel generation doubled, fog reduction doubled. If discovered: massive credibility hit.",
+      "flavor": "The invisible war. Devastating when it works. Career-ending when it doesn't."
+    },
+    "fortress_america": {
+      "name": "FORTRESS AMERICA",
+      "description": "Missile Defense + Troop Surge: Deterrence +10, tension -5 (defensive posture reads as non-provocative).",
+      "flavor": "A wall of steel that says \"we're not here to attack \u2014 we're here to stay.\""
+    },
+    "diplomatic_blitz": {
+      "name": "DIPLOMATIC BLITZ",
+      "description": "UN Engagement + Allied Coordination: DipCapital generation +50%, UN events succeed more often.",
+      "flavor": "The diplomatic machine runs at full speed. But military flexibility suffers."
+    },
+    "maximum_pressure": {
+      "name": "MAXIMUM PRESSURE",
+      "description": "Sanctions + Carrier Group + Cyber Ops: Iran economy squeezed, faction balance shifts toward moderates. But tension rises.",
+      "flavor": "Every lever pulled at once. Iran feels the pressure from all sides. International fatigue sets in after 10 days."
+    }
+  },
+  "cardLevels": {
+    "1": {
+      "name": "ACTIVE"
+    },
+    "2": {
+      "name": "VETERAN"
+    },
+    "3": {
+      "name": "ELITE"
+    },
+    "4": {
+      "name": "MASTERY"
+    }
+  }
+}

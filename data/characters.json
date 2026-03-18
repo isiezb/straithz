@@ -1,0 +1,533 @@
+{
+  "characters": {
+    "trump": {
+      "name": "Donald Trump",
+      "title": "45th & 47th President",
+      "ability": "The Decider",
+      "abilityDesc": "Gets ALL cards. 1.5x effects. 4 picks. WIN: Make America win BIG — high approval, oil flowing, low tension.",
+      "lore": [
+        "February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it."
+      ],
+      "morningBrief": [
+        "Mr. President, here's your Presidential Daily Brief for today.",
+        "Good morning, Mr. President. The overnight situation report.",
+        "Sir, your morning intelligence brief is ready."
+      ],
+      "uniqueEvents": {
+        "T01_fox_news_call": {
+          "title": "THE FOX NEWS CALL",
+          "description": "Fox & Friends is calling. They want you live in 10 minutes. A vintage Trump performance could rally the base — or start an international incident.",
+          "choices": [
+            {
+              "label": "Go on Fox — vintage Trump",
+              "flavor": "\"Iran is WEAK. We are STRONG. They will learn!\" 40M views in 2 hours. Your staff is already doing damage control."
+            },
+            {
+              "label": "Decline — stay presidential",
+              "flavor": "Your team is shocked. Fox runs a segment questioning your \"energy.\" Your base wonders what happened."
+            },
+            {
+              "label": "Go on Fox but message Iran directly",
+              "flavor": "\"Supreme Leader — if you're watching, and I know you are — call me.\" Unorthodox. But Iran's back-channel lights up."
+            }
+          ]
+        },
+        "T02_deal_on_table": {
+          "title": "THE DEAL ON THE TABLE",
+          "description": "Your advisors have a framework: comprehensive grand deal with Iran. Sanctions relief, security guarantees, economic partnership. The Nobel Prize play.",
+          "choices": [
+            {
+              "label": "Go big — comprehensive grand deal",
+              "flavor": "Everything on the table. If Iran engages, this changes everything. If not, humiliation."
+            },
+            {
+              "label": "Start small — tanker release deal",
+              "flavor": "A narrow deal on safe passage. Achievable. Your base asks \"where's the big deal?\""
+            },
+            {
+              "label": "Announce on Truth Social first",
+              "flavor": "Create public pressure on Iran. Diplomats despair. But 50M views forces Iran to respond."
+            }
+          ]
+        },
+        "T03_political_capital_crisis": {
+          "title": "POLITICAL CAPITAL CRISIS",
+          "description": "Congress is circling. Your political capital is hemorrhaging. Without a win soon, they'll pull the plug on your war spending.",
+          "choices": [
+            {
+              "label": "Rally — you know how to work a crowd",
+              "flavor": "Biggest rally since 2020. Swing state. \"Nobody handles Iran like Trump!\" The base erupts."
+            },
+            {
+              "label": "Cut a deal with Congressional leadership",
+              "flavor": "You give them a pet project. They give you support. Transactional. Effective."
+            },
+            {
+              "label": "Fire someone — publicly, dramatically",
+              "flavor": "Heads roll on live TV. The base loves it. Staff morale craters. Intel flow slows."
+            }
+          ]
+        },
+        "T04_iran_backchannel": {
+          "title": "IRAN'S BACK-CHANNEL RESPONSE",
+          "description": "Your Fox News message to Iran worked. Araghchi has responded through Omani intermediaries. A face-to-face is possible.",
+          "choices": [
+            {
+              "label": "Send Kushner as envoy",
+              "flavor": "Secret meeting in a Gulf state. High-risk, high-reward. If leaked, it's a scandal."
+            },
+            {
+              "label": "Official State Department channels",
+              "flavor": "Proper channels. Slower but safer. Araghchi is disappointed by the bureaucracy."
+            },
+            {
+              "label": "Ignore — let them stew",
+              "flavor": "You sent the message. They received it. Let them wonder. Channel stays open."
+            }
+          ]
+        },
+        "T02_deal_response": {
+          "title": "IRAN RESPONDS TO THE DEAL",
+          "description": "Iran has responded to your grand deal proposal. Araghchi says the framework is \"interesting but insufficient.\" Tangsiri says it's \"American surrender theater.\"",
+          "choices": [
+            {
+              "label": "Sweeten the offer",
+              "flavor": "More sanctions relief. More guarantees. The deal takes shape. Hawks are furious."
+            },
+            {
+              "label": "Walk away — they had their chance",
+              "flavor": "\"I made the best deal in history and they said no. Their loss.\" The base loves it."
+            },
+            {
+              "label": "Leak Tangsiri's response to embarrass him",
+              "flavor": "The world sees Iran's hardliner blocking peace. Araghchi is furious at Tangsiri."
+            }
+          ]
+        }
+      },
+      "epilogues": {
+        "diplomatic": "They said you couldn't do it. They said you were too unpredictable, too brash, too everything. And maybe they were right about all of that. But the deal is signed. Not the grand deal. You learned that grand deals are for Nobel speeches, not for the Persian Gulf. The deal that worked was smaller, uglier, full of compromises your base doesn't love and Iran's hardliners hate. But tankers are sailing. Oil is flowing. And on the cover of Time magazine, for the third time (but who's counting), is your face, with the headline: \"The Deal Nobody Wanted.\" You frame it anyway.",
+        "military": "The carrier group is coming home. You're on the flight deck for the photo op, obviously. The sailors love you. The polls love you. The defense contractors really love you. Iran's navy is functionally neutered, Tangsiri is under house arrest, and the strait is open under American escort. It cost more than anyone will publicly admit, in dollars, in standing, in the quiet funerals that didn't make the news. But you learned something in this crisis that surprised even you: sometimes the threat of the deal is more powerful than the deal itself. You'll never say that out loud, of course.",
+        "decline": "The strait is technically open. Oil is technically flowing. Your approval is technically above water. Everything is technically fine. The deal you cut with Iran is held together by duct tape and mutual exhaustion. Your base pretends to celebrate. The media pretends to care. You pretend it was the plan all along. In the quiet of the Oval Office, you stare at the portrait of Andrew Jackson and think: he would have just blown the whole thing up. Maybe that would have been better. Maybe not. The Art of the Deal, it turns out, sometimes means the deal nobody wanted, including you."
+      }
+    },
+    "hegseth": {
+      "name": "Pete Hegseth",
+      "title": "Secretary of War",
+      "ability": "The Warhorse",
+      "abilityDesc": "Command Authority resource. Military cards cost authority. WIN: Total war with public support — crush Iran.",
+      "lore": [
+        "February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran's response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You've trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003."
+      ],
+      "morningBrief": [
+        "Good morning, Mr. Secretary. Overnight SITREP on your desk.",
+        "Sir, CENTCOM's morning operational update is in.",
+        "Daily force readiness report, Mr. Secretary."
+      ],
+      "uniqueEvents": {
+        "H01_pentagon_power_play": {
+          "title": "THE PENTAGON POWER PLAY",
+          "description": "Day one at the Pentagon. The Joint Chiefs are sizing you up. Every decision here sets the tone for your entire tenure.",
+          "choices": [
+            {
+              "label": "Assert dominance — present your war plan",
+              "flavor": "You call a full Joint Chiefs meeting and lay it out. Pentagon respects the energy but watches for overreach."
+            },
+            {
+              "label": "Listen first — build relationships",
+              "flavor": "Three days learning the command structure. Slower start but deeper foundation. Critics call you passive."
+            },
+            {
+              "label": "Go to the carrier — be with the troops",
+              "flavor": "Skip the briefing room. Be on the ship. Spectacular photo op. You missed important briefings though."
+            }
+          ]
+        },
+        "H02_leak_from_within": {
+          "title": "THE LEAK FROM WITHIN",
+          "description": "Someone in the Pentagon is leaking your classified operational plans to the press. Your authority is being undermined from the inside.",
+          "choices": [
+            {
+              "label": "Confront the suspect directly",
+              "flavor": "Behind closed doors, military to military. 50/50 you got the right person. The leaks stop... or intensify."
+            },
+            {
+              "label": "Formal investigation — by the book",
+              "flavor": "Takes 5 days. Guaranteed to find the leaker. But the investigation itself generates embarrassing headlines."
+            },
+            {
+              "label": "Leak something yourself — poison the well",
+              "flavor": "Something true but useful. Make all leaks suspect. Clever but ethically questionable."
+            }
+          ]
+        },
+        "H02_leak_result": {
+          "title": "INVESTIGATION RESULTS",
+          "description": "The formal investigation identified the leaker: a senior aide with connections to your political opponents.",
+          "choices": [
+            {
+              "label": "Prosecute — send a message",
+              "flavor": "Court martial. The Pentagon watches. Leaks stop cold. But you've made powerful enemies."
+            },
+            {
+              "label": "Quiet reassignment",
+              "flavor": "The leaker disappears to a desk in Alaska. No headlines. Problem solved."
+            }
+          ]
+        },
+        "H03_shock_and_awe": {
+          "title": "SHOCK AND AWE MOMENT",
+          "description": "The carriers are in position. Your war plan is ready. A massive coordinated strike could end Iran's ability to threaten the strait. This is what you trained for.",
+          "choices": [
+            {
+              "label": "Launch the full strike package",
+              "flavor": "Operation Southern Strike. 500 sorties. Iranian naval capability shattered. The world holds its breath."
+            },
+            {
+              "label": "Surgical strike — IRGC command center only",
+              "flavor": "Precision over power. One target. Message sent without crossing the line."
+            },
+            {
+              "label": "Stage it visibly but don't launch — the bluff",
+              "flavor": "Satellites will see the preparations. The ultimate bluff. If Iran calls it, you're exposed."
+            }
+          ]
+        },
+        "H04_troop_morale": {
+          "title": "TROOP MORALE CRISIS",
+          "description": "Extended deployment is taking its toll. Sailors are exhausted. Maintenance crews are running on fumes. The fleet needs rest but the crisis isn't over.",
+          "choices": [
+            {
+              "label": "Visit every deployed unit personally",
+              "flavor": "Two days of morale tours. The troops genuinely love this. Your advisors manage without you."
+            },
+            {
+              "label": "Order R&R rotation",
+              "flavor": "Fresh crews in, tired ones home. Operational risk during transition but long-term gain."
+            },
+            {
+              "label": "Plan a visible operational success",
+              "flavor": "Give the troops a win. Morale through victory. If it works, it's brilliant. If it fails, devastating."
+            }
+          ]
+        }
+      },
+      "epilogues": {
+        "diplomatic": "You never expected diplomacy to be your legacy. The war plans were ready. The carriers were in position. But somewhere between the third carrier group and the first ceasefire, you realized that the best victory is the one where your troops come home without a scratch. The Pentagon will never fully accept you, but the troops know. They know you were ready to fight and chose not to.",
+        "military": "The Pentagon will never fully accept you. You know that. The old guard with their Ivy League degrees and their Clausewitz quotes will always see you as the TV guy who got lucky. But the troops know. The ones who were on the Eisenhower when the fast-boats came. The ones who heard your voice on the radio saying \"weapons free\" and trusted it. You walk the halls of the Pentagon now with a different kind of authority. Not the kind that comes from rings or stars, but the kind that comes from having been right when it mattered. Your memoir will be a bestseller. The chapter on Day 43 will be the one they excerpt.",
+        "decline": "The strait is open but the cost was staggering. Your command authority eroded with every decision that didn't produce a clear win. The Joint Chiefs tolerate you now, which is worse than opposing you. The troops still salute, but the enthusiasm is gone. Your Fox News friends stop calling. The memoir deal shrinks. In the end, you managed the crisis without catastrophe, which is another way of saying you didn't lose badly enough for anyone to notice."
+      }
+    },
+    "kushner": {
+      "name": "Jared Kushner",
+      "title": "Senior Advisor",
+      "ability": "The Operator",
+      "abilityDesc": "Contacts & exposure system. Build trust, avoid leaks. WIN: Enrich yourself and build lasting relationships.",
+      "lore": [
+        "February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they're all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe."
+      ],
+      "morningBrief": [
+        "Your overnight diplomatic traffic summary, sir.",
+        "Three missed calls from Gulf capitals. Here's the brief.",
+        "Back-channel status update and morning intelligence digest."
+      ],
+      "uniqueEvents": {
+        "K01_mbs_calls": {
+          "title": "MBS CALLS",
+          "description": "Mohammed bin Salman is on the line. Just like old times. But now you're not just Jared — you're the one making decisions.",
+          "choices": [
+            {
+              "label": "Speaker phone — team present",
+              "flavor": "Transparent. MBS is cautious — he's used to private Jared, not official Jared. He shares less."
+            },
+            {
+              "label": "Take it alone — just like old times",
+              "flavor": "MBS opens up. He has intelligence on Iran that your CIA doesn't have. Staff worried about what you're not sharing."
+            },
+            {
+              "label": "Propose a Riyadh summit",
+              "flavor": "Bring all Gulf leaders to the table. Big play. Big exposure risk."
+            }
+          ]
+        },
+        "K02_exposure_spikes": {
+          "title": "EXPOSURE METER SPIKES",
+          "description": "A Washington Post investigation is connecting the dots on your back-channel communications. Your exposure is dangerously high.",
+          "choices": [
+            {
+              "label": "Get ahead of it — press conference",
+              "flavor": "Frame your back-channel work as strategic genius. If your credibility holds, you control the narrative."
+            },
+            {
+              "label": "Go dark — cancel all appearances",
+              "flavor": "Let the story die. Opponents fill the vacuum with their narrative."
+            },
+            {
+              "label": "Leak your own successes anonymously",
+              "flavor": "Plant stories about breakthroughs without fingerprints. If traced: catastrophic."
+            }
+          ]
+        },
+        "K03_riyadh_summit": {
+          "title": "THE RIYADH SUMMIT",
+          "description": "Gulf leaders are gathered in Riyadh. MBS is hosting. The eyes of the world are on this room. This is your Abraham Accords moment.",
+          "choices": [
+            {
+              "label": "Push for joint Gulf statement against Iran",
+              "flavor": "Unity signal. Iran is isolated. The statement makes front pages worldwide."
+            },
+            {
+              "label": "Private bilateral meetings — hallway diplomacy",
+              "flavor": "The real work happens in hallways. No public statement but quiet progress on every front."
+            },
+            {
+              "label": "Propose economic framework — Abraham Accords II",
+              "flavor": "Gulf investment for US security guarantees. The big swing. This is what you came for."
+            }
+          ]
+        },
+        "K04_araghchi_gambit": {
+          "title": "ARAGHCHI'S GAMBIT",
+          "description": "Iran's Foreign Minister Araghchi is offering a comprehensive framework through intermediaries. But he needs something concrete: a sanctions concession.",
+          "choices": [
+            {
+              "label": "Meet secretly — accept the risk",
+              "flavor": "Three hours in a Muscat hotel room. This could end the crisis or end your career."
+            },
+            {
+              "label": "Demand proof first — release the hostages",
+              "flavor": "Test if he actually has power. 40% he delivers a breakthrough. 60% the channel weakens."
+            },
+            {
+              "label": "Record the meeting secretly — insurance",
+              "flavor": "You gain leverage. If discovered, all contacts lose trust and exposure explodes."
+            }
+          ]
+        },
+        "K04_framework": {
+          "title": "THE FRAMEWORK RESPONSE",
+          "description": "Araghchi brought your framework to Tehran. Mojtaba is skeptical. Tangsiri is hostile. But the moderates see an opening.",
+          "choices": [
+            {
+              "label": "Push forward — more concessions",
+              "flavor": "The framework solidifies. Hawks scream betrayal. But the guns go quiet."
+            },
+            {
+              "label": "Hold firm — no more concessions",
+              "flavor": "Progress stalls. Araghchi is frustrated but the channel survives."
+            },
+            {
+              "label": "Publicize the framework — force Iran's hand",
+              "flavor": "The world knows. Iran must respond publicly. Araghchi is burned."
+            }
+          ]
+        }
+      },
+      "epilogues": {
+        "diplomatic": "Nobody knows what you did. That's the point. The framework that ended the crisis has seven signatories and zero fingerprints. The Omani intermediary got a medal. Araghchi got promoted. MBS got the security guarantee he wanted. And you got what you always get: the satisfaction of having been in the room when it happened, and the quiet knowledge that without you, there would have been no room. Your exposure meter, miraculously, peaked and receded. The investigations found nothing because there was nothing to find. Just a man making phone calls. Abraham Accords II will be the official name, though the actual accord looks nothing like what you originally envisioned. It's better. It's real.",
+        "military": "The back-channels went silent when the bombs started falling. Every contact you built, every trust you earned, every whispered conversation in hotel lobbies across the Gulf — all of it evaporated in the first strike package. MBS stopped returning calls. Araghchi disappeared. The framework you spent weeks building became classified wreckage. But the military victory happened anyway, and you survived, which in Washington is its own kind of win. The exposure never quite caught you. The investigations found shadows, not substance. You'll be back.",
+        "decline": "The contacts are still there, technically. MBS texts occasionally. The Omani intermediary sends holiday greetings. But the grand framework — the Abraham Accords II, the thing that was going to change everything — never quite materialized. The strait is open. The crisis is managed. Your exposure meter settled at a level that's uncomfortable but not fatal. In the end, the shadow diplomat cast no shadow at all. Just a man who almost changed the world, and settled for keeping it from getting worse."
+      }
+    },
+    "asmongold": {
+      "name": "Asmongold",
+      "title": "Streamer & Analyst",
+      "ability": "The Analyst",
+      "abilityDesc": "Credibility resource. Intel Feed mini-game. WIN: Be right about everything — high credibility, low fog, public loves you.",
+      "lore": [
+        "February 28, 2026. Chat, this is not a drill. The US just killed Iran's Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran's response. The intel is flooding in faster than anyone can process. Except you."
+      ],
+      "morningBrief": [
+        "Chat, the overnight mod-curated intel feed just dropped.",
+        "OK dude, the mods flagged the important stuff from last night.",
+        "Morning intel digest — crowd-sourced and verified by the community."
+      ],
+      "uniqueEvents": {
+        "A01_osint_discovery": {
+          "title": "THE OSINT DISCOVERY",
+          "description": "Your crowdsourced OSINT network found something the intelligence community missed: satellite imagery showing Iranian mobile missile launchers dispersing from known bases.",
+          "choices": [
+            {
+              "label": "Share with intelligence community",
+              "flavor": "Teamwork. The IC is impressed but slightly threatened by your methods."
+            },
+            {
+              "label": "Publish it yourself — radical transparency",
+              "flavor": "The public trusts YOU, not the spooks. IC is furious. Your methods work."
+            },
+            {
+              "label": "Hold it — use as internal leverage",
+              "flavor": "You know something they don't. That's power. You're playing their game now."
+            }
+          ]
+        },
+        "A02_disinfo_attack": {
+          "title": "THE DISINFORMATION ATTACK",
+          "description": "Iranian state media has launched a coordinated disinformation campaign. Deepfakes of your \"classified briefings\" are going viral. 200M views and counting.",
+          "choices": [
+            {
+              "label": "Debunk live on stream",
+              "flavor": "Real-time forensic analysis. Chat goes wild. Iran's info-ops team regroups — they'll try harder."
+            },
+            {
+              "label": "Trace to source — expose the network",
+              "flavor": "Three days of work. The entire Iranian disinformation network exposed. Devastating."
+            },
+            {
+              "label": "Counter-narrative — fight fire with fire",
+              "flavor": "Don't just debunk, tell a better story. You're in the propaganda game now."
+            }
+          ]
+        },
+        "A02_disinfo_escalation": {
+          "title": "IRAN ESCALATES INFO-WAR",
+          "description": "After you exposed their network, Iran has hired Russian cyber units for a more sophisticated campaign. AI-generated footage of \"US war crimes\" flooding social media.",
+          "choices": [
+            {
+              "label": "Escalate — full information war",
+              "flavor": "You build a counter-disinformation unit. The information battlefield becomes its own front."
+            },
+            {
+              "label": "Appeal to platforms — content moderation",
+              "flavor": "Tech companies reluctantly act. Some content removed. Your base calls it censorship."
+            }
+          ]
+        },
+        "A03_credibility_test": {
+          "title": "THE CREDIBILITY TEST",
+          "description": "Your credibility is at an all-time high. The question is: what do you spend it on? A presidential address, a UN presentation, or bank it for later?",
+          "choices": [
+            {
+              "label": "Presidential address — data not rhetoric",
+              "flavor": "Information advantage is overwhelming. Your opponents can't compete with your data."
+            },
+            {
+              "label": "UN presentation — full transparency",
+              "flavor": "Unprecedented transparency at the UN. Methods exposed but the world trusts you."
+            },
+            {
+              "label": "Bank it — save for when you really need it",
+              "flavor": "Wise but boring. The credibility grows slowly. Your moment will come."
+            }
+          ]
+        },
+        "A04_chat_demands_action": {
+          "title": "CHAT DEMANDS ACTION",
+          "description": "Viewer count is dropping. Chat is spamming \"DO SOMETHING.\" Your base expects entertainment alongside governance. The analytics are brutal.",
+          "choices": [
+            {
+              "label": "Dramatic military action — full livestream",
+              "flavor": "Content meets crisis. Either brilliant or catastrophic. Chat explodes either way."
+            },
+            {
+              "label": "Push back — explain restraint is strategy",
+              "flavor": "Educational content. Some viewers leave. The loyal ones stay harder."
+            },
+            {
+              "label": "Pivot to humor — self-deprecating bit",
+              "flavor": "\"Being president is harder than raiding.\" Viral clip. Opponents don't know how to attack a joke."
+            }
+          ]
+        }
+      },
+      "epilogues": {
+        "diplomatic": "You streamed the final press conference. Twelve million concurrent viewers. The chat was, for once, almost entirely supportive, though someone did manage to post the crab emoji forty thousand times. The intelligence community will study your methods for decades: the fusion of open-source analysis with classified assets, the radical transparency that somehow made secrecy more effective, the way you turned public attention into a strategic weapon. You broke every rule they taught at Langley and got better results than anyone who followed them. The fog of war, for the first time in the history of modern conflict, was lower at the end than at the beginning.",
+        "military": "Chat wanted content and you gave them content. The problem is, the content was a war. Your credibility carried you further than anyone expected, but in the end, the missiles don't care about your viewer count. The military victory happened not because of your analysis but despite it — the generals did what generals do, and you provided cover. Your stream of the final operation hit 20 million viewers. The Pentagon banned streaming from classified briefings the next day.",
+        "decline": "The stream is still going but the viewer count is dropping. The crisis ended not with a bang but with a slow fade to normalcy, which is terrible for content. Your credibility is intact but irrelevant — nobody needs an analyst when there's nothing to analyze. Chat has moved on to the next thing. The fog of war settled back to its natural state. You go back to gaming, which is fine. But late at night, you pull up the shipping maps and check the strait. Old habits."
+      }
+    },
+    "fuentes": {
+      "name": "Nick Fuentes",
+      "title": "Political Commentator",
+      "ability": "The Outsider",
+      "abilityDesc": "Base Enthusiasm drops without America First cards. WIN: Pull out of the Middle East without losing global power.",
+      "lore": [
+        "February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You're the youngest national security advisor in history."
+      ],
+      "morningBrief": [
+        "Morning brief from our team. The establishment doesn't want you to see this.",
+        "Here's what really happened overnight — not the media spin.",
+        "Your advisors compiled the real intelligence. No filter."
+      ],
+      "uniqueEvents": {
+        "F01_base_demands_blood": {
+          "title": "THE BASE DEMANDS BLOOD",
+          "description": "Your supporters are in the streets. \"BRING THEM HOME.\" The base that elected you demands you end foreign wars — not manage them.",
+          "choices": [
+            {
+              "label": "Fiery speech — America First, pull the fleet",
+              "flavor": "The base erupts. Allies panic. Oil markets crater. This is what they voted for."
+            },
+            {
+              "label": "Walk the line — strength protects freedom",
+              "flavor": "Moderate your message. The base is confused but patient. You live to fight another day."
+            },
+            {
+              "label": "Redirect anger at defense contractors",
+              "flavor": "Channel anger at the military-industrial complex. Pentagon quietly starts undermining you."
+            }
+          ]
+        },
+        "F02_international_pariah": {
+          "title": "THE INTERNATIONAL PARIAH MOMENT",
+          "description": "The UN General Assembly passed a resolution condemning your policies. European allies have recalled ambassadors. You are internationally isolated.",
+          "choices": [
+            {
+              "label": "Embrace it — badge of honor",
+              "flavor": "\"We didn't come here to make friends with Davos.\" Standing floor locks. No recovery."
+            },
+            {
+              "label": "Course correct — reach out to one key ally",
+              "flavor": "Painful but necessary. One ally is enough to break the isolation."
+            },
+            {
+              "label": "Find unconventional allies — Russia, India",
+              "flavor": "Outside the Western consensus. New partnerships. Old allies further alienated."
+            }
+          ]
+        },
+        "F03_america_first_rally": {
+          "title": "THE AMERICA FIRST RALLY",
+          "description": "Biggest rally of your career. 80,000 people. Every camera in America pointed at you. This is your moment to define the crisis on your terms.",
+          "choices": [
+            {
+              "label": "Define the crisis — sovereignty, not oil",
+              "flavor": "\"This isn't about Iranian oil. This is about American sovereignty.\" The crowd goes wild."
+            },
+            {
+              "label": "Surprise everyone — announce peace initiative",
+              "flavor": "Reframe peace as strength. The base is confused but comes around. The world is stunned."
+            },
+            {
+              "label": "Scorched earth — name domestic enemies",
+              "flavor": "You just burned every bridge in Washington. Your base has never been more loyal."
+            }
+          ]
+        },
+        "F04_assassination_whisper": {
+          "title": "THE ASSASSINATION WHISPER",
+          "description": "Secret Service has intercepted credible threats. Your polarizing stance has made you a target. They recommend reduced public appearances.",
+          "choices": [
+            {
+              "label": "Accept recommendations — reduce visibility",
+              "flavor": "Reduced appearances. The base wonders where you went. Intel resources diverted to protection."
+            },
+            {
+              "label": "Defy the threat publicly",
+              "flavor": "\"They want me dead because I'm telling the truth.\" A speech about courage. Genuine personal risk."
+            },
+            {
+              "label": "Weaponize it politically",
+              "flavor": "Release the intelligence to supporters. Rally around the embattled leader. Agencies are furious."
+            }
+          ]
+        }
+      },
+      "epilogues": {
+        "diplomatic": "You didn't fire a shot. That was the promise, and against every prediction, every editorial, every smirking pundit who said the isolationist couldn't handle a real crisis, you kept it. The strait is open not because you forced it open but because you made it more expensive for Iran to keep it closed than to let it flow. Your base calls it the greatest foreign policy achievement since... well, they can't agree on the comparison, which is fine. Standing at 40 doesn't sound impressive until you remember it started at 12 and every expert said it would hit zero. The allies who mocked you are quiet now. They're not grateful. They'll never be grateful. But they're quiet. And the troops are home. Every single one of them.",
+        "military": "You promised America First and delivered America at War. The base fractured the moment the first bomb dropped. Half of them understood that sometimes you fight to protect what matters. The other half never forgave you. The strait is open. Iran is cowed. The troops are coming home, eventually. But the movement you built, the coalition that was supposed to change everything — it didn't survive contact with reality. You won the crisis and lost the cause.",
+        "decline": "The troops are coming home because there's nothing left to do, not because you brought them home. The crisis fizzled. The strait opened. Iran got bored. Your base takes credit anyway, and you let them. The international standing never recovered, but your base doesn't care about international standing, which was always the point. You survived. The establishment is still standing too, which means nobody really won. The next crisis will find a different outsider. Maybe they'll do better. Maybe there is no better."
+      }
+    }
+  }
+}

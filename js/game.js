@@ -4,6 +4,11 @@
 
 (async function () {
     try {
+        await loadGameData();
+        hydrateCards();
+        hydrateSimulation();
+        hydrateUI();
+        hydrateCharacters();
         initSprites();
 
         await showTitleScreen();
@@ -14,6 +19,7 @@
         initMap();
         initSimulation();
         initUI();
+        initNarrativeFeed();
 
         SIM.phase = 'morning';
         showDailyReport();
@@ -59,6 +65,7 @@
 })();
 
 function advanceDay() {
+    SIM._prevWarPath = SIM.warPath;
     dailyUpdate();
     if (checkWinLose()) return;
     if (SIM.decisionEventActive) return;
@@ -78,12 +85,26 @@ function advanceToMorning() {
     SIM.weekDay = ((SIM.day - 1) % 7) + 1;
     SIM.week = Math.floor((SIM.day - 1) / 7) + 1;
     SIM.phase = 'morning';
+    // Add day separator to narrative feed
+    if (typeof addNarrative === 'function') {
+        _narrativeEntries.push({
+            type: 'daybreak', text: '', hour: 0, day: SIM.day, time: Date.now(),
+            speaker: null, metric: null, delta: null, level: 'normal'
+        });
+        if (_narrativeFeed) {
+            const sep = document.createElement('div');
+            sep.className = 'nf-entry nf-day-break';
+            sep.innerHTML = `<span class="nf-day-break-line">\u2501\u2501\u2501 DAY ${SIM.day} \u2501\u2501\u2501</span>`;
+            _narrativeFeed.appendChild(sep);
+        }
+    }
+    if (typeof updateNarrativeHeader === 'function') updateNarrativeHeader();
     showDailyReport();
 }
 
 function startDayPlay() {
     SIM.phase = 'dayplay';
-    SIM.actionPoints = 5;
+    SIM.actionPoints = 3;
     SIM.prevGauges = calculateGauges();
     if (typeof showActionPanel === 'function') showActionPanel();
     if (typeof updateCenterPanel === 'function') updateCenterPanel();
