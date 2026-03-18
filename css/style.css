@@ -25,6 +25,12 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
 body {
     background: #000;
     color: #44dd88;
@@ -33,6 +39,8 @@ body {
     height: 100vh;
     height: 100dvh;
     width: 100vw;
+    max-height: 100vh;
+    max-height: 100dvh;
     image-rendering: pixelated;
     position: fixed;
     top: 0;
@@ -2012,6 +2020,7 @@ body {
     z-index: 50;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     font-family: 'Courier New', Courier, monospace;
     transform: translateX(100%);
     transition: transform 0.3s ease;
@@ -2133,6 +2142,7 @@ body {
     align-items: center;
     gap: 6px;
     font-size: 9px;
+    flex-shrink: 0;
     background: rgba(10, 10, 10, 0.5);
 }
 .ap-esc-label {
