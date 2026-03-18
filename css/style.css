@@ -55,6 +55,8 @@ body {
     height: 90vh;
     height: 90dvh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ======================== SCANLINES ======================== */
@@ -79,11 +81,8 @@ body {
 /* ======================== MAIN LAYOUT ======================== */
 
 #main-layout {
-    position: absolute;
-    top: 30px;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    flex: 1;
+    min-height: 0;
     display: flex;
     overflow: hidden;
 }
@@ -775,11 +774,10 @@ body {
 /* ======================== GAUGE BAR ======================== */
 
 #gauge-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
     height: 30px;
+    min-height: 30px;
+    max-height: 30px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 0;
@@ -788,6 +786,7 @@ body {
     z-index: 10;
     padding: 0 8px;
     overflow: hidden;
+    width: 100%;
 }
 
 .hud-day {
