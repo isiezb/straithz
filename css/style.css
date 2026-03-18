@@ -31,14 +31,22 @@ body {
     font-family: 'Courier New', Courier, monospace;
     overflow: hidden;
     height: 100vh;
+    height: 100dvh;
     width: 100vw;
     image-rendering: pixelated;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
 #game-container {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
 }
 
 /* ======================== SCANLINES ======================== */
@@ -63,13 +71,16 @@ body {
 /* ======================== CANVAS (hidden — kept for sprite generation) ======================== */
 
 #game-canvas {
-    display: none;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    visibility: hidden !important;
 }
 
 /* ======================== CENTER PANEL (situation room) ======================== */
 
 #center-panel {
-    position: absolute;
+    position: fixed;
     top: 52px;
     left: 320px;
     right: 280px;
@@ -289,13 +300,12 @@ body {
 
 /* Situation dashboard left panel */
 #situation-panel {
-    position: absolute;
+    position: fixed;
     top: 52px;
     left: 0;
+    bottom: 0;
     width: 320px;
-    height: calc(100vh - 52px);
-    max-height: calc(100vh - 52px);
-    background: rgba(5, 5, 5, 0.92);
+    background: rgba(5, 5, 5, 0.95);
     border-right: 1px solid #1a3a2a;
     z-index: 8;
     overflow-y: auto;
@@ -414,7 +424,7 @@ body {
 /* ======================== GAUGE BAR ======================== */
 
 #gauge-bar {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -426,6 +436,7 @@ body {
     border-bottom: 2px solid #1a3a2a;
     z-index: 10;
     padding: 0 8px;
+    overflow: hidden;
 }
 
 .hud-day {
@@ -1987,9 +1998,8 @@ body {
     position: fixed;
     top: 52px;
     right: 0;
+    bottom: 0;
     width: 280px;
-    height: calc(100vh - 52px);
-    max-height: calc(100vh - 52px);
     background: #0a0a0a;
     border-left: 2px solid #1a3a2a;
     z-index: 50;
@@ -2488,18 +2498,7 @@ body {
 .ap-scroll::-webkit-scrollbar-thumb { background: #1a3a2a; }
 .ap-scroll::-webkit-scrollbar-thumb:hover { background: #2a5a3a; }
 
-/* ======================== VIEWPORT FIT ======================== */
-
-/* Ensure nothing overflows the viewport */
-html, body {
-    max-height: 100vh;
-    overflow: hidden;
-}
-
-#game-container {
-    max-height: 100vh;
-    overflow: hidden;
-}
+/* ======================== RESPONSIVE ======================== */
 
 /* Responsive: smaller screens */
 @media (max-width: 900px) {
@@ -2516,8 +2515,8 @@ html, body {
     .gauge-value { font-size: 13px; }
     .gauge-label { font-size: 7px; letter-spacing: 1px; }
     #gauge-bar { height: 44px; padding: 0 4px; }
-    #situation-panel { top: 44px; height: calc(100vh - 44px); }
-    #action-panel { top: 44px; height: calc(100vh - 44px); }
+    #situation-panel { top: 44px; }
+    #action-panel { top: 44px; }
     #center-panel { top: 44px; }
     .cp-forces { grid-template-columns: 1fr; }
 }
@@ -2526,8 +2525,8 @@ html, body {
     #gauge-bar { height: 40px; }
     .gauge-value { font-size: 12px; }
     .gauge-track { height: 4px; }
-    #situation-panel { top: 40px; height: calc(100vh - 40px); }
-    #action-panel { top: 40px; height: calc(100vh - 40px); }
+    #situation-panel { top: 40px; }
+    #action-panel { top: 40px; }
     #center-panel { top: 40px; }
     .terminal-box { max-height: 85vh; padding: 16px 14px; }
 }

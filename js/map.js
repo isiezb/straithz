@@ -14,21 +14,11 @@ const MAP = {
 
 function initMap() {
     MAP.canvas = document.getElementById('game-canvas');
-    MAP.ctx = MAP.canvas.getContext('2d');
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Try to load map background image
-    const mapImg = new Image();
-    mapImg.onload = () => { MAP.assets.mapBg = mapImg; };
-    mapImg.onerror = () => {};
-    mapImg.src = 'assets/strait-map.png';
-
-    // Load situation room background
-    const sitImg = new Image();
-    sitImg.onload = () => { MAP.assets.sitRoom = sitImg; };
-    sitImg.onerror = () => {};
-    sitImg.src = 'assets/situation-room.png';
+    if (MAP.canvas) {
+        MAP.ctx = MAP.canvas.getContext('2d');
+    }
+    // Canvas is hidden — map is now DOM-based via center panel
+    // initMap kept for sprite system and getLanePosition()
 }
 
 function resizeCanvas() {
