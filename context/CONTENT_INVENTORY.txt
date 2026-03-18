@@ -1,6 +1,6 @@
 CONTENT INVENTORY — Strait of Hormuz Policy Simulator
 =====================================================
-Generated: 2026-03-18 (updated)
+Generated: 2026-03-18 (updated with content system)
 
 
 ========================================================================
@@ -561,3 +561,37 @@ AUDIO INVENTORY
     - SFX.error() - error states, bad outcomes (square wave 150->100Hz)
     - SFX.transition() - phase transitions, day changes (filtered noise sweep)
 - No missing audio references (all procedural)
+
+
+========================================================================
+CONTENT MANAGEMENT SYSTEM (NEW)
+========================================================================
+
+The game now has an organized content authoring pipeline:
+
+  content/ directory: 52 JSON files organized by type
+  content/build.js:   Compiles content/ → 12 runtime data/*.json files
+  content/migrate.js: One-time extraction data/ → content/ (already run)
+
+Build output (12 files):
+  data/characters.json     (40 KB)  ← content/characters/*.json
+  data/events.json         (232 KB) ← content/events/shared/*.json
+  data/event-scenes.json   (146 KB) ← merged from events
+  data/cards.json          (14 KB)  ← content/cards/*.json
+  data/headlines.json      (30 KB)  ← content/headlines/*.json
+  data/dialogue.json       (47 KB)  ← content/dialogue/*.json
+  data/reactions.json      (7 KB)   ← content/dialogue/reactions.json
+  data/briefings.json      (105 KB) ← content/briefings/*.json
+  data/action-scenes.json  (55 KB)  ← content/scenes/actions/*.json
+  data/day-endings.json    (23 KB)  ← content/scenes/day-endings/*.json
+  data/intel.json          (5 KB)   ← content/intel/*.json
+  data/interrupts.json     (41 KB)  ← content/interrupts/all.json
+
+Build validation checks:
+  - Event chain references (chainEvent IDs must exist)
+  - Image manifest references (event IDs must exist)
+  - Character required fields (name, morningBriefings, etc.)
+  - Minimum 2 choices per event
+
+Current validation: 0 errors, 28 warnings (portrait images are procedural,
+image manifest references character event IDs not in shared pool)

@@ -12,7 +12,7 @@ Post-implementation reference for the 5-part UI overhaul applied to the Strait o
 - `#map-sidebar` set to `display: none` in CSS
 - `renderMap()` in `js/map.js` has an early return for `dayplay`, `morning`, `event`, and `overnight` phases
 - `js/game.js` wraps the `renderMap()` call with the same phase check to avoid burning CPU on a hidden canvas
-- Right column reduced from 35% to 280px fixed width (`#strategy-col` with `flex: 0 0 280px`)
+- Right column reduced from 35% to 320px fixed width (`#strategy-col` with `flex: 0 0 320px`)
 - Character panel made compact: 48x48 portrait, `max-height: 120px`
 
 **Current state:** The map canvas element still exists in the DOM (not deleted) but is hidden and its render loop is short-circuited during all gameplay phases. It could be re-enabled for charselect/lore if needed.
@@ -26,14 +26,14 @@ Post-implementation reference for the 5-part UI overhaul applied to the Strait o
 **Current CSS layout chain:**
 ```
 #game-container        → 100dvh, flex column, overflow hidden
-  #gauge-bar           → 48px fixed, flex-shrink: 0
+  #gauge-bar           → 36px max-height, flex-shrink: 0
   #main-layout         → flex: 1, min-height: 0, flex row
     #narrative-col     → flex: 1, flex column, min-height: 0
-      #scene-panel     → 80px, flex-shrink: 10, min-height: 0
+      #scene-panel     → 200px max-height, min-height: 100px, flex-shrink: 2
       #narrative-feed  → flex: 1, min-height: 0
         .nf-feed       → flex: 1, min-height: 0, overflow-y: auto
-      #action-bar      → flex: 0 0 auto, max-height: 45%, overflow-y: auto
-    #strategy-col      → flex: 0 0 280px, overflow-y: auto, min-height: 0
+      #action-bar      → flex: 0 0 auto, max-height: 35%, overflow-y: auto
+    #strategy-col      → flex: 0 0 320px, overflow-y: auto, min-height: 0
 ```
 
 **Key fixes applied during iteration:**
@@ -108,7 +108,7 @@ js/simulation.js    — SIM state object, entities, daily update, AI, win/lose
 js/sprites.js       — Procedural pixel art sprite generation (UNTOUCHED)
 js/map.js           — Canvas rendering (disabled during gameplay phases)
 js/characters.js    — 5 playable characters with abilities/lore (~1175 lines, Kushner K05-K07 events added)
-js/ui.js            — Terminal UI, action panel, events, narrative pipeline (~4822 lines)
+js/ui.js            — Terminal UI, action panel, events, narrative pipeline (~4848 lines, tutorial skip added)
 js/narrative.js     — Narrative data, ambient content, dialogue tables (~838 lines)
 js/game.js          — Entry point, game loop, phase transitions (~151 lines, renderMap guard added)
 js/sound.js         — Audio management, mute toggle (206 lines)
@@ -134,12 +134,11 @@ Decision event resolves
     → echo character flavor text to feed
     → consequence text to feed
 
-During dayplay (every ~4s idle)
+During dayplay (every ~15s idle, max 4/day)
   → _pushAmbientContent()
-    → tension-graded cables from DATA.headlines.simulation
-    → Polymarket headlines (30% chance)
-    → idle asides from DATA.dialogue.idleAsides (20% chance)
-    → advisor reactions based on state thresholds
+    → picks ONE category: tension-graded cables OR idle asides OR advisor reactions
+    → Polymarket headlines (15% chance)
+    → Set-based dedup prevents repeats within same day
 ```
 
 ### Layout Hierarchy
@@ -149,10 +148,10 @@ During dayplay (every ~4s idle)
   ├── #gauge-bar (48px fixed top bar)
   └── #main-layout (fills remaining height)
        ├── #narrative-col (flex: 1)
-       │    ├── #scene-panel (80px, shrinkable, hosts state-driven ambient images via getAmbientSceneImage())
+       │    ├── #scene-panel (200px max, min 100px, shrinkable, hosts state-driven ambient images)
        │    ├── #narrative-feed > .nf-feed (scrollable feed)
-       │    └── #action-bar (auto height, max 45%, scrollable)
-       └── #strategy-col (280px fixed)
+       │    └── #action-bar (auto height, max 35%, scrollable)
+       └── #strategy-col (320px fixed)
             ├── character panel (compact, 120px max)
             ├── strategy card pills
             └── intel brief
@@ -168,11 +167,14 @@ During dayplay (every ~4s idle)
 
 ### Edge Cases
 - **Extreme viewport sizes:** The flex layout handles standard laptop/desktop resolutions well but may still overflow or leave dead space at very small (<900px height) or very large (4K+) viewports. The `flex-shrink: 10` on `#scene-panel` helps but is not a complete solution.
-- **Right sidebar text legibility:** On some displays the 280px column results in text that feels cramped. Could benefit from responsive font sizing or a slightly wider minimum.
+- **Right sidebar text legibility:** On some displays the 320px column results in text that feels cramped at smaller responsive breakpoints (220px at ≤1100px, 200px at ≤900px).
 
 ### Fixed Issues
 - **Mute button visibility:** Now `position: fixed` with `z-index: 9999`, visible on all screens including character select and lore. No longer lost behind overlays.
 - **Restart flow:** `restartGame()` is now async and follows the correct sequence: title → character select → lore. Previously could leave stale state.
+- **Ambient spam:** Rewrote `_pushAmbientContent()` — 15s interval (was 4s), 4/day cap, Set-based dedup, single-category pick per tick. No more flooding.
+- **Scene panel too small:** Increased from 80px to 200px max-height, min-height 100px, flex-shrink 2. Responsive: 140px at ≤800px height, 100px at ≤600px.
+- **Tutorial skip:** Added `[ SKIP TUTORIAL ]` button alongside `[ NEXT ]` in advisor guide system. CSS: `.guide-buttons { display:flex; gap:8px }`, `.guide-skip { border: 1px solid #5a6e80; color: #5a6e80 }`.
 
 ### Future Considerations
 - The tactical map canvas is hidden but still in the DOM. It could be repurposed as a mini-map toggle, a full-screen strategic view, or removed entirely to simplify the codebase.

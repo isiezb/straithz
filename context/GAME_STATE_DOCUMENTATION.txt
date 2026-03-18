@@ -49,6 +49,9 @@ CHANGELOG:
   data/loader.js, ambient cable system, action narration system, layout corrections,
   Kushner conspiracy arc (K05-K07), warPath clamping fix, win condition update,
   ambient scene images, arc transitions, async restart flow, mute button fix
+- 2026-03-18b: Ambient rewrite (15s interval, 4/day cap, dedup), tutorial skip,
+  scene panel 200px, right column 320px, gauge bar 36px, content management system
+  (52 content/*.json files, build.js, migrate.js)
 
 Files and load order (from index.html script tags):
 1. data/loader.js - Async loads 12 JSON files into global DATA object
@@ -59,8 +62,8 @@ Files and load order (from index.html script tags):
 6. js/narrative.js (~838 lines) - Narrative feed system, scene panel, morning briefings,
    state-driven ambient images
 7. js/characters.js (~1175 lines) - 5 playable characters, title/select/lore screens
-8. js/ui.js (~4822 lines) - All UI: action panel, events, interrupts, gauges, terminal,
-   game over, ambient cable traffic, action narration
+8. js/ui.js (~4848 lines) - All UI: action panel, events, interrupts, gauges, terminal,
+   game over, ambient cable traffic, action narration, tutorial with skip option
 9. js/game.js (~151 lines) - Entry point, game loop, phase transitions, arc transition detection
 
 Data files loaded by loader.js:
@@ -91,8 +94,11 @@ Phases: charselect -> lore -> morning -> dayplay -> event -> overnight -> mornin
    panels every 500ms during dayplay, renders tactical map only if visible and
    phase is charselect/lore, cleans up expired effects.
 
-   _ambientTimer accumulates frame delta during dayplay. When it exceeds 4000ms
-   and no decision event is active, fires _pushAmbientContent() then resets.
+   _ambientTimer accumulates frame delta during dayplay. When it exceeds 15000ms
+   (15 seconds) and no decision event is active, fires _pushAmbientContent()
+   then resets. Ambient content is capped at 4 messages per day via
+   _AMBIENT_MAX_PER_DAY, uses Set-based dedup to prevent repeats, and picks
+   ONE random category per tick (headlines OR idle asides OR advisor reactions).
 
    Arc transition detection: advanceToMorning() in game.js detects story arc
    changes and calls showArcTransition() for full-screen chapter splash overlays.
@@ -1417,22 +1423,36 @@ CHAIN EVENT SEQUENCES:
 29. AMBIENT CABLE SYSTEM (ui.js)
 ================================================================================
 
-_pushAmbientContent() fires every 4 seconds during idle dayplay (controlled by
-_ambientTimer in the game loop, which accumulates frame delta and resets at
-4000ms). Only fires when no decision event is active.
+_pushAmbientContent() fires every 15 seconds during idle dayplay (controlled by
+_ambientTimer in game.js, which accumulates frame delta and resets at 15000ms).
+Only fires when no decision event is active and SIM._suppressAmbient is false.
+
+RATE LIMITING (ui.js line ~4248):
+  _AMBIENT_MAX_PER_DAY = 4     cap per in-game day
+  _ambientDayCount              tracks messages sent this day (resets on day change)
+  _ambientUsedTexts             Set-based dedup prevents same text appearing twice
+  _ambientCooldown              internal cooldown counter between messages
+
+SELECTION ALGORITHM:
+  Each tick picks ONE random category, then one item from that category:
+  1. Build candidate pool from tension-graded headlines
+  2. Pick one random headline OR skip
+  3. If nothing picked: try idle asides (from DATA.dialogue.idleAsides[charId])
+  4. If still nothing picked: try advisor reactions (from DATA.dialogue.advisorReactions)
+  This replaces the old system that dumped ALL matching pools every tick.
 
 TENSION-GRADED CABLES:
-  - ambient_low_tension: 10 cables for low-tension periods
-  - ambient_medium_tension: 15 cables for medium-tension periods
-  - ambient_high_tension: 15 cables for high-tension periods
+  - ambient_low_tension: cables for tension < 40
+  - ambient_medium_tension: cables for tension 40-70
+  - ambient_high_tension: cables for tension > 70
 
 POLYMARKET HEADLINES:
-  12 Polymarket-style prediction market headlines, appearing with 30% chance
-  per ambient tick.
+  12 Polymarket-style prediction market headlines, appearing with 15% chance
+  per ambient tick (reduced from 30%).
 
 IDLE ASIDES:
-  50 character-specific idle lines (10 per character), appearing with 20% chance
-  per ambient tick.
+  50 character-specific idle lines (10 per character), fires only if headline
+  category didn't produce a pick.
 
 STATE-BASED HEADLINE POOLS:
   From DATA.headlines.simulation:
@@ -1451,31 +1471,28 @@ INTEL CABLE SNIPPETS:
 
 ADVISOR ASIDES:
   Generated from DATA.dialogue.advisorReactions[characterId].
-  Only fires if SIM._lastAdvisorReaction is null/falsy (prevents duplicates with
-  _maybeAdvisorReaction() from action narration).
-  15% chance per matching state threshold:
+  Only fires as fallback if no headline or idle aside was picked.
+  State threshold checks:
     - tension>75: highTension reaction
     - approval<30: lowApproval reaction
 
-All ambient content is wired into _pushAmbientContent() in ui.js.
-
 DEDUPLICATION:
-  _lastAmbientIdx tracks last-selected pool index to avoid immediate repeats.
-  SIM._lastAdvisorReaction prevents duplicate advisor reactions between ambient
-  and action-triggered systems.
+  _ambientUsedTexts Set tracks all text shown this day (clears on day change).
+  Each candidate is checked against the Set before display.
 
 ================================================================================
 30. KNOWN ISSUES AND INCONSISTENCIES
 ================================================================================
 
 FIXED:
-  - warPath clamping: Now properly clamped to 0-5 with Math.min(5, SIM.warPath + 1)
-    at all 6 increment locations throughout the codebase.
-  - Duplicate image properties: Resolved (e.g., oman_talks no longer has image set
-    twice).
-  - Win condition: Updated to 14 consecutive days with oilFlow > 60 (was 7 days / >55).
-  - Restart flow: restartGame() is now async, goes through title -> character select ->
-    lore screen flow instead of restarting with same character.
+  - warPath clamping: Now properly clamped to 0-5 at all increment locations.
+  - Duplicate image properties: Resolved (e.g., oman_talks no longer has image set twice).
+  - Win condition: Updated to 14 consecutive days with oilFlow > 60.
+  - Restart flow: restartGame() is now async, goes through title -> charselect -> lore.
+  - epilogue-peace-crt.png filename space: Fixed.
+  - Ambient spam: Rewrote _pushAmbientContent() with 15s interval, 4/day cap, Set dedup.
+  - Tutorial: Added [ SKIP TUTORIAL ] button to advisor guide system.
+  - Scene panel: Increased from 80px to 200px with responsive breakpoints.
 
 REMAINING ISSUES:
 
@@ -1496,8 +1513,8 @@ REMAINING ISSUES:
 
 6.  war_crimes_tribunal appears both as a strategy card AND a decision event ID.
 
-7.  dialogue.json and reactions.json contain identical content -- one is
-    redundant.
+7.  dialogue.json and reactions.json have DIFFERENT content now (reactions.json
+    has contextual news headlines, dialogue.json has character speech/UI text).
 
 8.  SIM.hillSupport property referenced in HTML (gauge-hill) but never defined
     in SIM object or updated.
@@ -1507,25 +1524,21 @@ REMAINING ISSUES:
 10. sprites.js was deleted but map.js still has empty drawEntities() /
     drawPlatforms() stubs.
 
-11. SIM_DEFAULTS has different starting values than SIM initial state (e.g.,
-    SIM.oilFlow=50 vs potentially different values if character overrides
-    aren't applied).
-
-12. Some events reference effects like 'politicalCapital' and 'credibility'
+11. Some events reference effects like 'politicalCapital' and 'credibility'
     that aren't direct SIM properties -- they go through character-specific
     handling.
 
-13. Card names/descriptions/hints are empty strings in JS -- hydrated from
-    cards.json at runtime. If JSON fails to load, all cards have no visible
-    text.
+12. Card names/descriptions/hints are empty strings in JS -- hydrated from
+    cards.json at runtime. If JSON fails to load, all cards have no visible text.
 
-14. Empty BIBLE_ACTIONS headlines: The headline property is hydrated from
-    data but never used in execute closures. BIBLE_ACTIONS[i].headline is
-    set at hydration time (ui.js line 4317) but the execute functions that
-    generate headlines use hardcoded strings or action-scenes.json instead.
+13. Empty BIBLE_ACTIONS headlines: The headline property is hydrated from
+    data but never reaches execute closures properly.
 
-15. epilogue-peace-crt.png has a space in filename ("epilogue-peace-crt.png .png")
-    causing broken asset references.
+CONTENT MANAGEMENT SYSTEM (NEW):
+  content/ directory (52 JSON files) contains organized game content.
+  content/build.js compiles content/ -> data/*.json (12 runtime files).
+  content/migrate.js extracts data/ -> content/ (one-time migration, already run).
+  Workflow: edit content/*.json -> run `node content/build.js` -> test game.
 
 ================================================================================
 END OF DOCUMENTATION

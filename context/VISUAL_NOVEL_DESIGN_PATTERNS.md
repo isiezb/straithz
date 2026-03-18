@@ -342,7 +342,7 @@ When a crisis event fires (nuclear_threshold, carrier_hit, friendly_fire, etc.),
 
 The silence makes the crisis land harder than any amount of red flashing UI chrome. The player was reading, then the reading stopped, then something terrible appeared one line at a time. That's how VNs create tension — by controlling the PACE of text delivery.
 
-**Current status:** Idle asides are implemented — 50 idle asides (10 per character) are wired into _pushAmbientContent() at 20% chance during quiet moments, creating those "silence before the storm" beats. Full crisis-moment silence sequences (music fade, feed pause, line-by-line text delivery) are not yet implemented for major events.
+**Current status:** Idle asides are implemented — 50 idle asides (10 per character) are wired into _pushAmbientContent() which now fires every 15 seconds with a 4/day cap and Set-based dedup. This creates natural quiet moments between content beats. Full crisis-moment silence sequences (music fade, feed pause, line-by-line text delivery) are not yet implemented for major events.
 
 ---
 
