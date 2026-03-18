@@ -8,6 +8,11 @@
  *   alert    — urgent one-liner in red/yellow
  *   stat     — subtle metric change indicator (always preceded by a scene)
  *   headline — news ticker style, single line
+ *   command  — player action command ("> DEPLOY ESCORT")
+ *   consequence — action consequence narrative
+ *   cable    — classified intel cable traffic
+ *   advisor  — advisor reaction/aside
+ *   ambient  — ambient wire report
  *
  * Usage:  addNarrative(type, text, options)
  *   options.speaker   — (dialogue) NPC name
@@ -134,7 +139,7 @@ function clearNarrative() {
 // ======================== INTERNALS ========================
 
 function _pushEntry(type, text, opts) {
-    const portraitSrc = (type === 'scene' || type === 'dialogue' || (type === 'alert' && opts.portrait))
+    const portraitSrc = (type === 'scene' || type === 'dialogue' || type === 'cable' || type === 'advisor' || (type === 'alert' && opts.portrait))
         ? _resolvePortrait(opts.portrait, opts.speaker)
         : null;
 
@@ -220,6 +225,28 @@ function _renderEntry(entry) {
             el.innerHTML = `<span class="nf-headline-text">${entry.text}</span>`;
             break;
 
+        case 'command':
+            el.innerHTML = `<span class="nf-command-text">> ${entry.text}</span>`;
+            break;
+
+        case 'consequence':
+            el.innerHTML = `<span class="nf-consequence-text">${entry.text}</span>`;
+            break;
+
+        case 'cable':
+            el.innerHTML = portraitHtml
+                + '<div class="nf-text-body"><span class="nf-cable-text">' + entry.text + '</span></div>';
+            break;
+
+        case 'advisor':
+            el.innerHTML = portraitHtml
+                + '<div class="nf-text-body"><span class="nf-advisor-speaker">' + (entry.speaker || 'ADVISOR') + ':</span> <span class="nf-advisor-text">"' + entry.text + '"</span></div>';
+            break;
+
+        case 'ambient':
+            el.innerHTML = `<span class="nf-ambient-text">${entry.text}</span>`;
+            break;
+
         default:
             el.innerHTML = entry.text;
     }
@@ -257,6 +284,26 @@ function _generateStatContext(opts) {
         conflictRisk: 'The threat board updates with new projections.'
     };
     return contexts[metric] || 'The room hums with activity as new information arrives.';
+}
+
+// ======================== DELAYED / SEQUENCE NARRATION ========================
+
+function addNarrativeDelayed(type, text, options, delayMs) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            addNarrative(type, text, options);
+            resolve();
+        }, delayMs);
+    });
+}
+
+async function narrateSequence(entries) {
+    for (const e of entries) {
+        addNarrative(e.type, e.text, e.options || {});
+        if (e.delay !== 0) {
+            await new Promise(r => setTimeout(r, e.delay || 400));
+        }
+    }
 }
 
 // ======================== SCENE PANEL ========================

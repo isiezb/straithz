@@ -37,6 +37,7 @@
 
         let lastFrame = 0;
         let _cpUpdateTimer = 0;
+        let _ambientTimer = 0;
 
         function gameLoop(timestamp) {
             try {
@@ -46,6 +47,13 @@
 
                 // Update side panels every ~500ms during dayplay
                 if (SIM.phase === 'dayplay' && !SIM.gameOver) {
+                    // Ambient cable traffic during idle periods
+                    _ambientTimer += dt;
+                    if (_ambientTimer > 4000 && !SIM.decisionEventActive) {
+                        _ambientTimer = 0;
+                        if (typeof _pushAmbientContent === 'function') _pushAmbientContent();
+                    }
+
                     _cpUpdateTimer += dt;
                     if (_cpUpdateTimer > 500) {
                         _cpUpdateTimer = 0;

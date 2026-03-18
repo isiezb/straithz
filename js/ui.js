@@ -1317,13 +1317,34 @@ function showDailyReport() {
         aipacHtml = `<div class="mb-iran-intel"><span class="mb-intel-prefix" style="color:#44dd88">\u25B2 HILL</span> ${charNote}</div>`;
     }
 
+    // Situation room description varies by tension
+    let sitRoomDesc = '';
+    if (SIM.tension < 40) {
+        sitRoomDesc = 'The Situation Room is quiet this morning. Overnight watch reports nothing unusual.';
+    } else if (SIM.tension < 70) {
+        sitRoomDesc = 'You enter the Situation Room. The overnight team looks tired. Multiple screens show developing situations.';
+    } else {
+        sitRoomDesc = 'The Situation Room is buzzing when you arrive. Staffers are on phones, the threat board is lit up. Something happened overnight.';
+    }
+
+    // Overnight developments from yesterday's headlines
+    let overnightHtml = '';
+    const yesterdayHeadlines = SIM.headlines.filter(h => h.day === SIM.day - 1).slice(-3);
+    if (yesterdayHeadlines.length > 0) {
+        overnightHtml = '<div class="mb-overnight"><div class="term-section-label">OVERNIGHT DEVELOPMENTS</div><ul class="mb-overnight-list">' +
+            yesterdayHeadlines.map(h => '<li>' + h.text + '</li>').join('') +
+            '</ul></div>';
+    }
+
     openTerminal(`
         ${arcHtml}
         <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
 
         <div class="mb-briefing">
+            <div class="mb-prose" style="font-style:italic; opacity:0.7; margin-bottom:6px">${sitRoomDesc}</div>
             <div class="mb-advisor-line"><span class="mb-advisor-name">${advisorName}</span> steps to the podium:</div>
             <div class="mb-prose">${openingText}</div>
+            ${overnightHtml}
             ${iranIntel ? `<div class="mb-iran-intel"><span class="mb-intel-prefix">\u26A0 IRAN</span> ${iranIntel}</div>` : ''}
             ${charBriefHtml}
         </div>
@@ -2114,6 +2135,64 @@ function _maybeReactiveNews() {
     addNarrative('headline', pool[idx], { level: 'normal' });
 }
 
+function _getActionDisplayName(actionId) {
+    const names = {
+        'gather-intel': 'GATHER INTEL — Tasking collection assets for new intelligence',
+        'analyze-threats': 'ANALYZE THREATS — Reviewing threat assessments and satellite imagery',
+        'phone-call': 'MAKE PHONE CALL — Engaging diplomatic channels',
+        'draft-proposal': 'DRAFT PROPOSAL — Preparing diplomatic framework',
+        'demand-un-session': 'DEMAND UN SESSION — Convening emergency Security Council meeting',
+        'reposition-fleet': 'REPOSITION FLEET — Adjusting naval force posture',
+        'change-roe': 'CHANGE ROE — Modifying rules of engagement',
+        'escort-tankers': 'ESCORT TANKERS — Deploying naval escorts for commercial shipping',
+        'precision-strike': 'PRECISION STRIKE — Authorizing targeted military action',
+        'spec-ops-raid': 'SPECIAL OPERATIONS — Deploying covert action teams',
+        'air-strikes': 'AIR STRIKES — Launching air campaign operations',
+        'sead-mission': 'SEAD MISSION — Suppressing enemy air defenses',
+        'ground-troops': 'DEPLOY GROUND FORCES — Committing ground combat elements',
+        'seize-islands': 'SEIZE ISLANDS — Amphibious operation to secure strategic positions',
+        'full-mobilization': 'FULL MOBILIZATION — Activating reserve forces and surge capacity',
+        'press-conference': 'PRESS CONFERENCE — Addressing the nation',
+        'brief-congress': 'BRIEF CONGRESS — Classified briefing to Hill leadership',
+        'adjust-sanctions': 'ADJUST SANCTIONS — Modifying economic pressure campaign',
+        'market-intervention': 'MARKET INTERVENTION — Emergency economic stabilization measures',
+        'issue-ultimatum': 'ISSUE ULTIMATUM — Delivering final warning to Tehran',
+        'emergency-coalition': 'EMERGENCY COALITION — Rallying international partners',
+        'escalate': 'ESCALATE — Increasing military readiness posture',
+        'deescalate': 'DE-ESCALATE — Reducing military tensions',
+        'deploy-marines': 'DEPLOY MARINES — Landing Marine expeditionary force',
+        'combat-air-patrol': 'COMBAT AIR PATROL — Establishing air superiority umbrella',
+        'rally-base': 'RALLY THE BASE — Mobilizing political support',
+        'media-blitz': 'MEDIA BLITZ — Launching coordinated media campaign',
+        'announce-withdrawal': 'ANNOUNCE WITHDRAWAL — Signaling force reduction',
+    };
+    if (actionId.startsWith('bible_')) {
+        const bibleId = actionId.replace('bible_', '');
+        const bibleNames = {
+            'prisoner_exchange': 'PRISONER EXCHANGE — Negotiating hostage release',
+            'covert_operation': 'COVERT OPERATION — Authorizing black ops',
+            'emergency_budget': 'EMERGENCY BUDGET — Requesting congressional funding',
+            'media_offensive': 'MEDIA OFFENSIVE — Coordinated information campaign',
+            'backchannel_message': 'BACK-CHANNEL MESSAGE — Secret diplomatic communication',
+            'allied_consultation': 'ALLIED CONSULTATION — Engaging coalition partners',
+            'sanctions_adjustment': 'SANCTIONS ADJUSTMENT — Recalibrating economic pressure',
+            'intel_sharing': 'INTEL SHARING — Exchanging intelligence with allies',
+            'humanitarian_corridor': 'HUMANITARIAN CORRIDOR — Establishing safe passage',
+            'economic_stimulus': 'ECONOMIC STIMULUS — Emergency domestic relief',
+            'cyber_recon': 'CYBER RECONNAISSANCE — Digital intelligence gathering',
+            'war_powers_consult': 'WAR POWERS BRIEF — Congressional authorization briefing',
+            'regional_flyover': 'REGIONAL FLYOVER — Show of force overflight',
+            'summit_proposal': 'SUMMIT PROPOSAL — Proposing direct negotiations',
+            'press_embargo': 'PRESS EMBARGO — Restricting media access',
+        };
+        return bibleNames[bibleId] || bibleId.replace(/_/g, ' ').toUpperCase();
+    }
+    if (actionId.startsWith('call-contact-')) {
+        return 'MAKE CONTACT — Back-channel communication';
+    }
+    return names[actionId] || actionId.replace(/-/g, ' ').toUpperCase();
+}
+
 function _narrateAction(actionId, snap, scaledKeys) {
     const scenes = DATA['action-scenes'];
     if (!scenes) return;
@@ -2130,7 +2209,6 @@ function _narrateAction(actionId, snap, scaledKeys) {
         pool = scenes.contacts && scenes.contacts.generic;
         sceneKey = 'call-contact';
     } else if (actionId === 'change-roe') {
-        // Pick sub-variant based on current ROE
         const roeKey = 'change-roe-' + (SIM.roe || 'defensive');
         pool = scenes.actions && (scenes.actions[roeKey] || scenes.actions['change-roe']);
         sceneKey = roeKey;
@@ -2159,19 +2237,23 @@ function _narrateAction(actionId, snap, scaledKeys) {
     }
     _sceneHistory[sceneKey] = idx;
 
-    // Write the scene with player character portrait — use character variant 50% of the time if available
+    // --- Step 1: Command line ---
+    const actionName = _getActionDisplayName(actionId);
+    addNarrative('command', actionName);
+
+    // --- Step 2: Scene text ---
     const _actPortrait = SIM.character ? SIM.character.id : null;
     const sceneText = (charVariantText && Math.random() < 0.5) ? charVariantText : pool[idx];
     addNarrative('scene', sceneText, { portrait: _actPortrait });
 
-    // Write stat changes beneath the scene
+    // --- Step 3: Consequence summary from stat deltas ---
+    const consequenceParts = [];
     for (const k of scaledKeys) {
         const delta = Math.round((SIM[k] - snap[k]) * 10) / 10;
         if (delta !== 0) {
             addNarrative('stat', '', { metric: k, delta: delta });
         }
     }
-    // Budget and warPath (not in scaledKeys, not scaled by 1.5x)
     if (snap._budget !== undefined) {
         const bDelta = Math.round(SIM.budget - snap._budget);
         if (bDelta !== 0) addNarrative('stat', '', { metric: 'budget', delta: bDelta });
@@ -2180,6 +2262,46 @@ function _narrateAction(actionId, snap, scaledKeys) {
         const wDelta = SIM.warPath - snap._warPath;
         if (wDelta !== 0) addNarrative('stat', '', { metric: 'warPath', delta: wDelta });
     }
+
+    // --- Step 4: Advisor reaction ---
+    _maybeAdvisorReaction();
+}
+
+function _maybeAdvisorReaction() {
+    if (Math.random() >= 0.35) return; // 35% chance
+    const dialogue = DATA.dialogue;
+    if (!dialogue || !dialogue.advisorReactions) return;
+    const charId = SIM.character ? SIM.character.id : null;
+    if (!charId) return;
+    const charReactions = dialogue.advisorReactions[charId];
+    if (!charReactions) return;
+
+    // Pick reaction based on current state
+    let reactionText = null;
+    let reactKey = null;
+    if (SIM.tension > 70 && charReactions.highTension) {
+        reactionText = charReactions.highTension;
+        reactKey = 'highTension';
+    } else if (SIM.domesticApproval < 35 && charReactions.lowApproval) {
+        reactionText = charReactions.lowApproval;
+        reactKey = 'lowApproval';
+    } else if (SIM.budget < 200 && charReactions.lowBudget) {
+        reactionText = charReactions.lowBudget;
+        reactKey = 'lowBudget';
+    } else if (SIM.proxyThreat > 50 && charReactions.highProxy) {
+        reactionText = charReactions.highProxy;
+        reactKey = 'highProxy';
+    } else if (SIM.diplomaticCapital > 50 && SIM.tension < 40 && charReactions.diplomatic) {
+        reactionText = charReactions.diplomatic;
+        reactKey = 'diplomatic';
+    }
+
+    // Don't repeat the same reaction twice in a row
+    if (!reactionText || reactKey === SIM._lastAdvisorReaction) return;
+    SIM._lastAdvisorReaction = reactKey;
+
+    const speakerName = SIM.character.name || 'Advisor';
+    addNarrative('advisor', reactionText, { speaker: speakerName, portrait: charId });
 }
 
 function _executeAction(actionId, rerenderFn) {
@@ -2775,7 +2897,8 @@ function _executeAction(actionId, rerenderFn) {
         else SFX.click();
     }
 
-    if (toastMsg) showToast(toastMsg, toastLevel);
+    // Toasts suppressed — narrative feed handles action feedback
+    // if (toastMsg) showToast(toastMsg, toastLevel);
     _flushFloatingNumbers();
     updateGauges();
 
@@ -3683,6 +3806,70 @@ function resolveDecision(event, choiceIdx, customScene) {
         // After event resolves, go to daily report (overnight)
         SIM.phase = 'overnight';
         showDailyReport();
+    });
+}
+
+// ======================== AMBIENT CABLE TRAFFIC ========================
+
+let _lastAmbientIdx = -1;
+let _ambientCooldown = 0;
+
+function _pushAmbientContent() {
+    if (_ambientCooldown > 0) { _ambientCooldown--; return; }
+    // Don't flood — space out ambient entries
+    _ambientCooldown = 0;
+
+    const pool = [];
+    const s = SIM;
+    const headlines = DATA.headlines;
+    const intel = DATA.intel;
+
+    // Simulation headlines based on state
+    if (headlines && headlines.simulation) {
+        const sim = headlines.simulation;
+        if (s.tension > 60 && sim.crisis_escalation) pool.push(...sim.crisis_escalation.map(t => ({type:'ambient', text:t})));
+        if (s.oilFlow < 40 && sim.strait_stability) pool.push(...sim.strait_stability.map(t => ({type:'ambient', text:t})));
+        if (s.iranFactionBalance < 40 && sim.iran_faction_hardliner_moves) pool.push(...sim.iran_faction_hardliner_moves.map(t => ({type:'ambient', text:t.replace('{moveText}', 'increased naval deployments')})));
+        if (s.iranFactionBalance > 60 && sim.iran_faction_moderate_moves) pool.push(...sim.iran_faction_moderate_moves.map(t => ({type:'ambient', text:t.replace('{moveText}', 'diplomatic signals through intermediaries')})));
+        if (s.proxyThreat > 40 && sim.proxy_events) pool.push(...sim.proxy_events.map(t => ({type:'ambient', text:t})));
+        if (s.domesticApproval < 40 && sim.approval_warnings) pool.push(...sim.approval_warnings.map(t => ({type:'ambient', text:t})));
+        if (s.polarization > 60 && sim.polarization_warnings) pool.push(...sim.polarization_warnings.map(t => ({type:'ambient', text:t})));
+    }
+
+    // Intel snippets styled as cables
+    if (intel && intel.intelSnippets && Math.random() < 0.3) {
+        const snippets = intel.intelSnippets;
+        const snippet = snippets[Math.floor(Math.random() * snippets.length)];
+        // Apply confidence level based on fog of war
+        const confidence = s.fogOfWar > 60 ? 'LOW' : s.fogOfWar > 35 ? 'MEDIUM' : 'HIGH';
+        pool.push({type:'cable', text: snippet + ' [Confidence: ' + confidence + ']'});
+    }
+
+    // Advisor asides based on state thresholds
+    if (SIM.character && DATA.dialogue && DATA.dialogue.advisorReactions) {
+        const charReactions = DATA.dialogue.advisorReactions[SIM.character.id];
+        if (charReactions) {
+            if (s.tension > 75 && charReactions.highTension && Math.random() < 0.15) {
+                pool.push({type:'advisor', text: charReactions.highTension, speaker: SIM.character.name, portrait: SIM.character.id});
+            }
+            if (s.domesticApproval < 30 && charReactions.lowApproval && Math.random() < 0.15) {
+                pool.push({type:'advisor', text: charReactions.lowApproval, speaker: SIM.character.name, portrait: SIM.character.id});
+            }
+        }
+    }
+
+    if (pool.length === 0) return;
+
+    // Pick one, avoid repeating
+    let idx;
+    do { idx = Math.floor(Math.random() * pool.length); } while (idx === _lastAmbientIdx && pool.length > 1);
+    _lastAmbientIdx = idx;
+
+    const entry = pool[idx];
+    addNarrative(entry.type, entry.text, {
+        speaker: entry.speaker || null,
+        portrait: entry.portrait || null,
+        level: entry.level || 'normal'
     });
 }
 
