@@ -1,40 +1,295 @@
 {
   "interrupts": [
-    { "text": "NSA flagged unusual encrypted traffic from an IRGC base. Analysts need 2 hours to decode.", "choices": [{ "label": "Divert analysts now" }, { "label": "Queue for tomorrow" }] },
-    { "text": "4-hour weather gap over Bandar Abbas for satellite imagery.", "choices": [{ "label": "Redirect satellite" }, { "label": "Keep scheduled targets" }] },
-    { "text": "Iranian naval officer at Swiss embassy claiming he has operational plans.", "choices": [{ "label": "Send team immediately" }, { "label": "Vet through channels" }] },
-    { "text": "IRGC commanders call intercepted. Best translator on leave.", "choices": [{ "label": "Use backup translator" }, { "label": "Wait for expert" }] },
-    { "text": "Telegram accounts posting Iranian military schedules. Could be real or counterintel.", "choices": [{ "label": "Act cautiously on the intel" }, { "label": "Flag and move on" }] },
-    { "text": "French ambassador in your lobby, upset about yesterday's briefing. No appointment.", "choices": [{ "label": "See him now" }, { "label": "Schedule tomorrow" }] },
-    { "text": "Omani intermediary has a time-sensitive message from Araghchi.", "choices": [{ "label": "Read now" }, { "label": "Read after current action" }] },
-    { "text": "UN Secretary General wants to discuss ceasefire framework.", "choices": [{ "label": "Take call" }, { "label": "Call back later" }] },
-    { "text": "Russian surveillance ship entered the Persian Gulf.", "choices": [{ "label": "Diplomatic note" }, { "label": "Shadow with destroyer" }] },
-    { "text": "South Korea's trade minister calling. They import 70% of oil through Hormuz.", "choices": [{ "label": "Reassure personally" }, { "label": "Refer to deputy" }] },
-    { "text": "Radar on USS Eisenhower down. 8-hour repair estimate.", "choices": [{ "label": "Keep on station degraded" }, { "label": "Pull back for repairs" }] },
-    { "text": "Destroyer captain: Iranian speedboats approaching fast, below warning threshold. Wants weapons-free prep.", "choices": [{ "label": "Grant weapons-free" }, { "label": "Maintain ROE" }] },
-    { "text": "US patrol nearly fired on UAE Coast Guard. IFF confusion. UAE wants explanation.", "choices": [{ "label": "Apologize, review protocols" }, { "label": "Blame UAE coordination" }] },
-    { "text": "SOCOM proposes covert recon of suspected Iranian weapons cache on an island.", "choices": [{ "label": "Approve mission" }, { "label": "Deny" }] },
-    { "text": "Patrol vessel detected naval mine in shipping lane.", "choices": [{ "label": "Send minesweeper" }, { "label": "Investigate with drones" }] },
-    { "text": "Senator tweeted classified operational details: \"The American people deserve to know.\"", "choices": [{ "label": "Demand investigation" }, { "label": "Brief FBI privately" }] },
-    { "text": "Trucker convoy blocking highway outside DC over fuel prices.", "choices": [{ "label": "Express sympathy, review subsidies" }, { "label": "Say nothing" }] },
-    { "text": "SecState and SecDef screaming match in the hallway. Staff shaken.", "choices": [{ "label": "Mediate personally" }, { "label": "Let them work it out" }] },
-    { "text": "Snap poll dropped. Comms team wants to know if you respond.", "choices": [{ "label": "Rapid response matching mood" }, { "label": "Stay the course" }] },
-    { "text": "Major veterans org issued statement on your military posture.", "choices": [{ "label": "Respond publicly" }, { "label": "No response" }] },
-    { "text": "Damaged tanker leaking crude into the strait. Environmental disaster developing.", "choices": [{ "label": "Divert naval assets to help" }, { "label": "Let flag state handle it" }] },
-    { "text": "Qatar Airways 777 deviated into restricted airspace. Both sides scrambling.", "choices": [{ "label": "De-escalate via hotline" }, { "label": "Scramble escort fighters" }] },
-    { "text": "6.4 magnitude earthquake in southwestern Iran. Significant casualties.", "choices": [{ "label": "Offer humanitarian aid immediately" }, { "label": "Express condolences only" }] },
-    { "text": "Oil futures spiked 8% on false seizure rumor.", "choices": [{ "label": "Public denial with intel backing" }, { "label": "Let it ride" }] },
-    { "text": "Large crowd at US embassy Baghdad. Hezbollah flags visible.", "choices": [{ "label": "Reinforce security" }, { "label": "Begin evacuation planning" }] },
-    { "text": "You posted an internal strategy memo to Truth Social instead of group chat. Up for 47 seconds.", "choices": [{ "label": "Claim intentional \u2014 4D chess" }, { "label": "Delete and deny" }] },
-    { "text": "Major donor calling from Mar-a-Lago, demanding to know why oil stocks are down.", "choices": [{ "label": "Schmooze" }, { "label": "Have assistant handle it" }] },
-    { "text": "Marine unit challenges you to PT on carrier visit. Cameras rolling.", "choices": [{ "label": "Accept and crush it" }, { "label": "Politely decline" }] },
-    { "text": "Generals split 50/50 on next move. They're looking at you.", "choices": [{ "label": "Decide immediately" }, { "label": "Ask for more analysis" }] },
-    { "text": "Unknown number sent coordinates in Dubai: \"Tomorrow. 3pm. Come alone. \u2014Z\"", "choices": [{ "label": "Go" }, { "label": "Trace number first" }] },
-    { "text": "Your father-in-law wants a full briefing over dinner. He has opinions.", "choices": [{ "label": "Brief honestly" }, { "label": "Sanitized version" }] },
-    { "text": "Someone in your intel briefing is leaking to a hostile Twitch streamer.", "choices": [{ "label": "Find the source" }, { "label": "Feed false intel through leak" }] },
-    { "text": "A subreddit crowdsourced satellite analysis and found something your IC missed.", "choices": [{ "label": "Engage, give credit" }, { "label": "Classify it" }] },
-    { "text": "Prominent figure in your movement denounced you as \"globalist capitulation.\"", "choices": [{ "label": "Attack back, purge" }, { "label": "Reach out privately" }] },
-    { "text": "Nobody will co-sponsor your resolution. Party leadership won't call back.", "choices": [{ "label": "Bypass Congress, national address" }, { "label": "Compromise with Congress" }] }
+    {
+      "text": "NSA flagged unusual encrypted traffic from an IRGC base. Analysts need 2 hours to decode.",
+      "scene_intro": "A junior analyst bursts through the Situation Room door, laptop open, face pale. The encrypted burst came from Bandar Abbas twelve minutes ago.",
+      "choices": [
+        { "label": "Divert analysts now", "scene_resolution": "The entire signals desk pivots. Coffee cups go cold as twelve analysts lean into their screens. Within ninety minutes, fragments emerge — troop movement orders. You got ahead of it." },
+        { "label": "Queue for tomorrow", "scene_resolution": "The analyst nods and backs out. By morning the traffic will be stale, but your team stays focused on the priority tasking. Sometimes triage means letting things go." }
+      ]
+    },
+    {
+      "text": "4-hour weather gap over Bandar Abbas for satellite imagery.",
+      "scene_intro": "The NRO liaison calls from the basement SCIF. Cloud cover over southern Iran is breaking — a rare window.",
+      "choices": [
+        { "label": "Redirect satellite", "scene_resolution": "The KH-11 slews thirty degrees east. For four glorious hours, Bandar Abbas sits naked under American eyes. The imagery analysts will have fresh product by evening." },
+        { "label": "Keep scheduled targets", "scene_resolution": "The satellite holds its scheduled pass over the Fordow facility. Bandar Abbas stays hidden under clouds. You can't cover everything." }
+      ]
+    },
+    {
+      "text": "Iranian naval officer at Swiss embassy claiming he has operational plans.",
+      "scene_intro": "The CIA station chief in Bern is on the secure line, whispering. An Iranian commander walked into the Swiss embassy twenty minutes ago asking for the Americans.",
+      "choices": [
+        { "label": "Send team immediately", "scene_resolution": "A two-man team from the Bern station makes contact within the hour. The officer is sweating, terrified, but the documents in his briefcase are genuine. This could change everything." },
+        { "label": "Vet through channels", "scene_resolution": "Standard vetting procedures begin. The officer waits in a holding room, growing more anxious by the hour. If he's real, the delay costs trust. If he's a plant, the caution saves lives." }
+      ]
+    },
+    {
+      "text": "IRGC commanders call intercepted. Best translator on leave.",
+      "scene_intro": "The intercept alert pings across three screens simultaneously. A high-priority IRGC command call, and your Farsi expert is at his daughter's wedding in Virginia.",
+      "choices": [
+        { "label": "Use backup translator", "scene_resolution": "The backup catches the gist — something about repositioning fast boats near Abu Musa. The nuance is lost, but the broad strokes are clear enough to act on." },
+        { "label": "Wait for expert", "scene_resolution": "You pull the expert from the reception. He arrives rumpled and apologetic, but his translation reveals subtleties the backup would have missed — conditional phrasing suggesting the order hasn't been confirmed yet." }
+      ]
+    },
+    {
+      "text": "Telegram accounts posting Iranian military schedules. Could be real or counterintel.",
+      "scene_intro": "An analyst drops a tablet on your desk, open to a Telegram channel. Dozens of posts with timestamps, unit designations, GPS coordinates. Too good to be true, or a gift from a dissident?",
+      "choices": [
+        { "label": "Act cautiously on the intel", "scene_resolution": "You cross-reference the posted schedules against known patterns. Some coordinates match. Others are slightly off — possibly bait. Your analysts flag the reliable threads and discard the noise." },
+        { "label": "Flag and move on", "scene_resolution": "The channel gets tagged for long-term monitoring. If the posts keep being accurate, you'll have a new source. If they're bait, you haven't taken it." }
+      ]
+    },
+    {
+      "text": "French ambassador in your lobby, upset about yesterday's briefing. No appointment.",
+      "scene_intro": "Your secretary leans through the doorway. The French ambassador is downstairs, red-faced, demanding to see you. He's been told you're in meetings all day. He's not leaving.",
+      "choices": [
+        { "label": "See him now", "scene_resolution": "You clear fifteen minutes. The ambassador vents about being blindsided, but by the time he leaves, you've smoothed it over with a promise of advance notice on future operations. An ally retained." },
+        { "label": "Schedule tomorrow", "scene_resolution": "Your secretary delivers the news. The ambassador storms out, and within the hour, the French UN delegation votes against your latest resolution draft. Diplomatic snubs have consequences." }
+      ]
+    },
+    {
+      "text": "Omani intermediary has a time-sensitive message from Araghchi.",
+      "scene_intro": "The Omani ambassador's personal aide is at the West Wing gate, envelope in hand. He says it's from Araghchi and it expires at midnight.",
+      "choices": [
+        { "label": "Read now", "scene_resolution": "The message is handwritten. Araghchi proposes a 48-hour de-escalation window — no new provocations from either side. It's vague enough to deny, specific enough to matter. A crack in the wall." },
+        { "label": "Read after current action", "scene_resolution": "The envelope sits on your desk for three hours. When you finally open it, the proposal inside has a midnight deadline that's already passed. The Omanis report the channel has gone cold." }
+      ]
+    },
+    {
+      "text": "UN Secretary General wants to discuss ceasefire framework.",
+      "scene_intro": "The red phone on your desk rings — the direct UN line. The Secretary General himself, not an aide.",
+      "choices": [
+        { "label": "Take call", "scene_resolution": "Twenty minutes of careful diplomatic language. The SG outlines a framework — limited, imperfect, but a foundation. You agree to review the terms. The call alone signals willingness." },
+        { "label": "Call back later", "scene_resolution": "The SG's office logs the missed call. By the time you return it, he's in a meeting with the Chinese delegation. The framework discussion will have to wait, and Beijing's fingerprints may be on the next draft." }
+      ]
+    },
+    {
+      "text": "Russian surveillance ship entered the Persian Gulf.",
+      "scene_intro": "CENTCOM's maritime tracker flashes a new contact. The Vishnya-class intelligence ship Marshal Krylov just transited Hormuz, bristling with antennas.",
+      "choices": [
+        { "label": "Diplomatic note", "scene_resolution": "State delivers a formal note to the Russian embassy. Moscow responds with studied innocence — 'freedom of navigation.' The ship continues its transit, but the note is on record." },
+        { "label": "Shadow with destroyer", "scene_resolution": "The USS Carney falls in behind the Russian vessel at two nautical miles. Close enough to read their captain's coffee mug. The message is clear: we're watching you watching us." }
+      ]
+    },
+    {
+      "text": "South Korea's trade minister calling. They import 70% of oil through Hormuz.",
+      "scene_intro": "The trade minister's voice is tight with barely concealed panic. Seoul's strategic reserves are down to 47 days. Their economy runs on strait traffic.",
+      "choices": [
+        { "label": "Reassure personally", "scene_resolution": "You spend ten minutes projecting calm authority. The minister audibly relaxes. By morning, South Korean media reports 'strong US commitment to strait security.' Markets in Seoul stabilize." },
+        { "label": "Refer to deputy", "scene_resolution": "The minister gets a competent briefing from your deputy, but the personal slight registers. South Korea's next UN vote goes 'abstain' instead of the 'yes' you needed." }
+      ]
+    },
+    {
+      "text": "Radar on USS Eisenhower down. 8-hour repair estimate.",
+      "scene_intro": "CENTCOM's voice cracks over the secure line. The Eisenhower's SPY-1 radar just went dark — a main transmitter failure. The carrier group is half-blind in hostile waters.",
+      "choices": [
+        { "label": "Keep on station degraded", "scene_resolution": "The Eisenhower holds position, relying on escort ship radars and E-2 Hawkeyes to fill the gap. The crew works through the night. Eight tense hours until the main array comes back online." },
+        { "label": "Pull back for repairs", "scene_resolution": "The carrier group withdraws fifty miles south. Iranian state media notices within the hour and claims victory. But the Eisenhower gets her eyes back safely, and no one had to hold their breath." }
+      ]
+    },
+    {
+      "text": "Destroyer captain: Iranian speedboats approaching fast, below warning threshold. Wants weapons-free prep.",
+      "scene_intro": "The tactical display shows six small contacts converging on the USS Mason at thirty-five knots. The captain's voice is steady but urgent over the radio.",
+      "choices": [
+        { "label": "Grant weapons-free", "scene_resolution": "Weapons-free authority granted. The Mason's CIWS systems track the approaching boats. At eight hundred yards, the Iranians veer off. They were testing your resolve. This time." },
+        { "label": "Maintain ROE", "scene_resolution": "Standard rules of engagement hold. The Mason fires warning flares and sounds the horn. The speedboats circle twice, close enough for the crew to see the mounted guns, then peel away. Restraint preserved, nerves frayed." }
+      ]
+    },
+    {
+      "text": "US patrol nearly fired on UAE Coast Guard. IFF confusion. UAE wants explanation.",
+      "scene_intro": "The IFF transponder logs tell the story — for eleven seconds, the UAE patrol boat showed as 'unknown hostile' on American screens. Trigger fingers twitched. Rounds nearly flew.",
+      "choices": [
+        { "label": "Apologize, review protocols", "scene_resolution": "A personal call to the Emirati defense minister with a full explanation. New IFF protocols are drafted within the day. The relationship survives, barely, held together by transparency." },
+        { "label": "Blame UAE coordination", "scene_resolution": "Your deputy deflects, citing UAE failure to file proper patrol routes. Abu Dhabi's ambassador cancels a scheduled meeting. The coalition frays at a seam you can't afford to lose." }
+      ]
+    },
+    {
+      "text": "SOCOM proposes covert recon of suspected Iranian weapons cache on an island.",
+      "scene_intro": "The SOCOM colonel spreads satellite photos across the table. An uncharted bunker on a small island near Abu Musa. He wants to put eyes on it tonight.",
+      "choices": [
+        { "label": "Approve mission", "scene_resolution": "A four-man recon team inserts by zodiac at 0200. They photograph everything and extract clean. The bunker holds anti-ship missiles — more than anyone expected. Now you know." },
+        { "label": "Deny", "scene_resolution": "The colonel collects his photos without expression. The bunker stays a question mark on the intelligence map. Some questions are better answered by satellites than by boots on sand." }
+      ]
+    },
+    {
+      "text": "Patrol vessel detected naval mine in shipping lane.",
+      "scene_intro": "Bridge cameras show the dark sphere bobbing in the shipping lane, horn-shaped contact detonators glinting in the sun. An M-08 — Iranian, definitely armed.",
+      "choices": [
+        { "label": "Send minesweeper", "scene_resolution": "The USS Pioneer creeps in, her mine countermeasures team working with surgical precision. The mine is neutralized, the lane swept clean. But if there's one, there are more." },
+        { "label": "Investigate with drones", "scene_resolution": "An unmanned surface vessel makes the approach. The drone's cameras confirm the mine type and position. Slower than the minesweeper, but no sailors in the blast radius." }
+      ]
+    },
+    {
+      "text": "Senator tweeted classified operational details: \"The American people deserve to know.\"",
+      "scene_intro": "Your chief of staff is white-knuckling a phone. A sitting senator just posted operational troop positions to fourteen million followers.",
+      "choices": [
+        { "label": "Demand investigation", "scene_resolution": "The FBI opens a formal inquiry within the hour. The senator goes on cable news claiming political persecution. The leak stops, but the political fallout is its own kind of damage." },
+        { "label": "Brief FBI privately", "scene_resolution": "A quiet call to the FBI director. No public drama, no cable news circus. The investigation proceeds in the shadows where it belongs. The senator gets a private visit that sobers him up." }
+      ]
+    },
+    {
+      "text": "Trucker convoy blocking highway outside DC over fuel prices.",
+      "scene_intro": "CNN's aerial shot fills the briefing room screen — eighteen-wheelers parked bumper to bumper on I-95, horns blaring, American flags everywhere. Gas prices are on every sign.",
+      "choices": [
+        { "label": "Express sympathy, review subsidies", "scene_resolution": "A hastily drafted statement acknowledges the pain at the pump. The Treasury begins reviewing emergency fuel subsidies. The convoy disperses by evening, grudgingly satisfied someone listened." },
+        { "label": "Say nothing", "scene_resolution": "Silence from the White House. The convoy grows. By nightfall, copycat blockades appear in three more states. Cable news runs the footage on loop. The optics are devastating." }
+      ]
+    },
+    {
+      "text": "SecState and SecDef screaming match in the hallway. Staff shaken.",
+      "scene_intro": "You can hear it through the walls. Two cabinet secretaries, nose to nose outside the Oval Office, voices echoing off marble. Three staffers are pretending to read their phones.",
+      "choices": [
+        { "label": "Mediate personally", "scene_resolution": "You step into the hallway. Both men fall silent. Behind closed doors, you hammer out a compromise neither loves. But the team holds together, and the staff sees leadership." },
+        { "label": "Let them work it out", "scene_resolution": "You close your door. The shouting dies down eventually. Both men emerge tight-lipped and avoid each other for days. The interagency process grinds slower without trust." }
+      ]
+    },
+    {
+      "text": "Snap poll dropped. Comms team wants to know if you respond.",
+      "scene_intro": "Your comms director slides the tablet across the Resolute Desk, poll numbers glowing. The trend line looks like a ski slope.",
+      "choices": [
+        { "label": "Rapid response matching mood", "scene_resolution": "Within the hour, you're in front of cameras with a message calibrated to the polling data. The next day's numbers tick up slightly. You're riding the wave instead of drowning in it." },
+        { "label": "Stay the course", "scene_resolution": "No response. The poll dominates one news cycle and fades. Your base respects the refusal to chase numbers, but the undecideds drift further away." }
+      ]
+    },
+    {
+      "text": "Major veterans org issued statement on your military posture.",
+      "scene_intro": "The statement lands like a grenade in the press room. The VFW's national commander, microphone in hand, calling your strategy into question on live television.",
+      "choices": [
+        { "label": "Respond publicly", "scene_resolution": "A measured response from the briefing room podium. You honor their service and explain your reasoning. The VFW's follow-up statement is noticeably softer. Respect answered with respect." },
+        { "label": "No response", "scene_resolution": "The statement hangs unanswered in the news cycle. Some interpret your silence as contempt, others as discipline. The veterans community stays divided, which is better than unified against you." }
+      ]
+    },
+    {
+      "text": "Damaged tanker leaking crude into the strait. Environmental disaster developing.",
+      "scene_intro": "Satellite imagery shows a black plume spreading across turquoise water. The tanker Stellar Fortune, Liberian-flagged, is hemorrhaging crude oil from a hull breach.",
+      "choices": [
+        { "label": "Divert naval assets to help", "scene_resolution": "Two destroyers break from patrol to assist. Sailors in hazmat gear deploy booms while the tanker's crew evacuates. The environmental damage is contained. The footage of American sailors saving the strait plays well globally." },
+        { "label": "Let flag state handle it", "scene_resolution": "Liberia's maritime authority acknowledges the situation twelve hours later. By then, the slick is twenty miles long. International media asks why American ships sat and watched. The flag state protocol held, but the optics didn't." }
+      ]
+    },
+    {
+      "text": "Qatar Airways 777 deviated into restricted airspace. Both sides scrambling.",
+      "scene_intro": "AWACS picks up the contact — a commercial triple-seven drifting into the military exclusion zone. Both American and Iranian fighters are spinning up. Three hundred passengers have no idea.",
+      "choices": [
+        { "label": "De-escalate via hotline", "scene_resolution": "The military hotline crackles to life. Both sides stand down their fighters. The 777 is redirected, lands safely in Doha. The crew never knew how close they came. The hotline works — this time." },
+        { "label": "Scramble escort fighters", "scene_resolution": "Two F/A-18s race to intercept, arriving before the Iranian fighters. The 777 is shepherded out of the zone. Passengers photograph fighter jets out their windows. Social media explodes, but everyone is safe." }
+      ]
+    },
+    {
+      "text": "6.4 magnitude earthquake in southwestern Iran. Significant casualties.",
+      "scene_intro": "The seismograph spike is followed by shaky cellphone footage from Bushehr province. Buildings pancaked, dust clouds, screaming. Iran's civil defense is overwhelmed.",
+      "choices": [
+        { "label": "Offer humanitarian aid immediately", "scene_resolution": "A C-17 loaded with medical supplies and search-and-rescue equipment is wheels-up within hours. Iranian state media can't decide whether to accept or denounce. The images of American aid workers pulling survivors from rubble transcend politics." },
+        { "label": "Express condolences only", "scene_resolution": "A carefully worded statement of sympathy is released. It's the proper diplomatic response, and it costs nothing. But the footage of Iranian children being pulled from rubble without American help tells its own story." }
+      ]
+    },
+    {
+      "text": "Oil futures spiked 8% on false seizure rumor.",
+      "scene_intro": "Trading floors are in chaos. Someone posted a fabricated video of an Iranian seizure, and algorithms did the rest. Eight percent in twelve minutes.",
+      "choices": [
+        { "label": "Public denial with intel backing", "scene_resolution": "Your press secretary holds an emergency briefing with declassified satellite imagery proving no seizure occurred. Markets correct within the hour. The rumor's source is traced to a bot network." },
+        { "label": "Let it ride", "scene_resolution": "The spike corrects naturally by close of trading, but the damage is done. Insurance premiums for strait transit tick up another notch. The market's fear is now a self-reinforcing loop." }
+      ]
+    },
+    {
+      "text": "Large crowd at US embassy Baghdad. Hezbollah flags visible.",
+      "scene_intro": "The embassy's security cameras show the crowd swelling. Hezbollah flags, burning tires, chanting. The Marine detachment has gone to full alert. The ambassador is calling.",
+      "choices": [
+        { "label": "Reinforce security", "scene_resolution": "An Apache helicopter flight buzzes the crowd at rooftop level. Additional Marines deploy from the Green Zone. The crowd disperses before nightfall. The embassy holds." },
+        { "label": "Begin evacuation planning", "scene_resolution": "Evacuation protocols activate. Non-essential personnel begin departing via helicopter. The crowd sees the choppers and roars in triumph. Staying would have been risky, but leaving sends its own message." }
+      ]
+    },
+    {
+      "text": "You posted an internal strategy memo to Truth Social instead of group chat. Up for 47 seconds.",
+      "scene_intro": "Your social media director sprints into the Oval Office, phone in hand, face the color of old paste. Forty-seven seconds. That's how long classified strike options were visible to 89 million followers.",
+      "charId": "trump",
+      "choices": [
+        { "label": "Claim intentional \u2014 4D chess", "scene_resolution": "You stride to the podium and declare it was strategic messaging — letting Iran know you mean business. Half the press corps is skeptical, but your base loves it. 'Only Trump could turn a leak into leverage.'" },
+        { "label": "Delete and deny", "scene_resolution": "The post vanishes. Your team scrubs screenshots from social media. But the internet never forgets. Screenshots circulate on Reddit for weeks. The damage is contained but not erased." }
+      ]
+    },
+    {
+      "text": "Major donor calling from Mar-a-Lago, demanding to know why oil stocks are down.",
+      "scene_intro": "The caller ID reads MAR-A-LAGO VIP LINE. Your chief of staff mouths 'the big donor' and makes a throat-cutting gesture. But the phone keeps ringing.",
+      "charId": "trump",
+      "choices": [
+        { "label": "Schmooze", "scene_resolution": "Twenty minutes of reassurance, a promise of a round of golf when this is over, and a hint about upcoming energy policy. The donor hangs up happy. Money keeps flowing to the right places." },
+        { "label": "Have assistant handle it", "scene_resolution": "Your assistant delivers the brush-off with maximum politeness. The donor's next check to the PAC is conspicuously smaller. Some relationships require the personal touch." }
+      ]
+    },
+    {
+      "text": "Marine unit challenges you to PT on carrier visit. Cameras rolling.",
+      "scene_intro": "You're on the flight deck of the Eisenhower. A grinning staff sergeant steps forward. 'Mr. Secretary, my platoon says you can't do twenty push-ups.' The embedded reporter's camera light blinks red.",
+      "charId": "hegseth",
+      "choices": [
+        { "label": "Accept and crush it", "scene_resolution": "You drop and bang out twenty-five, to roaring approval. The clip goes viral — 'SecDef Does PT With Marines.' Recruitment offices report a spike in calls. The troops will run through walls for you now." },
+        { "label": "Politely decline", "scene_resolution": "You laugh it off with a joke about saving your energy for the Iranians. The Marines respect the deflection, but the camera catches the moment. The clip runs on cable news under the chyron 'SecDef Declines Challenge.'" }
+      ]
+    },
+    {
+      "text": "Generals split 50/50 on next move. They're looking at you.",
+      "scene_intro": "The Situation Room table is divided. Four stars on one side want to strike, four stars on the other want to wait. Every eye turns to the head of the table. This is what command looks like.",
+      "charId": "hegseth",
+      "choices": [
+        { "label": "Decide immediately", "scene_resolution": "You make the call in under ten seconds. The room exhales. Whether it's right or wrong, the generals respect decisive leadership. Staff officers scramble to execute. Momentum restored." },
+        { "label": "Ask for more analysis", "scene_resolution": "You request a full options paper by 0600. The generals exchange glances — some relieved, some frustrated. The analysis arrives on time, thorough and useful. The delay costs momentum but buys clarity." }
+      ]
+    },
+    {
+      "text": "Unknown number sent coordinates in Dubai: \"Tomorrow. 3pm. Come alone. \u2014Z\"",
+      "scene_intro": "Your encrypted phone buzzes. An unknown number. The message is three lines — GPS coordinates in Dubai, a time, and a single initial. Your Mossad contact confirms: the Z is Zarif's nephew.",
+      "charId": "kushner",
+      "choices": [
+        { "label": "Go", "scene_resolution": "A private jet to Dubai, a nondescript hotel suite, and a conversation that could change the trajectory of the crisis. The nephew speaks carefully, but the message is clear: there are people in Tehran who want this to end." },
+        { "label": "Trace number first", "scene_resolution": "NSA traces the number to a UAE prepaid SIM purchased in cash. Dead end. By the time you decide to go, the coordinates lead to an empty hotel room. The window closed." }
+      ]
+    },
+    {
+      "text": "Your father-in-law wants a full briefing over dinner. He has opinions.",
+      "scene_intro": "The residence phone rings at 6 PM. It's the President, calling from the dining room. He wants you at dinner. He's been watching Fox News all afternoon and he has 'some thoughts on the Iran thing.'",
+      "charId": "kushner",
+      "choices": [
+        { "label": "Brief honestly", "scene_resolution": "Over steak and Diet Coke, you lay out the real picture — the risks, the costs, the uncertainty. The President listens, pushes back on some points, but ultimately trusts your judgment. For now." },
+        { "label": "Sanitized version", "scene_resolution": "You present the optimistic scenario over dinner. The President nods along, pleased. But tomorrow, when the situation doesn't match the briefing, the questions will be harder to answer." }
+      ]
+    },
+    {
+      "text": "Someone in your intel briefing is leaking to a hostile Twitch streamer.",
+      "scene_intro": "Your moderator DMs you a screenshot. Someone from the classified briefing is live-tweeting operational details to a Twitch channel with 200K viewers. The leaker is in the room with you right now.",
+      "charId": "asmongold",
+      "choices": [
+        { "label": "Find the source", "scene_resolution": "You give three different people three different fake details and wait. Within an hour, one shows up on the stream. The leaker is identified — a junior staffer who thought they were 'democratizing intelligence.' They're escorted out." },
+        { "label": "Feed false intel through leak", "scene_resolution": "You plant a carefully crafted false narrative about fleet movements. The streamer broadcasts it as breaking intel. When it proves false, the streamer's credibility collapses. Two birds, one stone." }
+      ]
+    },
+    {
+      "text": "A subreddit crowdsourced satellite analysis and found something your IC missed.",
+      "scene_intro": "Your phone explodes with notifications. A satellite analysis subreddit has geolocated a new IRGC facility using commercial imagery. They found it before the CIA did. It's trending on Twitter.",
+      "charId": "asmongold",
+      "choices": [
+        { "label": "Engage, give credit", "scene_resolution": "You post a carefully worded acknowledgment. The OSINT community erupts with pride. Within hours, they're voluntarily feeding you additional analysis. You've just recruited thousands of unpaid analysts." },
+        { "label": "Classify it", "scene_resolution": "The intelligence is swept into classified channels. The subreddit mods receive a polite but firm takedown request. The community is furious, but the information is now controlled. Trust with the online world takes a hit." }
+      ]
+    },
+    {
+      "text": "Prominent figure in your movement denounced you as \"globalist capitulation.\"",
+      "scene_intro": "The post drops at 3 AM and by dawn it has two million engagements. A prominent voice in your political base just called you a traitor to the cause. The comment sections are a civil war.",
+      "charId": "fuentes",
+      "choices": [
+        { "label": "Attack back, purge", "scene_resolution": "Your response is swift and brutal. Within hours, the dissenter's platform access is restricted, allies distance themselves, and the message is clear: loyalty is not negotiable. The base consolidates around fear." },
+        { "label": "Reach out privately", "scene_resolution": "A quiet DM, then a phone call. The prominent figure is surprised you reached out personally. A compromise is struck — softer language in exchange for a seat at the table. Unity preserved, barely." }
+      ]
+    },
+    {
+      "text": "Nobody will co-sponsor your resolution. Party leadership won't call back.",
+      "scene_intro": "Your legislative aide stares at the phone log — twenty-three calls to Capitol Hill, zero callbacks. The resolution sits on your desk, unsigned. Even your own party won't touch it.",
+      "charId": "fuentes",
+      "choices": [
+        { "label": "Bypass Congress, national address", "scene_resolution": "You go directly to the cameras. The address is raw, unfiltered, and aimed straight at the base. Congress may have abandoned you, but the people haven't. The phones on Capitol Hill start ringing the other direction." },
+        { "label": "Compromise with Congress", "scene_resolution": "You water down the resolution until it's palatable enough for three co-sponsors. The final text is a shadow of the original, but it passes committee. Sometimes half a victory is the best you get." }
+      ]
+    }
   ],
   "actionTips": {
     "gather-intel": { "desc": "Deploy CIA assets to reduce fog of war. Better intel means better decisions.", "effect": "Fog -8" },

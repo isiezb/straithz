@@ -134,7 +134,7 @@ function clearNarrative() {
 // ======================== INTERNALS ========================
 
 function _pushEntry(type, text, opts) {
-    const portraitSrc = (type === 'scene' || type === 'dialogue')
+    const portraitSrc = (type === 'scene' || type === 'dialogue' || (type === 'alert' && opts.portrait))
         ? _resolvePortrait(opts.portrait, opts.speaker)
         : null;
 
@@ -199,9 +199,16 @@ function _renderEntry(entry) {
             const prefix = entry.level === 'critical' ? '\u25A0 FLASH'
                          : entry.level === 'warning' ? '\u25B2 ALERT'
                          : '\u2713 UPDATE';
-            el.innerHTML = `<span class="nf-time">${timestamp}</span>`
-                + `<span class="nf-alert-prefix ${cls}">${prefix}</span> `
-                + `<span class="${cls}">${entry.text}</span>`;
+            if (hasPortrait) {
+                el.innerHTML = portraitHtml
+                    + `<div class="nf-text-body"><span class="nf-time">${timestamp}</span>`
+                    + `<span class="nf-alert-prefix ${cls}">${prefix}</span> `
+                    + `<span class="${cls}">${entry.text}</span></div>`;
+            } else {
+                el.innerHTML = `<span class="nf-time">${timestamp}</span>`
+                    + `<span class="nf-alert-prefix ${cls}">${prefix}</span> `
+                    + `<span class="${cls}">${entry.text}</span>`;
+            }
             break;
         }
 
@@ -264,6 +271,8 @@ function _generateStatContext(opts) {
 
 let _scenePanel = null;
 let _sceneImg = null;
+
+function getScenePanel() { return _scenePanel; }
 let _sceneCaptionEl = null;
 let _sceneTimeout = null;
 let _sceneAmbientSrc = '';

@@ -2704,6 +2704,32 @@ function showInterrupt(afterCallback) {
     const interrupt = eligible[Math.floor(Math.random() * eligible.length)];
     if (typeof SFX !== 'undefined') SFX.klaxon();
 
+    // Determine portrait for this interrupt
+    const iCharId = interrupt.charId || null;
+    let iPortrait = null;
+    if (iCharId) {
+        iPortrait = iCharId;
+    } else {
+        const iText = interrupt.text.toLowerCase();
+        if (iText.indexOf('iran') !== -1 || iText.indexOf('tehran') !== -1 || iText.indexOf('irgc') !== -1 || iText.indexOf('araghchi') !== -1) {
+            iPortrait = 'iran';
+        } else {
+            iPortrait = 'us';
+        }
+    }
+
+    // Flash scene panel border red for 500ms
+    const _sp = typeof getScenePanel === 'function' ? getScenePanel() : null;
+    if (_sp) {
+        _sp.classList.add('sp-flash-red');
+        setTimeout(function () { _sp.classList.remove('sp-flash-red'); }, 500);
+    }
+
+    // Write scene_intro to narrative feed as alert
+    if (typeof addNarrative === 'function' && interrupt.scene_intro) {
+        addNarrative('alert', interrupt.scene_intro, { level: 'warning', portrait: iPortrait });
+    }
+
     // Create interrupt overlay inside the action panel
     const overlay = document.createElement('div');
     overlay.className = 'ap-interrupt';
@@ -2764,16 +2790,16 @@ function showInterrupt(afterCallback) {
 
             addHeadline(`Interrupt: ${interrupt.text.substring(0, 40)}... \u2014 ${choice.label}`, 'normal');
 
-            // Push to narrative feed with contextual portrait
+            // Write scene_resolution to narrative feed, then stat changes
             if (typeof addNarrative === 'function') {
-                const iText = interrupt.text.toLowerCase();
-                let iPortrait = 'us';
-                if (iText.indexOf('iran') !== -1 || iText.indexOf('tehran') !== -1 || iText.indexOf('irgc') !== -1 || iText.indexOf('araghchi') !== -1) {
-                    iPortrait = 'iran';
-                } else if (SIM.character) {
-                    iPortrait = SIM.character.id;
+                const resolution = choice.scene_resolution || (interrupt.text + ' \u2014 ' + choice.label);
+                addNarrative('scene', resolution, { portrait: iPortrait });
+                // Stat changes as subtle indicators
+                for (const [key, val] of Object.entries(choice.effects)) {
+                    if (val !== 0) {
+                        addNarrative('stat', '', { metric: key, delta: val });
+                    }
                 }
-                addNarrative('scene', interrupt.text + ' \u2014 ' + choice.label, { portrait: iPortrait });
             }
 
             // Remove overlay
@@ -3498,9 +3524,14 @@ function hydrateUI() {
     int.interrupts.forEach((t, i) => {
         if (!INTERRUPTS[i]) return;
         INTERRUPTS[i].text = t.text;
+        if (t.scene_intro) INTERRUPTS[i].scene_intro = t.scene_intro;
+        if (t.charId) INTERRUPTS[i].charId = t.charId;
         if (t.choices) {
             INTERRUPTS[i].choices.forEach((c, j) => {
-                if (t.choices[j]) c.label = t.choices[j].label;
+                if (t.choices[j]) {
+                    c.label = t.choices[j].label;
+                    if (t.choices[j].scene_resolution) c.scene_resolution = t.choices[j].scene_resolution;
+                }
             });
         }
     });
