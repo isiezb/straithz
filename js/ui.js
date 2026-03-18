@@ -310,7 +310,7 @@ function updateSituationPanel() {
             <div class="sit-label">SITUATION REPORT \u2014 DAY ${SIM.day}</div>
             <div class="sit-row"><span style="color:${esc.color}">${esc.name}</span><span class="sit-val" style="color:${esc.color}">${SIM.warPath}/5</span></div>
             <div class="sit-row"><span>ROE</span><span class="sit-val" style="color:${roeColor}">${roeLabel}</span></div>
-            <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/10 OPEN' : 'CONTESTED'}</span></div>
+            <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/7 OPEN' : 'CONTESTED'}</span></div>
             <div class="sit-row"><span>Budget</span><span class="sit-val ${SIM.budget > 500 ? 'good' : SIM.budget > 200 ? 'warning' : 'danger'}">$${Math.round(SIM.budget)}M</span></div>
             <div class="sit-row"><span>Rating</span><span class="sit-val ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
             ${typeof _getWinProgress === 'function' ? _getWinProgress() : ''}
@@ -553,7 +553,7 @@ function _getKeyDrivers() {
     if (SIM.chinaRelations < 30) drivers.push({ text: 'China buying Iranian oil — sanctions less effective', cls: 'down-bad' });
     // Positive
     if (SIM.interceptCount > 0) drivers.push({ text: `${SIM.interceptCount} intercepts boosting approval`, cls: 'up-good' });
-    if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/10 days toward victory`, cls: 'up-good' });
+    if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/7 days toward victory`, cls: 'up-good' });
     // Player deltas
     const pd = SIM.playerDeltas;
     if (pd.tension < -3) drivers.push({ text: 'Your actions are reducing tension', cls: 'up-good' });
@@ -1936,7 +1936,7 @@ function _endDay() {
 function _getWinProgress() {
     if (!SIM.character || !SIM.character.scenario || !SIM.character.scenario.winConditions) {
         // Generic win: strait open days
-        const pct = Math.min(100, Math.round((SIM.straitOpenDays / 10) * 100));
+        const pct = Math.min(100, Math.round((SIM.straitOpenDays / 7) * 100));
         // Daily checklist
         const recentSeizures = SIM.recentSeizureDays ? SIM.recentSeizureDays.filter(d => SIM.day - d <= 3).length : 0;
         const checks = [
@@ -1947,9 +1947,9 @@ function _getWinProgress() {
         ];
         const checkHtml = checks.map(c => `<span style="color:${c.ok ? '#44dd88' : '#dd4444'}">${c.ok ? '\u2713' : '\u2717'} ${c.label}</span>`).join(' ');
         return `<div class="win-progress">
-            <div class="win-progress-label">OBJECTIVE: STRAIT OPEN 10 DAYS</div>
+            <div class="win-progress-label">OBJECTIVE: STRAIT OPEN 7 DAYS</div>
             <div class="win-progress-bar"><div class="win-progress-fill" style="width:${pct}%"></div></div>
-            <div class="win-progress-text">${SIM.straitOpenDays}/10 days</div>
+            <div class="win-progress-text">${SIM.straitOpenDays}/7 days</div>
             <div style="font-size:9px;margin-top:4px;line-height:1.6">${checkHtml}</div>
         </div>`;
     }
@@ -2452,7 +2452,7 @@ function showGameOverScreen() {
             <div class="stat-row"><span>Character</span><span>${SIM.character ? SIM.character.name : 'None'}</span></div>
             <div class="stat-row"><span>Days Survived</span><span>${SIM.day}</span></div>
             <div class="stat-row"><span>Escalation</span><span style="color:${_getEscalationColor()}">${_getEscalationName()} (${SIM.warPath}/5)</span></div>
-            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/10 days</span></div>
+            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/7 days</span></div>
             <div class="stat-row"><span>Tankers Seized</span><span>${SIM.seizureCount}</span></div>
             <div class="stat-row"><span>Intercepts</span><span>${SIM.interceptCount}</span></div>
             <div class="stat-row"><span>Budget Remaining</span><span>$${Math.round(SIM.budget)}M / $900M</span></div>

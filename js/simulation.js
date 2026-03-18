@@ -22,16 +22,16 @@ const SIM = {
     prevGauges: null,         // gauge snapshot from start of day
 
     // Core metrics (underlying — player sees 4 gauges)
-    oilFlow: 40,
+    oilFlow: 50,
     oilPrice: 95,
-    tension: 65,
+    tension: 55,
     domesticApproval: 60,
     internationalStanding: 50,
     conflictRisk: 35,
     budget: 900,
 
     // Iran state
-    iranAggression: 55,
+    iranAggression: 45,
     iranEconomy: 35,
     iranStrategy: 'probing', // restrained/probing/escalatory/confrontational
 
@@ -123,9 +123,9 @@ const SIM_DEFAULTS = {
     day: 1, hour: 0, week: 1, weekDay: 1, speed: 2,
     phase: 'morning', actionPoints: 5, swapsToday: 0,
     stanceActivationDay: {}, firedConsequences: [], pendingNews: [], prevGauges: null,
-    oilFlow: 40, oilPrice: 95, tension: 65, domesticApproval: 60,
+    oilFlow: 50, oilPrice: 95, tension: 55, domesticApproval: 60,
     internationalStanding: 50, conflictRisk: 35, budget: 900,
-    iranAggression: 55, iranEconomy: 35, iranStrategy: 'probing',
+    iranAggression: 45, iranEconomy: 35, iranStrategy: 'probing',
     fogOfWar: 70, diplomaticCapital: 35, proxyThreat: 25,
     chinaRelations: 50, polarization: 20,
     assassinationRisk: 0, warPath: 1,
@@ -205,11 +205,9 @@ const SHIPPING_LANES = [
 ];
 
 function initSimulation() {
-    // Crisis start: fewer tankers, one already seized
+    // Crisis start: tankers in transit, no seizure on day 1
     for (let i = 0; i < 5; i++) spawnTanker();
-    SIM.tankers[0].seized = true;
-    SIM.tankers[0].id = 'TKR-SEIZED';
-    SIM.seizureCount = 1;
+    SIM.seizureCount = 0;
 
     // IRGC boats already deployed in the strait
     spawnIranBoat(0.52, 0.50);
@@ -554,6 +552,11 @@ function dailyUpdate() {
     // Weekly cost divided by 7 for daily
     SIM.budget -= adjustedCost / 7;
 
+    // Budget income: coalition allies + oil revenue
+    const coalitionIncome = (SIM.internationalStanding / 100) * 2.5; // up to $2.5M/day from allies
+    const oilRevenue = (SIM.oilFlow / 100) * 1.5; // up to $1.5M/day from flowing oil
+    SIM.budget += coalitionIncome + oilRevenue;
+
     // Tension — card stances set baseline drift, playerDeltas shift the target
     const dipBonus = (SIM.diplomaticCapital - 50) * 0.05;
     const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus + pd.tension));
@@ -595,7 +598,7 @@ function dailyUpdate() {
     // Iran aggression — card effects now 0.3x (was 0.05x), plus playerDelta
     const aggrDelta = getStanceEffect('iranAggression');
     SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + aggrDelta * 0.3 + pd.iranAggression * 0.15));
-    if (SIM.iranEconomy < 30) SIM.iranAggression += 0.5;
+    if (SIM.iranEconomy < 30) SIM.iranAggression += 0.25;
 
     // Iran economy — card effects now 0.15x (was 0.02x), plus playerDelta
     const econDelta = getStanceEffect('iranEconomy');
@@ -615,12 +618,18 @@ function dailyUpdate() {
     // Diplomatic capital — card effects now 0.4x (was 0.1x), plus playerDelta
     const dipDelta2 = getStanceEffect('diplomaticCapital');
     if (SIM.character && SIM.character.diplomacyMult && dipDelta2 > 0) {
-        SIM.diplomaticCapital += dipDelta2 * SIM.character.diplomacyMult * 0.4;
+        SIM.diplomaticCapital += dipDelta2 * SIM.character.diplomacyMult * 0.55;
     } else {
-        SIM.diplomaticCapital += dipDelta2 * 0.4;
+        SIM.diplomaticCapital += dipDelta2 * 0.55;
     }
     SIM.diplomaticCapital += pd.diplomaticCapital * 0.15;
     SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital));
+
+    // Free weekly de-escalation: -1 warPath every 7 days if tension is below 60
+    if (SIM.day > 1 && SIM.day % 7 === 0 && SIM.warPath > 0 && SIM.tension < 60) {
+        SIM.warPath = Math.max(0, SIM.warPath - 1);
+        addHeadline('Weekly diplomatic cool-down reduces escalation level', 'good');
+    }
 
     // Decay all player deltas (retain 85% per day)
     for (const key of Object.keys(pd)) {
@@ -820,14 +829,14 @@ function updateIranStrategy() {
     const hasHeavyNavy = getStanceMax('navalPresence') >= 3;
     const hasCoalition = getStanceEffect('internationalStanding') > 8;
 
-    // Sanctions without diplomacy = escalatory
-    if (hasHeavySanctions && !hasDiplomacy) SIM.iranAggression += 1.5;
-    // Diplomacy while economy hurting = de-escalatory
-    if (hasDiplomacy && SIM.iranEconomy < 40) SIM.iranAggression -= 2;
-    // Unilateral navy without coalition = provocative
-    if (hasHeavyNavy && !hasCoalition) SIM.iranAggression += 1;
-    // Coalition + diplomacy = Iran pressured to negotiate
-    if (hasCoalition && hasDiplomacy) SIM.iranAggression -= 1.5;
+    // Sanctions without diplomacy = escalatory (reduced from 1.5)
+    if (hasHeavySanctions && !hasDiplomacy) SIM.iranAggression += 0.8;
+    // Diplomacy while economy hurting = de-escalatory (boosted from -2)
+    if (hasDiplomacy && SIM.iranEconomy < 40) SIM.iranAggression -= 2.5;
+    // Unilateral navy without coalition = provocative (reduced from 1)
+    if (hasHeavyNavy && !hasCoalition) SIM.iranAggression += 0.5;
+    // Coalition + diplomacy = Iran pressured to negotiate (boosted from -1.5)
+    if (hasCoalition && hasDiplomacy) SIM.iranAggression -= 2;
 
     // Low China relations = Iran gets alternative weapons supply
     if (SIM.chinaRelations < 25) SIM.iranAggression += 0.3;
@@ -958,17 +967,17 @@ function checkWinLose() {
 
     if (straitOpen) {
         SIM.straitOpenDays++;
-        if (SIM.straitOpenDays >= 7) {
-            addHeadline(`STRAIT STABLE ${SIM.straitOpenDays}/10 DAYS — maintain course!`, 'good');
+        if (SIM.straitOpenDays >= 5) {
+            addHeadline(`STRAIT STABLE ${SIM.straitOpenDays}/7 DAYS — maintain course!`, 'good');
         }
-        if (SIM.straitOpenDays >= 10) {
-            endGame(true, 'The Strait of Hormuz has been open and stable for 10 consecutive days. Crisis resolved through ' +
+        if (SIM.straitOpenDays >= 7) {
+            endGame(true, 'The Strait of Hormuz has been open and stable for 7 consecutive days. Crisis resolved through ' +
                 (SIM.diplomaticCapital > 60 ? 'masterful diplomacy.' : SIM.domesticApproval > 70 ? 'strong leadership.' : 'persistent strategy.'));
             return true;
         }
     } else {
         if (SIM.straitOpenDays > 2) {
-            addHeadline(`Strait stability disrupted — counter resets (was ${SIM.straitOpenDays}/10)`, 'warning');
+            addHeadline(`Strait stability disrupted — counter resets (was ${SIM.straitOpenDays}/7)`, 'warning');
         }
         SIM.straitOpenDays = 0;
     }
