@@ -23,6 +23,12 @@ function initMap() {
     mapImg.onload = () => { MAP.assets.mapBg = mapImg; };
     mapImg.onerror = () => {};
     mapImg.src = 'assets/strait-map.png';
+
+    // Load situation room background
+    const sitImg = new Image();
+    sitImg.onload = () => { MAP.assets.sitRoom = sitImg; };
+    sitImg.onerror = () => {};
+    sitImg.src = 'assets/situation-room.png';
 }
 
 function resizeCanvas() {
@@ -48,28 +54,107 @@ function renderMap() {
 
     ctx.clearRect(0, 0, w, h);
 
-    // Background
-    if (MAP.assets.mapBg) {
-        ctx.drawImage(MAP.assets.mapBg, 0, 0, w, h);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    // Background: situation room image fills canvas, or dark fallback
+    if (MAP.assets.sitRoom) {
+        // Cover-fit the situation room image
+        const img = MAP.assets.sitRoom;
+        const imgAspect = img.width / img.height;
+        const canAspect = w / h;
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+        if (imgAspect > canAspect) {
+            sw = img.height * canAspect;
+            sx = (img.width - sw) / 2;
+        } else {
+            sh = img.width / canAspect;
+            sy = (img.height - sh) / 2;
+        }
+        ctx.globalAlpha = 0.3;
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+        ctx.globalAlpha = 1;
+        // Dark overlay for readability
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
         ctx.fillRect(0, 0, w, h);
     } else {
-        drawProceduralMap(ctx, w, h);
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, w, h);
     }
 
-    // --- Overlays (no entity sprites — just lane flow and markers) ---
-    drawShippingLaneFlow(ctx, w, h);
-    drawIncidentMarkers(ctx, w, h);
+    // Draw the strategic map in the center area (between panels)
+    const sitPanel = document.getElementById('situation-panel');
+    const actPanel = document.getElementById('action-panel');
+    const hasSitPanel = sitPanel && sitPanel.style.display !== 'none';
+    const hasActPanel = actPanel && actPanel.classList.contains('visible');
+    const mapLeft = hasSitPanel ? 320 : 0;
+    const mapRight = hasActPanel ? 280 : 0;
+    const mapW = Math.max(200, w - mapLeft - mapRight);
+    const mapH = h;
+    const mapX = mapLeft;
 
-    // Day counter
-    drawDayCounter(ctx, w, h);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(mapX, 0, mapW, mapH);
+    ctx.clip();
+
+    // Draw map content inside the clipped center area
+    if (MAP.assets.mapBg) {
+        ctx.globalAlpha = 0.7;
+        ctx.drawImage(MAP.assets.mapBg, mapX, 0, mapW, mapH);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.fillRect(mapX, 0, mapW, mapH);
+    } else {
+        // Procedural map in center
+        ctx.save();
+        ctx.translate(mapX, 0);
+        drawProceduralMap(ctx, mapW, mapH);
+        ctx.restore();
+    }
+
+    // Shipping lanes and markers in center area
+    ctx.save();
+    ctx.translate(mapX, 0);
+    drawShippingLaneFlow(ctx, mapW, mapH);
+    drawIncidentMarkers(ctx, mapW, mapH);
+    ctx.restore();
+
+    ctx.restore(); // unclip
+
+    // Subtle border around the map area
+    ctx.strokeStyle = 'rgba(26, 58, 42, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(mapX, 0, mapW, mapH);
+
+    // "TACTICAL DISPLAY" label at top of map area
+    ctx.save();
+    ctx.font = '9px monospace';
+    ctx.fillStyle = 'rgba(42, 106, 74, 0.5)';
+    ctx.textAlign = 'center';
+    ctx.fillText('TACTICAL DISPLAY', mapX + mapW / 2, 14);
+
+    // Status info in bottom of map area
+    ctx.font = '8px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(42, 106, 74, 0.4)';
+    const statusY = mapH - 12;
+    const seizedN = SIM.tankers.filter(t => t.seized).length;
+    ctx.fillText(`USN: ${SIM.navyShips.length}${SIM.carrier ? ' +CSG' : ''}  |  IRGC: ${SIM.iranBoats.length}  |  MINES: ${SIM.mines.length}  |  SEIZED: ${seizedN}`, mapX + 8, statusY);
+    ctx.textAlign = 'right';
+    ctx.fillText(`FLOW: ${Math.round(SIM.oilFlow)}%  |  TENSION: ${Math.round(SIM.tension)}`, mapX + mapW - 8, statusY);
+    ctx.restore();
+
+    // Vignette effect
+    const vigGrad = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.7);
+    vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
+    vigGrad.addColorStop(1, 'rgba(0,0,0,0.4)');
+    ctx.fillStyle = vigGrad;
+    ctx.fillRect(0, 0, w, h);
 
     // Event flash card
     drawEventFlash(ctx, w, h);
 
     // Tension overlay — red tint as things heat up
     if (SIM.tension > 40) {
-        const alpha = (SIM.tension - 40) / 200;
+        const alpha = (SIM.tension - 40) / 300;
         ctx.fillStyle = `rgba(255, 30, 30, ${alpha})`;
         ctx.fillRect(0, 0, w, h);
     }
@@ -910,31 +995,7 @@ function drawProceduralMap(ctx, w, h) {
 // --- Day Counter (large centered text during dayplay) ---
 
 function drawDayCounter(ctx, w, h) {
-    if (SIM.phase !== 'dayplay') return;
-
-    const dayText = 'DAY ' + SIM.day;
-
-    ctx.save();
-    ctx.font = 'bold 28px monospace';
-    ctx.fillStyle = 'rgba(68, 221, 136, 0.25)';
-    ctx.textAlign = 'center';
-    ctx.fillText(dayText, w * 0.5, 40);
-
-    // AP indicator dots
-    const ap = SIM.actionPoints || 0;
-    const dotSize = 6;
-    const dotGap = 10;
-    const totalDotsW = 5 * dotSize + 4 * dotGap;
-    const dotsX = w * 0.5 - totalDotsW / 2;
-    const dotsY = 50;
-    for (let i = 0; i < 5; i++) {
-        ctx.fillStyle = i < ap ? 'rgba(68, 221, 136, 0.6)' : 'rgba(26, 58, 42, 0.3)';
-        ctx.beginPath();
-        ctx.arc(dotsX + i * (dotSize + dotGap) + dotSize / 2, dotsY, dotSize / 2, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    ctx.restore();
+    // Day counter is now in the HUD gauge bar — skip canvas version
 }
 
 // --- Event Flash Card ---

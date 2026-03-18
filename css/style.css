@@ -68,8 +68,7 @@ body {
     top: 52px;
     left: 0;
     width: 100%;
-    height: calc(100% - 52px);
-    max-height: 45vh;
+    height: calc(100vh - 52px);
     image-rendering: pixelated;
 }
 
@@ -79,11 +78,13 @@ body {
     top: 52px;
     left: 0;
     width: 320px;
-    height: calc(100% - 52px);
-    background: rgba(5, 5, 5, 0.95);
+    height: calc(100vh - 52px);
+    max-height: calc(100vh - 52px);
+    background: rgba(5, 5, 5, 0.92);
     border-right: 1px solid #1a3a2a;
     z-index: 8;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 10px 14px;
     font-size: 11px;
 }
@@ -191,16 +192,15 @@ body {
     line-height: 1.6;
 }
 
-/* When situation panel is showing, push canvas right */
+/* Canvas stays full-width behind panels as background */
 #game-canvas.with-sitpanel {
-    left: 320px;
-    width: calc(100% - 320px);
+    left: 0;
+    width: 100%;
 }
 
-/* When both panels showing (sitpanel + action panel) */
 #game-canvas.with-both {
-    left: 320px;
-    width: calc(100% - 320px - 280px);
+    left: 0;
+    width: 100%;
 }
 
 /* ======================== GAUGE BAR ======================== */
@@ -1404,6 +1404,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 200;
+    overflow-y: auto;
 }
 
 .char-select-box {
@@ -1579,6 +1580,7 @@ body {
     z-index: 150;
     animation: fadeIn 0.8s ease;
     cursor: pointer;
+    overflow-y: auto;
 }
 
 .lore-box {
@@ -1779,7 +1781,8 @@ body {
     right: 0;
     width: 280px;
     height: calc(100vh - 52px);
-    background: #0a0a0a;
+    max-height: calc(100vh - 52px);
+    background: rgba(5, 5, 5, 0.92);
     border-left: 2px solid #1a3a2a;
     z-index: 50;
     display: flex;
@@ -2276,3 +2279,54 @@ body {
 .ap-scroll::-webkit-scrollbar-track { background: #0a0a0a; }
 .ap-scroll::-webkit-scrollbar-thumb { background: #1a3a2a; }
 .ap-scroll::-webkit-scrollbar-thumb:hover { background: #2a5a3a; }
+
+/* ======================== VIEWPORT FIT ======================== */
+
+/* Ensure nothing overflows the viewport */
+html, body {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+#game-container {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+/* Responsive: smaller screens */
+@media (max-width: 900px) {
+    #situation-panel {
+        width: 240px;
+    }
+    #action-panel {
+        width: 240px;
+    }
+}
+
+@media (max-width: 700px) {
+    #situation-panel {
+        width: 200px;
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+    #action-panel {
+        width: 200px;
+    }
+    .gauge-item { padding: 2px 4px; }
+    .gauge-value { font-size: 13px; }
+    .gauge-label { font-size: 7px; letter-spacing: 1px; }
+    #gauge-bar { height: 44px; padding: 0 4px; }
+    #game-canvas { top: 44px; height: calc(100vh - 44px); }
+    #situation-panel { top: 44px; height: calc(100vh - 44px); }
+    #action-panel { top: 44px; height: calc(100vh - 44px); }
+}
+
+@media (max-height: 600px) {
+    #gauge-bar { height: 40px; }
+    .gauge-value { font-size: 12px; }
+    .gauge-track { height: 4px; }
+    #game-canvas { top: 40px; height: calc(100vh - 40px); }
+    #situation-panel { top: 40px; height: calc(100vh - 40px); }
+    #action-panel { top: 40px; height: calc(100vh - 40px); }
+    .terminal-box { max-height: 85vh; padding: 16px 14px; }
+}
