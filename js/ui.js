@@ -1336,6 +1336,34 @@ function showDailyReport() {
             '</ul></div>';
     }
 
+    // Pick up to 2 intel items for the morning briefing
+    let intelHtml = '';
+    if (SIM.intelBriefings && SIM.intelBriefings.length > 0) {
+        const recentIntel = SIM.intelBriefings.filter(i => i.day >= SIM.day - 1).slice(-2);
+        if (recentIntel.length > 0) {
+            intelHtml = '<div class="mb-overnight"><div class="term-section-label">INTELLIGENCE UPDATE</div><ul class="mb-overnight-list">' +
+                recentIntel.map(i => `<li>${i.text} <span style="color:${i.confidence === 'high' ? '#44dd88' : i.confidence === 'medium' ? '#ddaa44' : '#dd4444'}">[${i.confidence.toUpperCase()}]</span></li>`).join('') +
+                '</ul></div>';
+        }
+    }
+
+    // Pick a developing situation (interrupt) for the morning briefing
+    let interruptHtml = '';
+    let _morningInterrupt = null;
+    if (SIM.day > 1) {
+        const eligible = INTERRUPTS.filter(i => !i.condition || i.condition());
+        if (eligible.length > 0 && Math.random() < 0.5) {
+            _morningInterrupt = eligible[Math.floor(Math.random() * eligible.length)];
+            interruptHtml = `<div class="mb-interrupt" style="margin-top:8px; border:1px solid #ddaa44; padding:8px 10px; background:rgba(221,170,68,0.05)">
+                <div class="term-section-label" style="color:#ddaa44">\u26A1 DEVELOPING SITUATION</div>
+                <div class="mb-prose" style="margin:4px 0 6px">${_morningInterrupt.scene_intro || _morningInterrupt.text}</div>
+                <div class="mb-interrupt-choices" style="display:flex; gap:6px">
+                    ${_morningInterrupt.choices.map((c, i) => `<button class="term-btn mb-interrupt-btn" data-choice="${i}" style="flex:1; font-size:10px">${c.label}</button>`).join('')}
+                </div>
+            </div>`;
+        }
+    }
+
     openTerminal(`
         ${arcHtml}
         <div class="term-header">${_getDateString()} \u2014 DAY ${SIM.day}</div>
@@ -1347,6 +1375,8 @@ function showDailyReport() {
             ${overnightHtml}
             ${iranIntel ? `<div class="mb-iran-intel"><span class="mb-intel-prefix">\u26A0 IRAN</span> ${iranIntel}</div>` : ''}
             ${charBriefHtml}
+            ${intelHtml}
+            ${interruptHtml}
         </div>
 
         <div class="mb-gauges-row">
@@ -1360,6 +1390,8 @@ function showDailyReport() {
         ${synergyHtml}
 
         ${aipacHtml}
+
+        ${briefing && briefing.resourceDialogue ? `<div class="mb-resource-dialogue"><div class="mb-prose" style="margin-top:6px; border-left:2px solid ${SIM.character.uniqueResource ? SIM.character.uniqueResource.color || '#44dd88' : '#44dd88'}; padding-left:8px; font-style:italic">${briefing.resourceDialogue.text}</div></div>` : ''}
 
         <div class="mb-closer">\u25B6 ${closerText}</div>
 
@@ -1376,7 +1408,44 @@ function showDailyReport() {
     if (typeof addNarrative === 'function' && briefing) {
         addNarrative('scene', openingText, { portrait: advisorName });
         if (iranIntel) addNarrative('dialogue', iranIntel, { speaker: advisorName, portrait: advisorName });
+        // Resource tier dialogue — character's emotional state based on unique resource
+        if (briefing.resourceDialogue) {
+            const charName = SIM.character.name || SIM.character.id;
+            addNarrative('dialogue', briefing.resourceDialogue.text, { speaker: charName, portrait: SIM.character.id });
+        }
         if (closerText) addNarrative('scene', closerText, { portrait: advisorName });
+    }
+
+    // Wire up developing situation choices if present
+    if (_morningInterrupt) {
+        document.querySelectorAll('.mb-interrupt-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const choiceIdx = parseInt(btn.dataset.choice);
+                const choice = _morningInterrupt.choices[choiceIdx];
+                _applyEffects(choice.effects);
+                if (choice.setFlags && SIM.storyFlags) {
+                    for (const [flag, val] of Object.entries(choice.setFlags)) {
+                        SIM.storyFlags[flag] = val;
+                    }
+                }
+                SIM.decisionLog.push({
+                    title: _morningInterrupt.text.length > 50 ? _morningInterrupt.text.substring(0, 47) + '...' : _morningInterrupt.text,
+                    choice: choice.label, effects: { ...choice.effects },
+                    day: SIM.day, type: 'interrupt',
+                });
+                addHeadline(`${_morningInterrupt.text.substring(0, 40)}... \u2014 ${choice.label}`, 'normal');
+                if (typeof addNarrative === 'function') {
+                    const resolution = choice.scene_resolution || (_morningInterrupt.text + ' \u2014 ' + choice.label);
+                    addNarrative('consequence', resolution);
+                }
+                // Replace interrupt UI with result
+                const intEl = document.querySelector('.mb-interrupt');
+                if (intEl) {
+                    intEl.innerHTML = `<div class="term-section-label" style="color:#44dd88">\u2713 ${choice.label.toUpperCase()}</div>
+                        <div class="mb-prose" style="opacity:0.7; font-size:10px">${choice.scene_resolution || 'Decision recorded.'}</div>`;
+                }
+            });
+        });
     }
 
     document.getElementById('btn-maintain').addEventListener('click', () => {
@@ -2296,6 +2365,15 @@ function _maybeAdvisorReaction() {
         reactKey = 'diplomatic';
     }
 
+    // Fallback: use resource tier dialogue if no specific condition matched
+    if (!reactionText && typeof pickResourceTierDialogue === 'function') {
+        const tierDialogue = pickResourceTierDialogue();
+        if (tierDialogue) {
+            reactionText = tierDialogue.text;
+            reactKey = 'resourceTier_' + tierDialogue.tier;
+        }
+    }
+
     // Don't repeat the same reaction twice in a row
     if (!reactionText || reactKey === SIM._lastAdvisorReaction) return;
     SIM._lastAdvisorReaction = reactKey;
@@ -2909,14 +2987,8 @@ function _executeAction(actionId, rerenderFn) {
         return;
     }
 
-    // Random interrupt check (50% chance — compensates for fewer AP per day)
-    if (Math.random() < 0.5) {
-        setTimeout(() => {
-            showInterrupt(rerenderFn);
-        }, 400);
-    } else {
-        rerenderFn();
-    }
+    // Interrupts moved to morning briefing — action feedback should not be interrupted
+    rerenderFn();
 }
 
 // ======================== HEGSETH: BATTLE REPORT ========================
@@ -3909,14 +3981,7 @@ function _pushAmbientContent() {
         if (s.polarization > 60 && sim.polarization_warnings) pool.push(...sim.polarization_warnings.map(t => ({type:'ambient', text:t})));
     }
 
-    // Intel snippets styled as cables
-    if (intel && intel.intelSnippets && Math.random() < 0.3) {
-        const snippets = intel.intelSnippets;
-        const snippet = snippets[Math.floor(Math.random() * snippets.length)];
-        // Apply confidence level based on fog of war
-        const confidence = s.fogOfWar > 60 ? 'LOW' : s.fogOfWar > 35 ? 'MEDIUM' : 'HIGH';
-        pool.push({type:'cable', text: snippet + ' [Confidence: ' + confidence + ']'});
-    }
+    // Intel cables removed from ambient — delivered in morning briefing only
 
     // Advisor asides based on state thresholds
     // Advisor asides (skip if _maybeAdvisorReaction recently fired)
