@@ -1,0 +1,28 @@
+{
+  "levels": [
+    {
+      "name": "DIPLOMATIC TENSIONS",
+      "description": "Sanctions and rhetoric. No military engagement."
+    },
+    {
+      "name": "NAVAL STANDOFF",
+      "description": "Warships deployed. Seizures and standoffs. Limited skirmishes."
+    },
+    {
+      "name": "LIMITED STRIKES",
+      "description": "Precision strikes on military targets. Tit-for-tat."
+    },
+    {
+      "name": "AIR CAMPAIGN",
+      "description": "Sustained air operations. Infrastructure targeted. Civilian risk."
+    },
+    {
+      "name": "GROUND INVASION",
+      "description": "Ground forces deployed. Draft considered. Regional war."
+    },
+    {
+      "name": "TOTAL WAR",
+      "description": "Nuclear threshold. Chemical weapons. Civilization at stake."
+    }
+  ]
+}

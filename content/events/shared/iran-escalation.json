@@ -1,0 +1,48 @@
+{
+  "levels": [
+    {
+      "name": "RESTRAINED",
+      "triggers": [
+        "aggression < 25"
+      ]
+    },
+    {
+      "name": "PROBING",
+      "triggers": [
+        "aggression 25-50",
+        "fast boats and seizures"
+      ]
+    },
+    {
+      "name": "PROXY WAR",
+      "triggers": [
+        "aggression 50-65",
+        "Houthis + Iraqi militias activated"
+      ]
+    },
+    {
+      "name": "DIRECT ENGAGEMENT",
+      "triggers": [
+        "aggression 65-80",
+        "missile strikes",
+        "mine-laying"
+      ]
+    },
+    {
+      "name": "NUCLEAR LEVERAGE",
+      "triggers": [
+        "aggression 80-90",
+        "breakout threats",
+        "enrichment acceleration"
+      ]
+    },
+    {
+      "name": "ALL-OUT",
+      "triggers": [
+        "aggression > 90",
+        "mass missile/drone swarm",
+        "suicide boats"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "cards": {
+    "saudi_deal": {
+      "name": "Saudi Grand Bargain",
+      "description": "MBS commits Saudi resources and influence to resolve the crisis.",
+      "hint": {
+        "low": "Quiet Saudi support",
+        "med": "Public Saudi partnership",
+        "high": "Full Saudi commitment"
+      }
+    },
+    "uae_port_access": {
+      "name": "UAE Port Access",
+      "description": "MBZ grants full access to Fujairah port for US operations.",
+      "hint": {
+        "low": "Resupply rights",
+        "med": "Forward operating base",
+        "high": "Full military partnership"
+      }
+    },
+    "bosphorus_leverage": {
+      "name": "Turkish Leverage",
+      "description": "Erdogan applies pressure on Iran through economic and military channels.",
+      "hint": {
+        "low": "Diplomatic signals",
+        "med": "Economic pressure",
+        "high": "Military posturing on border"
+      }
+    },
+    "secret_channel": {
+      "name": "Araghchi Direct Line",
+      "description": "Direct communication with Iranian moderates through Araghchi.",
+      "hint": {
+        "low": "Message exchange",
+        "med": "Active negotiation",
+        "high": "Framework agreement"
+      }
+    },
+    "mossad_intel": {
+      "name": "Mossad Intelligence",
+      "description": "Netanyahu shares Mossad intelligence on Iranian operations.",
+      "hint": {
+        "low": "Satellite imagery",
+        "med": "HUMINT assets",
+        "high": "Full intelligence sharing"
+      }
+    }
+  }
+}

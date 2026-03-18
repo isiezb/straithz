@@ -1,0 +1,234 @@
+{
+  "id": "trump",
+  "name": "Donald Trump",
+  "title": "45th & 47th President",
+  "portraitImage": "",
+  "selectImage": "",
+  "reactionImages": {},
+  "ability": "The Decider",
+  "abilityDesc": "Gets ALL cards. 1.5x effects. 4 picks. CLAIM VICTORY after public wins. WIN: Claim 3 victories, approval >= 60, oil flow >= 55.",
+  "lore": [
+    "February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it."
+  ],
+  "uniqueResource": {
+    "name": "",
+    "start": 0,
+    "max": 100,
+    "inverted": false
+  },
+  "aipacStart": 50,
+  "morningBriefings": {
+    "advisor": "Dan Scavino",
+    "highApproval": [
+      "Sir, you're trending number one again — Fox ran three segments on your strait strategy and the coverage was overwhelmingly positive.",
+      "Media hits are through the roof this morning. Even the hostile networks are grudgingly admitting the polling looks strong.",
+      "Social media engagement is up 40% overnight. The base is fired up and the narrative is completely in your favor right now.",
+      "Sir, every cable hit this morning led with your approval numbers. The story is you're winning, and that story sells itself."
+    ],
+    "lowApproval": [
+      "Sir, the cable numbers are bad — CNN and MSNBC ran wall-to-wall negative coverage and it's bleeding into Fox's panel segments.",
+      "You're trending, but for the wrong reasons. We need a media win today or the narrative hardens against us.",
+      "The morning shows are running with the 'crisis of confidence' framing. We need to get ahead of this before the evening cycle.",
+      "Sir, the press pool is circling. Approval is cratering and every reporter in the briefing room smells blood in the water."
+    ],
+    "winAvailable": [
+      "Sir, there's a public win you can claim today — the networks will eat it up.",
+      "The setup is perfect for a Rose Garden moment. One good announcement and we dominate the cycle.",
+      "Sir, this is your moment — the cameras are ready and the story writes itself. Time to take a victory lap."
+    ],
+    "noWin": [
+      "Nothing to claim right now, sir. We need to create a narrative today.",
+      "The story cupboard is bare this morning. We need to manufacture a headline or someone else will write one for us.",
+      "No easy wins on the board, sir. We're playing defense today unless we make something happen."
+    ],
+    "highTension": [
+      "The drama is playing huge on cable — every network has split-screen coverage and your name is in every chyron.",
+      "Sir, the tension is a double-edged sword. The ratings are incredible but the framing could go either way fast.",
+      "Fox is running the crisis as strong leadership, but the other networks are pushing the reckless angle. We need to control the narrative.",
+      "The whole country is watching. High tension means high stakes coverage — this is either your finest hour or your biggest liability."
+    ],
+    "budgetCrisis": [
+      "Sir, the spending optics are terrible. Congress is asking questions on camera and the deficit hawks are circling.",
+      "Budget numbers leaked to the Post overnight. Expect hostile questions at every briefing until we get a handle on the spending story.",
+      "The fiscal hawks are cutting ads already. We need a cost-containment narrative or this becomes the story of the week.",
+      "Sir, three committee chairs sent letters demanding a spending accounting. The cameras will be rolling when they release them."
+    ]
+  },
+  "overnightScenes": {
+    "default": [
+      "The residence is quiet at midnight. You're in the dining room with two scoops of vanilla ice cream and your phone. Truth Social notifications stack up — 14K likes on the tanker intercept post, 22K on the 'strait is OPEN' declaration. Fox ran the carrier footage for the third time tonight with the chyron 'TRUMP'S NAVY.' You screen-cap it and post it without comment. The numbers are good. Approval is holding. Oil is manageable. For the first time in a week, you feel like you're winning. You finish the ice cream and reach for the remote. Hannity starts in ten minutes."
+    ],
+    "highTension": [
+      "You can't sleep. The phone is on the nightstand, face-up, and every five minutes it buzzes with another push notification you shouldn't read but do. CNN: 'CRISIS DEEPENS.' BBC: 'STRAIT TENSIONS ESCALATE.' You pick up the phone and type a Truth Social post — something about the fake news media — then delete it. Then type it again. Then delete it again. The Washington Monument is a thin white line through the window. You eat a cold hamburger from the kitchen and watch the ceiling fan turn."
+    ],
+    "militaryAction": [
+      "The remote hits the wall before you realize you've thrown it. Fox — FOX! — led with the casualty footage instead of the intercept success. Three dead service members and they ran the family interview instead of the tactical win. By 1am you've posted four Truth Social messages, each one angrier than the last. By 1:30am you've deleted two of them. By 2am the phone is on the floor and you're staring at the ceiling, calculating approval numbers in your head."
+    ],
+    "diplomaticDay": [
+      "The champagne is domestic — you insist on domestic — and it's good. The political capital surge from today's claimed victory is real: approval up 7 points, Congressional support firming. MBS sent a congratulatory text with a crown emoji. You screenshot it. You'll use it later. The Situation Room is empty now, cleaned up and reset for tomorrow. You walk through it one more time, alone, and touch the back of the chair where you sat when the decision was made. History is what you make it."
+    ],
+    "budgetTight": [
+      "Alone in the Oval. The desk is covered with briefing papers you haven't read and polling printouts you've memorized. Approval at 34%. Political capital at 22. The Truth Social post about the 'tremendous progress' got ratio'd — by your own followers. Your phone buzzes. It's Don Jr. 'Dad, the drone company stock is up 40%. Just saying.' You don't respond. For the first time since this started, the voice in your head that always says 'you've got this' says nothing."
+    ],
+    "approvalDrop": [
+      "The calls are done. Three families. Three conversations where you said the words 'sacrifice' and 'hero' and 'nation grateful' while a silence on the other end of the line told you that no word in any language is sufficient. The last mother — from Ohio, a woman who voted for you twice — said 'bring the rest of them home, please' and you said 'we will' and you both knew it might not be true. The residence is dark. The ice cream is in the freezer but you don't want it."
+    ],
+    "lowTension": [
+      "3am and you're wired. The Diet Coke is flat but you're drinking it anyway, pacing the residence in your robe, phone in one hand, remote in the other. The plan is forming. Not a military plan — a narrative plan. A story that turns this crisis into the greatest chapter in your biography. The Iran chapter. Bigger than North Korea. Bigger than the Abraham Accords. You need three things: a dramatic gesture, a television moment, and someone to blame. You text Kushner. 'Call me in the morning. I have an idea.'"
+    ]
+  },
+  "idleAsides": [
+    "Did you see what CNN just said? They said 'crisis management' like it's a bad thing. Everything I do is crisis management. That's the job.",
+    "Hannity texted. He wants an exclusive from the Situation Room. I told him we'd think about it. We should do it.",
+    "Oil at $115. You know what that means? It means everyone with a truck in Texas is thinking about me right now. Not in a good way.",
+    "The Democrats are already talking impeachment. Impeachment! For defending American interests. These people would impeach Washington for crossing the Delaware.",
+    "Get me Hegseth on the phone. No — don't get me Hegseth. He'll want to bomb something. Get me the Fox producer instead.",
+    "Polymarket has me at 43% approval tomorrow. I've beaten Polymarket before. Remember 2024?",
+    "MBS sent a gift. A gold-plated model of an aircraft carrier. Subtle. Very subtle.",
+    "My Truth Social post about the tanker intercept got 4.2 million views. More than CNN's entire primetime combined. Think about that.",
+    "The Pentagon wants $2 billion more. For what? Missiles? We've got missiles. I want results, not invoices.",
+    "Someone tell the press pool to stop asking about Kushner's travel schedule. It's not relevant. It's a distraction."
+  ],
+  "cardReactions": {
+    "military": {
+      "positive": "Some ships, some planes — make sure they get the footage. I want Tomahawk launches on the evening news.",
+      "reluctant": "Everything. Send everything. I want Iran to wake up tomorrow and see the entire US Navy on their doorstep. That's how you negotiate."
+    },
+    "diplomatic": {
+      "positive": "A deal. I love deals. Nobody makes deals like me. Let's see what they're offering.",
+      "reluctant": "A summit? Sure, I'll do a summit. I did Singapore with Kim and that was beautiful. This could be bigger."
+    },
+    "economic": {
+      "positive": "Sanctions. Easy. Squeeze them until they come to the table. This is what I do best.",
+      "reluctant": "Crush them. Sanctions on everything — oil, banking, shipping, the works. Make it hurt."
+    },
+    "intelligence": {
+      "positive": "Intel. Good. I want to know what they're thinking before they think it.",
+      "reluctant": "Total surveillance. I want to read their emails. I want to know what Tangsiri had for breakfast."
+    },
+    "domestic": {
+      "positive": "The American people. That's who matters. This plays great in the heartland — I can feel it.",
+      "reluctant": "Congress wants attention again. Give them their briefing. Just make sure they know who's in charge."
+    }
+  },
+  "advisorReactions": {
+    "weekStart": [
+      "The ratings are through the roof. Every network is covering us. Let's give them something to talk about.",
+      "Nobody handles a crisis like Trump. The media knows it. The polls know it. Let's make news.",
+      "Fox ran our strait coverage for three hours last night. That's free airtime. Let's keep the momentum."
+    ],
+    "morningBrief": [
+      "Mr. President, Dan Scavino has your media digest and the overnight approval tracking.",
+      "Good morning, Mr. President. The networks are running your footage from yesterday. Here's how it's playing.",
+      "Sir, Scavino flagged the morning cable coverage. Here's what they're saying about you."
+    ],
+    "highTension": "The tension is trending everywhere. This is prime time — the whole world is watching you handle it.",
+    "lowApproval": "The fake news is running hit pieces. The polls dipped. We need a public win to claim, and fast.",
+    "seizure": "They seized our tanker and every camera in the world is rolling. This is either a disaster or a hero moment — your call.",
+    "diplomatic": "The diplomatic angle plays well — looks presidential. The donors love it when you're on the phone with world leaders.",
+    "victory": "This is the biggest win since the Abraham Accords. Maybe bigger. The networks can't ignore this one.",
+    "lowBudget": "The spending numbers look terrible on camera. Congress is using them for attack ads. Get the Gulf states to pay.",
+    "highProxy": "Proxy attacks make great crisis footage. Hit them back on camera and approval spikes.",
+    "uniqueResourceLow": "Political capital is draining. The donor calls are getting shorter. We need a win the media can't spin away.",
+    "uniqueResourceCritical": "Congress is drafting articles. The donors are pulling out. One more public win or it's over."
+  },
+  "restrictedCards": [],
+  "restrictionRefusals": {},
+  "epilogues": {
+    "diplomatic": "They said you couldn't do it. They said you were too unpredictable, too brash, too everything. And maybe they were right about all of that. But the deal is signed. Not the grand deal. You learned that grand deals are for Nobel speeches, not for the Persian Gulf. The deal that worked was smaller, uglier, full of compromises your base doesn't love and Iran's hardliners hate. But tankers are sailing. Oil is flowing. And on the cover of Time magazine, for the third time (but who's counting), is your face, with the headline: \"The Deal Nobody Wanted.\" You frame it anyway.",
+    "military": "The carrier group is coming home. You're on the flight deck for the photo op, obviously. The sailors love you. The polls love you. The defense contractors really love you. Iran's navy is functionally neutered, Tangsiri is under house arrest, and the strait is open under American escort. It cost more than anyone will publicly admit, in dollars, in standing, in the quiet funerals that didn't make the news. But you learned something in this crisis that surprised even you: sometimes the threat of the deal is more powerful than the deal itself. You'll never say that out loud, of course.",
+    "decline": "The strait is technically open. Oil is technically flowing. Your approval is technically above water. Everything is technically fine. The deal you cut with Iran is held together by duct tape and mutual exhaustion. Your base pretends to celebrate. The media pretends to care. You pretend it was the plan all along. In the quiet of the Oval Office, you stare at the portrait of Andrew Jackson and think: he would have just blown the whole thing up. Maybe that would have been better. Maybe not. The Art of the Deal, it turns out, sometimes means the deal nobody wanted, including you."
+  },
+  "uniqueEvents": {
+    "T01_fox_news_call": {
+      "title": "THE FOX NEWS CALL",
+      "description": "Fox & Friends is calling. They want you live in 10 minutes. A vintage Trump performance could rally the base — or start an international incident.",
+      "choices": [
+        {
+          "label": "Go on Fox — vintage Trump",
+          "flavor": "\"Iran is WEAK. We are STRONG. They will learn!\" 40M views in 2 hours. Your staff is already doing damage control."
+        },
+        {
+          "label": "Decline — stay presidential",
+          "flavor": "Your team is shocked. Fox runs a segment questioning your \"energy.\" Your base wonders what happened."
+        },
+        {
+          "label": "Go on Fox but message Iran directly",
+          "flavor": "\"Supreme Leader — if you're watching, and I know you are — call me.\" Unorthodox. But Iran's back-channel lights up."
+        }
+      ]
+    },
+    "T02_deal_on_table": {
+      "title": "THE DEAL ON THE TABLE",
+      "description": "Your advisors have a framework: comprehensive grand deal with Iran. Sanctions relief, security guarantees, economic partnership. The Nobel Prize play.",
+      "choices": [
+        {
+          "label": "Go big — comprehensive grand deal",
+          "flavor": "Everything on the table. If Iran engages, this changes everything. If not, humiliation."
+        },
+        {
+          "label": "Start small — tanker release deal",
+          "flavor": "A narrow deal on safe passage. Achievable. Your base asks \"where's the big deal?\""
+        },
+        {
+          "label": "Announce on Truth Social first",
+          "flavor": "Create public pressure on Iran. Diplomats despair. But 50M views forces Iran to respond."
+        }
+      ]
+    },
+    "T03_political_capital_crisis": {
+      "title": "POLITICAL CAPITAL CRISIS",
+      "description": "Congress is circling. Your political capital is hemorrhaging. Without a win soon, they'll pull the plug on your war spending.",
+      "choices": [
+        {
+          "label": "Rally — you know how to work a crowd",
+          "flavor": "Biggest rally since 2020. Swing state. \"Nobody handles Iran like Trump!\" The base erupts."
+        },
+        {
+          "label": "Cut a deal with Congressional leadership",
+          "flavor": "You give them a pet project. They give you support. Transactional. Effective."
+        },
+        {
+          "label": "Fire someone — publicly, dramatically",
+          "flavor": "Heads roll on live TV. The base loves it. Staff morale craters. Intel flow slows."
+        }
+      ]
+    },
+    "T04_iran_backchannel": {
+      "title": "IRAN'S BACK-CHANNEL RESPONSE",
+      "description": "Your Fox News message to Iran worked. Araghchi has responded through Omani intermediaries. A face-to-face is possible.",
+      "choices": [
+        {
+          "label": "Send Kushner as envoy",
+          "flavor": "Secret meeting in a Gulf state. High-risk, high-reward. If leaked, it's a scandal."
+        },
+        {
+          "label": "Official State Department channels",
+          "flavor": "Proper channels. Slower but safer. Araghchi is disappointed by the bureaucracy."
+        },
+        {
+          "label": "Ignore — let them stew",
+          "flavor": "You sent the message. They received it. Let them wonder. Channel stays open."
+        }
+      ]
+    },
+    "T02_deal_response": {
+      "title": "IRAN RESPONDS TO THE DEAL",
+      "description": "Iran has responded to your grand deal proposal. Araghchi says the framework is \"interesting but insufficient.\" Tangsiri says it's \"American surrender theater.\"",
+      "choices": [
+        {
+          "label": "Sweeten the offer",
+          "flavor": "More sanctions relief. More guarantees. The deal takes shape. Hawks are furious."
+        },
+        {
+          "label": "Walk away — they had their chance",
+          "flavor": "\"I made the best deal in history and they said no. Their loss.\" The base loves it."
+        },
+        {
+          "label": "Leak Tangsiri's response to embarrass him",
+          "flavor": "The world sees Iran's hardliner blocking peace. Araghchi is furious at Tangsiri."
+        }
+      ]
+    }
+  }
+}

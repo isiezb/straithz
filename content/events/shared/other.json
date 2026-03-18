@@ -1,634 +1,6 @@
 {
-  "decisionEvents": {
-    "secret_talks": {
-      "id": "secret_talks",
-      "title": "SECRET BACK-CHANNEL",
-      "description": "Iranian moderates have reached out through Omani intermediaries. They propose secret talks — but if leaked, hawks on both sides will be furious.",
-      "choices": [
-        {
-          "label": "Accept the talks",
-          "flavor": "The back-channel opens. Both sides agree to a cooling-off period.",
-          "consequence": "You send your envoy to Muscat. The talks begin in a whitewashed villa overlooking the Gulf of Oman. Both sides agree to a cooling-off period — reduced naval patrols, no new seizures, a forty-eight-hour window of calm. It is fragile, unofficial, and deniable. But for the first time, someone on the other side looked you in the eye and said 'enough.'"
-        },
-        {
-          "label": "Reject — too risky",
-          "flavor": "The opportunity passes. Iranian hardliners use the rejection as propaganda.",
-          "consequence": "You reject the offer. The risk calculus does not favor secret diplomacy — too many variables, too many leakers, too many ways this becomes your scandal. The Omani ambassador nods sadly and relays your response. In Tehran, the moderates lose their argument. Iranian hardliners use the rejection as proof that America was never serious about peace."
-        },
-        {
-          "label": "Leak it to the press",
-          "flavor": "You gain public credit but burn the diplomatic bridge.",
-          "consequence": "You leak the offer to a friendly reporter. The headline reads: 'Iran Begs for Secret Talks as Strait Crisis Deepens.' You gain the public credit for being the reasonable party. But the diplomatic bridge is burned — the Omani ambassador calls personally to express his 'profound disappointment.' The back-channel goes dark."
-        }
-      ],
-      "scene": "The message arrives via the Omani ambassador, handwritten on embassy stationery in Farsi and English. Iranian moderates — the Araghchi faction, your analysts believe — are proposing secret talks. Muscat, neutral ground, no staff beyond two per side. The terms are simple: show up and talk. But the intelligence assessment attached to the message carries a warning in red ink: if these talks leak, hawks on both sides will use the exposure to destroy the diplomatic track permanently. Your chief of staff reads the message over your shoulder. 'This could be the breakthrough,' he says. Then, quieter: 'Or the trap.'",
-      "image": "assets/event-e10-shirazi.png"
-    },
-    "oman_talks": {
-      "id": "oman_talks",
-      "title": "MUSCAT BACK-CHANNEL",
-      "description": "Omani intermediaries report Iran's Foreign Minister Araghchi says a nuclear deal is \"within reach.\" He proposes secret talks in Muscat. Three days later, your intelligence says IRGC is planning a major provocation.",
-      "choices": [
-        {
-          "label": "Send negotiators to Muscat",
-          "flavor": "Three hours of talks produce a framework. But is the IRGC on the same page as the Foreign Ministry?",
-          "consequence": "You agree to direct talks. Your envoy meets the Iranian delegation in a villa overlooking the Gulf of Oman. The conversations are tense, halting, full of distrust, but they are conversations. For the first time in weeks, someone on the other side is listening."
-        },
-        {
-          "label": "Demand preconditions first",
-          "flavor": "You insist on a tanker release before talks. Iran walks away. The window narrows.",
-          "consequence": "You send a counter-proposal through the Omanis, adding conditions that you know Iran will resist. The move buys time and tests Tehran's seriousness without committing you to anything. The diplomatic dance continues at arm's length."
-        },
-        {
-          "label": "It's a distraction — reject",
-          "flavor": "Hawks applaud. Doves despair. The IRGC provocation happens anyway.",
-          "consequence": "You reject the overture and leak it to the press. The headline — 'Iran Seeks Talks as Crisis Deepens' — plays well domestically but slams the door on diplomacy. The Omani foreign minister returns to Muscat empty-handed and disappointed."
-        }
-      ],
-      "scene": "The Omani foreign minister arrives at your hotel suite in Muscat with a handwritten letter from Iran's foreign minister. The calligraphy is elegant, the language formal, but the message is unmistakable: Tehran is willing to negotiate. You are sitting in the same city where the back-channel talks that led to the original Iran nuclear deal began years ago. The ghosts of past diplomacy hover in the warm night air.",
-      "image": "assets/event-e20-muscat.png"
-    },
-    "backchannel_progress": {
-      "id": "backchannel_progress",
-      "title": "BACK-CHANNEL UPDATE",
-      "description": "Your Omani intermediary reports back. The Iranian delegation showed up — a significant signal. They presented a list of demands: sanctions relief on medical supplies, return of frozen assets, and a public statement acknowledging Iranian sovereignty. In exchange, they offer a 48-hour shipping ceasefire and the release of 4 detained crew members.",
-      "choices": [
-        {
-          "label": "Accept the ceasefire deal",
-          "flavor": "Both sides stand down. For the first time in weeks, the strait is quiet. But hawks on both sides are furious.",
-          "consequence": "You accept the framework and begin implementation immediately, ordering a partial naval drawdown as a show of good faith. The Strait quiets. Oil begins to flow. The ceasefire holds with the delicacy of wet paper, but it holds."
-        },
-        {
-          "label": "Counter-offer: ceasefire first, then talks",
-          "flavor": "A reasonable position. The Omanis carry it back. Now you wait.",
-          "consequence": "You counter-propose, pushing for broader terms that include proxy forces and the nuclear program. The Iranians balk but do not walk away. The negotiations enter a new phase — harder, slower, but more comprehensive."
-        },
-        {
-          "label": "Reject — these terms are weakness",
-          "flavor": "The channel goes dark. Iran's moderates lose face. The hardliners say \"we told you so.\"",
-          "consequence": "You pocket the concessions and demand more, exploiting the moderates' desperation to show results. The talks collapse under the weight of your maximalism. The Omani intermediary goes home disgusted."
-        }
-      ],
-      "scene": "The Omani intermediary returns with news from Tehran. The back-channel talks have produced a framework — tentative, fragile, full of ambiguities that both sides are pretending not to notice. The moderates in Tehran are offering a phased de-escalation: reduced IRGC naval activity in exchange for partial sanctions relief. Your hawks call it a trap. Your diplomats call it a breakthrough. The truth is probably somewhere in between."
-    },
-    "backchannel_ceasefire_test": {
-      "id": "backchannel_ceasefire_test",
-      "title": "CEASEFIRE UNDER PRESSURE",
-      "description": "Day two of the ceasefire. IRGC fast boats are still patrolling — technically not a violation, but provocative. Then: an IRGC commander's nephew is caught planting a limpet mine on a Kuwaiti-flagged tanker. Iran claims he acted alone. Your military advisors want to respond. The Omani mediator begs you not to.",
-      "choices": [
-        {
-          "label": "Hold the ceasefire — accept Iran's explanation",
-          "flavor": "You absorb the political cost. But the ceasefire holds. Oil begins to flow. The Omanis call it \"a brave choice.\"",
-          "consequence": "You maintain the ceasefire and address the violations through diplomatic channels, trusting the framework to absorb the shock. Your ambassador in Muscat delivers a firm but private warning. The repositioning slows but does not stop."
-        },
-        {
-          "label": "Demand Iran arrest the commander publicly",
-          "flavor": "Iran refuses. The ceasefire technically holds but trust is damaged. Both sides are watching for the next provocation.",
-          "consequence": "You put your forces on heightened alert without breaking the ceasefire, matching Iranian repositioning with quiet movements of your own. The shadow dance continues beneath the surface of peace."
-        },
-        {
-          "label": "Strike the IRGC base — ceasefire is over",
-          "flavor": "Tomahawks hit Bandar Abbas. The ceasefire is dead. Iran's moderates are silenced for a generation.",
-          "consequence": "You declare the ceasefire violated and resume operations, arguing that Iran's actions prove the agreement was a ruse. The fragile peace shatters. The moderates in Tehran who staked their credibility on the deal are finished."
-        }
-      ],
-      "scene": "The ceasefire is seventy-two hours old. Both navies are standing down, tankers are beginning to move through the Strait, and the world is exhaling for the first time in weeks. Then your intelligence team flags anomalous activity: IRGC units repositioning near the coast, drone launches from Qeshm Island, encrypted traffic spiking on military frequencies. The ceasefire may be holding on the surface, but underneath, something is stirring."
-    },
-    "backchannel_counteroffer_response": {
-      "id": "backchannel_counteroffer_response",
-      "title": "IRAN'S RESPONSE",
-      "description": "The Omani intermediary returns. Iran's counter-counter-proposal: they'll reduce IRGC patrols by 50% for 72 hours as a \"gesture of goodwill,\" but no formal ceasefire. They want reciprocity — pull one carrier group back to show good faith. The moderates are sticking their necks out. This is their last offer.",
-      "choices": [
-        {
-          "label": "Accept — pull a carrier back",
-          "flavor": "USS Truman moves to the Arabian Sea. IRGC boats thin out. A fragile de-escalation begins.",
-          "consequence": "You accept the counteroffer with minor modifications, choosing to build on imperfect progress rather than hold out for a perfect agreement that may never come. The signing is quiet, the handshakes tentative, the relief palpable."
-        },
-        {
-          "label": "Agree to patrol reduction but keep carriers",
-          "flavor": "A half-measure that satisfies neither side fully. But the shooting stops, for now.",
-          "consequence": "You ask for more time to consult with allies, using the delay to shore up domestic support and international buy-in. The Iranians agree to wait, though their patience has limits."
-        },
-        {
-          "label": "Reject — Iran must concede first",
-          "flavor": "The channel collapses. The Omani ambassador says \"we tried.\" Iran's moderates won't recover from this.",
-          "consequence": "You reject the counteroffer, demanding terms you know Iran cannot accept. The back channel goes silent. The Omani intermediary delivers your response and does not return."
-        }
-      ],
-      "scene": "Iran's counteroffer arrives through the Omani channel. It is more modest than your proposal but more ambitious than their opening position. They will accept partial sanctions relief tied to a ninety-day de-escalation timeline, with verification by Omani observers. The deal is imperfect, full of loopholes and unresolved questions, but it is a deal. Your negotiators look at you expectantly."
-    },
-    "oil_markets_panic": {
-      "id": "oil_markets_panic",
-      "title": "OIL MARKETS PANIC",
-      "description": "Oil futures jumped $15/barrel overnight. The Energy Secretary is on the phone. Gas prices are on every cable news chyron. The Saudi Energy Minister might increase production — if you ask nicely.",
-      "choices": [
-        {
-          "label": "Release strategic petroleum reserves",
-          "flavor": "Markets calm immediately. But reserves are finite — you've bought 10 days, not a solution.",
-          "consequence": "You sign the order to release strategic petroleum reserves. The effect is immediate — futures drop eight dollars within the hour. Markets exhale. Gas station owners adjust their signs downward. But you watch the SPR counter tick down and feel the finite nature of the relief. You have bought yourself ten days, maybe twelve. The reserves are not a solution. They are borrowed time."
-        },
-        {
-          "label": "Call Saudi — beg for increased production",
-          "flavor": "MBS agrees — for a price you'll pay later. The humiliating leak comes on Day 20.",
-          "consequence": "You swallow your pride and call Riyadh. MBS takes the call on the third ring, which means he was waiting. The conversation is cordial, professional, and deeply humiliating. He agrees to increase production by 500,000 barrels per day. The price will come later — it always does. On Day 20, the details of this conversation will leak, and the editorial cartoons will not be kind."
-        },
-        {
-          "label": "Let markets find their own level",
-          "flavor": "Pain now, stability later. The opposition runs \"gas prices\" attack ads within hours.",
-          "consequence": "You do nothing. You tell your Energy Secretary to let the markets find their own level. The pain is immediate — gas stations raise prices, cable news runs 'CRISIS AT THE PUMP' graphics, and the opposition party's ad team begins cutting attack spots. But you know that artificial intervention only delays the reckoning. The markets will adjust. Your approval rating, however, is adjusting faster."
-        }
-      ],
-      "scene": "The Bloomberg terminal in the corner of the Situation Room flashes red numbers that climb like a fever. Oil futures jumped fifteen dollars a barrel overnight, and the trajectory shows no ceiling. Your Energy Secretary is on the phone, his voice strained: 'Gas prices are on every cable news chyron in America. Trucking companies are calling about fuel surcharges.' Through the window, you can see a CNN satellite truck setting up on the North Lawn. The Saudi Energy Minister has made it known, through back channels, that he might increase production — if you ask nicely. The word 'nicely' carries the weight of a thousand concessions.",
-      "image": "assets/event-e08-oil-panic.png"
-    },
-    "oil_spike": {
-      "id": "oil_spike",
-      "title": "OIL MARKET PANIC",
-      "description": "Oil futures jumped $15/barrel. Energy Secretary is on the phone — should you release reserves?",
-      "choices": [
-        {
-          "label": "Release reserves",
-          "flavor": "SPR release calms markets. Prices stabilize.",
-          "consequence": "You authorize the SPR release. The announcement goes out at 9:00 AM Eastern, timed for maximum market impact. Futures drop immediately — six dollars in the first hour. The physical drawdown begins at Bryan Mound and Big Hill. Markets stabilize. Gas station signs tick downward. But the Strategic Petroleum Reserve counter on your desk shows a number that gets smaller every day."
-        },
-        {
-          "label": "Verbal intervention only",
-          "flavor": "Your press conference helps a little. Markets remain jittery.",
-          "consequence": "You step to the podium for a verbal intervention. 'Markets should have confidence in the stability of global oil supply,' you say, your voice calibrated for maximum steadiness. It helps — a little. Futures drop three dollars on the statement. But traders are professional skeptics, and words without barrels behind them have a short half-life. Markets remain jittery through the week."
-        },
-        {
-          "label": "Let markets correct",
-          "flavor": "Gas prices soar. Critics call you out of touch.",
-          "consequence": "You let the markets correct on their own. No intervention, no statement, no signal. Gas prices soar past six dollars in some markets. Cable news discovers that your Energy Secretary drives an electric vehicle. Critics call you out of touch. The economic pain is real and politically devastating, but you hold to the principle that government intervention distorts markets and delays adjustment."
-        }
-      ],
-      "scene": "The trading floor at NYMEX looks like a hospital during a code blue. Oil futures have spiked fifteen dollars a barrel in overnight trading, and the trajectory is vertical. Your Energy Secretary's voice on the phone carries the particular strain of a man who has been fielding calls from refinery executives since 4 AM. 'We need to signal stability,' he says. 'Or this becomes a panic.' The gas price ticker on your desk — a daily briefing item now — reads $5.47 and climbing. Trucking companies are calling the Transportation Department about emergency fuel allocations. The markets are not just nervous; they are beginning to price in the possibility that this crisis has no resolution."
-    },
-    "china_oil_deal": {
-      "id": "china_oil_deal",
-      "title": "CHINA'S SHADOW FLEET",
-      "description": "Satellite imagery shows 15 Chinese-flagged tankers loading Iranian oil at Kharg Island. 11.7 million barrels shipped to China since the crisis began. Your sanctions are being openly defied.",
-      "choices": [
-        {
-          "label": "Secondary sanctions on Chinese banks",
-          "flavor": "SWIFT cuts off three Chinese banks. Beijing is furious. Iran's revenue collapses. Trade war escalates.",
-          "consequence": "You impose secondary sanctions on Chinese entities involved in the deal, threatening to cut them off from the American financial system. Beijing retaliates with tariffs. The economic escalation spirals, but Iran's oil revenue takes a hit."
-        },
-        {
-          "label": "Quiet diplomatic pressure",
-          "flavor": "Beijing makes promises. The shadow fleet shrinks slightly. It's not enough.",
-          "consequence": "You quietly negotiate with Beijing, offering trade concessions in exchange for reduced Iranian oil purchases. The haggling is ugly and transactional, but you chip away at Iran's economic lifeline without a public confrontation."
-        },
-        {
-          "label": "Look the other way",
-          "flavor": "Pragmatism over principle. Iran keeps selling. Hawks in Congress are furious.",
-          "consequence": "You let the deal stand, calculating that antagonizing China while managing Iran would stretch your leverage too thin. Tehran gets its money. Beijing gets its oil. Your sanctions regime develops a leak that will only grow."
-        }
-      ],
-      "scene": "Your trade representative bursts into the morning briefing with intercepts showing that China and Iran have signed a secret oil-for-infrastructure agreement. Beijing will purchase Iranian crude at a steep discount, paid in yuan, effectively creating a sanctions-proof lifeline for Tehran's economy. The deal undermines your entire economic pressure strategy. Beijing's ambassador requests an urgent meeting."
-    },
-    "gas_price_crisis": {
-      "id": "gas_price_crisis",
-      "title": "GAS HITS $6 PER GALLON",
-      "description": "Average US gas price breaks $6/gallon. Trucking companies halt routes. Airlines cancel flights. The economic pain is no longer abstract — it's at every pump in America.",
-      "choices": [
-        {
-          "label": "Emergency SPR release + price cap",
-          "flavor": "Gas drops to $5.20. Temporary relief. But the reserve is running low.",
-          "consequence": "You release petroleum reserves and suspend the federal gas tax, providing immediate relief at the pump. The fiscal cost is staggering, but the political bleeding stops. For now."
-        },
-        {
-          "label": "Blame Iran — rally patriotism",
-          "flavor": "\"Iran is attacking YOUR wallet.\" The message resonates but doesn't lower prices.",
-          "consequence": "You go on national television and level with the American people, explaining the strategic stakes and asking for patience. You frame the sacrifice as patriotic duty. Some rally to the flag. Others change the channel."
-        },
-        {
-          "label": "Fast-track domestic drilling",
-          "flavor": "Environmental groups protest. Production won't increase for months. But it's a signal.",
-          "consequence": "You pressure oil companies to reduce their margins and accelerate domestic drilling permits. The industry pushes back, but the optics of 'doing something' blunt the worst of the political damage."
-        }
-      ],
-      "scene": "The number on the gas station signs back home has become a political weapon. Six dollars, seven dollars, climbing toward eight. Congressional switchboards are melting. Truckers are blockading refineries. Your domestic policy advisor lays the polling data on your desk like a coroner presenting an autopsy. Your approval rating is in freefall, tied directly to the price at the pump."
-    },
-    "the_leak": {
-      "id": "the_leak",
-      "title": "THE LEAK",
-      "description": "The Washington Post has your classified strategy memo. Every detail of your Iran approach is now public. Someone in your inner circle betrayed you. The press is circling.",
-      "choices": [
-        {
-          "label": "Launch an aggressive investigation — find the leaker",
-          "flavor": "You burn political capital hunting the mole. If you find them, credibility skyrockets.",
-          "consequence": "You launch the investigation immediately. The FBI counterintelligence team arrives within hours, polygraphs in tow. Your staff is terrified — the innocent alongside the guilty. For three days, the investigation dominates internal operations, burning political capital with every interview. But if you find the leaker, and you make an example, your credibility will be ironclad. The mole hunt begins."
-        },
-        {
-          "label": "Spin it — frame the leak as showing your brilliant strategy",
-          "flavor": "Bold. Iran now knows your playbook. But your base thinks you're playing 4D chess.",
-          "consequence": "You lean back and smile. Your communications director catches the signal. Within an hour, the talking points are out: 'The leaked memo demonstrates the President's brilliant multi-track strategy.' It is audacious spin. Iran now knows your playbook, which is a genuine problem. But your base thinks you are playing four-dimensional chess, and the news cycle shifts from 'security breach' to 'strategic genius.'"
-        },
-        {
-          "label": "Ignore it — refuse to dignify leaks",
-          "flavor": "The news cycle moves on. But your staff knows there are no consequences for betrayal.",
-          "consequence": "You say nothing. No investigation, no spin, no comment. The news cycle churns for forty-eight hours and then moves on to the next outrage. But in the quiet corridors of your administration, a message has been received: there are no consequences for betrayal. The next leak will come faster."
-        }
-      ],
-      "scene": "Your chief of staff walks in holding a tablet, his face the color of old cement. The Washington Post homepage fills the screen: 'EXCLUSIVE: Classified Strategy Memo Reveals Administration's Iran Playbook.' Every detail is there — the red lines, the escalation triggers, the fallback positions, even the code name for the back-channel. Someone in your inner circle has betrayed you. The secure conference room suddenly feels much larger and much emptier. Your senior advisors sit around the table, and one of them did this. You study their faces. The press pool is already gathering outside the West Wing.",
-      "image": "assets/event-e17-leak.png"
-    },
-    "intel_breakthrough": {
-      "id": "intel_breakthrough",
-      "title": "THE INTELLIGENCE BREAKTHROUGH",
-      "description": "A SIGINT intercept combined with a HUMINT source has revealed Iran's true strategic objective. This isn't about the strait — it's about forcing recognition of Iran's regional hegemony. Every move they've made was building toward this moment. The question is what you do with the knowledge.",
-      "choices": [
-        {
-          "label": "Share with allies — build a coalition response",
-          "flavor": "Allies are galvanized. But your intelligence methods are exposed. Future intel quality degrades.",
-          "consequence": "You share the intelligence with allies — a secure briefing for the Five Eyes, then NATO, then key Asian partners. The reaction is electric. Suddenly, disparate events click into a coherent picture. A coalition response begins to form, unified by shared understanding. But your intelligence methods are now exposed across a dozen foreign services. Future collection quality will degrade. You traded tomorrow's secrets for today's alliance."
-        },
-        {
-          "label": "Keep it classified — act unilaterally",
-          "flavor": "You know something nobody else does. That's power. But allies will feel blindsided later.",
-          "consequence": "You close the folder and lock it in your personal safe. Only three people know: you, the CIA briefer, and the DNI. The knowledge sits in your chest like a coal — hot, dangerous, powerful. You now see moves that no one else can see. But when the moment comes to act on it, your allies will feel blindsided, and blind allies make unpredictable partners."
-        },
-        {
-          "label": "Leak to a trusted journalist — shape the narrative",
-          "flavor": "The public needs to know. Iran changes plans. The intelligence becomes partly obsolete. But public pressure on Iran surges.",
-          "consequence": "You call Emily Watkins at the Times. 'I have something for you,' you say. 'On background.' The story runs within twelve hours, and suddenly the world sees what you see. Iran scrambles to change plans — the intelligence is partly obsolete now. But public pressure on Tehran surges, and the diplomatic landscape shifts. You used a secret as a weapon. It worked. This time."
-        }
-      ],
-      "characterFlavor": {
-        "trump": "The CIA briefer's trembling hands tell you this is big — the kind of intelligence revelation that plays perfectly in a declassified press conference with the right production value.",
-        "hegseth": "You absorb the intelligence assessment with a tactician's focus — if Iran's true objective is regional hegemony, then every force disposition you've planned needs recalibrating.",
-        "kushner": "Understanding Iran's real endgame means understanding their negotiating position. This isn't just intelligence — it's the foundation for a deal framework worth hundreds of millions.",
-        "fuentes": "The intelligence confirms what your base has been saying for years — Iran's ambitions are regional, not American. We're fighting someone else's war.",
-        "asmongold": "The briefer reveals Iran's true strategy, and it maps exactly to the pattern you identified on stream last week. If chat clipped that analysis, your credibility metric is about to explode."
-      },
-      "scene": "The intelligence arrives at 2:14 AM — a convergence of signals intercepts and a human source in Tehran that changes everything. Your CIA briefer spreads the analysis across the conference table, her hands trembling slightly with the weight of what she is about to say. 'Sir, this isn't about the strait. It never was.' The intercepts reveal Iran's true strategic objective: forcing international recognition of Iranian regional hegemony. Every seizure, every provocation, every proxy attack — it was all building toward this moment of maximum leverage. The question is no longer what Iran is doing but what you do with the knowledge that you understand their endgame.",
-      "image": "assets/event-e21-intel-breakthrough.png"
-    },
-    "intel_reveal": {
-      "id": "intel_reveal",
-      "title": "INTELLIGENCE BREAKTHROUGH",
-      "description": "Your agents located Iran's mine-laying operations. Acting on it would burn the source.",
-      "choices": [
-        {
-          "label": "Strike the mine depot",
-          "flavor": "Cruise missiles destroy the depot. Mine threat neutralized.",
-          "consequence": "You authorize the strike. Eight cruise missiles reduce the depot to smoking rubble. Secondary explosions confirm the mines were real. The mine threat is neutralized overnight. But in Tehran, IRGC counterintelligence begins working backward from the strike pattern, and your human source has approximately forty-eight hours before the knock comes at his door."
-        },
-        {
-          "label": "Share with allies quietly",
-          "flavor": "Coalition partners mine-sweep the areas. Source stays safe.",
-          "consequence": "You share the intelligence with coalition partners through secure channels. Allied minesweeping vessels deploy to the areas identified by your source, clearing sea lanes under the cover story of 'routine mine countermeasures.' The operation is slower but effective. Your source remains safe, and the coalition deepens its trust in American intelligence sharing."
-        },
-        {
-          "label": "Hold the intelligence",
-          "flavor": "You file it for future use.",
-          "consequence": "You file the intelligence and do nothing. The analysis goes into a secure vault, tagged for future reference. Your source remains safe, the mine depot remains operational, and the knowledge sits like a loaded weapon — dangerous until you decide to pull the trigger, but useless until then."
-        }
-      ],
-      "scene": "The intelligence analyst stands at the Situation Room podium, her hands steady despite what she is about to reveal. 'We have located Iran's primary mine-laying operation,' she says, clicking to a satellite image so sharp you can read the hull numbers. A warehouse complex near Bandar Abbas, three vessels loaded with mines, and a timeline that suggests deployment within seventy-two hours. The intelligence comes from two sources: a signals intercept and a human asset who has been cultivated for four years. Acting on this intelligence will neutralize the mine threat. It will also burn the source — the patterns of response will tell Iranian counterintelligence exactly where the leak is."
-    },
-    "assassination_intel": {
-      "id": "assassination_intel",
-      "title": "CREDIBLE THREAT DETECTED",
-      "description": "Intelligence agencies detect a credible assassination threat against senior officials. The source is unclear — could be Iranian or domestic.",
-      "choices": [
-        {
-          "label": "Increase security protocols",
-          "flavor": "Security is tightened. Operations slow but the threat is contained.",
-          "consequence": "Security protocols go to maximum. Your movements are restricted, public appearances cancelled, the motorcade route randomized. The government operates from hardened facilities for seventy-two hours. Operations slow to a crawl as every meeting requires additional security screening. The threat is contained, but the image of a government operating from bunkers is not one that inspires confidence."
-        },
-        {
-          "label": "Public announcement",
-          "flavor": "Going public rallies support but raises tensions.",
-          "consequence": "You go public. A carefully worded statement acknowledges the threat without naming the source. 'We will not be intimidated,' you say from the podium. The public rallies in support. But in Tehran and in domestic extremist chat rooms, the announcement is read as confirmation that their operations are having an effect. Tensions ratchet higher."
-        },
-        {
-          "label": "Ignore — focus on the mission",
-          "flavor": "You choose to focus on the strait. The risk remains.",
-          "consequence": "You ignore the threat and maintain your normal schedule. The Secret Service protests formally. You appear at a public event the next morning, shaking hands and projecting calm. The risk is real — the intelligence is specific enough to include a timeline. But showing fear is a concession you refuse to make. Your security detail watches every rooftop."
-        }
-      ],
-      "scene": "The briefing is delivered by a CIA officer who does not give her name. She places a red-bordered folder on the table and opens it to reveal a surveillance photograph: a man in civilian clothes, photographed through a car window in Istanbul. 'We have detected a credible assassination threat against senior officials involved in the strait crisis,' she says. 'The operational pattern is consistent with IRGC Quds Force, but we cannot rule out domestic extremists.' She pauses. 'The threat level is imminent.' The room temperature seems to drop. Your Secret Service detail, who were briefed thirty minutes ago, have already tripled the protection perimeter.",
-      "image": "assets/event-assassination.png"
-    },
-    "cyber_attack_decision": {
-      "id": "cyber_attack_decision",
-      "title": "CYBER OPERATION PROPOSAL",
-      "description": "NSA can disable Iran's naval command network for 48 hours. If attributed, it's an act of war.",
-      "choices": [
-        {
-          "label": "Approve the operation",
-          "flavor": "Iran's boats go silent for two days. They suspect sabotage.",
-          "consequence": "You approve the operation. The attack goes live at 0200 local time. Within the hour, Iran's naval command frequencies go silent. Fast-boats return to port, unable to coordinate. For forty-eight hours, the strait is the quietest it has been since the crisis began. Iran suspects sabotage — they know, but they cannot prove it. The deniability holds. For now."
-        },
-        {
-          "label": "Too dangerous — deny",
-          "flavor": "You shelve the plan. Better to save that card.",
-          "consequence": "You deny the operation. The USB drive goes back in its sealed pouch. 'Too dangerous,' you tell the NSA director. 'Save that card for when we really need it.' She nods — she expected this answer. The cyber weapon sits in reserve, growing more valuable with each day you do not use it. The question is whether the day you really need it comes before the vulnerability is patched."
-        }
-      ],
-      "scene": "The NSA director arrives with a single USB drive in a sealed pouch. The briefing is for your eyes only — no aides, no notes, no recording. 'We have penetrated Iran's naval command-and-control network,' she says, her voice flat. 'On your authorization, we can disable their entire fleet coordination system for forty-eight hours. Their boats will be blind, deaf, and unable to communicate.' She pauses. 'If this is attributed to us, it constitutes an act of war under most international frameworks. If it's not attributed, it's the single most effective non-kinetic action we can take.' The USB drive sits on the table between you like an unexploded ordnance.",
-      "image": "assets/event-e23-cyber.png"
-    },
-    "wargame_leak": {
-      "id": "wargame_leak",
-      "title": "WARGAME SIMULATION LEAKED",
-      "description": "A Pentagon wargame simulation showing US casualties in a strait conflict was leaked to the press. Public is alarmed.",
-      "choices": [
-        {
-          "label": "Downplay and investigate leak",
-          "flavor": "The story dominates the news cycle. The leak investigation goes nowhere.",
-          "consequence": "You downplay it and investigate. 'Wargames model worst cases — that's their purpose,' your spokesperson says. The story dominates the news cycle for three days while the leak investigation produces nothing. The public's memory is short, but the seed of doubt has been planted. People are now imagining body bags."
-        },
-        {
-          "label": "Use it as a warning",
-          "flavor": "You frame it as evidence for de-escalation. Public opinion shifts toward diplomacy.",
-          "consequence": "You use the leak as a weapon. In a press conference, you hold up the simulation report. 'This is exactly why we need de-escalation,' you say. 'This is what war looks like. We must find another way.' Public opinion shifts measurably toward diplomacy. The hawks are outflanked by their own wargame."
-        },
-        {
-          "label": "Double down on readiness",
-          "flavor": "\"We train for worst cases so they never happen.\" Hawks love it.",
-          "consequence": "You double down on readiness. 'We train for worst cases so they never happen,' you say, your jaw set. 'Our military is prepared for any contingency.' Hawks applaud. Military families feel reassured. Iran's intelligence analysts read between the lines and conclude you are preparing for exactly the scenario the wargame modeled."
-        }
-      ],
-      "scene": "The headline lands like a bomb: 'Pentagon Wargame Projects 2,000 US Casualties in Strait Conflict.' Someone leaked a classified simulation — Operation Crimson Tide, a tabletop exercise run at the Naval War College six weeks ago. The simulation modeled a full-scale confrontation with Iran and the results were sobering: heavy casualties, two ships damaged, one sunk, and a conflict that lasted fourteen months. The public is alarmed. Gold prices spike. Your own staff is reading the article on their phones with expressions that range from anger to fear. The Pentagon's spokesperson is demanding guidance. The leaker is still unknown."
-    },
-    "cyber_port_attack": {
-      "id": "cyber_port_attack",
-      "title": "IRANIAN CYBER ATTACK — FUJAIRAH PORT",
-      "description": "APT33 (IRGC-affiliated) has hit Fujairah port systems with wiper malware. Terminal operating systems are down. 40+ tankers can't load or unload. It's the digital equivalent of mining the strait.",
-      "choices": [
-        {
-          "label": "Counter-cyber operation — hit Iranian ports",
-          "flavor": "NSA retaliates. Bandar Abbas port goes dark for 72 hours. Cyber escalation spiral begins.",
-          "consequence": "You authorize a retaliatory cyber operation against Iran's military command and control networks. Your hackers penetrate deep, disabling radar systems and communications along the Iranian coast. It is invisible warfare, deniable and devastating."
-        },
-        {
-          "label": "Restore systems — defensive posture",
-          "flavor": "US Cyber Command deploys incident response teams. Systems back online in 5 days. Vulnerability patched.",
-          "consequence": "You dispatch a cyber recovery team to help restore the port's systems while hardening your own naval communications against similar attacks. The defensive approach is prudent but does nothing to deter the next strike."
-        },
-        {
-          "label": "Public attribution and sanctions",
-          "flavor": "You name and shame APT33 operators. Sanctions on IRGC Cyber Command. Allies express solidarity.",
-          "consequence": "You bring the evidence of Iran's cyber attack to the international community, building a case for coordinated sanctions against Iran's cyber warfare units. The attribution is solid, and the diplomatic damage to Tehran is real."
-        }
-      ],
-      "scene": "Bandar Abbas port's computer systems go dark at 0200 local time. Your cyber command reports a sophisticated attack — Iranian origin, targeting the port's automated cargo handling and navigation systems. Ships in the harbor cannot dock or depart. The attack is a signal: Iran can disrupt the Strait without firing a single shot. Your own cyber teams are already mapping potential counterstrike targets."
-    },
-    "russia_intel_leak": {
-      "id": "russia_intel_leak",
-      "title": "RUSSIAN INTELLIGENCE LEAK",
-      "description": "An FSB defector reveals Russia has been sharing US military intelligence with Iran — satellite passes, carrier positions, submarine locations. Your operational security is compromised.",
-      "choices": [
-        {
-          "label": "Expel Russian diplomats",
-          "flavor": "15 diplomats expelled. NATO allies follow suit. Russia retaliates but the leak is plugged.",
-          "consequence": "You declassify the Russian intelligence and present it to the world. The revelation of Moscow's shadow support for Iran reshapes the diplomatic landscape. Russia scrambles to deny, but the documents speak for themselves."
-        },
-        {
-          "label": "Exploit the defector — feed disinformation",
-          "flavor": "You turn the leak into an advantage. False intelligence flows to Tehran through Moscow. Iran chases ghosts.",
-          "consequence": "You keep the intelligence classified, using it to quietly pressure Moscow into reducing its support for Iran. The back-channel diplomacy is delicate — threatening without provoking, leveraging without exposing your source."
-        },
-        {
-          "label": "Quiet protest — preserve the channel",
-          "flavor": "A stern demarche. Russia denies everything. But the intelligence sharing slows.",
-          "consequence": "You share the intelligence selectively with key allies, building a quiet coalition of informed nations without the public spectacle of a confrontation with Russia. The approach is measured, the effect cumulative."
-        }
-      ],
-      "scene": "A Russian intelligence operative has defected to your embassy in Tbilisi, carrying a trove of classified documents detailing Moscow's military support to Iran. The files reveal weapons shipments, technical advisors, satellite intelligence sharing — a shadow war conducted through Iranian proxies. The defector is credible, the documents verifiable. You have in your hands the evidence to reshape the entire geopolitical narrative."
-    },
-    "first_seizure_attempt": {
-      "id": "first_seizure_attempt",
-      "title": "THE FIRST SEIZURE ATTEMPT",
-      "description": "FLASH traffic from CENTCOM: IRGC fast-boats converging on the MV Pacific Meridian, a Liberian-flagged tanker carrying Japanese electronics. This is the game's first real test.",
-      "choices": [
-        {
-          "label": "Scramble jets — verbal warning over radio",
-          "flavor": "70% chance the seizure is deterred. Standard procedure. If it fails, you own the failure.",
-          "consequence": "You authorize the scramble. Two F/A-18s roar off the Eisenhower's deck and bank hard toward the Pacific Meridian, their afterburners cutting the predawn darkness. The radio crackles with a verbal warning in Farsi and English. The IRGC boats hesitate — then two peel off. Then three more. The last boat lingers, its crew filming the American jets, before turning north. The seizure is deterred. Standard procedure, textbook execution. But you know: if this hadn't worked, you would own the failure."
-        },
-        {
-          "label": "Authorize warning shots across the bow",
-          "flavor": "The world watches nervously. 90% chance Iran backs down. But escalation is real.",
-          "consequence": "You authorize warning shots. The bridge of the USS Porter erupts in controlled violence — .50 caliber rounds stitch the water two hundred meters ahead of the lead IRGC boat. The sound carries across the strait. On CNN, the footage plays in slow motion. The IRGC boats scatter. Ninety percent of the world exhales. But in Tehran, Tangsiri is already planning the next move, and the escalation is now real."
-        },
-        {
-          "label": "Let it happen — document everything for the UN",
-          "flavor": "The tanker is seized. It's painful. But the footage at the UN will be devastating for Iran.",
-          "consequence": "You let it happen. The words taste like ash in your mouth, but you say them: 'Document everything. Do not engage.' The Pacific Meridian is boarded. Her crew is taken below. Iranian flags replace the Liberian colors. It is painful to watch. But your UN ambassador is already preparing the footage for an emergency session, and the images of armed men boarding a commercial vessel will be devastating for Tehran's international standing."
-        }
-      ],
-      "characterFlavor": {
-        "trump": "The cable news chyrons are already writing themselves — 'TANKER SEIZED UNDER NEW LEADERSHIP' or 'DECISIVE ACTION IN THE STRAIT.' Which headline runs depends entirely on the next thirty seconds.",
-        "hegseth": "The tactical display shows a textbook intercept pattern — you've studied this exact formation in war college scenarios. The difference is, this time the dots on the screen are real boats with real weapons.",
-        "kushner": "You're already calculating the insurance premium implications — every tanker seized doubles the cost of strait transit, and every cost increase is leverage for the protection framework you've been building.",
-        "fuentes": "American taxpayers are funding a naval presence to protect foreign-flagged tankers carrying oil to countries that don't even like us. The base sees the absurdity.",
-        "asmongold": "Real-time seizure attempt unfolding on stream. Chat is counting the fast-boats, tracking the destroyer response time, and arguing about whether this confirms your 'escalation pattern' prediction from Day 2."
-      },
-      "scene": "The FLASH traffic arrives at 0347 local, printed on thermal paper that curls at the edges. CENTCOM reports IRGC fast-boats converging on the MV Pacific Meridian — a Liberian-flagged tanker carrying Japanese electronics through the strait. Your watch officer's voice is tight: 'Six boats, closing at forty knots, weapons visible.' The tactical display shows the tanker as a slow green dot, surrounded by fast red ones. This is your first real test. The entire National Security Council is watching from their homes via secure video. You can see their faces in the blue light of their screens — waiting for you to decide.",
-      "image": "assets/event-e06-seizure.png"
-    },
-    "carrier_incident": {
-      "id": "carrier_incident",
-      "title": "THE CARRIER INCIDENT",
-      "description": "An Iranian drone buzzed the USS Eisenhower's flight deck at 50 feet. Sailors hit the deck. Gun cameras captured everything. CENTCOM wants to release the footage. Iran claims it was \"routine surveillance.\"",
-      "choices": [
-        {
-          "label": "Issue formal protest through military channels",
-          "flavor": "Professionals talk to professionals. Iran absorbs the protest. IRGC internally: \"They flinched.\"",
-          "consequence": "You issue a formal protest through military-to-military channels. A stern letter, delivered through the deconfliction line, citing international law and demanding cessation. Professional. Measured. By the book. In Tehran, the protest is read, filed, and forgotten. Within the IRGC, the consensus hardens: the Americans flinched. The next provocation will be closer."
-        },
-        {
-          "label": "Declassify footage — release to CNN",
-          "flavor": "The footage goes viral. Iran is embarrassed globally. But Tangsiri remembers the humiliation.",
-          "consequence": "You declassify the footage and hand it to CNN. By evening, the gun-camera video is on every screen in the world. The image of American sailors diving for cover on their own flight deck is indelible. Iran is globally embarrassed. Condemnations pour in from thirty nations. But Admiral Tangsiri watches the footage in his office, and the humiliation burns. He will remember this."
-        },
-        {
-          "label": "Retaliate — disable the drone command facility",
-          "flavor": "Precision strike. Clean hit. The world holds its breath. Iran goes silent for 48 hours.",
-          "consequence": "You authorize the strike. A single Tomahawk cruise missile, precisely targeted, destroys the drone command facility on the Iranian coast. The explosion is visible from the Eisenhower's deck. The world holds its breath for forty-eight hours. Iran goes silent — no state media statements, no UN complaints, nothing. The silence is either retreat or planning."
-        }
-      ],
-      "scene": "The footage arrives from the USS Eisenhower's gun cameras: an Iranian Shahed drone, angular and menacing, buzzing the carrier's flight deck at fifty feet. You can see the deck crew hitting the steel, hands over their heads, as the drone's shadow passes over them. The bridge recording captures the officer of the deck shouting 'Hostile UAV, hostile UAV!' before the drone banks away and disappears into the haze. CENTCOM wants to release the footage immediately. Iran's state media is already claiming it was 'routine surveillance of international waters.' Your communications team and your military advisors are, for once, in perfect agreement: someone needs to pay for this.",
-      "image": "assets/event-e09-carrier-incident.png"
-    },
-    "drone_carrier": {
-      "id": "drone_carrier",
-      "title": "IRIS SHAHID BAGHERI DETECTED",
-      "description": "Intelligence identifies the IRIS Shahid Bagheri — a converted container ship functioning as Iran's first drone carrier. It can deploy 30+ fast attack craft and explosive drone boats from inside the hull.",
-      "choices": [
-        {
-          "label": "Strike it before it deploys",
-          "flavor": "Harpoon missiles destroy the vessel. Iran calls it an attack on a \"civilian cargo ship.\" Satellite photos prove otherwise.",
-          "consequence": "You order a preemptive strike. A pair of F/A-18s descend on the vessel and put two precision-guided munitions through its hull. The ship breaks apart and sinks in fourteen minutes. Iran denies any connection. The drone swarm never launches."
-        },
-        {
-          "label": "Track and monitor",
-          "flavor": "You let it sail, gaining valuable intel on Iran's doctrine. But those drone boats could strike at any time.",
-          "consequence": "You shadow the vessel with a submarine and deploy electronic warfare assets to jam its communications. Your intelligence teams monitor every transmission, building a comprehensive picture of Iran's drone warfare doctrine without firing a shot."
-        },
-        {
-          "label": "Leak intel to media",
-          "flavor": "World media covers the \"ghost carrier.\" Iran forced to dock it. But they know you're watching.",
-          "consequence": "You share the intelligence with allies and bring the evidence to the UN Security Council, framing Iran's drone carrier as a threat to international shipping. The diplomatic approach takes time, but it builds the coalition you need for whatever comes next."
-        }
-      ],
-      "scene": "Naval intelligence has located it — a converted cargo vessel operating in international waters south of Bandar Abbas, its hold packed with dozens of armed drones. Your analysts call it a 'drone carrier,' a floating launch platform capable of saturating your fleet's air defenses. The vessel is flying no flag, its transponder dark. Satellite imagery shows deck hatches being opened in preparation for a launch sequence."
-    },
-    "second_carrier": {
-      "id": "second_carrier",
-      "title": "SECOND CARRIER DEPLOYMENT",
-      "description": "CENTCOM requests deployment of a second carrier strike group — USS Gerald R. Ford. It would be the largest naval buildup since 2003. The signal is unmistakable.",
-      "choices": [
-        {
-          "label": "Deploy the Ford — show maximum force",
-          "flavor": "Two carrier strike groups in the Gulf. Iran's navy stays in port. The world hasn't seen this since Iraq.",
-          "consequence": "You approve the deployment. Within days, two American carrier strike groups are operating in the Gulf simultaneously — a concentration of naval power not seen since the Iraq War. Iran's admirals quietly begin repositioning their forces. The deterrent effect is real, but so is the cost."
-        },
-        {
-          "label": "Position Ford in Arabian Sea (standoff)",
-          "flavor": "Close enough to matter, far enough to avoid provocation. A balanced signal.",
-          "consequence": "You approve a partial reinforcement, sending additional destroyers and submarines without the second carrier. The augmented force provides meaningful capability without the political and financial weight of a dual-carrier deployment."
-        },
-        {
-          "label": "Deny the request — one carrier is enough",
-          "flavor": "CENTCOM is unhappy but complies. The Ford stays in the Mediterranean.",
-          "consequence": "You decline the deployment, judging that the current naval presence is sufficient and that further escalation could trigger the very conflict you are trying to prevent. The Pentagon accepts the decision. Grudgingly."
-        }
-      ],
-      "scene": "The Pentagon proposes deploying a second carrier strike group to the Persian Gulf. The logistics are staggering — repositioning the USS Gerald Ford from the Mediterranean, accelerating maintenance on escorts, rerouting supply chains. Your defense secretary argues it will send an unmistakable signal of American resolve. Your budget director argues it will send an unmistakable signal to your creditors."
-    },
-    "minab_school_strike": {
-      "id": "minab_school_strike",
-      "title": "MINAB SCHOOL STRIKE",
-      "description": "Reports emerge of a US airstrike hitting a school in Minab, southern Iran. 47 civilians reported killed including children. Iran broadcasting footage globally. UN demands investigation.",
-      "choices": [
-        {
-          "label": "Express regret — open investigation",
-          "flavor": "You acknowledge the tragedy. The investigation finds mixed-use targeting. International pressure eases slightly.",
-          "consequence": "You immediately acknowledge the strike and announce a full investigation, suspending air operations in the area pending review. The admission costs you politically at home, but the international community responds to the transparency."
-        },
-        {
-          "label": "Deny — claim it was a military site",
-          "flavor": "Pentagon releases grainy satellite photos. Nobody is convinced. Global protests erupt.",
-          "consequence": "You deny responsibility, pointing to Iranian air defense debris and the regime's history of staging propaganda. Your intelligence supports the denial, but the images are more powerful than any briefing paper."
-        },
-        {
-          "label": "Pause air operations for review",
-          "flavor": "A 72-hour pause. Hawks scream. Allies exhale. Iran uses the time to reposition forces.",
-          "consequence": "You halt all offensive operations and call for an immediate ceasefire, using the tragedy as a pivot point. The gesture is dramatic and risky — your military commanders warn that pausing operations concedes initiative to Iran."
-        }
-      ],
-      "scene": "The images arrive from Iranian state television and spread across social media within minutes. A school in the coastal city of Minab, reduced to rubble. Children's backpacks visible in the debris. Iran claims it was an American airstrike. Your targeting analysts insist the coordinates were a military communications relay. The truth hardly matters now — the world is watching, and the footage is devastating."
-    },
-    "three_carriers": {
-      "id": "three_carriers",
-      "title": "THREE CARRIER GROUPS IN THEATER",
-      "description": "Lincoln, Truman, and Carl Vinson are all in the Arabian Sea. 200+ aircraft, 30 warships, 25,000 sailors. The largest US naval deployment since Iraq 2003. The world is watching.",
-      "choices": [
-        {
-          "label": "Launch sustained air campaign",
-          "flavor": "Operation Southern Watch II begins. 200 sorties per day. Iran's military infrastructure is systematically degraded.",
-          "consequence": "You approve the triple-carrier deployment. The sight of three American flight decks operating in concert sends a signal that reverberates from Tehran to Beijing. Iran's navy retreats to port. The deterrent works, but at a cost that will echo through next year's defense budget."
-        },
-        {
-          "label": "Maintain pressure — deterrence posture",
-          "flavor": "The carriers patrol. Iran's navy stays in port. The mere presence changes the calculus.",
-          "consequence": "You approve two carriers and supplement with submarine and bomber assets, achieving comparable striking power with a smaller surface footprint. The approach is less visible but arguably more lethal."
-        },
-        {
-          "label": "Withdraw one carrier — signal restraint",
-          "flavor": "Vinson returns to the Pacific. A signal that you're not seeking war. Allies approve. Iran is uncertain.",
-          "consequence": "You decline the surge, judging the current force sufficient and the fiscal exposure unacceptable. You redirect the funds toward diplomatic initiatives and economic tools. The Pentagon drafts a strongly worded memo of dissent."
-        }
-      ],
-      "scene": "The Joint Chiefs present a plan to surge a third carrier strike group into the theater. Three carriers, their escorts, their air wings — a floating fortress capable of projecting more firepower than most nations possess. The deployment would be the largest concentration of American naval power in a generation. Your Secretary of Defense calls it 'overwhelming deterrence.' Your Treasury Secretary calls it 'overwhelming expenditure.'"
-    },
-    "carrier_near_miss": {
-      "id": "carrier_near_miss",
-      "title": "USS EISENHOWER NEAR MISS",
-      "description": "An Iranian anti-ship ballistic missile splashes 200 meters from the USS Eisenhower. The closest a hostile weapon has come to a US carrier since WWII. The crew is shaken.",
-      "choices": [
-        {
-          "label": "Destroy Iran's coastal missile batteries",
-          "flavor": "Operation Burning Light. 48 cruise missiles eliminate Iran's anti-ship capability. The carrier group is safe. For now.",
-          "consequence": "You authorize a devastating strike package against Iran's coastal anti-ship missile infrastructure. Tomahawks and precision-guided munitions rain down on batteries, radars, and command bunkers along the Iranian littoral. The coast goes quiet. The escalation does not."
-        },
-        {
-          "label": "Pull the carrier back to the Gulf of Oman",
-          "flavor": "Retreat. The IRGC celebrates. Your Navy commanders are furious.",
-          "consequence": "You pull the carrier group back to a safer distance, conceding sea space in exchange for survivability. The tactical retreat is prudent but the optics are painful — an American carrier retreating from Iranian missiles makes headlines around the world."
-        },
-        {
-          "label": "Stay on station — increase air defense posture",
-          "flavor": "Aegis systems go to maximum alert. The next shot might not miss.",
-          "consequence": "You reinforce the carrier's defensive screen with additional Aegis destroyers and deploy electronic warfare aircraft to jam Iranian targeting radars. The defensive investment is expensive but keeps your carrier in the fight."
-        }
-      ],
-      "scene": "The USS Eisenhower's combat information center erupts in alarm. An Iranian anti-ship ballistic missile has splashed into the water less than five hundred meters from the carrier's hull. Close enough to feel the shockwave on the flight deck. Close enough that if the guidance had been fractionally better, you would be dealing with the worst naval disaster since World War Two. Your admiral is requesting permission to destroy every missile battery on the Iranian coast."
-    },
-    "three_seizures": {
-      "id": "three_seizures",
-      "title": "[ MASS SEIZURE EVENT ]",
-      "description": "IRGC Navy seizes THREE tankers simultaneously — Norwegian, Japanese, and Greek-flagged. 67 hostages. This is not a provocation. This is a coordinated operation. The world is watching your response in real time.",
-      "choices": [
-        {
-          "label": "Immediate military rescue operation",
-          "flavor": "SEALs board two tankers. The third is too far. 4 hostages wounded, 1 killed. Iran calls it piracy. Fox News calls you a hero.",
-          "consequence": "You order an immediate military response — strike the IRGC fast-boat bases, destroy their command and control, cripple their ability to conduct further operations. The strikes begin within the hour. American firepower meets Iranian infrastructure in a one-sided exchange that reshapes the coastline."
-        },
-        {
-          "label": "Naval blockade of Iranian ports",
-          "flavor": "\"Nothing enters or leaves Iranian waters until our people are free.\" A classic escalation. Effective but the world economy shudders.",
-          "consequence": "You impose crippling economic sanctions and a full naval blockade of Iranian ports, strangling their oil exports as they strangle yours. The economic warfare is total and reciprocal. Both economies begin to bleed."
-        },
-        {
-          "label": "Hostage negotiation through Oman",
-          "flavor": "Negotiations begin. Iran demands sanctions relief. Day 1 passes. Day 2. The families are on every channel. \"WHERE ARE YOU?\"",
-          "consequence": "You go to the UN, armed with satellite footage and intercepted communications, demanding international action. The Security Council chamber becomes a courtroom. China and Russia shift in their seats, calculating their interests."
-        },
-        {
-          "label": "Authorize \"all necessary force\"",
-          "flavor": "Congress grants authorization. The US is now legally at war with Iran in all but name.",
-          "consequence": "You order a full carrier strike on every IRGC naval facility along the Iranian coast. The operation is massive — the largest American military action in the Gulf since 2003. When it is over, Iran's ability to threaten shipping has been permanently degraded. So has any remaining chance of a diplomatic resolution."
-        }
-      ],
-      "scene": "Three tankers seized in a single morning. The IRGC has executed a coordinated operation of terrifying precision — fast boats converging simultaneously on vessels in three different sections of the Strait, boarding parties storming bridges before escort warships can respond. The Strait of Hormuz is effectively closed. Global oil supply has just lost a fifth of its volume. Markets are in freefall. The President of the United States is being woken for the third time tonight.",
-      "image": "assets/event-crisis-three-seizures.png"
-    },
-    "carrier_hit": {
-      "id": "carrier_hit",
-      "title": "[ CARRIER UNDER ATTACK ]",
-      "description": "FLASH: USS Abraham Lincoln reports missile impact. Iranian anti-ship ballistic missile. Flight deck damaged. 23 casualties. The carrier is NOT sinking but air operations are suspended. This is the first hit on a US carrier since WWII.",
-      "choices": [
-        {
-          "label": "Massive retaliation — destroy Iran's missile capability",
-          "flavor": "200 Tomahawks in a single salvo. Every known missile site hit. Iran's offensive capability is shattered. The war is now total.",
-          "consequence": "You order an immediate and overwhelming retaliatory strike against every military target of value in Iran. The response is biblical in its scope — airbases, naval installations, missile batteries, command centers, all hit within a single coordinated wave. When the sun rises, Iran's conventional military capability has been reduced by half."
-        },
-        {
-          "label": "Proportional response — hit the launch site",
-          "flavor": "Cruise missiles destroy the specific battery that fired. Measured. Professional. But 23 families want more.",
-          "consequence": "You authorize a proportional response — targeted strikes against the specific units and facilities responsible for the attack. The restraint in the face of such provocation is either strategic wisdom or unforgivable weakness, depending on who you ask."
-        },
-        {
-          "label": "Withdraw the Lincoln — save the crew",
-          "flavor": "The Lincoln limps to Fujairah. Iran celebrates. \"We drove the Americans from our waters.\" Your deterrence is in ruins.",
-          "consequence": "You order the Eisenhower evacuated and towed to safety, focusing entirely on saving the ship and her crew before making any retaliatory decisions. The world watches an American carrier limping away from the fight. Some call it prudence. Others call it retreat."
-        },
-        {
-          "label": "Invoke Article II — address the nation",
-          "flavor": "\"23 Americans were attacked today. We will respond at a time and manner of our choosing.\" The nation rallies. Iran waits.",
-          "consequence": "You go on national television, show the footage of the burning carrier, and rally the nation for what comes next. The speech is measured, resolute, and devastating. You announce that America will respond at a time and place of its choosing. Iran begins to wonder when and where that will be."
-        }
-      ],
-      "scene": "The explosion rocks the USS Eisenhower amidships, a plume of fire and black smoke erupting from the flight deck. An Iranian anti-ship ballistic missile has struck an American aircraft carrier — the first time a US carrier has been hit by enemy action since World War Two. Damage control teams are fighting fires while the ship lists to starboard. Casualty reports are streaming in. The carrier is still afloat, still fighting, but the symbol of American naval invincibility has just been shattered on live television.",
-      "image": "assets/event-crisis-carrier-hit.png"
-    },
-    "impounded_tanker": {
+  "events": [
+    {
       "id": "impounded_tanker",
       "title": "THE IMPOUNDED TANKER",
       "description": "An Iranian Revolutionary Guard fast-boat swarm harassed a commercial tanker three days ago. The crew is safe but the ship is impounded in Bandar Abbas. Your predecessor resigned in disgrace. You are the replacement. Nobody expects you to last.",
@@ -656,10 +28,9 @@
         "fuentes": "Six thousand miles from American soil, an American ship sits under armed guard because fifty years of interventionist policy put it there.",
         "asmongold": "Chat is already pulling satellite imagery and cross-referencing IRGC patrol schedules. Your crowd-sourced intel feed is three hours ahead of the CIA briefing."
       },
-      "scene": "The Situation Room smells like stale coffee and carpet cleaner. You are three hours into your new assignment, and the wall of monitors already shows your first crisis: a grainy feed from Bandar Abbas harbor, where the MV Stellar Fortune sits under armed guard, her crew confined below decks. Admiral Chen taps the screen with a laser pointer. 'IRGC fast-boat swarm, sir. Six boats, coordinated approach, textbook harassment pattern.' Your predecessor's resignation letter is still warm in the shredder. The Joint Chiefs are sizing you up. Nobody in this room expects you to last the week.",
-      "image": "assets/event-e01-tanker.png"
+      "scene": "The Situation Room smells like stale coffee and carpet cleaner. You are three hours into your new assignment, and the wall of monitors already shows your first crisis: a grainy feed from Bandar Abbas harbor, where the MV Stellar Fortune sits under armed guard, her crew confined below decks. Admiral Chen taps the screen with a laser pointer. 'IRGC fast-boat swarm, sir. Six boats, coordinated approach, textbook harassment pattern.' Your predecessor's resignation letter is still warm in the shredder. The Joint Chiefs are sizing you up. Nobody in this room expects you to last the week."
     },
-    "predecessors_ghost": {
+    {
       "id": "predecessors_ghost",
       "title": "THE PREDECESSOR'S GHOST",
       "description": "A classified folder sits on your desk — your predecessor's secret negotiations with Tehran. Reading it is knowledge. Burning it is a clean start. The contents are radioactive either way.",
@@ -675,10 +46,9 @@
           "consequence": "You pick up the folder, walk to the fireplace in the private study, and feed it to the flames. The paper curls, blackens, and disappears. Your chief of staff watches from the doorway. 'Clean start,' you tell him. He nods slowly. The public will trust a leader unburdened by backroom deals. But somewhere in Tehran, there is a red line you will now have to discover the hard way — through a crisis."
         }
       ],
-      "scene": "The classified folder sits on the mahogany desk, sealed with red tape and a 'NOFORN' stamp. Your predecessor's chief of staff left it here deliberately — a parting gift or a poisoned chalice. The air conditioning hums. Through the reinforced windows, you can see the Rose Garden, impossibly green against the gray sky. Your hand hovers over the folder. The paper inside details secret negotiations with Tehran that never made the news. Your aide stands at the door, waiting. 'Sir, the morning brief starts in ten minutes.' The contents are radioactive either way — but so is ignorance.",
-      "image": "assets/event-e02-predecessor.png"
+      "scene": "The classified folder sits on the mahogany desk, sealed with red tape and a 'NOFORN' stamp. Your predecessor's chief of staff left it here deliberately — a parting gift or a poisoned chalice. The air conditioning hums. Through the reinforced windows, you can see the Rose Garden, impossibly green against the gray sky. Your hand hovers over the folder. The paper inside details secret negotiations with Tehran that never made the news. Your aide stands at the door, waiting. 'Sir, the morning brief starts in ten minutes.' The contents are radioactive either way — but so is ignorance."
     },
-    "admirals_warning": {
+    {
       "id": "admirals_warning",
       "title": "THE ADMIRAL'S WARNING",
       "description": "Your first real briefing. Admiral Chen stands at the podium with satellite imagery of Iranian naval movements. \"We need to increase patrol tempo immediately,\" he says. Your civilian advisors shift uncomfortably.",
@@ -699,10 +69,9 @@
           "consequence": "You lean forward. 'Admiral, what if we sent a different kind of signal?' The room goes quiet. You outline a diplomatic overture — direct message to Tehran through Swiss intermediaries. Chen's jaw tightens. He begins composing a memo to the Armed Services Committee chairman about your 'lack of seriousness.' But six thousand miles away, Iranian Foreign Minister Araghchi reads the signal and picks up his own phone."
         }
       ],
-      "scene": "The Pentagon briefing room is windowless, lit by fluorescent panels that give everyone the complexion of the dead. Admiral Chen stands at the podium with a clicker in one hand and thirty years of naval warfare behind his eyes. The satellite imagery on the screen shows Iranian naval movements — Bandar Abbas, Jask, Qeshm Island — in sharp resolution. 'We need to increase patrol tempo immediately,' he says, his voice flat and certain. Behind you, your civilian advisors shift in their leather chairs. The Secretary of State clears her throat. The room divides along a fault line as old as the republic: military necessity versus diplomatic caution.",
-      "image": "assets/event-e03-admiral.png"
+      "scene": "The Pentagon briefing room is windowless, lit by fluorescent panels that give everyone the complexion of the dead. Admiral Chen stands at the podium with a clicker in one hand and thirty years of naval warfare behind his eyes. The satellite imagery on the screen shows Iranian naval movements — Bandar Abbas, Jask, Qeshm Island — in sharp resolution. 'We need to increase patrol tempo immediately,' he says, his voice flat and certain. Behind you, your civilian advisors shift in their leather chairs. The Secretary of State clears her throat. The room divides along a fault line as old as the republic: military necessity versus diplomatic caution."
     },
-    "journalists_call": {
+    {
       "id": "journalists_call",
       "title": "THE JOURNALIST'S CALL",
       "description": "A New York Times reporter is on the line. She's working on a piece about your first 72 hours. Off-the-record, she says. But you know how that goes.",
@@ -723,10 +92,9 @@
           "consequence": "You tell your assistant: 'No comment. And don't put her through again.' The line goes dead. Watkins sits in her Manhattan office, staring at her phone. She crosses your name off the cooperative list and adds it to another list entirely. Future media engagements just got significantly harder."
         }
       ],
-      "scene": "Your assistant appears in the doorway with that particular expression that means trouble. 'Emily Watkins, New York Times. She says it's urgent.' The name lands like a small grenade. Watkins broke the Abu Ghraib story. She exposed the NSA domestic surveillance program. She has a Pulitzer and the phone number of every disgruntled staffer in Washington. Now she wants to talk about your first seventy-two hours. 'Off the record,' she promises through the receiver. But you can hear her keyboard clicking in the background. The recorder is already running. It always is.",
-      "image": "assets/event-e04-journalist.png"
+      "scene": "Your assistant appears in the doorway with that particular expression that means trouble. 'Emily Watkins, New York Times. She says it's urgent.' The name lands like a small grenade. Watkins broke the Abu Ghraib story. She exposed the NSA domestic surveillance program. She has a Pulitzer and the phone number of every disgruntled staffer in Washington. Now she wants to talk about your first seventy-two hours. 'Off the record,' she promises through the receiver. But you can hear her keyboard clicking in the background. The recorder is already running. It always is."
     },
-    "british_pm_call": {
+    {
       "id": "british_pm_call",
       "title": "ALLY ON THE LINE: THE BRITISH PM",
       "description": "The British Prime Minister is offering a joint naval task force. Shared command, shared rules of engagement. It's generous — suspiciously so. Nothing is free in the special relationship.",
@@ -747,10 +115,9 @@
           "consequence": "You lean back in your chair. 'What do you want in return?' The PM laughs — that particular English laugh that means you've said the quiet part out loud. He mentions the UN trade resolution. A side negotiation opens, and suddenly the strait crisis has become a chessboard with pieces you didn't know were in play."
         }
       ],
-      "scene": "The call comes in on the encrypted line at 6:47 AM, before your first coffee has cooled. The British Prime Minister's voice carries the particular warmth of someone who wants something. He proposes a joint naval task force — shared command structure, shared rules of engagement, Royal Navy vessels integrated with the Fifth Fleet. It is generous. It is suspiciously generous. Through the Situation Room window, the first light catches the Washington Monument. Your national security advisor slides a note across the desk: 'UK wants our vote on the UN trade resolution. This is the price.' Nothing is free in the special relationship. It never has been.",
-      "image": "assets/event-e05-british-pm.png"
+      "scene": "The call comes in on the encrypted line at 6:47 AM, before your first coffee has cooled. The British Prime Minister's voice carries the particular warmth of someone who wants something. He proposes a joint naval task force — shared command structure, shared rules of engagement, Royal Navy vessels integrated with the Fifth Fleet. It is generous. It is suspiciously generous. Through the Situation Room window, the first light catches the Washington Monument. Your national security advisor slides a note across the desk: 'UK wants our vote on the UN trade resolution. This is the price.' Nothing is free in the special relationship. It never has been."
     },
-    "un_showdown": {
+    {
       "id": "un_showdown",
       "title": "UN SECURITY COUNCIL SHOWDOWN",
       "description": "The Security Council is in emergency session. You have one shot to get a binding resolution. Russia is leaning veto. China is undecided. Your ambassador is waiting for instructions.",
@@ -771,10 +138,9 @@
           "consequence": "Your ambassador stands and requests the floor. 'I would like to present classified intelligence to this body.' The chamber goes silent. Satellite photos appear on the screens — IRGC commanders identified by name, their operations mapped in granular detail. The Iranian delegation scrambles for their phones. The room is shocked. But in Langley, the Director of the CIA is watching with a clenched jaw. You just burned intelligence sources that took years to develop."
         }
       ],
-      "scene": "The Security Council chamber is a theatre of controlled fury. Your ambassador sits in the American chair, earpiece in, waiting for your instructions relayed from six thousand miles away. Russia's ambassador is leaning back with studied indifference — but his aides are passing notes furiously. China's representative stares at the draft resolution, her pen hovering. The gallery is packed with journalists. The Iranian delegation sits stone-faced in the observer section. You have one shot at a binding resolution. One shot to make the international community put its name on paper. The clock on the wall reads 3:47 PM in New York, and the President of the Security Council is about to open the floor.",
-      "image": "assets/event-e11-un-showdown.png"
+      "scene": "The Security Council chamber is a theatre of controlled fury. Your ambassador sits in the American chair, earpiece in, waiting for your instructions relayed from six thousand miles away. Russia's ambassador is leaning back with studied indifference — but his aides are passing notes furiously. China's representative stares at the draft resolution, her pen hovering. The gallery is packed with journalists. The Iranian delegation sits stone-faced in the observer section. You have one shot at a binding resolution. One shot to make the international community put its name on paper. The clock on the wall reads 3:47 PM in New York, and the President of the Security Council is about to open the floor."
     },
-    "proxy_ignition": {
+    {
       "id": "proxy_ignition",
       "title": "PROXY IGNITION: HOUTHI STRIKE",
       "description": "Houthis launched anti-ship missiles at a commercial vessel in the Red Sea. The crisis is no longer contained to the strait — it's metastasizing. Your budget is burning and allies are nervous.",
@@ -795,10 +161,9 @@
           "consequence": "You pick up the phone to the Omani back-channel. The message to Tehran is simple and clear: proxy attacks will be treated as Iranian attacks. A red line, drawn in language that cannot be misunderstood. In Tehran, the message lands on two desks simultaneously — Araghchi's and Tangsiri's. If Araghchi believes you, the calculus changes. If Tangsiri doesn't, it changes nothing."
         }
       ],
-      "scene": "The alert comes from CENTCOM's Red Sea desk: Houthi anti-ship missiles launched from the Yemeni coast, tracking toward a commercial vessel in the Bab el-Mandeb strait. The missile tracks appear on the tactical display as angry red arcs. The crisis, which you had carefully contained within the Strait of Hormuz, is metastasizing. Your budget officer slides a revised expenditure report across the table — the numbers are bleeding red. An aide whispers that the French ambassador has requested an urgent call. The map on the wall now shows two active theaters, and Iran's proxy network is waking up like a nervous system sensing pain.",
-      "image": "assets/event-e14-houthi.png"
+      "scene": "The alert comes from CENTCOM's Red Sea desk: Houthi anti-ship missiles launched from the Yemeni coast, tracking toward a commercial vessel in the Bab el-Mandeb strait. The missile tracks appear on the tactical display as angry red arcs. The crisis, which you had carefully contained within the Strait of Hormuz, is metastasizing. Your budget officer slides a revised expenditure report across the table — the numbers are bleeding red. An aide whispers that the French ambassador has requested an urgent call. The map on the wall now shows two active theaters, and Iran's proxy network is waking up like a nervous system sensing pain."
     },
-    "congressional_hearing_big": {
+    {
       "id": "congressional_hearing_big",
       "title": "THE CONGRESSIONAL HEARING",
       "description": "Senate Armed Services Committee. Live on C-SPAN. The chairman opens with: \"The American people deserve to know why we're spending $50 million a day on a crisis that's getting worse.\" The cameras are rolling.",
@@ -826,10 +191,9 @@
         "fuentes": "The chairman opens with spending numbers designed to make you look reckless. He voted for the Iraq War, the Libya intervention, and the Syria operation. Your base remembers, even if the cameras don't show it.",
         "asmongold": "You're streaming the hearing prep live — chat is crowdsourcing rebuttals to the committee's likely questions. Viewer count just hit a new high. This is S-tier content."
       },
-      "scene": "The hearing room in the Hart Senate Office Building is packed to the walls. Camera operators jostle for angles. The Senate Armed Services Committee chairman, a silver-haired veteran of three wars, peers down from the raised dais and opens with the line everyone will remember: 'The American people deserve to know why we're spending fifty million dollars a day on a crisis that's getting worse.' The C-SPAN cameras capture every bead of sweat, every shuffle of paper. Your legal counsel sits behind you, a stack of classified briefing cards ready. The gallery is full of reporters, lobbyists, and two families who lost sons in the strait.",
-      "image": "assets/event-e18-congress.png"
+      "scene": "The hearing room in the Hart Senate Office Building is packed to the walls. Camera operators jostle for angles. The Senate Armed Services Committee chairman, a silver-haired veteran of three wars, peers down from the raised dais and opens with the line everyone will remember: 'The American people deserve to know why we're spending fifty million dollars a day on a crisis that's getting worse.' The C-SPAN cameras capture every bead of sweat, every shuffle of paper. Your legal counsel sits behind you, a stack of classified briefing cards ready. The gallery is full of reporters, lobbyists, and two families who lost sons in the strait."
     },
-    "iran_ultimatum": {
+    {
       "id": "iran_ultimatum",
       "title": "IRAN'S ULTIMATUM",
       "description": "Mojtaba Khamenei appears on state television: \"Lift sanctions on our central bank within 72 hours, or the next vessel we seize will fly the American flag.\" Tangsiri stands behind him, arms crossed. The clock is ticking.",
@@ -857,10 +221,9 @@
         "fuentes": "Iran issued an ultimatum because American sanctions gave them nothing left to lose. The establishment's maximum pressure policy created the very crisis they're now asking you to solve with more military spending.",
         "asmongold": "Seventy-two hour countdown timer on screen. Chat is already running probability models. This is the moment that proves whether your threat analysis was right or completely off."
       },
-      "scene": "Iranian state television fills the Situation Room's main screen. Mojtaba Khamenei stands at a podium flanked by IRGC flags, his father's portrait looming behind him. His voice is measured but his eyes are cold: 'Lift sanctions on our central bank within seventy-two hours, or the next vessel we seize will fly the American flag.' Behind him, Admiral Tangsiri stands with his arms crossed, the ghost of a smile on his lips. The room goes silent. Your watch officer stops writing. The clock on the wall becomes the loudest sound in the room. Seventy-two hours. Three days to decide whether this is a bluff you can call or a promise you cannot afford to test.",
-      "image": "assets/event-e07-iran-doubles.png"
+      "scene": "Iranian state television fills the Situation Room's main screen. Mojtaba Khamenei stands at a podium flanked by IRGC flags, his father's portrait looming behind him. His voice is measured but his eyes are cold: 'Lift sanctions on our central bank within seventy-two hours, or the next vessel we seize will fly the American flag.' Behind him, Admiral Tangsiri stands with his arms crossed, the ghost of a smile on his lips. The room goes silent. Your watch officer stops writing. The clock on the wall becomes the loudest sound in the room. Seventy-two hours. Three days to decide whether this is a bluff you can call or a promise you cannot afford to test."
     },
-    "journalist_returns": {
+    {
       "id": "journalist_returns",
       "title": "THE JOURNALIST RETURNS",
       "description": "Remember the Times reporter? She's back. This time she wants to be embedded with your team for 48 hours. Radical transparency — or radical exposure. Your relationship with her determines how this plays out.",
@@ -883,7 +246,7 @@
       ],
       "scene": "Emily Watkins is back, and this time she is not asking for quotes. She wants to be embedded with your team for forty-eight hours — 'radical transparency,' she calls it, leaning forward in the visitor's chair with the kind of intensity that wins Pulitzers. Your press secretary stands behind her, making throat-cutting gestures. But Watkins has been fair so far, and the public narrative needs shaping. Through the window, you can see the cable news trucks multiplying on the North Lawn. The story is being written with or without your cooperation. The only question is whether you hold the pen."
     },
-    "congress_pressure": {
+    {
       "id": "congress_pressure",
       "title": "CONGRESSIONAL HEARING",
       "description": "Senate Armed Services Committee demands testimony. They threaten to cut your budget.",
@@ -906,7 +269,7 @@
       ],
       "scene": "The Senate Armed Services Committee hearing room is half-empty but fully hostile. The chairman adjusts his microphone with the practiced slowness of a man who knows the cameras are rolling. 'We have serious concerns about the trajectory of spending,' he begins, shuffling a stack of budget projections. Your budget liaison whispers the number: they are threatening to cut your operational funding by thirty percent. The committee staffers have prepared a damning chart that compares your daily expenditure to the cost of school lunches. It is reductive and effective."
     },
-    "allied_request": {
+    {
       "id": "allied_request",
       "title": "ALLIED NAVAL REQUEST",
       "description": "Japan requests dedicated US Navy escort for their tanker fleet. It strengthens the alliance but costs resources.",
@@ -924,7 +287,7 @@
       ],
       "scene": "The Japanese ambassador arrives at the State Department with a formal request printed on cream-colored paper bearing the chrysanthemum seal. Japan — the world's fourth-largest economy, importer of 88% of its oil through the Strait of Hormuz — is requesting dedicated US Navy escorts for its tanker fleet. The ambassador bows slightly as he presents the document. Behind the diplomatic courtesy, there is real fear. Tokyo's strategic petroleum reserve will last sixty days. After that, the lights begin to go out in the world's most energy-dependent nation."
     },
-    "humanitarian": {
+    {
       "id": "humanitarian",
       "title": "HUMANITARIAN CRISIS",
       "description": "An Iranian fishing vessel capsized near the strait. 40 fishermen in the water. Your destroyer is 15 minutes away.",
@@ -947,7 +310,7 @@
       ],
       "scene": "The report comes from your destroyer captain, USS Halsey, patrolling the eastern approach to the strait: an Iranian fishing vessel has capsized in heavy swells three nautical miles south of Qeshm Island. Forty fishermen are in the water. The captain's voice is calm but urgent on the radio — he can see them through his binoculars, heads bobbing in the gray-green waves. Your destroyer is fifteen minutes away at flank speed. Iranian coast guard vessels are forty-five minutes out. The water temperature is survivable for about an hour. The fishermen are not soldiers. They are fathers, brothers, sons. But this is an active naval confrontation zone, and your ship pulling alongside an Iranian vessel creates risks that no rule of engagement fully addresses."
     },
-    "media_crisis": {
+    {
       "id": "media_crisis",
       "title": "MEDIA FIRESTORM",
       "description": "Footage of a near-collision between US and Iranian vessels. Cable news running it 24/7.",
@@ -968,10 +331,9 @@
           "consequence": "You go on the offensive. A formal public condemnation, backed by the video evidence, names the IRGC boat commander and demands Iran discipline its forces. Your base rallies. Cable news runs your statement alongside the footage. But in Tehran, the condemnation is played on state TV as evidence of American aggression, and the cycle of provocation accelerates."
         }
       ],
-      "scene": "The footage is ninety seconds of pure chaos: an IRGC fast-boat cutting across the bow of the USS Bataan at what appears to be twenty meters, the American ship sounding its horn, a near-collision that sends spray across both vessels. Someone on the Bataan's bridge screams an obscenity that the microphone catches perfectly. Cable news is running it on a twenty-four-hour loop with the chyron 'NEAR MISS IN THE STRAIT.' The full unedited video, which you have seen, tells a different story — the Iranian boat initiated the provocation by dead-heading toward the Bataan at high speed. But the public only sees the version that sells.",
-      "image": "assets/event-e04-journalist.png"
+      "scene": "The footage is ninety seconds of pure chaos: an IRGC fast-boat cutting across the bow of the USS Bataan at what appears to be twenty meters, the American ship sounding its horn, a near-collision that sends spray across both vessels. Someone on the Bataan's bridge screams an obscenity that the microphone catches perfectly. Cable news is running it on a twenty-four-hour loop with the chyron 'NEAR MISS IN THE STRAIT.' The full unedited video, which you have seen, tells a different story — the Iranian boat initiated the provocation by dead-heading toward the Bataan at high speed. But the public only sees the version that sells."
     },
-    "china_mediation": {
+    {
       "id": "china_mediation",
       "title": "CHINESE MEDIATION OFFER",
       "description": "Beijing proposes brokering a deal: they'll pressure Iran if you ease tech restrictions on Chinese firms.",
@@ -992,10 +354,9 @@
           "consequence": "You reject the proposal outright. 'China's technology ambitions and Iran's aggression are separate matters,' you tell the ambassador. Hawks in Congress applaud your firmness. The Chinese ambassador gathers his paper and leaves without a handshake. Within a month, Chinese arms shipments to Iran increase. The diplomatic window narrows."
         }
       ],
-      "scene": "The Chinese ambassador requests a private meeting — no aides, no notes, no record. He arrives at the State Department through a side entrance, carrying nothing but a single sheet of paper. The proposal is simple: Beijing will pressure Iran to stand down in the strait in exchange for eased technology restrictions on three Chinese semiconductor firms. The ambassador slides the paper across the table. 'Minister Wang believes this crisis offers a unique opportunity for our nations to demonstrate cooperative leadership,' he says, his English impeccable. The offer is genuine. The price is steep. And the geopolitical implications extend far beyond the strait.",
-      "image": "assets/event-e13-china.png"
+      "scene": "The Chinese ambassador requests a private meeting — no aides, no notes, no record. He arrives at the State Department through a side entrance, carrying nothing but a single sheet of paper. The proposal is simple: Beijing will pressure Iran to stand down in the strait in exchange for eased technology restrictions on three Chinese semiconductor firms. The ambassador slides the paper across the table. 'Minister Wang believes this crisis offers a unique opportunity for our nations to demonstrate cooperative leadership,' he says, his English impeccable. The offer is genuine. The price is steep. And the geopolitical implications extend far beyond the strait."
     },
-    "houthi_attack": {
+    {
       "id": "houthi_attack",
       "title": "HOUTHI RED SEA ATTACK",
       "description": "Houthi forces have struck a commercial vessel in the Red Sea with an anti-ship missile. Iran's proxy war is expanding.",
@@ -1018,7 +379,7 @@
       ],
       "scene": "The CENTCOM alert scrolls across every screen in the Situation Room: Houthi anti-ship missile launch detected from the Yemeni coast, tracking toward a Panamanian-flagged bulk carrier in the southern Red Sea. The missile is an Iranian-supplied C-802 derivative — you recognize it from the intelligence briefings. The carrier's crew of twenty-six has no idea what is heading their way at Mach 0.9. Your Red Sea desk officer is already on the phone with the Fifth Fleet. Iran's proxy war has expanded beyond the Gulf, and every day it remains unanswered, it grows bolder."
     },
-    "militia_attack": {
+    {
       "id": "militia_attack",
       "title": "MILITIA BASE ATTACK",
       "description": "Iraqi militia rockets hit a US base in the region. Two soldiers wounded. CENTCOM wants authorization to retaliate.",
@@ -1039,10 +400,9 @@
           "consequence": "You order the withdrawal from the base. The logistics are completed in seventy-two hours — efficient, professional, and devastating to morale. Iranian state media runs the footage of empty hangars and lowered flags as a victory montage. 'The Americans flee,' the anchor says, smiling. Your troops watch the broadcast from their new position, sixty kilometers further from the fight."
         }
       ],
-      "scene": "The rockets hit at 0317 local time — three 107mm Katyushas, launched from a pickup truck parked in a palm grove three kilometers from the base perimeter. Two impact inside the wire. Your base operations center calls it in: two soldiers wounded, one critically, shrapnel from a rocket that hit the chow hall. The video from the base security cameras shows the flash, the dust cloud, the soldiers running for cover in their underwear. CENTCOM's targeting cell has already identified the militia group — Kata'ib Hezbollah, Iranian-funded, Iranian-trained. The strike authorization request is on your desk. The blood on the chow hall floor is still wet.",
-      "image": "assets/event-proxy-attack.png"
+      "scene": "The rockets hit at 0317 local time — three 107mm Katyushas, launched from a pickup truck parked in a palm grove three kilometers from the base perimeter. Two impact inside the wire. Your base operations center calls it in: two soldiers wounded, one critically, shrapnel from a rocket that hit the chow hall. The video from the base security cameras shows the flash, the dust cloud, the soldiers running for cover in their underwear. CENTCOM's targeting cell has already identified the militia group — Kata'ib Hezbollah, Iranian-funded, Iranian-trained. The strike authorization request is on your desk. The blood on the chow hall floor is still wet."
     },
-    "domestic_unrest": {
+    {
       "id": "domestic_unrest",
       "title": "DOMESTIC UNREST",
       "description": "Protests erupt in major cities over war spending and the strait crisis. The National Guard is requesting authorization.",
@@ -1065,7 +425,7 @@
       ],
       "scene": "The aerial footage fills the Situation Room screens: protests in Washington, Chicago, Los Angeles, Houston. Tens of thousands in the streets, carrying signs that read 'NO WAR FOR OIL' and 'BRING THEM HOME.' A gas station in Detroit was set on fire overnight. The National Guard commander for the District of Columbia has submitted a formal request for authorization to deploy. Your domestic policy advisor sits across from you, her face drawn. 'The polling shows sixty-two percent oppose escalation,' she says. 'And thirty-eight percent believe the crisis is being mismanaged.' On the screen, a protester in a wheelchair — a veteran — is being interviewed by CNN. He is articulate, sympathetic, and devastating."
     },
-    "hostage": {
+    {
       "id": "hostage",
       "title": "HOSTAGE SITUATION",
       "description": "Iran is holding 12 crew members from a seized tanker. Families are on every news channel.",
@@ -1086,10 +446,9 @@
           "consequence": "You authorize a quiet concession: a minor sanctions waiver on Iranian medical supplies, routed through an intermediary so the connection is deniable. Three days later, the crew is released at the Omani border, gaunt but alive. They fly home to tearful reunions broadcast worldwide. Nobody talks about the price. Nobody needs to."
         }
       ],
-      "scene": "Twelve faces stare from the split screen in the Situation Room — passport photos of the crew seized from the tanker MV Coral Dawn, now held in an unknown location in Iran. A Filipino engineer. A Greek captain. An Indian second officer. Their families have been on CNN for three straight days. A mother from Mumbai breaks down on camera, her words translated in real time. Your hostage negotiation team has identified a potential channel through Swiss intermediaries, but Tehran is not responding. The IRGC is using the crew as leverage, and every hour they remain in captivity, the pressure on you intensifies.",
-      "image": "assets/event-e12-hostage.png"
+      "scene": "Twelve faces stare from the split screen in the Situation Room — passport photos of the crew seized from the tanker MV Coral Dawn, now held in an unknown location in Iran. A Filipino engineer. A Greek captain. An Indian second officer. Their families have been on CNN for three straight days. A mother from Mumbai breaks down on camera, her words translated in real time. Your hostage negotiation team has identified a potential channel through Swiss intermediaries, but Tehran is not responding. The IRGC is using the crew as leverage, and every hour they remain in captivity, the pressure on you intensifies."
     },
-    "gulf_offer": {
+    {
       "id": "gulf_offer",
       "title": "GULF STATE OFFER",
       "description": "Saudi Arabia and UAE offer to fund 60% of your operations — but they want a say in rules of engagement.",
@@ -1112,7 +471,7 @@
       ],
       "scene": "The offer arrives through the Saudi ambassador, delivered over coffee at a private meeting that appears on no official schedule. Saudi Arabia and the UAE will fund sixty percent of your strait operations — patrol costs, intelligence sharing, logistics support. The number is staggering: hundreds of millions of dollars flowing from Gulf sovereign wealth funds to offset your hemorrhaging budget. The catch arrives in the second paragraph: they want a seat at the rules-of-engagement table. Not a veto, exactly. But 'meaningful consultation on kinetic decisions.' Your budget officer, who has been running deficit projections that keep him up at night, looks at you with something approaching hope."
     },
-    "drone_shootdown": {
+    {
       "id": "drone_shootdown",
       "title": "DRONE SHOOT-DOWN",
       "description": "Iran shot down your surveillance drone over international waters. Joint Chiefs want a proportional response.",
@@ -1135,7 +494,7 @@
       ],
       "scene": "The surveillance feed from the MQ-9 Reaper cuts to static at 0623 local time. Your drone, operating over international waters in the Gulf of Oman, has been destroyed by an Iranian surface-to-air missile. The telemetry data, recovered before the link was severed, shows the SA-15 battery that fired. The Joint Chiefs are in your office within the hour, the targeting package already prepared. 'Proportional response, sir,' the Chairman says, laying photos of the Iranian missile battery on your desk. 'We take out the battery that shot down our drone. Clean, professional, defensible.' The wreckage of your forty-million-dollar aircraft is sinking to the bottom of the Gulf of Oman."
     },
-    "un_vote": {
+    {
       "id": "un_vote",
       "title": "UN RESOLUTION VOTE",
       "description": "A resolution condemning Iran is up for vote. Russia will veto unless you water it down.",
@@ -1158,7 +517,7 @@
       ],
       "scene": "The Security Council chamber in New York is quiet with the particular tension of a vote that matters. The draft resolution condemning Iran's actions in the strait is on the table. Your ambassador has spent three days negotiating language — 'condemns' versus 'deplores,' 'demands' versus 'calls upon.' Russia's ambassador has made it clear, through intermediaries, that a veto awaits any resolution with enforcement teeth. China is performing its customary ambiguity, signaling different things to different delegations. The vote is sixty seconds away."
     },
-    "election_pressure": {
+    {
       "id": "election_pressure",
       "title": "ELECTION YEAR PRESSURE",
       "description": "Your party is down in polls. Advisors want a dramatic move before midterms.",
@@ -1181,7 +540,7 @@
       ],
       "scene": "Your political advisors have taken over the Roosevelt Room, their laptops open to polling data that tells a grim story. 'Down six points in the suburbs,' your campaign manager says. 'Down nine among independents.' A dramatic move before the midterms could reverse the trend — or accelerate it. The television in the corner shows a cable news panel debating whether the strait crisis helps or hurts you politically. Your pollster slides a memo across the table: 'Voters respond to strength, not nuance.' The advisors want action. The question is whether you govern for the polls or govern for the policy."
     },
-    "pipeline_sabotage": {
+    {
       "id": "pipeline_sabotage",
       "title": "PIPELINE SABOTAGE",
       "description": "An underwater pipeline feeding a major terminal has been damaged. Could be Iran, could be an accident.",
@@ -1202,10 +561,9 @@
           "consequence": "You propose a joint investigation with Iran. The offer is unprecedented — a gesture of either radical trust or radical strategy. To everyone's surprise, Iran agrees. A team of American and Iranian engineers descends to the pipeline together. In the cold water, far from politics, professionals examine the evidence. A thread of trust forms in the most unlikely of places."
         }
       ],
-      "scene": "The underwater pipeline feeding the Fujairah terminal has ruptured. Video from an ROV shows a clean cut in the steel — too precise for corrosion, too symmetrical for an anchor strike. Your intelligence analysts are divided: the Iranian intelligence service has the capability, but so do half a dozen non-state actors. The oil terminal's throughput has dropped forty percent. Your forensics team needs seventy-two hours to analyze the cut pattern, the explosive residue, and the underwater current data. In the meantime, oil markets have already rendered their verdict: futures up eight dollars on the word 'sabotage.'",
-      "image": "assets/event-oil-chaos.png"
+      "scene": "The underwater pipeline feeding the Fujairah terminal has ruptured. Video from an ROV shows a clean cut in the steel — too precise for corrosion, too symmetrical for an anchor strike. Your intelligence analysts are divided: the Iranian intelligence service has the capability, but so do half a dozen non-state actors. The oil terminal's throughput has dropped forty percent. Your forensics team needs seventy-two hours to analyze the cut pattern, the explosive residue, and the underwater current data. In the meantime, oil markets have already rendered their verdict: futures up eight dollars on the word 'sabotage.'"
     },
-    "russia_arms_deal": {
+    {
       "id": "russia_arms_deal",
       "title": "RUSSIAN ARMS SHIPMENT",
       "description": "Intel shows Russia is shipping advanced anti-ship missiles to Iran. If they're deployed, the strait becomes deadlier.",
@@ -1228,7 +586,7 @@
       ],
       "scene": "The satellite imagery is unambiguous: a Russian cargo vessel, the MV Akademik Chernov, transiting the Caspian Sea toward the Iranian port of Bandar-e Anzali. Her deck cargo, partially covered by tarps, shows the distinctive silhouette of Kh-35 anti-ship missile launchers. Your intelligence assessment estimates forty missiles in the shipment — enough to make the Strait of Hormuz significantly deadlier. The Russian ambassador has not returned your calls. The shipment will arrive in Iranian hands within seventy-two hours unless you act."
     },
-    "iran_internal": {
+    {
       "id": "iran_internal",
       "title": "IRANIAN POWER STRUGGLE",
       "description": "Intel suggests moderates within Iran's government are challenging IRGC hardliners. You could tip the balance.",
@@ -1251,7 +609,7 @@
       ],
       "scene": "The CIA station chief in the region delivers the briefing personally, a rare signal of its importance. 'The moderate faction within Iran's government is challenging the IRGC hardliners,' she says, spreading intercepted communications across the table. 'Foreign Minister Araghchi has been making private arguments for de-escalation. He's gaining traction with the civilian government. But Tangsiri and the IRGC leadership are pushing back hard.' She looks at you directly. 'You have a narrow window to tip the balance. But any overt move could backfire — the moderates are already accused of being Western stooges.'"
     },
-    "tanker_escort": {
+    {
       "id": "tanker_escort",
       "title": "ESCORT CONVOY REQUEST",
       "description": "Multiple shipping companies request military escort through the strait. It would restore confidence but stretch your forces.",
@@ -1274,7 +632,7 @@
       ],
       "scene": "The request comes not from one shipping company but from twelve — a joint letter signed by Maersk, Evergreen, COSCO, and nine others, delivered to the State Department and the Pentagon simultaneously. They want military escort through the strait. Without it, they say, commercial transit will cease within two weeks. The insurance companies are already pulling coverage. Your naval commander in the Gulf has run the numbers: full escort operations would require every available destroyer, plus carrier air cover, plus mine countermeasures vessels. It is possible, but barely, and it would stretch your forces to the breaking point."
     },
-    "stena_imperative": {
+    {
       "id": "stena_imperative",
       "title": "TANKER ESCAPE — USS MCFAUL",
       "description": "Six IRGC gunboats are converging on the tanker Stena Imperative. USS McFaul (DDG-74) is 12 minutes away. The tanker captain is requesting emergency escort.",
@@ -1297,7 +655,7 @@
       ],
       "scene": "The tactical display lights up with six hostile contacts converging on a single green icon. The Stena Imperative, a Swedish-flagged tanker, is under siege. IRGC gunboats — Heydar-class, the fastest combat boats on earth — are closing from three directions at fifty knots. The tanker's captain is on the distress frequency, his voice cracking with fear: 'Any warship, any warship, this is Stena Imperative, we are being approached by Iranian military vessels, request immediate assistance.' USS McFaul, DDG-74, is twelve minutes away at flank speed. An F-35 from the Eisenhower is eight minutes out. The clock is running, and the IRGC boats are not slowing down."
     },
-    "insurance_crisis": {
+    {
       "id": "insurance_crisis",
       "title": "MARITIME INSURANCE COLLAPSE",
       "description": "Lloyd's of London and major maritime insurers have cancelled all war risk coverage in the Persian Gulf. No insurance = no tankers transit. Oil markets are panicking.",
@@ -1320,7 +678,7 @@
       ],
       "scene": "The call from Lloyd's of London comes to your Treasury Secretary at 6 AM: all war risk coverage in the Persian Gulf has been cancelled, effective immediately. The ripple effect is instant and devastating. Without insurance, no tanker can legally transit. Without tankers, no oil moves. Without oil, the global economy begins to seize. Within hours, the market impact is visible: futures spike, shipping companies announce 'indefinite suspension' of Gulf operations, and your inbox fills with urgent messages from every energy-importing nation on earth. The maritime insurance market — a system older than America itself — has just declared the Strait of Hormuz uninsurable."
     },
-    "nuclear_breakout": {
+    {
       "id": "nuclear_breakout",
       "title": "NUCLEAR BREAKOUT WARNING",
       "description": "IAEA reports Iran has moved enriched uranium to the underground Fordow facility. At 60% enrichment with 440kg stockpile, weapons-grade material is 72 hours away.",
@@ -1343,7 +701,7 @@
       ],
       "scene": "The CIA Director's face is gray as old concrete when she walks into the Situation Room. She lays a single satellite photograph on the table — Fordow enrichment facility, buried deep in a mountain near Qom. The centrifuge cascades are spinning at ninety percent enrichment. 'They're weeks from a weapon, possibly days,' she says. The room falls silent. Every option on the table leads somewhere terrible."
     },
-    "abqaiq_redux": {
+    {
       "id": "abqaiq_redux",
       "title": "SAUDI ARAMCO ATTACK",
       "description": "Drone swarm strikes Abqaiq-Khurais oil processing facility. 5.7 million barrels/day knocked offline — half of Saudi production. Oil futures spike 15% overnight.",
@@ -1366,7 +724,7 @@
       ],
       "scene": "The attack comes at dawn, a swarm of cruise missiles and drones converging on Saudi Arabia's Abqaiq processing facility from multiple vectors. The facility handles five percent of global oil supply. Satellite imagery shows plumes of black smoke rising ten thousand feet into the Arabian sky. Saudi air defenses engaged some of the inbound weapons, but enough got through. Oil futures are already spiking."
     },
-    "houthi_restart": {
+    {
       "id": "houthi_restart",
       "title": "HOUTHI RED SEA CAMPAIGN RESUMES",
       "description": "After months of quiet, Houthi forces launch anti-ship missiles at three commercial vessels in the Red Sea. Container shipping drops 90% through Bab el-Mandeb.",
@@ -1389,7 +747,7 @@
       ],
       "scene": "CENTCOM's morning brief hits your desk with a red border. Houthi forces in Yemen have resumed attacks on commercial shipping in the Red Sea, launching anti-ship ballistic missiles at two tankers transiting the Bab el-Mandeb strait. One missile was intercepted by a Navy destroyer. The other struck a Panamanian-flagged chemical tanker, which is now listing and leaking cargo into the sea. The Houthis are Iran's most unpredictable proxy, and they smell opportunity in the Hormuz crisis."
     },
-    "mine_laying_detected": {
+    {
       "id": "mine_laying_detected",
       "title": "IRAN BEGINS MINING THE STRAIT",
       "description": "CNN confirms: Iranian vessels are actively laying mines in the Strait of Hormuz shipping channels. CENTCOM identifies 12+ minelayers operating under cover of darkness.",
@@ -1412,7 +770,7 @@
       ],
       "scene": "A P-8 Poseidon maritime patrol aircraft spots them first — small boats operating under cover of darkness in the narrowest section of the Strait. Infrared cameras capture the unmistakable silhouette of naval mines being rolled off the sterns. By morning, your minesweeper crews confirm it: Iran is mining the Strait of Hormuz. Every tanker captain in the Gulf is now recalculating risk. Insurance rates triple before lunch."
     },
-    "asian_energy_crisis": {
+    {
       "id": "asian_energy_crisis",
       "title": "ASIAN ENERGY EMERGENCY",
       "description": "India, Japan, and South Korea declare energy emergencies. 89% of strait oil goes to Asia. India invokes emergency powers to redirect LPG from industry to households. Tokyo warns of rolling blackouts.",
@@ -1435,7 +793,7 @@
       ],
       "scene": "The cascading effects of the Strait closure have reached Asia. Japan, South Korea, and India — nations that depend on Gulf oil for the majority of their energy imports — are facing rolling blackouts and industrial shutdowns. Tokyo's ambassador delivers a blunt message: 'Resolve this, or we will find our own solution.' The global economy is buckling, and the pressure to act is coming from every direction."
     },
-    "war_powers_vote": {
+    {
       "id": "war_powers_vote",
       "title": "WAR POWERS RESOLUTION",
       "description": "Both chambers of Congress have drafted War Powers Resolutions. If passed, your military options are severely constrained. The vote is in 48 hours.",
@@ -1458,7 +816,7 @@
       ],
       "scene": "The Speaker of the House has scheduled a War Powers Resolution vote for tomorrow. The debate on the floor is already bitter — hawks accusing doves of weakness, doves accusing hawks of warmongering. Your legislative team counts votes through the night. The outcome will either authorize expanded military operations or force a drawdown that could embolden Iran. Either way, the decision is no longer yours alone."
     },
-    "tanker_war_echoes": {
+    {
       "id": "tanker_war_echoes",
       "title": "OPERATION EARNEST WILL 2.0",
       "description": "Pentagon proposes a formal convoy escort operation through the strait — echoing the 1987-88 Tanker War. Reflagging allied tankers under US flag for legal protection.",
@@ -1481,7 +839,7 @@
       ],
       "scene": "The parallels are impossible to ignore. Your military historians have pulled the files from the 1987-88 Tanker War, and the similarities are haunting — Iranian attacks on commercial shipping, American convoy escorts, the constant threat of escalation. Admiral Hayes presents Operation Earnest Will as a template. 'It worked then,' he says. 'It can work now.' But you know how that story ended — with the USS Vincennes shooting down an Iranian airliner."
     },
-    "truth_social_armada": {
+    {
       "id": "truth_social_armada",
       "title": "\"MASSIVE ARMADA HEADING TO IRAN\"",
       "description": "The President posts on Truth Social: \"A massive Armada is heading to Iran. They will learn!\" The post has 50 million views. Iran's Supreme Leader responds within the hour.",
@@ -1504,7 +862,7 @@
       ],
       "scene": "You wake to find that a senior official has posted on social media about sending 'the greatest armada the world has ever seen' to the Persian Gulf. The post has gone viral. Allies are confused, adversaries are calculating, and your communications team is in damage-control mode. The markets have already reacted — defense stocks are surging, oil futures climbing. Your national security advisor is standing in your doorway, looking like someone who has swallowed a grenade."
     },
-    "iran_internal_struggle": {
+    {
       "id": "iran_internal_struggle",
       "title": "IRANIAN MODERATES VS IRGC",
       "description": "Iran's civilian government and IRGC are openly clashing. The Foreign Ministry wants negotiations. The IRGC is planning more seizures. Your intel shows the split is real.",
@@ -1527,7 +885,7 @@
       ],
       "scene": "Your intelligence analysts have identified a fracture within the Iranian regime. The IRGC hardliners under General Tangsiri are pushing for maximum confrontation, while the foreign ministry faction led by Araghchi advocates negotiation. Intercepted communications suggest the Supreme Leader has not yet chosen a side. This internal struggle is your opening — or your trap."
     },
-    "fast_boat_swarm": {
+    {
       "id": "fast_boat_swarm",
       "title": "IRGC FAST BOAT SWARM",
       "description": "TWENTY-FIVE Heydar-class fast boats — the fastest combat boats on earth at 110 knots — are converging on a tanker convoy. This is Iran's signature tactic: overwhelm with speed and numbers.",
@@ -1550,7 +908,7 @@
       ],
       "scene": "CENTCOM reports a mass sortie of IRGC fast boats from multiple Iranian ports simultaneously. Dozens of armed speedboats are converging on the shipping lanes in a coordinated swarm pattern. Your fleet commanders are requesting weapons-free authorization. The radar screens look like a kicked anthill. This is the scenario your war planners have war-gamed a hundred times, and it is happening now."
     },
-    "hezbollah_front": {
+    {
       "id": "hezbollah_front",
       "title": "HEZBOLLAH OPENS SECOND FRONT",
       "description": "Hezbollah launches missiles and drones into northern Israel from Lebanon. Iran's proxy war is expanding beyond the Gulf. Israel demands US support.",
@@ -1573,7 +931,7 @@
       ],
       "scene": "Hezbollah has opened a second front. Rockets are falling on the US Embassy compound in Baghdad, and your forces at Al-Tanf garrison in Syria are under sustained mortar fire. The proxy network is activating across the region, stretching your attention and your resources. The Iranian strategy is becoming clear — they will fight you everywhere except Iran."
     },
-    "cape_route_crisis": {
+    {
       "id": "cape_route_crisis",
       "title": "CAPE OF GOOD HOPE BOTTLENECK",
       "description": "With the strait effectively closed, 150+ tankers are rerouting via the Cape of Good Hope — adding 11,000 nautical miles, 10 days, and $1M fuel per voyage. Ports in South Africa are overwhelmed.",
@@ -1596,7 +954,7 @@
       ],
       "scene": "Shipping companies are rerouting around the Cape of Good Hope to avoid the Strait entirely. The alternative route adds two weeks and massive fuel costs to every tanker voyage. The global supply chain is warping under the pressure — delivery times extending, costs skyrocketing, industries that depend on just-in-time logistics grinding to a halt. Your economic advisors present models showing a global recession within sixty days if the Strait remains contested."
     },
-    "mojtaba_succession": {
+    {
       "id": "mojtaba_succession",
       "title": "SUPREME LEADER SUCCESSION CRISIS",
       "description": "With Khamenei dead, his son Mojtaba is consolidating power with IRGC backing. But the Assembly of Experts is divided. Iran's internal chaos creates both danger and opportunity.",
@@ -1619,7 +977,7 @@
       ],
       "scene": "Your intelligence briefer delivers the morning's bombshell quietly, almost casually. The Supreme Leader's health is failing, and his son Mojtaba Khamenei is positioning himself to inherit power. The IRGC generals are divided — some support Mojtaba, others see him as a weak pretender. Iran's internal politics are about to become the most dangerous variable in your crisis equation."
     },
-    "joe_kent_resignation": {
+    {
       "id": "joe_kent_resignation",
       "title": "NSA KENT RESIGNS",
       "description": "National Security Advisor Joe Kent has resigned, citing disagreements over escalation. He goes on Fox News within the hour. \"The President is being misled by hawks who've never seen combat.\"",
@@ -1642,7 +1000,7 @@
       ],
       "scene": "The resignation letter lands on your desk at 0600, leaked to the press by 0615. A senior national security official — a decorated combat veteran with deep credibility in the defense community — has quit, publicly condemning your handling of the Iran crisis. The letter is devastating, detailed, and already trending. Cable news has him booked for every primetime show tonight."
     },
-    "gcc_attacks": {
+    {
       "id": "gcc_attacks",
       "title": "GCC BASES UNDER FIRE",
       "description": "Iran launches ballistic missiles at Al Udeid (Qatar) and Al Dhafra (UAE). Both house US forces. Patriot batteries intercept most but three impact inside Al Udeid. 8 US casualties.",
@@ -1665,7 +1023,7 @@
       ],
       "scene": "The attacks are simultaneous and coordinated. Ballistic missiles strike a Saudi military base, a drone swarm targets a UAE oil terminal, and rockets hit a Bahraini naval facility. The Gulf Cooperation Council states are screaming for an American response. Your allies' capitals are burning, and the pressure to act is unlike anything you have felt. The Gulf monarchs are on the phone, one after another, each more furious than the last."
     },
-    "iris_dena_aftermath": {
+    {
       "id": "iris_dena_aftermath",
       "title": "IRIS DENA WRECKAGE",
       "description": "The Iranian frigate IRIS Dena was sunk on Day 1. Now bodies and wreckage are washing up on Omani beaches. Al Jazeera is broadcasting it live. International pressure mounts.",
@@ -1688,7 +1046,7 @@
       ],
       "scene": "The IRIS Dena, an Iranian frigate, lies crippled in the Gulf of Oman after an engagement with coalition naval forces. Rescue operations are underway — Iranian sailors in the water, some wounded, all of them pawns in a game played at much higher altitudes. The footage of American sailors pulling Iranian sailors from the oil-slicked water is simultaneously a humanitarian triumph and a propaganda minefield."
     },
-    "china_mediation_real": {
+    {
       "id": "china_mediation_real",
       "title": "BEIJING CEASEFIRE PROPOSAL",
       "description": "Chinese FM Wang Yi proposes a 5-point ceasefire framework: mutual de-escalation, UN peacekeepers in strait, sanctions relief timeline, nuclear talks restart, regional security forum. Beijing is serious.",
@@ -1711,7 +1069,7 @@
       ],
       "scene": "Beijing has made its move. China's foreign minister arrives in Tehran with a comprehensive peace proposal, brokered in quiet consultations with both sides. The plan calls for mutual de-escalation, sanctions relief tied to verifiable milestones, and Chinese peacekeepers in the Strait. It is elegant, ambitious, and designed to position Beijing as the indispensable power broker of the twenty-first century. Your allies are intrigued. Your hawks are appalled."
     },
-    "nowruz_ceasefire": {
+    {
       "id": "nowruz_ceasefire",
       "title": "NOWRUZ CEASEFIRE WINDOW",
       "description": "Iranian New Year (Nowruz) is in 3 days. Iranian moderates propose a 5-day ceasefire for the holiday. IRGC hasn't objected. This could be the off-ramp.",
@@ -1734,7 +1092,7 @@
       ],
       "scene": "The Omani intermediary arrives with an unexpected proposal: Iran is offering a ceasefire timed to Nowruz, the Persian New Year. The gesture carries deep cultural significance — a fresh start, a new beginning. Your Iran experts see it as a genuine olive branch from the moderate faction. Your military advisors see it as a ploy to reposition forces. Both could be right."
     },
-    "hezbollah_ceasefire_break": {
+    {
       "id": "hezbollah_ceasefire_break",
       "title": "HEZBOLLAH BREAKS CEASEFIRE",
       "description": "Hezbollah launches 150 rockets into northern Israel, breaking the Lebanon ceasefire. Israel retaliates immediately. Iran's proxy network is activating across the region.",
@@ -1757,7 +1115,7 @@
       ],
       "scene": "The ceasefire is barely hours old when Hezbollah launches a barrage of rockets from southern Lebanon toward a US logistics base in northern Iraq. The attack kills no one — the base was evacuated as a precaution — but the violation is brazen. Tehran claims Hezbollah acts independently. Nobody in your Situation Room believes that for a second."
     },
-    "houthi_escalation": {
+    {
       "id": "houthi_escalation",
       "title": "HOUTHIS TARGET US WARSHIP",
       "description": "Houthi anti-ship ballistic missile targets USS Gravely (DDG-107) in the Red Sea. SM-2 intercept at 8nm. The closest a Houthi missile has come to hitting a US warship.",
@@ -1780,7 +1138,7 @@
       ],
       "scene": "Houthi forces in Yemen have escalated dramatically, launching their most sophisticated attack yet — a coordinated barrage of anti-ship ballistic missiles and explosive-laden drone boats targeting a convoy of tankers in the Red Sea. Your destroyers intercept most of the incoming, but one tanker takes a hit and is ablaze. The Bab el-Mandeb strait, the world's second-most critical oil chokepoint, is now as dangerous as Hormuz."
     },
-    "kc135_crash": {
+    {
       "id": "kc135_crash",
       "title": "KC-135 CRASH — COMBAT LOSSES MOUNT",
       "description": "A KC-135 aerial refueling tanker crashes during combat operations, killing all 3 crew. It's the first US aircraft loss. Cable news shows the wreckage on loop.",
@@ -1803,7 +1161,7 @@
       ],
       "scene": "A KC-135 aerial refueling tanker has gone down in the Arabian Sea during a routine mission. Four crew members are missing. Search and rescue operations are underway, but the crash site is in contested waters. Iran's navy is in the area. The cause is unknown — mechanical failure, hostile action, or something in between. The families are being notified. The press is asking questions you cannot yet answer."
     },
-    "war_crimes_tribunal": {
+    {
       "id": "war_crimes_tribunal",
       "title": "ICC WAR CRIMES INVESTIGATION",
       "description": "The International Criminal Court announces an investigation into both US and Iranian conduct. Warrants could be issued for senior officials. European allies are divided.",
@@ -1826,7 +1184,7 @@
       ],
       "scene": "The International Criminal Court has announced a preliminary investigation into potential war crimes committed during the Strait crisis. The investigation targets both sides, but American actions — the airstrikes, the blockade enforcement, the naval engagements — are under particular scrutiny. Your legal team is divided on the exposure. The political implications are enormous."
     },
-    "mojtaba_consolidation": {
+    {
       "id": "mojtaba_consolidation",
       "title": "MOJTABA KHAMENEI POWER GRAB",
       "description": "Intelligence confirms Mojtaba Khamenei — the dead Supreme Leader's son — has consolidated IRGC support. He's demanding revenge strikes and threatening to close the strait permanently.",
@@ -1849,7 +1207,7 @@
       ],
       "scene": "Mojtaba Khamenei has consolidated power faster than anyone predicted. The IRGC generals who opposed him have been quietly retired or reassigned. Tehran's new power structure is taking shape, and it is unclear whether Mojtaba will prove more moderate or more extreme than his father. Your intelligence is contradictory — some sources say he wants a deal, others say he is preparing for war. The uncertainty is paralyzing."
     },
-    "al_udeid_attack": {
+    {
       "id": "al_udeid_attack",
       "title": "AL UDEID BASE UNDER FIRE",
       "description": "Iranian ballistic missiles hit Al Udeid Air Base in Qatar — the forward HQ of CENTCOM. 3 US personnel killed, 22 wounded. Qatar is demanding you relocate operations.",
@@ -1872,7 +1230,7 @@
       ],
       "scene": "Ballistic missiles are inbound toward Al Udeid Air Base in Qatar, the nerve center of US air operations in the Gulf. Patriot batteries fire in rapid sequence, streaks of light arcing into the night sky. Most of the missiles are intercepted, but fragments rain down on the flight line. One hangar is burning. The base commander reports casualties. This is the first direct Iranian attack on an American military installation."
     },
-    "indian_energy_crisis": {
+    {
       "id": "indian_energy_crisis",
       "title": "INDIA ENERGY EMERGENCY",
       "description": "India declares a national energy emergency. They import 80% of their oil through the Strait. PM Modi is calling — demanding action or they will negotiate directly with Iran.",
@@ -1895,7 +1253,7 @@
       ],
       "scene": "India's prime minister calls you directly, bypassing the usual diplomatic channels. The subcontinent is running out of oil. Power cuts are spreading, factories are shutting down, and street protests are erupting in Mumbai and Delhi. India imports eighty percent of its oil through the Strait of Hormuz. 'My country is dying slowly,' the prime minister says. 'I need you to fix this.'"
     },
-    "iran_moderate_coup": {
+    {
       "id": "iran_moderate_coup",
       "title": "MODERATE FACTION REACHES OUT",
       "description": "An encrypted message through Swiss channels: Iran's moderate faction is planning to sideline the IRGC hardliners. They need 72 hours — and a gesture of good faith.",
@@ -1918,7 +1276,7 @@
       ],
       "scene": "The intelligence arrives in fragments, pieced together from SIGINT intercepts and human sources in Tehran. A faction of Iranian moderates — military officers, business leaders, reformist politicians — is planning to move against the hardliners. They want to know if America will support a political transition. The request comes with a warning: if this fails, the hardliners will be more dangerous than ever."
     },
-    "kc135_crew_rescue": {
+    {
       "id": "kc135_crew_rescue",
       "title": "DOWNED KC-135 CREW",
       "description": "The KC-135 tanker shot down on Day 1 — search teams have located 2 surviving crew members on an Iranian island. IRGC is closing in.",
@@ -1941,7 +1299,7 @@
       ],
       "scene": "Your downed KC-135 crew has been located — alive, floating in life rafts in the Arabian Sea, sixty nautical miles from the Iranian coast. IRGC fast boats have been spotted heading toward the same coordinates. A Navy helicopter rescue team is thirty minutes out. The race is on, and the lives of four American servicemembers hang in the balance."
     },
-    "european_split": {
+    {
       "id": "european_split",
       "title": "NATO FRACTURES",
       "description": "France breaks with the US — Macron calls the Iran strikes \"disproportionate\" and blocks NATO solidarity statement. Germany is wavering. The UK stands with you — for now.",
@@ -1964,7 +1322,7 @@
       ],
       "scene": "The European Union is fracturing over the Iran crisis. France and Germany are calling for immediate negotiations and a suspension of military operations. Britain stands with you, but the Eastern European nations are distracted by their own security concerns. The transatlantic alliance, the bedrock of American foreign policy for eighty years, is cracking along the fault lines of the Strait of Hormuz."
     },
-    "hostage_situation_escalates": {
+    {
       "id": "hostage_situation_escalates",
       "title": "HOSTAGE CRISIS DEEPENS",
       "description": "Three of the 12 detained crew members appear on Iranian state TV, reading prepared statements calling for America to \"stop its aggression.\" Intelligence suggests they're being held at Evin Prison, not a military facility — a signal Iran wants to negotiate. The families are on CNN demanding action. A retired admiral is calling for a rescue operation on Fox News.",
@@ -1987,7 +1345,7 @@
       ],
       "scene": "The hostage situation has deteriorated. Iran has moved the detained tanker crews from the port facility to an unknown location inland. Your intelligence has lost track of them. The families are on television, pleading for action. Congressional pressure is mounting. Time is working against you — every day the hostages spend in Iranian custody makes their recovery more difficult and more dangerous."
     },
-    "hostage_envoy_result": {
+    {
       "id": "hostage_envoy_result",
       "title": "THE ENVOY REPORTS",
       "description": "Your envoy spent 72 hours in Tehran. The news is mixed. Iran will release 8 of the 12 crew — but they're keeping 4 \"for investigation into espionage.\" The price: unfreeze $2 billion in Iranian assets and issue a joint statement about \"mutual respect for maritime sovereignty.\" The envoy says the moderates were sincere but scared. The IRGC was listening to every word.",
@@ -2005,7 +1363,7 @@
       ],
       "scene": "Your envoy has been in Tehran for three days. The negotiations have been grueling — marathon sessions in windowless rooms, accusations and counteraccusations, moments of progress followed by hours of deadlock. Now the envoy calls with an update: Iran is willing to release some hostages in exchange for unfreezing certain assets. Not all the hostages. Not all the assets. A partial deal in a world where partial is the best you can get."
     },
-    "hostage_rescue_result": {
+    {
       "id": "hostage_rescue_result",
       "title": "OPERATION EAGLE CLAW II",
       "description": "The rescue force launched at 0200 local time. Two MH-60 Black Hawks, 24 operators, supported by AC-130 gunships. They reached Evin Prison and breached the facility. But Iranian intelligence was waiting.",
@@ -2018,7 +1376,7 @@
       ],
       "scene": "The rescue mission has launched. Black Hawks cross the Iranian coast at wave-top height, their rotors cutting the predawn darkness. The SEALs insert at the target compound under covering fire from AC-130 gunships. Then the operation goes sideways — the hostages have been moved, the compound is a trap, and your operators are taking fire from positions that were supposed to be empty. The extraction is chaotic, contested, and costly."
     },
-    "mojtaba_power_play": {
+    {
       "id": "mojtaba_power_play",
       "title": "MOJTABA CONSOLIDATES",
       "description": "Mojtaba Khamenei has purged three senior IRGC commanders who opposed his succession. Satellite imagery shows Republican Guard units redeploying to Tehran — not to the Gulf. Intelligence suggests he's more afraid of internal rivals than of you. A CIA source inside the Guardian Council reports he might be open to a deal if it helps him consolidate power.",
@@ -2041,7 +1399,7 @@
       ],
       "scene": "Your intelligence assets in Tehran report that Mojtaba Khamenei has made his move. He has purged three IRGC generals and installed loyalists in key positions. But the power play has left him isolated — he needs external validation to consolidate. Your station chief in the region sends a flash cable: Mojtaba's people want to talk. Not through intermediaries. Directly."
     },
-    "mojtaba_secret_deal": {
+    {
       "id": "mojtaba_secret_deal",
       "title": "THE SUPREME LEADER'S OFFER",
       "description": "Mojtaba's people made contact. The proposal is extraordinary: Iran will reopen the strait and halt enrichment above 20% — permanently. In exchange, they want recognition of the new Supreme Leader, removal of all personal sanctions on Mojtaba, and a secret $5 billion reconstruction fund. The CIA says he's genuine. The risk: if Congress finds out, it's Iran-Contra 2.0.",
@@ -2064,7 +1422,7 @@
       ],
       "scene": "The back channel with Mojtaba's faction has produced something extraordinary — a draft agreement that would fundamentally reshape Iran's relationship with the West. Sanctions relief, nuclear limits, Gulf security guarantees, proxy force drawdowns. It is the grand bargain that every administration since the Revolution has dreamed of and none has achieved. The catch: Mojtaba needs the deal to remain secret until he has fully consolidated power. One leak, and the hardliners will tear it apart — and possibly tear Mojtaba apart with it."
     },
-    "nuclear_inspection_crisis": {
+    {
       "id": "nuclear_inspection_crisis",
       "title": "IAEA DEMANDS ACCESS",
       "description": "Following your push for international inspection, the IAEA team arrived at Fordow — and was turned away. Iran claims \"construction\" prevents access. Satellite imagery shows new tunneling activity. The IAEA chief calls you directly: \"They're 2-3 weeks from enough material for a device. Maybe less.\" Israel is moving Jericho missiles to launch positions.",
@@ -2087,7 +1445,7 @@
       ],
       "scene": "The IAEA inspection team has arrived at Fordow — and been denied access to the deep underground halls. The Iranian military has surrounded the facility with troops and declared the inspection 'suspended for security reasons.' Your inspectors are confined to a guest house while satellites show centrifuge halls operating at full capacity. The verification regime you staked your credibility on is collapsing in real time."
     },
-    "nuclear_ultimatum_response": {
+    {
       "id": "nuclear_ultimatum_response",
       "title": "IRAN'S 72-HOUR RESPONSE",
       "description": "The deadline passes. Iran's response comes not through diplomats but through actions: they move centrifuge cascades to a new, unknown facility. Meanwhile, Mojtaba appears on television and says, \"Iran will never bow to nuclear blackmail — we seek peaceful energy, and we will defend our rights.\" The IAEA says they've lost track of 8kg of enriched uranium.",
@@ -2105,7 +1463,7 @@
       ],
       "scene": "Iran's response to your nuclear ultimatum arrives at the stroke of the deadline. It is not a capitulation. It is not a rejection. It is a counter-ultimatum: withdraw your carrier groups from the Gulf within seventy-two hours, or Iran will expel all remaining international monitors and accelerate enrichment to weapons grade. The Supreme Leader appears on state television, flanked by generals, calling your bluff. The world has never been closer to a nuclear-armed Iran."
     },
-    "assassination_crisis": {
+    {
       "id": "assassination_crisis",
       "title": "[ IMMINENT THREAT ]",
       "description": "Multiple intelligence agencies confirm a credible, imminent assassination plot. You have minutes to decide.",
@@ -2124,7 +1482,7 @@
         }
       ]
     },
-    "nuclear_threshold": {
+    {
       "id": "nuclear_threshold",
       "title": "[ NUCLEAR THRESHOLD ]",
       "description": "IAEA reports Iran at 90% enrichment with 440kg stockpile. Israel is on the phone. \"We strike in 12 hours unless you act.\" Russia warns any strike will be treated as aggression against their ally.",
@@ -2155,10 +1513,9 @@
           "consequence": "You do nothing visible. You increase surveillance, position assets, prepare contingencies, and wait for Iran to make its next move. The strategic patience is agonizing, but you refuse to let Tehran's timeline dictate your actions."
         }
       ],
-      "scene": "The red phone rings at three in the morning. The CIA Director's voice is flat, drained of emotion, delivering the words that every president since 1979 has dreaded. Iran has crossed the nuclear threshold. Fordow's centrifuges have produced enough highly enriched uranium for a weapon. Weaponization timelines are uncertain — weeks, perhaps days. The Situation Room fills with people who have not slept, staring at satellite imagery of a mountain that now contains the end of the world as they know it.",
-      "image": "assets/event-crisis-nuclear.png"
+      "scene": "The red phone rings at three in the morning. The CIA Director's voice is flat, drained of emotion, delivering the words that every president since 1979 has dreaded. Iran has crossed the nuclear threshold. Fordow's centrifuges have produced enough highly enriched uranium for a weapon. Weaponization timelines are uncertain — weeks, perhaps days. The Situation Room fills with people who have not slept, staring at satellite imagery of a mountain that now contains the end of the world as they know it."
     },
-    "friendly_fire": {
+    {
       "id": "friendly_fire",
       "title": "[ FRIENDLY FIRE INCIDENT ]",
       "description": "USS Vella Gulf (CG-72) has engaged and destroyed a vessel in the strait. It was an Emirati coast guard cutter. 11 UAE personnel killed. The UAE ambassador is on the phone. Al Jazeera has the footage.",
@@ -2184,10 +1541,9 @@
           "consequence": "You propose joint rules of engagement with all allied navies in the theater, turning the tragedy into a catalyst for better coordination. The initiative cannot undo the dead, but it might prevent the next friendly-fire incident."
         }
       ],
-      "scene": "The worst has happened. In the fog of a nighttime naval engagement, an American destroyer has fired on and struck a vessel that turns out to be a Bahraini coast guard cutter operating in the same waters. Casualties are significant. The Bahraini government is in shock — they are your ally, their base hosts your fleet, and your weapons have just killed their sailors. The incident is already on social media, uploaded by a fishing boat that witnessed the explosion.",
-      "image": "assets/event-crisis-friendly-fire.png"
+      "scene": "The worst has happened. In the fog of a nighttime naval engagement, an American destroyer has fired on and struck a vessel that turns out to be a Bahraini coast guard cutter operating in the same waters. Casualties are significant. The Bahraini government is in shock — they are your ally, their base hosts your fleet, and your weapons have just killed their sailors. The incident is already on social media, uploaded by a fishing boat that witnessed the explosion."
     },
-    "cascade_crisis": {
+    {
       "id": "cascade_crisis",
       "title": "[ CASCADE FAILURE ]",
       "description": "Houthi anti-ship missile hits LNG tanker in Bab el-Mandeb. Tanker is on fire, crew abandoning ship. Simultaneously, IRGC mines detonate under a VLCC in Hormuz. AND Iraqi militias are rocketing Al Asad. Three theaters. One response.",
@@ -2213,133 +1569,7 @@
           "consequence": "You address the nation, acknowledging the severity of the crisis and calling for calm. Behind the scenes, you authorize only defensive operations, refusing to be the one who escalates a bad situation into an irreversible catastrophe."
         }
       ],
-      "scene": "Everything is happening at once. Houthi missiles are streaking toward Red Sea shipping. Hezbollah rockets are hitting targets in Iraq. An IRGC fast-boat swarm is converging on a tanker convoy in the Strait. Your forces are engaged on three fronts simultaneously, and the situation board looks like a war that has already started without anyone formally declaring it. Your theater commander is requesting reinforcements he knows you do not have. The cascade has begun.",
-      "image": "assets/event-crisis-cascade.png"
+      "scene": "Everything is happening at once. Houthi missiles are streaking toward Red Sea shipping. Hezbollah rockets are hitting targets in Iraq. An IRGC fast-boat swarm is converging on a tanker convoy in the Strait. Your forces are engaged on three fronts simultaneously, and the situation board looks like a war that has already started without anyone formally declaring it. Your theater commander is requesting reinforcements he knows you do not have. The cascade has begun."
     }
-  },
-  "crisisEvents": {},
-  "escalationLadder": [
-    {
-      "name": "DIPLOMATIC TENSIONS",
-      "description": "Sanctions and rhetoric. No military engagement."
-    },
-    {
-      "name": "NAVAL STANDOFF",
-      "description": "Warships deployed. Seizures and standoffs. Limited skirmishes."
-    },
-    {
-      "name": "LIMITED STRIKES",
-      "description": "Precision strikes on military targets. Tit-for-tat."
-    },
-    {
-      "name": "AIR CAMPAIGN",
-      "description": "Sustained air operations. Infrastructure targeted. Civilian risk."
-    },
-    {
-      "name": "GROUND INVASION",
-      "description": "Ground forces deployed. Draft considered. Regional war."
-    },
-    {
-      "name": "TOTAL WAR",
-      "description": "Nuclear threshold. Chemical weapons. Civilization at stake."
-    }
-  ],
-  "iranEscalation": [
-    {
-      "name": "RESTRAINED",
-      "triggers": [
-        "aggression < 25"
-      ]
-    },
-    {
-      "name": "PROBING",
-      "triggers": [
-        "aggression 25-50",
-        "fast boats and seizures"
-      ]
-    },
-    {
-      "name": "PROXY WAR",
-      "triggers": [
-        "aggression 50-65",
-        "Houthis + Iraqi militias activated"
-      ]
-    },
-    {
-      "name": "DIRECT ENGAGEMENT",
-      "triggers": [
-        "aggression 65-80",
-        "missile strikes",
-        "mine-laying"
-      ]
-    },
-    {
-      "name": "NUCLEAR LEVERAGE",
-      "triggers": [
-        "aggression 80-90",
-        "breakout threats",
-        "enrichment acceleration"
-      ]
-    },
-    {
-      "name": "ALL-OUT",
-      "triggers": [
-        "aggression > 90",
-        "mass missile/drone swarm",
-        "suicide boats"
-      ]
-    }
-  ],
-  "storyArcs": {
-    "the_spark": {
-      "name": "THE SPARK",
-      "brief": "You inherit a crisis in motion. Nobody expects you to last."
-    },
-    "the_squeeze": {
-      "name": "THE SQUEEZE",
-      "brief": "Iran tightens. A second vessel seized. Your opposition smells blood."
-    },
-    "diplomatic_window": {
-      "name": "THE DIPLOMATIC WINDOW",
-      "brief": "A brief thaw. Iran releases crew. The UN convenes. Choose wisely."
-    },
-    "false_dawn": {
-      "name": "THE FALSE DAWN",
-      "brief": "Whatever progress you made gets complicated. Every path leads to a setback."
-    },
-    "proxy_season": {
-      "name": "PROXY SEASON",
-      "brief": "Houthis. Hezbollah. Iraqi militias. The crisis is metastasizing."
-    },
-    "pressure_cooker": {
-      "name": "THE PRESSURE COOKER",
-      "brief": "Congressional hearings. Leaked documents. Iran issues an ultimatum."
-    },
-    "crossroads": {
-      "name": "CROSSROADS",
-      "brief": "The ultimatum expires. What happens depends on what you've built."
-    },
-    "the_grind": {
-      "name": "THE GRIND",
-      "brief": "The world adjusts. The crisis becomes chronic. Fatigue sets in."
-    },
-    "endgame_setup": {
-      "name": "ENDGAME",
-      "brief": "A breakthrough reveals Iran's true objective. The board reshapes."
-    },
-    "resolution": {
-      "name": "RESOLUTION",
-      "brief": "Diplomatic resolution, military victory, or managed decline. History is watching."
-    }
-  },
-  "winLoseReasons": {
-    "win_strait_open": "The Strait of Hormuz has been open and stable for 7 consecutive days. Crisis resolved through [masterful diplomacy / strong leadership / persistent strategy].",
-    "win_day91_stable": "After 13 weeks of crisis management, the situation has stabilized enough for a diplomatic resolution.",
-    "lose_approval": "Congress has initiated removal proceedings. Your approval collapsed to [X]% and stayed there. Your time in the Situation Room is over.",
-    "lose_assassination_extreme": "Despite warnings, the threat was not contained. A sophisticated attack succeeds. The crisis claims its highest-profile casualty.",
-    "lose_international": "The international community has turned against you. Allies recall ambassadors. Sanctions against the United States are being discussed. You are a global pariah.",
-    "lose_polarization": "Domestic unrest has reached a breaking point. The military is split. The crisis abroad has ignited a crisis at home. Civil order collapses.",
-    "lose_war": "Too many unresolved military incidents. The escalation spiral is irreversible. Armed conflict erupts in the Strait of Hormuz. A regional war has begun.",
-    "lose_day91_unstable": "After 13 weeks, the situation remains unstable. You failed to open the strait."
-  }
+  ]
 }

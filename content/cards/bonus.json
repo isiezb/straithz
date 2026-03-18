@@ -1,0 +1,49 @@
+{
+  "cards": {
+    "art_of_deal": {
+      "name": "Art of the Deal",
+      "description": "Demand Gulf states pay for protection or lose it.",
+      "hint": {
+        "low": "Casual ask",
+        "med": "Firm demand",
+        "high": "Ultimatum — pay or we leave"
+      }
+    },
+    "abraham_accords": {
+      "name": "Abraham Accords II",
+      "description": "Leverage Gulf relationships for regional peace framework.",
+      "hint": {
+        "low": "Quiet conversations",
+        "med": "Formal framework",
+        "high": "Historic agreement"
+      }
+    },
+    "shock_awe": {
+      "name": "Shock & Awe",
+      "description": "Overwhelming military demonstration. Every asset, visible and loud.",
+      "hint": {
+        "low": "Large-scale exercise",
+        "med": "Full fleet formation",
+        "high": "Combat-ready posture with live fire"
+      }
+    },
+    "osint_flood": {
+      "name": "OSINT Flood",
+      "description": "Crowdsource intelligence using open-source analysis. Chat does the work.",
+      "hint": {
+        "low": "Monitor feeds",
+        "med": "Coordinate OSINT community",
+        "high": "Full crowd-intel platform"
+      }
+    },
+    "populist_rally": {
+      "name": "America First Rally",
+      "description": "Massive domestic rally. Frame crisis as us vs. the establishment.",
+      "hint": {
+        "low": "Social media campaign",
+        "med": "Rally series in key states",
+        "high": "National movement"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "reasons": {
+    "win_strait_open": "The Strait of Hormuz has been open and stable for 7 consecutive days. Crisis resolved through [masterful diplomacy / strong leadership / persistent strategy].",
+    "win_day91_stable": "After 13 weeks of crisis management, the situation has stabilized enough for a diplomatic resolution.",
+    "lose_approval": "Congress has initiated removal proceedings. Your approval collapsed to [X]% and stayed there. Your time in the Situation Room is over.",
+    "lose_assassination_extreme": "Despite warnings, the threat was not contained. A sophisticated attack succeeds. The crisis claims its highest-profile casualty.",
+    "lose_international": "The international community has turned against you. Allies recall ambassadors. Sanctions against the United States are being discussed. You are a global pariah.",
+    "lose_polarization": "Domestic unrest has reached a breaking point. The military is split. The crisis abroad has ignited a crisis at home. Civil order collapses.",
+    "lose_war": "Too many unresolved military incidents. The escalation spiral is irreversible. Armed conflict erupts in the Strait of Hormuz. A regional war has begun.",
+    "lose_day91_unstable": "After 13 weeks, the situation remains unstable. You failed to open the strait."
+  }
+}

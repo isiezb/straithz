@@ -1,0 +1,53 @@
+{
+  "actions": {
+    "prisoner_exchange": {
+      "success": "BREAKING: Prisoner exchange agreed — crew coming home",
+      "failure": "Prisoner exchange talks collapse — Iran demands more concessions"
+    },
+    "covert_operation": {
+      "success": "Reports of explosion at Iranian military facility — cause unknown",
+      "failure": "Iran claims to have captured US special operations personnel"
+    },
+    "emergency_budget": {
+      "success": "Congress approves $200M emergency appropriation for strait operations",
+      "failure": "Congress slashes emergency budget request — only $50M approved"
+    },
+    "media_offensive": [
+      "White House launches coordinated media offensive on strait crisis"
+    ],
+    "backchannel_message": [
+      "Sources: back-channel communications between Washington and Tehran ongoing"
+    ],
+    "allied_consultation": [
+      "Allied leaders express support for US strait strategy in joint call"
+    ],
+    "sanctions_adjustment": [
+      "Treasury announces targeted sanctions adjustments on Iranian entities"
+    ],
+    "intel_sharing": [
+      "US shares classified strait intelligence with coalition partners"
+    ],
+    "humanitarian_corridor": [
+      "US establishes humanitarian corridor through Strait of Hormuz"
+    ],
+    "economic_stimulus": [
+      "President announces economic stimulus package to offset oil crisis"
+    ],
+    "cyber_recon": {
+      "discovery": "NSA cyber reconnaissance reveals Iranian naval operation plans",
+      "routine": "Cyber reconnaissance gathering data on Iranian networks"
+    },
+    "war_powers_consult": [
+      "President briefs Congressional Gang of Eight on military operations"
+    ],
+    "regional_flyover": [
+      "B-52 strategic bombers conduct visible flyover of Persian Gulf"
+    ],
+    "summit_proposal": [
+      "US proposes international summit on Strait of Hormuz crisis"
+    ],
+    "press_embargo": [
+      "White House requests voluntary media embargo on strait operations"
+    ]
+  }
+}

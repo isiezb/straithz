@@ -1,0 +1,190 @@
+{
+  "events": [
+    {
+      "id": "the_leak",
+      "title": "THE LEAK",
+      "description": "The Washington Post has your classified strategy memo. Every detail of your Iran approach is now public. Someone in your inner circle betrayed you. The press is circling.",
+      "choices": [
+        {
+          "label": "Launch an aggressive investigation — find the leaker",
+          "flavor": "You burn political capital hunting the mole. If you find them, credibility skyrockets.",
+          "consequence": "You launch the investigation immediately. The FBI counterintelligence team arrives within hours, polygraphs in tow. Your staff is terrified — the innocent alongside the guilty. For three days, the investigation dominates internal operations, burning political capital with every interview. But if you find the leaker, and you make an example, your credibility will be ironclad. The mole hunt begins."
+        },
+        {
+          "label": "Spin it — frame the leak as showing your brilliant strategy",
+          "flavor": "Bold. Iran now knows your playbook. But your base thinks you're playing 4D chess.",
+          "consequence": "You lean back and smile. Your communications director catches the signal. Within an hour, the talking points are out: 'The leaked memo demonstrates the President's brilliant multi-track strategy.' It is audacious spin. Iran now knows your playbook, which is a genuine problem. But your base thinks you are playing four-dimensional chess, and the news cycle shifts from 'security breach' to 'strategic genius.'"
+        },
+        {
+          "label": "Ignore it — refuse to dignify leaks",
+          "flavor": "The news cycle moves on. But your staff knows there are no consequences for betrayal.",
+          "consequence": "You say nothing. No investigation, no spin, no comment. The news cycle churns for forty-eight hours and then moves on to the next outrage. But in the quiet corridors of your administration, a message has been received: there are no consequences for betrayal. The next leak will come faster."
+        }
+      ],
+      "scene": "Your chief of staff walks in holding a tablet, his face the color of old cement. The Washington Post homepage fills the screen: 'EXCLUSIVE: Classified Strategy Memo Reveals Administration's Iran Playbook.' Every detail is there — the red lines, the escalation triggers, the fallback positions, even the code name for the back-channel. Someone in your inner circle has betrayed you. The secure conference room suddenly feels much larger and much emptier. Your senior advisors sit around the table, and one of them did this. You study their faces. The press pool is already gathering outside the West Wing."
+    },
+    {
+      "id": "intel_breakthrough",
+      "title": "THE INTELLIGENCE BREAKTHROUGH",
+      "description": "A SIGINT intercept combined with a HUMINT source has revealed Iran's true strategic objective. This isn't about the strait — it's about forcing recognition of Iran's regional hegemony. Every move they've made was building toward this moment. The question is what you do with the knowledge.",
+      "choices": [
+        {
+          "label": "Share with allies — build a coalition response",
+          "flavor": "Allies are galvanized. But your intelligence methods are exposed. Future intel quality degrades.",
+          "consequence": "You share the intelligence with allies — a secure briefing for the Five Eyes, then NATO, then key Asian partners. The reaction is electric. Suddenly, disparate events click into a coherent picture. A coalition response begins to form, unified by shared understanding. But your intelligence methods are now exposed across a dozen foreign services. Future collection quality will degrade. You traded tomorrow's secrets for today's alliance."
+        },
+        {
+          "label": "Keep it classified — act unilaterally",
+          "flavor": "You know something nobody else does. That's power. But allies will feel blindsided later.",
+          "consequence": "You close the folder and lock it in your personal safe. Only three people know: you, the CIA briefer, and the DNI. The knowledge sits in your chest like a coal — hot, dangerous, powerful. You now see moves that no one else can see. But when the moment comes to act on it, your allies will feel blindsided, and blind allies make unpredictable partners."
+        },
+        {
+          "label": "Leak to a trusted journalist — shape the narrative",
+          "flavor": "The public needs to know. Iran changes plans. The intelligence becomes partly obsolete. But public pressure on Iran surges.",
+          "consequence": "You call Emily Watkins at the Times. 'I have something for you,' you say. 'On background.' The story runs within twelve hours, and suddenly the world sees what you see. Iran scrambles to change plans — the intelligence is partly obsolete now. But public pressure on Tehran surges, and the diplomatic landscape shifts. You used a secret as a weapon. It worked. This time."
+        }
+      ],
+      "characterFlavor": {
+        "trump": "The CIA briefer's trembling hands tell you this is big — the kind of intelligence revelation that plays perfectly in a declassified press conference with the right production value.",
+        "hegseth": "You absorb the intelligence assessment with a tactician's focus — if Iran's true objective is regional hegemony, then every force disposition you've planned needs recalibrating.",
+        "kushner": "Understanding Iran's real endgame means understanding their negotiating position. This isn't just intelligence — it's the foundation for a deal framework worth hundreds of millions.",
+        "fuentes": "The intelligence confirms what your base has been saying for years — Iran's ambitions are regional, not American. We're fighting someone else's war.",
+        "asmongold": "The briefer reveals Iran's true strategy, and it maps exactly to the pattern you identified on stream last week. If chat clipped that analysis, your credibility metric is about to explode."
+      },
+      "scene": "The intelligence arrives at 2:14 AM — a convergence of signals intercepts and a human source in Tehran that changes everything. Your CIA briefer spreads the analysis across the conference table, her hands trembling slightly with the weight of what she is about to say. 'Sir, this isn't about the strait. It never was.' The intercepts reveal Iran's true strategic objective: forcing international recognition of Iranian regional hegemony. Every seizure, every provocation, every proxy attack — it was all building toward this moment of maximum leverage. The question is no longer what Iran is doing but what you do with the knowledge that you understand their endgame."
+    },
+    {
+      "id": "intel_reveal",
+      "title": "INTELLIGENCE BREAKTHROUGH",
+      "description": "Your agents located Iran's mine-laying operations. Acting on it would burn the source.",
+      "choices": [
+        {
+          "label": "Strike the mine depot",
+          "flavor": "Cruise missiles destroy the depot. Mine threat neutralized.",
+          "consequence": "You authorize the strike. Eight cruise missiles reduce the depot to smoking rubble. Secondary explosions confirm the mines were real. The mine threat is neutralized overnight. But in Tehran, IRGC counterintelligence begins working backward from the strike pattern, and your human source has approximately forty-eight hours before the knock comes at his door."
+        },
+        {
+          "label": "Share with allies quietly",
+          "flavor": "Coalition partners mine-sweep the areas. Source stays safe.",
+          "consequence": "You share the intelligence with coalition partners through secure channels. Allied minesweeping vessels deploy to the areas identified by your source, clearing sea lanes under the cover story of 'routine mine countermeasures.' The operation is slower but effective. Your source remains safe, and the coalition deepens its trust in American intelligence sharing."
+        },
+        {
+          "label": "Hold the intelligence",
+          "flavor": "You file it for future use.",
+          "consequence": "You file the intelligence and do nothing. The analysis goes into a secure vault, tagged for future reference. Your source remains safe, the mine depot remains operational, and the knowledge sits like a loaded weapon — dangerous until you decide to pull the trigger, but useless until then."
+        }
+      ],
+      "scene": "The intelligence analyst stands at the Situation Room podium, her hands steady despite what she is about to reveal. 'We have located Iran's primary mine-laying operation,' she says, clicking to a satellite image so sharp you can read the hull numbers. A warehouse complex near Bandar Abbas, three vessels loaded with mines, and a timeline that suggests deployment within seventy-two hours. The intelligence comes from two sources: a signals intercept and a human asset who has been cultivated for four years. Acting on this intelligence will neutralize the mine threat. It will also burn the source — the patterns of response will tell Iranian counterintelligence exactly where the leak is."
+    },
+    {
+      "id": "assassination_intel",
+      "title": "CREDIBLE THREAT DETECTED",
+      "description": "Intelligence agencies detect a credible assassination threat against senior officials. The source is unclear — could be Iranian or domestic.",
+      "choices": [
+        {
+          "label": "Increase security protocols",
+          "flavor": "Security is tightened. Operations slow but the threat is contained.",
+          "consequence": "Security protocols go to maximum. Your movements are restricted, public appearances cancelled, the motorcade route randomized. The government operates from hardened facilities for seventy-two hours. Operations slow to a crawl as every meeting requires additional security screening. The threat is contained, but the image of a government operating from bunkers is not one that inspires confidence."
+        },
+        {
+          "label": "Public announcement",
+          "flavor": "Going public rallies support but raises tensions.",
+          "consequence": "You go public. A carefully worded statement acknowledges the threat without naming the source. 'We will not be intimidated,' you say from the podium. The public rallies in support. But in Tehran and in domestic extremist chat rooms, the announcement is read as confirmation that their operations are having an effect. Tensions ratchet higher."
+        },
+        {
+          "label": "Ignore — focus on the mission",
+          "flavor": "You choose to focus on the strait. The risk remains.",
+          "consequence": "You ignore the threat and maintain your normal schedule. The Secret Service protests formally. You appear at a public event the next morning, shaking hands and projecting calm. The risk is real — the intelligence is specific enough to include a timeline. But showing fear is a concession you refuse to make. Your security detail watches every rooftop."
+        }
+      ],
+      "scene": "The briefing is delivered by a CIA officer who does not give her name. She places a red-bordered folder on the table and opens it to reveal a surveillance photograph: a man in civilian clothes, photographed through a car window in Istanbul. 'We have detected a credible assassination threat against senior officials involved in the strait crisis,' she says. 'The operational pattern is consistent with IRGC Quds Force, but we cannot rule out domestic extremists.' She pauses. 'The threat level is imminent.' The room temperature seems to drop. Your Secret Service detail, who were briefed thirty minutes ago, have already tripled the protection perimeter."
+    },
+    {
+      "id": "cyber_attack_decision",
+      "title": "CYBER OPERATION PROPOSAL",
+      "description": "NSA can disable Iran's naval command network for 48 hours. If attributed, it's an act of war.",
+      "choices": [
+        {
+          "label": "Approve the operation",
+          "flavor": "Iran's boats go silent for two days. They suspect sabotage.",
+          "consequence": "You approve the operation. The attack goes live at 0200 local time. Within the hour, Iran's naval command frequencies go silent. Fast-boats return to port, unable to coordinate. For forty-eight hours, the strait is the quietest it has been since the crisis began. Iran suspects sabotage — they know, but they cannot prove it. The deniability holds. For now."
+        },
+        {
+          "label": "Too dangerous — deny",
+          "flavor": "You shelve the plan. Better to save that card.",
+          "consequence": "You deny the operation. The USB drive goes back in its sealed pouch. 'Too dangerous,' you tell the NSA director. 'Save that card for when we really need it.' She nods — she expected this answer. The cyber weapon sits in reserve, growing more valuable with each day you do not use it. The question is whether the day you really need it comes before the vulnerability is patched."
+        }
+      ],
+      "scene": "The NSA director arrives with a single USB drive in a sealed pouch. The briefing is for your eyes only — no aides, no notes, no recording. 'We have penetrated Iran's naval command-and-control network,' she says, her voice flat. 'On your authorization, we can disable their entire fleet coordination system for forty-eight hours. Their boats will be blind, deaf, and unable to communicate.' She pauses. 'If this is attributed to us, it constitutes an act of war under most international frameworks. If it's not attributed, it's the single most effective non-kinetic action we can take.' The USB drive sits on the table between you like an unexploded ordnance."
+    },
+    {
+      "id": "wargame_leak",
+      "title": "WARGAME SIMULATION LEAKED",
+      "description": "A Pentagon wargame simulation showing US casualties in a strait conflict was leaked to the press. Public is alarmed.",
+      "choices": [
+        {
+          "label": "Downplay and investigate leak",
+          "flavor": "The story dominates the news cycle. The leak investigation goes nowhere.",
+          "consequence": "You downplay it and investigate. 'Wargames model worst cases — that's their purpose,' your spokesperson says. The story dominates the news cycle for three days while the leak investigation produces nothing. The public's memory is short, but the seed of doubt has been planted. People are now imagining body bags."
+        },
+        {
+          "label": "Use it as a warning",
+          "flavor": "You frame it as evidence for de-escalation. Public opinion shifts toward diplomacy.",
+          "consequence": "You use the leak as a weapon. In a press conference, you hold up the simulation report. 'This is exactly why we need de-escalation,' you say. 'This is what war looks like. We must find another way.' Public opinion shifts measurably toward diplomacy. The hawks are outflanked by their own wargame."
+        },
+        {
+          "label": "Double down on readiness",
+          "flavor": "\"We train for worst cases so they never happen.\" Hawks love it.",
+          "consequence": "You double down on readiness. 'We train for worst cases so they never happen,' you say, your jaw set. 'Our military is prepared for any contingency.' Hawks applaud. Military families feel reassured. Iran's intelligence analysts read between the lines and conclude you are preparing for exactly the scenario the wargame modeled."
+        }
+      ],
+      "scene": "The headline lands like a bomb: 'Pentagon Wargame Projects 2,000 US Casualties in Strait Conflict.' Someone leaked a classified simulation — Operation Crimson Tide, a tabletop exercise run at the Naval War College six weeks ago. The simulation modeled a full-scale confrontation with Iran and the results were sobering: heavy casualties, two ships damaged, one sunk, and a conflict that lasted fourteen months. The public is alarmed. Gold prices spike. Your own staff is reading the article on their phones with expressions that range from anger to fear. The Pentagon's spokesperson is demanding guidance. The leaker is still unknown."
+    },
+    {
+      "id": "cyber_port_attack",
+      "title": "IRANIAN CYBER ATTACK — FUJAIRAH PORT",
+      "description": "APT33 (IRGC-affiliated) has hit Fujairah port systems with wiper malware. Terminal operating systems are down. 40+ tankers can't load or unload. It's the digital equivalent of mining the strait.",
+      "choices": [
+        {
+          "label": "Counter-cyber operation — hit Iranian ports",
+          "flavor": "NSA retaliates. Bandar Abbas port goes dark for 72 hours. Cyber escalation spiral begins.",
+          "consequence": "You authorize a retaliatory cyber operation against Iran's military command and control networks. Your hackers penetrate deep, disabling radar systems and communications along the Iranian coast. It is invisible warfare, deniable and devastating."
+        },
+        {
+          "label": "Restore systems — defensive posture",
+          "flavor": "US Cyber Command deploys incident response teams. Systems back online in 5 days. Vulnerability patched.",
+          "consequence": "You dispatch a cyber recovery team to help restore the port's systems while hardening your own naval communications against similar attacks. The defensive approach is prudent but does nothing to deter the next strike."
+        },
+        {
+          "label": "Public attribution and sanctions",
+          "flavor": "You name and shame APT33 operators. Sanctions on IRGC Cyber Command. Allies express solidarity.",
+          "consequence": "You bring the evidence of Iran's cyber attack to the international community, building a case for coordinated sanctions against Iran's cyber warfare units. The attribution is solid, and the diplomatic damage to Tehran is real."
+        }
+      ],
+      "scene": "Bandar Abbas port's computer systems go dark at 0200 local time. Your cyber command reports a sophisticated attack — Iranian origin, targeting the port's automated cargo handling and navigation systems. Ships in the harbor cannot dock or depart. The attack is a signal: Iran can disrupt the Strait without firing a single shot. Your own cyber teams are already mapping potential counterstrike targets."
+    },
+    {
+      "id": "russia_intel_leak",
+      "title": "RUSSIAN INTELLIGENCE LEAK",
+      "description": "An FSB defector reveals Russia has been sharing US military intelligence with Iran — satellite passes, carrier positions, submarine locations. Your operational security is compromised.",
+      "choices": [
+        {
+          "label": "Expel Russian diplomats",
+          "flavor": "15 diplomats expelled. NATO allies follow suit. Russia retaliates but the leak is plugged.",
+          "consequence": "You declassify the Russian intelligence and present it to the world. The revelation of Moscow's shadow support for Iran reshapes the diplomatic landscape. Russia scrambles to deny, but the documents speak for themselves."
+        },
+        {
+          "label": "Exploit the defector — feed disinformation",
+          "flavor": "You turn the leak into an advantage. False intelligence flows to Tehran through Moscow. Iran chases ghosts.",
+          "consequence": "You keep the intelligence classified, using it to quietly pressure Moscow into reducing its support for Iran. The back-channel diplomacy is delicate — threatening without provoking, leveraging without exposing your source."
+        },
+        {
+          "label": "Quiet protest — preserve the channel",
+          "flavor": "A stern demarche. Russia denies everything. But the intelligence sharing slows.",
+          "consequence": "You share the intelligence selectively with key allies, building a quiet coalition of informed nations without the public spectacle of a confrontation with Russia. The approach is measured, the effect cumulative."
+        }
+      ],
+      "scene": "A Russian intelligence operative has defected to your embassy in Tbilisi, carrying a trove of classified documents detailing Moscow's military support to Iran. The files reveal weapons shipments, technical advisors, satellite intelligence sharing — a shadow war conducted through Iranian proxies. The defector is credible, the documents verifiable. You have in your hands the evidence to reshape the entire geopolitical narrative."
+    }
+  ]
+}

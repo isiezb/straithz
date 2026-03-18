@@ -1,0 +1,222 @@
+{
+  "id": "fuentes",
+  "name": "Nick Fuentes",
+  "title": "Political Commentator",
+  "portraitImage": "",
+  "selectImage": "",
+  "reactionImages": {},
+  "ability": "The Outsider",
+  "abilityDesc": "Base Enthusiasm drops without America First cards. Withdrawal progress unlocks ANNOUNCE WITHDRAWAL. WIN: Full withdrawal — warPath 0, <= 1 ship, budget >= $600M, standing >= 35.",
+  "lore": [
+    "February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You're the youngest national security advisor in history."
+  ],
+  "uniqueResource": {
+    "name": "",
+    "start": 0,
+    "max": 100,
+    "inverted": false
+  },
+  "aipacStart": 50,
+  "morningBriefings": {
+    "advisor": "Policy Advisor",
+    "highApproval": [
+      "The base is rock solid. Congressional opposition is crumbling because they know the people are with us.",
+      "Approval numbers prove the America First message is resonating. The establishment can't ignore these numbers.",
+      "Sir, the movement is stronger than ever. High approval gives us the mandate to push harder on withdrawal.",
+      "Public support is overwhelming. Every politician who opposed us is scrambling to get on the right side of history."
+    ],
+    "lowApproval": [
+      "The media is running hit pieces around the clock, but the base sees through it. Our core supporters haven't moved.",
+      "Low approval is a media fabrication — the polls oversample the coasts. Real America is still with us.",
+      "Sir, the establishment media wants you to panic over approval numbers. The base knows what's really happening.",
+      "They're cooking the numbers to demoralize us. Every rally we hold proves the real support is there."
+    ],
+    "winAvailable": [
+      "Withdrawal timeline is on track. The troops are closer to coming home.",
+      "Sir, there's a real opportunity to bring forces home today. The base has been waiting for this moment.",
+      "The conditions are right to announce a drawdown. This is what the movement elected us to do."
+    ],
+    "noWin": [
+      "We're stuck — too many troops still deployed. The base is getting impatient.",
+      "No progress on the withdrawal front today. Every day boots stay on foreign soil, we lose credibility with our people.",
+      "The establishment is slow-rolling the drawdown. We need to force the issue or the base will hold us accountable."
+    ],
+    "highTension": [
+      "The establishment created this crisis and now they want us to fix it with more intervention. That's exactly the trap.",
+      "High tension in the strait proves our point — decades of interventionism created this mess. Withdrawal is the only answer.",
+      "Sir, the war hawks are using the tension to argue for escalation. This is the perfect moment to make the case for pulling out.",
+      "Every spike in tension validates the America First position. We never should have been this entangled in the first place."
+    ],
+    "budgetCrisis": [
+      "Overseas spending is proving the America First point better than any speech could. Every dollar spent there is stolen from Americans.",
+      "The budget crisis is our best argument. Show the people what foreign adventurism actually costs their families.",
+      "Sir, this is the fiscal reckoning we warned about. Endless overseas commitments have a price and Americans are paying it.",
+      "Use the budget numbers in every public statement. Nothing converts fence-sitters faster than seeing the bill for foreign wars."
+    ],
+    "troopCount": [
+      "Still too many ships deployed in theater. The base wants that number at zero.",
+      "Every vessel in the Gulf is a broken promise. We told the people we'd bring the troops home.",
+      "Force deployment numbers are going in the wrong direction. The base is tracking every ship and every soldier.",
+      "Sir, the deployment count is the only number that matters to our supporters. It needs to go down."
+    ]
+  },
+  "overnightScenes": {
+    "default": [
+      "The office is empty because it's always empty. No aides staying late, no junior staff grabbing face time. Your Telegram channel hit 500K tonight. You posted the withdrawal announcement yourself — no press office, no comms strategy, just you and the phone and the truth. The base response was euphoric. The media response was apocalyptic. Both are exactly what you wanted. You eat a protein bar at the desk and read through the death threats with the detached interest of someone who's received enough of them to know which ones are real."
+    ],
+    "highTension": [
+      "The UN General Assembly vote was 174-1. One. You. The United States of America, alone against the world. The ambassador called it 'a badge of honor' in the press conference you wrote for him, but alone in the office, the number settles differently. 174 countries. Every ally, every partner, every nation you've ever traded with or fought alongside. All of them voted against you. The American flag on the wall behind your desk looks different tonight. Not less meaningful — maybe more meaningful, because it's the only flag left."
+    ],
+    "militaryAction": [
+      "Oil prices dropped $6 today. Not because of a military operation or a diplomatic breakthrough. Because Iran announced it would partially reopen the strait to 'non-belligerent nations.' And the reason they can do that is because the US Navy isn't there anymore. The threat is gone. Withdrawal worked. Not the way the think tanks predicted, but in the messy, counterintuitive way that reality always works. You eat dinner alone in the office and read the headlines that don't understand what happened. They will. Eventually."
+    ],
+    "diplomaticDay": [
+      "The threat briefing is specific this time. Not 'credible threat from unknown source' but 'specific individual, specific weapon, specific timeline.' The Secret Service wants you in the bunker. You refuse. But at midnight, alone in the empty office, the fear is there. Not of dying. Of dying before the withdrawal is complete. Of dying and having the hawks reverse everything within a week. You call your mother. You don't tell her about the briefing. You talk about the weather."
+    ],
+    "approvalDrop": [
+      "The base turned on you tonight. Not the true believers — but the broader movement. They saw the tanker seizure footage and they wanted blood and you gave them a withdrawal timeline. The Telegram is vicious. 'Fuentes is a coward.' 'America First means America STRONG.' Your base enthusiasm dropped 15 points in eight hours. You're sitting at the desk with the phone face-down because you can't read any more of it. The movement that put you here is cracking, and you can hear it."
+    ],
+    "budgetTight": [
+      "The budget is growing because you're not spending. That's the beautiful irony of withdrawal — every ship that comes home is money in the bank. You pull up the spreadsheet and the numbers are clean. $750 million and rising. Infrastructure, border security, domestic programs — this is where the money belongs. Not fueling carriers in the Persian Gulf. You allow yourself a moment of satisfaction. Then you check the Telegram. The moment ends."
+    ],
+    "lowTension": [
+      "Netanyahu called. You didn't pick up. He called again. You didn't pick up again. Some messages are better delivered through silence. The office is quiet. The American flag hangs in the corner. You think about what 'America First' actually means at 2am when nobody's watching. It means this: sitting alone in an empty office, holding the line, while the entire world tells you you're wrong. The base believes. That's enough. It has to be enough."
+    ]
+  },
+  "idleAsides": [
+    "AIPAC spent $12 million on ads against us this week. $12 million. Where does that money come from? Follow the money.",
+    "Tucker just texted. 'Stay the course.' That's the most validation I've gotten from anyone outside the base in two weeks.",
+    "The European ambassadors won't return my calls. Good. When was the last time a European ambassador solved an American problem?",
+    "My Telegram channel hit 500,000 subscribers. Half of them are feds but the other half are real, and that's enough.",
+    "The military-industrial complex isn't a conspiracy theory. It's a line item in the federal budget. Look it up.",
+    "They call me an isolationist like it's an insult. America First isn't isolation. It's prioritization.",
+    "Gas prices are down because we're not burning a trillion dollars in the Gulf. Nobody on CNN will make that connection.",
+    "The Secret Service detail keeps getting bigger. Either the threats are real or they're trying to intimidate me. Either way, I'm not stopping.",
+    "Netanyahu called. I didn't pick up. He called again. I didn't pick up again. Some messages are better delivered through silence.",
+    "They want me to send American kids to die for Saudi oil profits. I'm the radical because I said no."
+  ],
+  "cardReactions": {
+    "military": {
+      "positive": "Fine. Minimal presence. Enough to protect Americans abroad but not enough to get sucked into another forever war.",
+      "reluctant": "Absolutely not. We're not deploying the full US military to protect Saudi oil tankers. The base didn't elect us for this."
+    },
+    "diplomatic": {
+      "positive": "If diplomacy means getting out of the Gulf faster, I'll take it. If it means new commitments, forget it.",
+      "reluctant": "Coalition building? Gulf partnerships? This is the globalist playbook with a different cover. Hard pass."
+    },
+    "economic": {
+      "positive": "Sanctions are fine. Cheap, effective, doesn't require American boots on the ground.",
+      "reluctant": "I'd rather sanction them into the ground than send a single American soldier to die in the Gulf."
+    },
+    "intelligence": {
+      "positive": "Intelligence gathering — fine. Knowing what's happening doesn't mean we have to do anything about it.",
+      "reluctant": "I'd rather spend money on intel than on carriers. Information doesn't come home in a body bag."
+    },
+    "domestic": {
+      "positive": "Rally the base. Simple. Direct. No intermediaries, no media filter.",
+      "reluctant": "Congressional briefing is a trap. They'll use it to build the case for intervention."
+    }
+  },
+  "advisorReactions": {
+    "weekStart": [
+      "The establishment wants more ships, more spending, more war. We're giving them the opposite.",
+      "Withdrawal timeline update: how many troops are still deployed? The base wants a number.",
+      "The American people come first. Not the defense contractors. Not the Gulf monarchies. Americans."
+    ],
+    "morningBrief": [
+      "Morning brief from our team. The establishment media is spinning hard — here's the real picture.",
+      "Here's what really happened overnight. Ships still deployed, withdrawal progress, base sentiment.",
+      "Your advisors compiled the real numbers. Troop count, spending rate, base loyalty index."
+    ],
+    "highTension": "The neocons created this tension with fifty years of intervention. The base sees through it — bring the troops home.",
+    "lowApproval": "The media polls are rigged against us. The real numbers are in the rallies. The base is solid.",
+    "seizure": "They're attacking our ships because we're still there to be attacked. No presence, no provocation. The base gets it.",
+    "diplomatic": "Talking instead of fighting — that's not weakness, that's the America First doctrine. The hawks hate it.",
+    "victory": "America First wins. The establishment said withdrawal was impossible. The troops are coming home.",
+    "lowBudget": "Every dollar spent overseas is stolen from Americans. This is exactly why we're fighting for withdrawal.",
+    "highProxy": "Iran's proxies attack us because we're in THEIR neighborhood. The base has been saying this for years.",
+    "uniqueResourceLow": "The base is getting impatient. They need to see troops coming home, not more deployments.",
+    "uniqueResourceCritical": "We're losing the base. If they stop showing up to rallies, Congress smells blood. Address the nation NOW."
+  },
+  "restrictedCards": [],
+  "restrictionRefusals": {},
+  "epilogues": {
+    "diplomatic": "You didn't fire a shot. That was the promise, and against every prediction, every editorial, every smirking pundit who said the isolationist couldn't handle a real crisis, you kept it. The strait is open not because you forced it open but because you made it more expensive for Iran to keep it closed than to let it flow. Your base calls it the greatest foreign policy achievement since... well, they can't agree on the comparison, which is fine. Standing at 40 doesn't sound impressive until you remember it started at 12 and every expert said it would hit zero. The allies who mocked you are quiet now. They're not grateful. They'll never be grateful. But they're quiet. And the troops are home. Every single one of them.",
+    "military": "You promised America First and delivered America at War. The base fractured the moment the first bomb dropped. Half of them understood that sometimes you fight to protect what matters. The other half never forgave you. The strait is open. Iran is cowed. The troops are coming home, eventually. But the movement you built, the coalition that was supposed to change everything — it didn't survive contact with reality. You won the crisis and lost the cause.",
+    "decline": "The troops are coming home because there's nothing left to do, not because you brought them home. The crisis fizzled. The strait opened. Iran got bored. Your base takes credit anyway, and you let them. The international standing never recovered, but your base doesn't care about international standing, which was always the point. You survived. The establishment is still standing too, which means nobody really won. The next crisis will find a different outsider. Maybe they'll do better. Maybe there is no better."
+  },
+  "uniqueEvents": {
+    "F01_base_demands_blood": {
+      "title": "THE BASE DEMANDS BLOOD",
+      "description": "Your supporters are in the streets. \"BRING THEM HOME.\" The base that elected you demands you end foreign wars — not manage them.",
+      "choices": [
+        {
+          "label": "Fiery speech — America First, pull the fleet",
+          "flavor": "The base erupts. Allies panic. Oil markets crater. This is what they voted for."
+        },
+        {
+          "label": "Walk the line — strength protects freedom",
+          "flavor": "Moderate your message. The base is confused but patient. You live to fight another day."
+        },
+        {
+          "label": "Redirect anger at defense contractors",
+          "flavor": "Channel anger at the military-industrial complex. Pentagon quietly starts undermining you."
+        }
+      ]
+    },
+    "F02_international_pariah": {
+      "title": "THE INTERNATIONAL PARIAH MOMENT",
+      "description": "The UN General Assembly passed a resolution condemning your policies. European allies have recalled ambassadors. You are internationally isolated.",
+      "choices": [
+        {
+          "label": "Embrace it — badge of honor",
+          "flavor": "\"We didn't come here to make friends with Davos.\" Standing floor locks. No recovery."
+        },
+        {
+          "label": "Course correct — reach out to one key ally",
+          "flavor": "Painful but necessary. One ally is enough to break the isolation."
+        },
+        {
+          "label": "Find unconventional allies — Russia, India",
+          "flavor": "Outside the Western consensus. New partnerships. Old allies further alienated."
+        }
+      ]
+    },
+    "F03_america_first_rally": {
+      "title": "THE AMERICA FIRST RALLY",
+      "description": "Biggest rally of your career. 80,000 people. Every camera in America pointed at you. This is your moment to define the crisis on your terms.",
+      "choices": [
+        {
+          "label": "Define the crisis — sovereignty, not oil",
+          "flavor": "\"This isn't about Iranian oil. This is about American sovereignty.\" The crowd goes wild."
+        },
+        {
+          "label": "Surprise everyone — announce peace initiative",
+          "flavor": "Reframe peace as strength. The base is confused but comes around. The world is stunned."
+        },
+        {
+          "label": "Scorched earth — name domestic enemies",
+          "flavor": "You just burned every bridge in Washington. Your base has never been more loyal."
+        }
+      ]
+    },
+    "F04_assassination_whisper": {
+      "title": "THE ASSASSINATION WHISPER",
+      "description": "Secret Service has intercepted credible threats. Your polarizing stance has made you a target. They recommend reduced public appearances.",
+      "choices": [
+        {
+          "label": "Accept recommendations — reduce visibility",
+          "flavor": "Reduced appearances. The base wonders where you went. Intel resources diverted to protection."
+        },
+        {
+          "label": "Defy the threat publicly",
+          "flavor": "\"They want me dead because I'm telling the truth.\" A speech about courage. Genuine personal risk."
+        },
+        {
+          "label": "Weaponize it politically",
+          "flavor": "Release the intelligence to supporters. Rally around the embattled leader. Agencies are furious."
+        }
+      ]
+    }
+  }
+}

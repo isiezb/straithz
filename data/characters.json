@@ -5,13 +5,15 @@
       "title": "45th & 47th President",
       "ability": "The Decider",
       "abilityDesc": "Gets ALL cards. 1.5x effects. 4 picks. CLAIM VICTORY after public wins. WIN: Claim 3 victories, approval >= 60, oil flow >= 55.",
+      "portraitImage": "",
+      "selectImage": "",
       "lore": [
         "February 28, 2026. You authorized the strike that killed Khamenei. 500 targets destroyed in a single night. Now Iran is retaliating with everything they have — 500 missiles, 2,000 drones, and the strait is closing. The Situation Room is yours. The world is watching. You started this. Now finish it."
       ],
       "morningBrief": [
-        "Mr. President, here's your Presidential Daily Brief for today.",
-        "Good morning, Mr. President. The overnight situation report.",
-        "Sir, your morning intelligence brief is ready."
+        "Mr. President, Dan Scavino has your media digest and the overnight approval tracking.",
+        "Good morning, Mr. President. The networks are running your footage from yesterday. Here's how it's playing.",
+        "Sir, Scavino flagged the morning cable coverage. Here's what they're saying about you."
       ],
       "uniqueEvents": {
         "T01_fox_news_call": {
@@ -116,13 +118,15 @@
       "title": "Secretary of War",
       "ability": "The Warhorse",
       "abilityDesc": "Command Authority grows in conflict, decays in peace. Battle reports after military actions. WIN: warPath >= 3, crush Iran aggression, maintain approval.",
+      "portraitImage": "",
+      "selectImage": "",
       "lore": [
         "February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran's response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You've trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003."
       ],
       "morningBrief": [
-        "Good morning, Mr. Secretary. Overnight SITREP on your desk.",
-        "Sir, CENTCOM's morning operational update is in.",
-        "Daily force readiness report, Mr. Secretary."
+        "Good morning, Mr. Secretary. Mark Esper has the overnight SITREP and force readiness update.",
+        "Sir, CENTCOM's morning operational brief. Iranian aggression metrics and casualty status.",
+        "Daily force readiness report. No American casualties. Here's where Iran's military posture stands."
       ],
       "uniqueEvents": {
         "H01_pentagon_power_play": {
@@ -223,13 +227,15 @@
       "title": "Senior Advisor",
       "ability": "The Operator",
       "abilityDesc": "Contacts & deal value system. Build trust, close deals, avoid exposure. WIN: Deal value >= $300M, crush Iran aggression, keep exposure low.",
+      "portraitImage": "",
+      "selectImage": "",
       "lore": [
         "February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they're all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe."
       ],
       "morningBrief": [
-        "Your overnight diplomatic traffic summary, sir.",
-        "Three missed calls from Gulf capitals. Here's the brief.",
-        "Back-channel status update and morning intelligence digest."
+        "Avi Berkowitz has your contact status report and deal pipeline update.",
+        "Three missed calls from Gulf capitals. Deal value is tracking. Here's the exposure assessment.",
+        "Back-channel status: contacts are active, deal pipeline is moving, exposure is manageable."
       ],
       "uniqueEvents": {
         "K01_mbs_calls": {
@@ -388,13 +394,15 @@
       "title": "Streamer & Analyst",
       "ability": "The Analyst",
       "abilityDesc": "Prediction system. Make public predictions, gain audience if correct. WIN: Audience >= 90, credibility >= 65, 3+ correct predictions.",
+      "portraitImage": "",
+      "selectImage": "",
       "lore": [
         "February 28, 2026. Chat, this is not a drill. The US just killed Iran's Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran's response. The intel is flooding in faster than anyone can process. Except you."
       ],
       "morningBrief": [
-        "Chat, the overnight mod-curated intel feed just dropped.",
-        "OK dude, the mods flagged the important stuff from last night.",
-        "Morning intel digest — crowd-sourced and verified by the community."
+        "Chat, the overnight mod-curated intel feed and prediction tracker are in.",
+        "Morning digest — crowd-sourced and verified. Also, check the prediction scorecard.",
+        "Analyst has the morning brief. Prediction tracker, audience metrics, and credibility assessment."
       ],
       "uniqueEvents": {
         "A01_osint_discovery": {
@@ -495,13 +503,15 @@
       "title": "Political Commentator",
       "ability": "The Outsider",
       "abilityDesc": "Base Enthusiasm drops without America First cards. Withdrawal progress unlocks ANNOUNCE WITHDRAWAL. WIN: Full withdrawal — warPath 0, <= 1 ship, budget >= $600M, standing >= 35.",
+      "portraitImage": "",
+      "selectImage": "",
       "lore": [
         "February 28, 2026. They actually did it. The establishment launched a war with Iran without asking the American people. Now there are 2,000 Iranian missiles in the air and gas is headed to $6 a gallon. Your base is furious. The populist coalition demands someone who will put America First — not the military-industrial complex. You're the youngest national security advisor in history."
       ],
       "morningBrief": [
-        "Morning brief from our team. The establishment doesn't want you to see this.",
-        "Here's what really happened overnight — not the media spin.",
-        "Your advisors compiled the real intelligence. No filter."
+        "Morning brief from our team. The establishment media is spinning hard — here's the real picture.",
+        "Here's what really happened overnight. Ships still deployed, withdrawal progress, base sentiment.",
+        "Your advisors compiled the real numbers. Troop count, spending rate, base loyalty index."
       ],
       "uniqueEvents": {
         "F01_base_demands_blood": {

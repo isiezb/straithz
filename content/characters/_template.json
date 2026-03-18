@@ -1,0 +1,98 @@
+{
+  "id": "",
+  "name": "",
+  "title": "",
+  "portraitImage": "",
+  "selectImage": "",
+  "reactionImages": {},
+  "ability": "",
+  "abilityDesc": "",
+  "lore": [
+    ""
+  ],
+  "uniqueResource": {
+    "name": "",
+    "start": 0,
+    "max": 100,
+    "inverted": false
+  },
+  "aipacStart": 50,
+  "morningBriefings": {
+    "calm": "",
+    "elevated": "",
+    "crisis": "",
+    "low_approval": "",
+    "high_oil": "",
+    "seizure": "",
+    "budget_crisis": "",
+    "winning": "",
+    "war_path_high": "",
+    "diplomatic_progress": ""
+  },
+  "overnightScenes": {
+    "confident": "",
+    "anxious": "",
+    "angry": "",
+    "desperate": "",
+    "victorious": "",
+    "grieving": "",
+    "scheming": ""
+  },
+  "idleAsides": [],
+  "cardReactions": {
+    "military": {
+      "low": "",
+      "med": "",
+      "high": ""
+    },
+    "diplomatic": {
+      "low": "",
+      "med": "",
+      "high": ""
+    },
+    "economic": {
+      "low": "",
+      "med": "",
+      "high": ""
+    },
+    "intelligence": {
+      "low": "",
+      "med": "",
+      "high": ""
+    },
+    "domestic": {
+      "low": "",
+      "med": "",
+      "high": ""
+    }
+  },
+  "advisorReactions": {
+    "weekStart": [
+      "",
+      "",
+      ""
+    ],
+    "morningBrief": [
+      "",
+      "",
+      ""
+    ],
+    "highTension": "",
+    "lowApproval": "",
+    "seizure": "",
+    "diplomatic": "",
+    "victory": "",
+    "lowBudget": "",
+    "highProxy": "",
+    "uniqueResourceLow": "",
+    "uniqueResourceCritical": ""
+  },
+  "restrictedCards": [],
+  "restrictionRefusals": {},
+  "epilogues": {
+    "diplomatic": "",
+    "military": "",
+    "decline": ""
+  },
+  "uniqueEvents": {}
+}

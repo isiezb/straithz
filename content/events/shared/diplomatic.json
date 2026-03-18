@@ -1,0 +1,119 @@
+{
+  "events": [
+    {
+      "id": "secret_talks",
+      "title": "SECRET BACK-CHANNEL",
+      "description": "Iranian moderates have reached out through Omani intermediaries. They propose secret talks — but if leaked, hawks on both sides will be furious.",
+      "choices": [
+        {
+          "label": "Accept the talks",
+          "flavor": "The back-channel opens. Both sides agree to a cooling-off period.",
+          "consequence": "You send your envoy to Muscat. The talks begin in a whitewashed villa overlooking the Gulf of Oman. Both sides agree to a cooling-off period — reduced naval patrols, no new seizures, a forty-eight-hour window of calm. It is fragile, unofficial, and deniable. But for the first time, someone on the other side looked you in the eye and said 'enough.'"
+        },
+        {
+          "label": "Reject — too risky",
+          "flavor": "The opportunity passes. Iranian hardliners use the rejection as propaganda.",
+          "consequence": "You reject the offer. The risk calculus does not favor secret diplomacy — too many variables, too many leakers, too many ways this becomes your scandal. The Omani ambassador nods sadly and relays your response. In Tehran, the moderates lose their argument. Iranian hardliners use the rejection as proof that America was never serious about peace."
+        },
+        {
+          "label": "Leak it to the press",
+          "flavor": "You gain public credit but burn the diplomatic bridge.",
+          "consequence": "You leak the offer to a friendly reporter. The headline reads: 'Iran Begs for Secret Talks as Strait Crisis Deepens.' You gain the public credit for being the reasonable party. But the diplomatic bridge is burned — the Omani ambassador calls personally to express his 'profound disappointment.' The back-channel goes dark."
+        }
+      ],
+      "scene": "The message arrives via the Omani ambassador, handwritten on embassy stationery in Farsi and English. Iranian moderates — the Araghchi faction, your analysts believe — are proposing secret talks. Muscat, neutral ground, no staff beyond two per side. The terms are simple: show up and talk. But the intelligence assessment attached to the message carries a warning in red ink: if these talks leak, hawks on both sides will use the exposure to destroy the diplomatic track permanently. Your chief of staff reads the message over your shoulder. 'This could be the breakthrough,' he says. Then, quieter: 'Or the trap.'"
+    },
+    {
+      "id": "oman_talks",
+      "title": "MUSCAT BACK-CHANNEL",
+      "description": "Omani intermediaries report Iran's Foreign Minister Araghchi says a nuclear deal is \"within reach.\" He proposes secret talks in Muscat. Three days later, your intelligence says IRGC is planning a major provocation.",
+      "choices": [
+        {
+          "label": "Send negotiators to Muscat",
+          "flavor": "Three hours of talks produce a framework. But is the IRGC on the same page as the Foreign Ministry?",
+          "consequence": "You agree to direct talks. Your envoy meets the Iranian delegation in a villa overlooking the Gulf of Oman. The conversations are tense, halting, full of distrust, but they are conversations. For the first time in weeks, someone on the other side is listening."
+        },
+        {
+          "label": "Demand preconditions first",
+          "flavor": "You insist on a tanker release before talks. Iran walks away. The window narrows.",
+          "consequence": "You send a counter-proposal through the Omanis, adding conditions that you know Iran will resist. The move buys time and tests Tehran's seriousness without committing you to anything. The diplomatic dance continues at arm's length."
+        },
+        {
+          "label": "It's a distraction — reject",
+          "flavor": "Hawks applaud. Doves despair. The IRGC provocation happens anyway.",
+          "consequence": "You reject the overture and leak it to the press. The headline — 'Iran Seeks Talks as Crisis Deepens' — plays well domestically but slams the door on diplomacy. The Omani foreign minister returns to Muscat empty-handed and disappointed."
+        }
+      ],
+      "scene": "The Omani foreign minister arrives at your hotel suite in Muscat with a handwritten letter from Iran's foreign minister. The calligraphy is elegant, the language formal, but the message is unmistakable: Tehran is willing to negotiate. You are sitting in the same city where the back-channel talks that led to the original Iran nuclear deal began years ago. The ghosts of past diplomacy hover in the warm night air."
+    },
+    {
+      "id": "backchannel_progress",
+      "title": "BACK-CHANNEL UPDATE",
+      "description": "Your Omani intermediary reports back. The Iranian delegation showed up — a significant signal. They presented a list of demands: sanctions relief on medical supplies, return of frozen assets, and a public statement acknowledging Iranian sovereignty. In exchange, they offer a 48-hour shipping ceasefire and the release of 4 detained crew members.",
+      "choices": [
+        {
+          "label": "Accept the ceasefire deal",
+          "flavor": "Both sides stand down. For the first time in weeks, the strait is quiet. But hawks on both sides are furious.",
+          "consequence": "You accept the framework and begin implementation immediately, ordering a partial naval drawdown as a show of good faith. The Strait quiets. Oil begins to flow. The ceasefire holds with the delicacy of wet paper, but it holds."
+        },
+        {
+          "label": "Counter-offer: ceasefire first, then talks",
+          "flavor": "A reasonable position. The Omanis carry it back. Now you wait.",
+          "consequence": "You counter-propose, pushing for broader terms that include proxy forces and the nuclear program. The Iranians balk but do not walk away. The negotiations enter a new phase — harder, slower, but more comprehensive."
+        },
+        {
+          "label": "Reject — these terms are weakness",
+          "flavor": "The channel goes dark. Iran's moderates lose face. The hardliners say \"we told you so.\"",
+          "consequence": "You pocket the concessions and demand more, exploiting the moderates' desperation to show results. The talks collapse under the weight of your maximalism. The Omani intermediary goes home disgusted."
+        }
+      ],
+      "scene": "The Omani intermediary returns with news from Tehran. The back-channel talks have produced a framework — tentative, fragile, full of ambiguities that both sides are pretending not to notice. The moderates in Tehran are offering a phased de-escalation: reduced IRGC naval activity in exchange for partial sanctions relief. Your hawks call it a trap. Your diplomats call it a breakthrough. The truth is probably somewhere in between."
+    },
+    {
+      "id": "backchannel_ceasefire_test",
+      "title": "CEASEFIRE UNDER PRESSURE",
+      "description": "Day two of the ceasefire. IRGC fast boats are still patrolling — technically not a violation, but provocative. Then: an IRGC commander's nephew is caught planting a limpet mine on a Kuwaiti-flagged tanker. Iran claims he acted alone. Your military advisors want to respond. The Omani mediator begs you not to.",
+      "choices": [
+        {
+          "label": "Hold the ceasefire — accept Iran's explanation",
+          "flavor": "You absorb the political cost. But the ceasefire holds. Oil begins to flow. The Omanis call it \"a brave choice.\"",
+          "consequence": "You maintain the ceasefire and address the violations through diplomatic channels, trusting the framework to absorb the shock. Your ambassador in Muscat delivers a firm but private warning. The repositioning slows but does not stop."
+        },
+        {
+          "label": "Demand Iran arrest the commander publicly",
+          "flavor": "Iran refuses. The ceasefire technically holds but trust is damaged. Both sides are watching for the next provocation.",
+          "consequence": "You put your forces on heightened alert without breaking the ceasefire, matching Iranian repositioning with quiet movements of your own. The shadow dance continues beneath the surface of peace."
+        },
+        {
+          "label": "Strike the IRGC base — ceasefire is over",
+          "flavor": "Tomahawks hit Bandar Abbas. The ceasefire is dead. Iran's moderates are silenced for a generation.",
+          "consequence": "You declare the ceasefire violated and resume operations, arguing that Iran's actions prove the agreement was a ruse. The fragile peace shatters. The moderates in Tehran who staked their credibility on the deal are finished."
+        }
+      ],
+      "scene": "The ceasefire is seventy-two hours old. Both navies are standing down, tankers are beginning to move through the Strait, and the world is exhaling for the first time in weeks. Then your intelligence team flags anomalous activity: IRGC units repositioning near the coast, drone launches from Qeshm Island, encrypted traffic spiking on military frequencies. The ceasefire may be holding on the surface, but underneath, something is stirring."
+    },
+    {
+      "id": "backchannel_counteroffer_response",
+      "title": "IRAN'S RESPONSE",
+      "description": "The Omani intermediary returns. Iran's counter-counter-proposal: they'll reduce IRGC patrols by 50% for 72 hours as a \"gesture of goodwill,\" but no formal ceasefire. They want reciprocity — pull one carrier group back to show good faith. The moderates are sticking their necks out. This is their last offer.",
+      "choices": [
+        {
+          "label": "Accept — pull a carrier back",
+          "flavor": "USS Truman moves to the Arabian Sea. IRGC boats thin out. A fragile de-escalation begins.",
+          "consequence": "You accept the counteroffer with minor modifications, choosing to build on imperfect progress rather than hold out for a perfect agreement that may never come. The signing is quiet, the handshakes tentative, the relief palpable."
+        },
+        {
+          "label": "Agree to patrol reduction but keep carriers",
+          "flavor": "A half-measure that satisfies neither side fully. But the shooting stops, for now.",
+          "consequence": "You ask for more time to consult with allies, using the delay to shore up domestic support and international buy-in. The Iranians agree to wait, though their patience has limits."
+        },
+        {
+          "label": "Reject — Iran must concede first",
+          "flavor": "The channel collapses. The Omani ambassador says \"we tried.\" Iran's moderates won't recover from this.",
+          "consequence": "You reject the counteroffer, demanding terms you know Iran cannot accept. The back channel goes silent. The Omani intermediary delivers your response and does not return."
+        }
+      ],
+      "scene": "Iran's counteroffer arrives through the Omani channel. It is more modest than your proposal but more ambitious than their opening position. They will accept partial sanctions relief tied to a ninety-day de-escalation timeline, with verification by Omani observers. The deal is imperfect, full of loopholes and unresolved questions, but it is a deal. Your negotiators look at you expectantly."
+    }
+  ]
+}

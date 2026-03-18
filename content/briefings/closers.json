@@ -1,0 +1,59 @@
+{
+  "closers": {
+    "recommend_intel": [
+      "Director Hartwell strongly recommends prioritizing intelligence collection today. You're making decisions in the dark, and that's how mistakes happen. Get eyes on the problem before you try to solve it.",
+      "Deputy Director Oakes suggests an intelligence surge as your first order of business. The gaps in our picture are dangerous — fill them before committing resources to action you may need to reverse.",
+      "Admiral Reeves concurs with the intelligence community: you need better situational awareness before you commit to any operational decisions. Recommend tasking additional ISR assets to the strait."
+    ],
+    "recommend_diplomacy": [
+      "Ambassador Chen urges you to lean into the diplomatic track today. Military posture is necessary but insufficient — you need a political framework for resolution, and that means talking to people you'd rather not talk to.",
+      "Secretary Marsh recommends investing in diplomatic outreach while the window is open. Alliances maintained in calm weather hold fast in storms — build the coalition now.",
+      "Deputy Secretary Falk suggests prioritizing diplomatic engagement. The tension level makes a direct military confrontation increasingly likely — the diplomatic track is your best tool for reducing that risk."
+    ],
+    "recommend_military": [
+      "Admiral Reeves recommends a visible show of force to re-establish deterrence. Iran respects strength and probes weakness — make sure they see strength today.",
+      "General Kovic advises demonstrating military readiness in a way Tehran cannot ignore. Deterrence has eroded and needs reinforcement — recommend you authorize a freedom of navigation operation or combat air patrol surge.",
+      "Admiral Reeves notes that Iranian aggression responds to demonstrated capability. A measured but visible military action today could reset the equation without escalating to conflict."
+    ],
+    "recommend_domestic": [
+      "Chief of Staff Brennan urges you to address the home front before it becomes your biggest vulnerability. A public address, a congressional briefing, some visible action that shows the American people you have a plan.",
+      "Press Secretary Diaz recommends getting ahead of the domestic narrative today. Your opponents are defining you, and every day without a compelling counter-message digs the hole deeper.",
+      "Chief of Staff Brennan suggests shoring up domestic support as a strategic priority. You cannot sustain this policy without the American people behind you — invest in making the case."
+    ],
+    "recommend_economic": [
+      "Secretary Marsh flags the economic dimension as your most pressing concern today. Oil prices are climbing, markets are rattled, and the longer the strait stays constrained, the harder the economic blowback hits. Consider market intervention or supply-side action.",
+      "Deputy Secretary Falk recommends economic stabilization measures as a priority. The strait crisis has become a global economic event, and managing that dimension is as important as managing the military one.",
+      "Secretary Marsh urges action on the economic front. Energy markets are pricing in worst-case scenarios — a credible signal that you're working to restore oil flow could buy significant breathing room."
+    ],
+    "warning_budget": [
+      "Chief of Staff Brennan adds a sobering coda: watch the budget. Every operation you authorize has a price tag, and the balance is getting uncomfortably low. Prioritize ruthlessly.",
+      "Secretary Marsh issues a fiscal warning: you cannot sustain this tempo of operations indefinitely. Every dollar you spend today is a dollar you won't have for tomorrow's crisis. Choose wisely.",
+      "Deputy Secretary Falk reminds you that financial resources are finite and depleting. Consider the cost-benefit of every action — some of the most effective moves are also the cheapest."
+    ],
+    "warning_escalation": [
+      "Director Hartwell closes with a warning: the escalation ladder has fewer rungs above you than you think. Every military action moves you closer to a threshold that, once crossed, cannot be uncrossed. Make sure you mean it before you move.",
+      "General Kovic offers a soldier's caution: war is easy to start and hard to stop. The path you're on leads to places where the decisions get much bigger and the consequences get much worse. Consider the off-ramps while they still exist.",
+      "Admiral Reeves notes that escalation dominance is an illusion — both sides believe they can control the pace, and both sides are usually wrong. Recommend you factor de-escalation into every military decision you make today."
+    ],
+    "cautious_optimism": [
+      "Ambassador Chen closes on a cautiously positive note: the trend lines are favorable, the coalition is holding, and the strategy is working. Don't get complacent, but do take confidence from the progress. Steady hands win long crises.",
+      "Secretary Marsh observes that the situation, while far from resolved, is better than it was. Momentum matters in diplomacy as much as in warfare — maintain it, build on it, and don't squander it on unnecessary risks.",
+      "Director Hartwell allows that the intelligence picture supports cautious optimism. The key word is cautious — Tehran has surprised us before and will again. But the conditions for a favorable outcome are present if you stay the course."
+    ],
+    "grim_outlook": [
+      "Director Hartwell doesn't sugarcoat the closing assessment: the trajectory is bad and getting worse. You need to change the dynamic or accept that the current path leads to outcomes you won't like. The clock is ticking.",
+      "General Kovic's final assessment is sobering: the situation is deteriorating and half-measures won't reverse it. You need to make hard choices today — the kind of choices that have costs but also change trajectories. Delay is the most expensive option.",
+      "Secretary Marsh closes with a blunt observation: the trend lines are converging on crisis. Multiple indicators are heading in the wrong direction simultaneously, and the window for corrective action is narrowing. Today matters more than yesterday. Tomorrow matters even more."
+    ],
+    "urgent_action": [
+      "Director Hartwell's closing is stark: you face multiple simultaneous crises that demand immediate action. Triage is not optional — pick the fire most likely to burn the house down and put it out. Everything else can wait; that cannot.",
+      "General Kovic stands and delivers his assessment like an order: the situation requires action today, not tomorrow. Multiple systems are failing and each one makes the others worse. Break the cascade now or ride it to the bottom.",
+      "Chief of Staff Brennan closes with controlled urgency: this is not a day for careful deliberation. Multiple crises are converging and you need to act decisively on at least one of them before the end of the day. Pick your priority and commit to it fully."
+    ],
+    "steady_course": [
+      "Admiral Reeves recommends staying the course. Your current posture is sound, the situation is stable, and the impulse to do something for the sake of doing something is the enemy of good strategy. Hold steady.",
+      "Ambassador Chen suggests maintaining current approach. The strategy is producing results, allies are aligned, and unnecessary changes risk disrupting a framework that's working. Sometimes the best move is to keep doing what you're doing.",
+      "Director Hartwell's recommendation is refreshingly simple: stay the course. The situation doesn't require dramatic intervention today — it requires disciplined execution of the plan you've already set in motion. Consistency is underrated in crisis management."
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "intelSnippets": [
+  "snippets": [
     "SIGINT intercept: IRGC naval base at Bandar Abbas showing surge activity.",
     "Satellite imagery: Heydar-110 fast boats deployed to forward position near Larak Island.",
     "HUMINT report: Iranian commander expressing doubts about escalation — moderates gaining.",
@@ -28,26 +28,6 @@
     "Asset report: IRGC Quds Force activating sleeper cells in Bahrain and Kuwait.",
     "Imagery: IRIS Shahid Bagheri drone carrier detected deploying explosive drone boats."
   ],
-  "falseIntelSnippets": [],
-  "keyDrivers": {
-    "crisisLevel": "Crisis Level {value} adding tension",
-    "strongDiplomacy": "Strong diplomacy reducing tension",
-    "oilFlowLow": "Oil flow low ({value}%) — prices rising",
-    "proxyThreat": "Proxy attacks disrupting shipping (threat: {value})",
-    "tankersSeized": "{count} tanker(s) seized — flow and approval hit",
-    "budgetCrisis": "Budget crisis hurting approval",
-    "gasPrices": "Gas prices crushing domestic support",
-    "iranEconomyCollapsed": "Iran economy collapsed — aggression rising",
-    "chinaBuyingOil": "China buying Iranian oil — sanctions less effective",
-    "interceptsBoosting": "{count} intercepts boosting approval",
-    "straitOpen": "Strait open {days}/7 days toward victory",
-    "playerReducingTension": "Your actions are reducing tension",
-    "playerIncreasingTension": "Your actions are increasing tension",
-    "playerImprovingOilFlow": "Your actions are improving oil flow",
-    "playerBoostingApproval": "Your actions are boosting approval",
-    "playerHurtingApproval": "Your actions are hurting approval",
-    "holdingSteady": "Situation holding steady"
-  },
   "effectNames": {
     "tension": "Tension",
     "oilFlowProtection": "Oil Protection",

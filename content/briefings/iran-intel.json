@@ -1,0 +1,30 @@
+{
+  "iranIntel": {
+    "hardliner": [
+      "IRGC Naval Forces sortied twelve fast-attack craft from Bandar Abbas before dawn — dispersal patterns suggest pre-positioned ambush formations along the northern shipping lane.",
+      "Satellite imagery confirms mobile Noor anti-ship missile batteries relocated to elevated positions on Qeshm Island with direct line of sight over the strait's chokepoint.",
+      "SIGINT intercepted a directive from IRGC Navy Commander Tangsiri authorizing live-fire exercises within two nautical miles of the international shipping corridor — a significant escalation from previous posture.",
+      "Iranian state television broadcast footage of the Ghadir-class submarine flotilla departing Jask naval base — at least three boats are now unaccounted for in the operational area.",
+      "HUMINT reports from Bandar Abbas indicate the IRGC has moved shore-based anti-ship cruise missiles to forward firing positions and is conducting final targeting calibrations."
+    ],
+    "moderate": [
+      "Back-channel communications through Oman indicate Iranian Foreign Minister Araghchi has been authorized to discuss maritime de-escalation protocols — first such authorization since the crisis began.",
+      "Iranian naval patrols in the strait voluntarily pulled back to within twelve nautical miles of their coastline overnight — a notable de-escalation from the expanded patrol zones of recent days.",
+      "SIGINT detected unusual traffic between the Iranian Foreign Ministry and the Supreme Leader's office suggesting active internal debate about pursuing a diplomatic track.",
+      "The IRGC Navy's official social media channels went silent for eighteen hours and then posted imagery of humanitarian operations rather than military exercises — a deliberate signal shift.",
+      "Our embassy contacts in Muscat report that an Iranian diplomatic envoy arrived quietly last night seeking informal talks about shipping lane security arrangements."
+    ],
+    "ambiguous": [
+      "Iranian forces conducted a large-scale naval exercise in the Sea of Oman overnight — could be routine readiness training or rehearsal for offensive operations in the strait.",
+      "Satellite imagery shows unusual activity at Bandar Abbas naval base — multiple vessels have changed berths and loading operations are underway, but the purpose remains unclear.",
+      "IRGC-affiliated media released footage of a new 'domestically produced' naval drone, though analysts cannot determine if it has been deployed operationally or is still in testing.",
+      "Iranian submarine activity increased overnight with multiple submerged contacts detected near the strait — standard patrol patterns or pre-positioning remains an open question.",
+      "An unscheduled meeting between IRGC Navy commanders and the Supreme National Security Council was detected via communications intercepts — the agenda is unknown."
+    ],
+    "none": [
+      "No significant Iranian military activity detected overnight — all monitored forces remain in baseline positions.",
+      "The overnight watch reported routine Iranian naval movements consistent with standard patrol schedules — nothing requiring your attention.",
+      "Iranian forces held steady positions through the night with no notable departures from established patterns or postures."
+    ]
+  }
+}

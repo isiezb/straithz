@@ -1,0 +1,228 @@
+{
+  "events": [
+    {
+      "id": "first_seizure_attempt",
+      "title": "THE FIRST SEIZURE ATTEMPT",
+      "description": "FLASH traffic from CENTCOM: IRGC fast-boats converging on the MV Pacific Meridian, a Liberian-flagged tanker carrying Japanese electronics. This is the game's first real test.",
+      "choices": [
+        {
+          "label": "Scramble jets — verbal warning over radio",
+          "flavor": "70% chance the seizure is deterred. Standard procedure. If it fails, you own the failure.",
+          "consequence": "You authorize the scramble. Two F/A-18s roar off the Eisenhower's deck and bank hard toward the Pacific Meridian, their afterburners cutting the predawn darkness. The radio crackles with a verbal warning in Farsi and English. The IRGC boats hesitate — then two peel off. Then three more. The last boat lingers, its crew filming the American jets, before turning north. The seizure is deterred. Standard procedure, textbook execution. But you know: if this hadn't worked, you would own the failure."
+        },
+        {
+          "label": "Authorize warning shots across the bow",
+          "flavor": "The world watches nervously. 90% chance Iran backs down. But escalation is real.",
+          "consequence": "You authorize warning shots. The bridge of the USS Porter erupts in controlled violence — .50 caliber rounds stitch the water two hundred meters ahead of the lead IRGC boat. The sound carries across the strait. On CNN, the footage plays in slow motion. The IRGC boats scatter. Ninety percent of the world exhales. But in Tehran, Tangsiri is already planning the next move, and the escalation is now real."
+        },
+        {
+          "label": "Let it happen — document everything for the UN",
+          "flavor": "The tanker is seized. It's painful. But the footage at the UN will be devastating for Iran.",
+          "consequence": "You let it happen. The words taste like ash in your mouth, but you say them: 'Document everything. Do not engage.' The Pacific Meridian is boarded. Her crew is taken below. Iranian flags replace the Liberian colors. It is painful to watch. But your UN ambassador is already preparing the footage for an emergency session, and the images of armed men boarding a commercial vessel will be devastating for Tehran's international standing."
+        }
+      ],
+      "characterFlavor": {
+        "trump": "The cable news chyrons are already writing themselves — 'TANKER SEIZED UNDER NEW LEADERSHIP' or 'DECISIVE ACTION IN THE STRAIT.' Which headline runs depends entirely on the next thirty seconds.",
+        "hegseth": "The tactical display shows a textbook intercept pattern — you've studied this exact formation in war college scenarios. The difference is, this time the dots on the screen are real boats with real weapons.",
+        "kushner": "You're already calculating the insurance premium implications — every tanker seized doubles the cost of strait transit, and every cost increase is leverage for the protection framework you've been building.",
+        "fuentes": "American taxpayers are funding a naval presence to protect foreign-flagged tankers carrying oil to countries that don't even like us. The base sees the absurdity.",
+        "asmongold": "Real-time seizure attempt unfolding on stream. Chat is counting the fast-boats, tracking the destroyer response time, and arguing about whether this confirms your 'escalation pattern' prediction from Day 2."
+      },
+      "scene": "The FLASH traffic arrives at 0347 local, printed on thermal paper that curls at the edges. CENTCOM reports IRGC fast-boats converging on the MV Pacific Meridian — a Liberian-flagged tanker carrying Japanese electronics through the strait. Your watch officer's voice is tight: 'Six boats, closing at forty knots, weapons visible.' The tactical display shows the tanker as a slow green dot, surrounded by fast red ones. This is your first real test. The entire National Security Council is watching from their homes via secure video. You can see their faces in the blue light of their screens — waiting for you to decide."
+    },
+    {
+      "id": "carrier_incident",
+      "title": "THE CARRIER INCIDENT",
+      "description": "An Iranian drone buzzed the USS Eisenhower's flight deck at 50 feet. Sailors hit the deck. Gun cameras captured everything. CENTCOM wants to release the footage. Iran claims it was \"routine surveillance.\"",
+      "choices": [
+        {
+          "label": "Issue formal protest through military channels",
+          "flavor": "Professionals talk to professionals. Iran absorbs the protest. IRGC internally: \"They flinched.\"",
+          "consequence": "You issue a formal protest through military-to-military channels. A stern letter, delivered through the deconfliction line, citing international law and demanding cessation. Professional. Measured. By the book. In Tehran, the protest is read, filed, and forgotten. Within the IRGC, the consensus hardens: the Americans flinched. The next provocation will be closer."
+        },
+        {
+          "label": "Declassify footage — release to CNN",
+          "flavor": "The footage goes viral. Iran is embarrassed globally. But Tangsiri remembers the humiliation.",
+          "consequence": "You declassify the footage and hand it to CNN. By evening, the gun-camera video is on every screen in the world. The image of American sailors diving for cover on their own flight deck is indelible. Iran is globally embarrassed. Condemnations pour in from thirty nations. But Admiral Tangsiri watches the footage in his office, and the humiliation burns. He will remember this."
+        },
+        {
+          "label": "Retaliate — disable the drone command facility",
+          "flavor": "Precision strike. Clean hit. The world holds its breath. Iran goes silent for 48 hours.",
+          "consequence": "You authorize the strike. A single Tomahawk cruise missile, precisely targeted, destroys the drone command facility on the Iranian coast. The explosion is visible from the Eisenhower's deck. The world holds its breath for forty-eight hours. Iran goes silent — no state media statements, no UN complaints, nothing. The silence is either retreat or planning."
+        }
+      ],
+      "scene": "The footage arrives from the USS Eisenhower's gun cameras: an Iranian Shahed drone, angular and menacing, buzzing the carrier's flight deck at fifty feet. You can see the deck crew hitting the steel, hands over their heads, as the drone's shadow passes over them. The bridge recording captures the officer of the deck shouting 'Hostile UAV, hostile UAV!' before the drone banks away and disappears into the haze. CENTCOM wants to release the footage immediately. Iran's state media is already claiming it was 'routine surveillance of international waters.' Your communications team and your military advisors are, for once, in perfect agreement: someone needs to pay for this."
+    },
+    {
+      "id": "drone_carrier",
+      "title": "IRIS SHAHID BAGHERI DETECTED",
+      "description": "Intelligence identifies the IRIS Shahid Bagheri — a converted container ship functioning as Iran's first drone carrier. It can deploy 30+ fast attack craft and explosive drone boats from inside the hull.",
+      "choices": [
+        {
+          "label": "Strike it before it deploys",
+          "flavor": "Harpoon missiles destroy the vessel. Iran calls it an attack on a \"civilian cargo ship.\" Satellite photos prove otherwise.",
+          "consequence": "You order a preemptive strike. A pair of F/A-18s descend on the vessel and put two precision-guided munitions through its hull. The ship breaks apart and sinks in fourteen minutes. Iran denies any connection. The drone swarm never launches."
+        },
+        {
+          "label": "Track and monitor",
+          "flavor": "You let it sail, gaining valuable intel on Iran's doctrine. But those drone boats could strike at any time.",
+          "consequence": "You shadow the vessel with a submarine and deploy electronic warfare assets to jam its communications. Your intelligence teams monitor every transmission, building a comprehensive picture of Iran's drone warfare doctrine without firing a shot."
+        },
+        {
+          "label": "Leak intel to media",
+          "flavor": "World media covers the \"ghost carrier.\" Iran forced to dock it. But they know you're watching.",
+          "consequence": "You share the intelligence with allies and bring the evidence to the UN Security Council, framing Iran's drone carrier as a threat to international shipping. The diplomatic approach takes time, but it builds the coalition you need for whatever comes next."
+        }
+      ],
+      "scene": "Naval intelligence has located it — a converted cargo vessel operating in international waters south of Bandar Abbas, its hold packed with dozens of armed drones. Your analysts call it a 'drone carrier,' a floating launch platform capable of saturating your fleet's air defenses. The vessel is flying no flag, its transponder dark. Satellite imagery shows deck hatches being opened in preparation for a launch sequence."
+    },
+    {
+      "id": "second_carrier",
+      "title": "SECOND CARRIER DEPLOYMENT",
+      "description": "CENTCOM requests deployment of a second carrier strike group — USS Gerald R. Ford. It would be the largest naval buildup since 2003. The signal is unmistakable.",
+      "choices": [
+        {
+          "label": "Deploy the Ford — show maximum force",
+          "flavor": "Two carrier strike groups in the Gulf. Iran's navy stays in port. The world hasn't seen this since Iraq.",
+          "consequence": "You approve the deployment. Within days, two American carrier strike groups are operating in the Gulf simultaneously — a concentration of naval power not seen since the Iraq War. Iran's admirals quietly begin repositioning their forces. The deterrent effect is real, but so is the cost."
+        },
+        {
+          "label": "Position Ford in Arabian Sea (standoff)",
+          "flavor": "Close enough to matter, far enough to avoid provocation. A balanced signal.",
+          "consequence": "You approve a partial reinforcement, sending additional destroyers and submarines without the second carrier. The augmented force provides meaningful capability without the political and financial weight of a dual-carrier deployment."
+        },
+        {
+          "label": "Deny the request — one carrier is enough",
+          "flavor": "CENTCOM is unhappy but complies. The Ford stays in the Mediterranean.",
+          "consequence": "You decline the deployment, judging that the current naval presence is sufficient and that further escalation could trigger the very conflict you are trying to prevent. The Pentagon accepts the decision. Grudgingly."
+        }
+      ],
+      "scene": "The Pentagon proposes deploying a second carrier strike group to the Persian Gulf. The logistics are staggering — repositioning the USS Gerald Ford from the Mediterranean, accelerating maintenance on escorts, rerouting supply chains. Your defense secretary argues it will send an unmistakable signal of American resolve. Your budget director argues it will send an unmistakable signal to your creditors."
+    },
+    {
+      "id": "minab_school_strike",
+      "title": "MINAB SCHOOL STRIKE",
+      "description": "Reports emerge of a US airstrike hitting a school in Minab, southern Iran. 47 civilians reported killed including children. Iran broadcasting footage globally. UN demands investigation.",
+      "choices": [
+        {
+          "label": "Express regret — open investigation",
+          "flavor": "You acknowledge the tragedy. The investigation finds mixed-use targeting. International pressure eases slightly.",
+          "consequence": "You immediately acknowledge the strike and announce a full investigation, suspending air operations in the area pending review. The admission costs you politically at home, but the international community responds to the transparency."
+        },
+        {
+          "label": "Deny — claim it was a military site",
+          "flavor": "Pentagon releases grainy satellite photos. Nobody is convinced. Global protests erupt.",
+          "consequence": "You deny responsibility, pointing to Iranian air defense debris and the regime's history of staging propaganda. Your intelligence supports the denial, but the images are more powerful than any briefing paper."
+        },
+        {
+          "label": "Pause air operations for review",
+          "flavor": "A 72-hour pause. Hawks scream. Allies exhale. Iran uses the time to reposition forces.",
+          "consequence": "You halt all offensive operations and call for an immediate ceasefire, using the tragedy as a pivot point. The gesture is dramatic and risky — your military commanders warn that pausing operations concedes initiative to Iran."
+        }
+      ],
+      "scene": "The images arrive from Iranian state television and spread across social media within minutes. A school in the coastal city of Minab, reduced to rubble. Children's backpacks visible in the debris. Iran claims it was an American airstrike. Your targeting analysts insist the coordinates were a military communications relay. The truth hardly matters now — the world is watching, and the footage is devastating."
+    },
+    {
+      "id": "three_carriers",
+      "title": "THREE CARRIER GROUPS IN THEATER",
+      "description": "Lincoln, Truman, and Carl Vinson are all in the Arabian Sea. 200+ aircraft, 30 warships, 25,000 sailors. The largest US naval deployment since Iraq 2003. The world is watching.",
+      "choices": [
+        {
+          "label": "Launch sustained air campaign",
+          "flavor": "Operation Southern Watch II begins. 200 sorties per day. Iran's military infrastructure is systematically degraded.",
+          "consequence": "You approve the triple-carrier deployment. The sight of three American flight decks operating in concert sends a signal that reverberates from Tehran to Beijing. Iran's navy retreats to port. The deterrent works, but at a cost that will echo through next year's defense budget."
+        },
+        {
+          "label": "Maintain pressure — deterrence posture",
+          "flavor": "The carriers patrol. Iran's navy stays in port. The mere presence changes the calculus.",
+          "consequence": "You approve two carriers and supplement with submarine and bomber assets, achieving comparable striking power with a smaller surface footprint. The approach is less visible but arguably more lethal."
+        },
+        {
+          "label": "Withdraw one carrier — signal restraint",
+          "flavor": "Vinson returns to the Pacific. A signal that you're not seeking war. Allies approve. Iran is uncertain.",
+          "consequence": "You decline the surge, judging the current force sufficient and the fiscal exposure unacceptable. You redirect the funds toward diplomatic initiatives and economic tools. The Pentagon drafts a strongly worded memo of dissent."
+        }
+      ],
+      "scene": "The Joint Chiefs present a plan to surge a third carrier strike group into the theater. Three carriers, their escorts, their air wings — a floating fortress capable of projecting more firepower than most nations possess. The deployment would be the largest concentration of American naval power in a generation. Your Secretary of Defense calls it 'overwhelming deterrence.' Your Treasury Secretary calls it 'overwhelming expenditure.'"
+    },
+    {
+      "id": "carrier_near_miss",
+      "title": "USS EISENHOWER NEAR MISS",
+      "description": "An Iranian anti-ship ballistic missile splashes 200 meters from the USS Eisenhower. The closest a hostile weapon has come to a US carrier since WWII. The crew is shaken.",
+      "choices": [
+        {
+          "label": "Destroy Iran's coastal missile batteries",
+          "flavor": "Operation Burning Light. 48 cruise missiles eliminate Iran's anti-ship capability. The carrier group is safe. For now.",
+          "consequence": "You authorize a devastating strike package against Iran's coastal anti-ship missile infrastructure. Tomahawks and precision-guided munitions rain down on batteries, radars, and command bunkers along the Iranian littoral. The coast goes quiet. The escalation does not."
+        },
+        {
+          "label": "Pull the carrier back to the Gulf of Oman",
+          "flavor": "Retreat. The IRGC celebrates. Your Navy commanders are furious.",
+          "consequence": "You pull the carrier group back to a safer distance, conceding sea space in exchange for survivability. The tactical retreat is prudent but the optics are painful — an American carrier retreating from Iranian missiles makes headlines around the world."
+        },
+        {
+          "label": "Stay on station — increase air defense posture",
+          "flavor": "Aegis systems go to maximum alert. The next shot might not miss.",
+          "consequence": "You reinforce the carrier's defensive screen with additional Aegis destroyers and deploy electronic warfare aircraft to jam Iranian targeting radars. The defensive investment is expensive but keeps your carrier in the fight."
+        }
+      ],
+      "scene": "The USS Eisenhower's combat information center erupts in alarm. An Iranian anti-ship ballistic missile has splashed into the water less than five hundred meters from the carrier's hull. Close enough to feel the shockwave on the flight deck. Close enough that if the guidance had been fractionally better, you would be dealing with the worst naval disaster since World War Two. Your admiral is requesting permission to destroy every missile battery on the Iranian coast."
+    },
+    {
+      "id": "three_seizures",
+      "title": "[ MASS SEIZURE EVENT ]",
+      "description": "IRGC Navy seizes THREE tankers simultaneously — Norwegian, Japanese, and Greek-flagged. 67 hostages. This is not a provocation. This is a coordinated operation. The world is watching your response in real time.",
+      "choices": [
+        {
+          "label": "Immediate military rescue operation",
+          "flavor": "SEALs board two tankers. The third is too far. 4 hostages wounded, 1 killed. Iran calls it piracy. Fox News calls you a hero.",
+          "consequence": "You order an immediate military response — strike the IRGC fast-boat bases, destroy their command and control, cripple their ability to conduct further operations. The strikes begin within the hour. American firepower meets Iranian infrastructure in a one-sided exchange that reshapes the coastline."
+        },
+        {
+          "label": "Naval blockade of Iranian ports",
+          "flavor": "\"Nothing enters or leaves Iranian waters until our people are free.\" A classic escalation. Effective but the world economy shudders.",
+          "consequence": "You impose crippling economic sanctions and a full naval blockade of Iranian ports, strangling their oil exports as they strangle yours. The economic warfare is total and reciprocal. Both economies begin to bleed."
+        },
+        {
+          "label": "Hostage negotiation through Oman",
+          "flavor": "Negotiations begin. Iran demands sanctions relief. Day 1 passes. Day 2. The families are on every channel. \"WHERE ARE YOU?\"",
+          "consequence": "You go to the UN, armed with satellite footage and intercepted communications, demanding international action. The Security Council chamber becomes a courtroom. China and Russia shift in their seats, calculating their interests."
+        },
+        {
+          "label": "Authorize \"all necessary force\"",
+          "flavor": "Congress grants authorization. The US is now legally at war with Iran in all but name.",
+          "consequence": "You order a full carrier strike on every IRGC naval facility along the Iranian coast. The operation is massive — the largest American military action in the Gulf since 2003. When it is over, Iran's ability to threaten shipping has been permanently degraded. So has any remaining chance of a diplomatic resolution."
+        }
+      ],
+      "scene": "Three tankers seized in a single morning. The IRGC has executed a coordinated operation of terrifying precision — fast boats converging simultaneously on vessels in three different sections of the Strait, boarding parties storming bridges before escort warships can respond. The Strait of Hormuz is effectively closed. Global oil supply has just lost a fifth of its volume. Markets are in freefall. The President of the United States is being woken for the third time tonight."
+    },
+    {
+      "id": "carrier_hit",
+      "title": "[ CARRIER UNDER ATTACK ]",
+      "description": "FLASH: USS Abraham Lincoln reports missile impact. Iranian anti-ship ballistic missile. Flight deck damaged. 23 casualties. The carrier is NOT sinking but air operations are suspended. This is the first hit on a US carrier since WWII.",
+      "choices": [
+        {
+          "label": "Massive retaliation — destroy Iran's missile capability",
+          "flavor": "200 Tomahawks in a single salvo. Every known missile site hit. Iran's offensive capability is shattered. The war is now total.",
+          "consequence": "You order an immediate and overwhelming retaliatory strike against every military target of value in Iran. The response is biblical in its scope — airbases, naval installations, missile batteries, command centers, all hit within a single coordinated wave. When the sun rises, Iran's conventional military capability has been reduced by half."
+        },
+        {
+          "label": "Proportional response — hit the launch site",
+          "flavor": "Cruise missiles destroy the specific battery that fired. Measured. Professional. But 23 families want more.",
+          "consequence": "You authorize a proportional response — targeted strikes against the specific units and facilities responsible for the attack. The restraint in the face of such provocation is either strategic wisdom or unforgivable weakness, depending on who you ask."
+        },
+        {
+          "label": "Withdraw the Lincoln — save the crew",
+          "flavor": "The Lincoln limps to Fujairah. Iran celebrates. \"We drove the Americans from our waters.\" Your deterrence is in ruins.",
+          "consequence": "You order the Eisenhower evacuated and towed to safety, focusing entirely on saving the ship and her crew before making any retaliatory decisions. The world watches an American carrier limping away from the fight. Some call it prudence. Others call it retreat."
+        },
+        {
+          "label": "Invoke Article II — address the nation",
+          "flavor": "\"23 Americans were attacked today. We will respond at a time and manner of our choosing.\" The nation rallies. Iran waits.",
+          "consequence": "You go on national television, show the footage of the burning carrier, and rally the nation for what comes next. The speech is measured, resolute, and devastating. You announce that America will respond at a time and place of its choosing. Iran begins to wonder when and where that will be."
+        }
+      ],
+      "scene": "The explosion rocks the USS Eisenhower amidships, a plume of fire and black smoke erupting from the flight deck. An Iranian anti-ship ballistic missile has struck an American aircraft carrier — the first time a US carrier has been hit by enemy action since World War Two. Damage control teams are fighting fires while the ship lists to starboard. Casualty reports are streaming in. The carrier is still afloat, still fighting, but the symbol of American naval invincibility has just been shattered on live television."
+    }
+  ]
+}

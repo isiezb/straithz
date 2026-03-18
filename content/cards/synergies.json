@@ -1,0 +1,39 @@
+{
+  "synergies": {
+    "smart_pressure": {
+      "name": "SMART PRESSURE",
+      "description": "Sanctions + Diplomacy: Sanctions effectiveness +25%, diplomatic overtures carry more weight.",
+      "flavor": "Iran knows the stick is real. The carrot becomes more appealing."
+    },
+    "iron_curtain": {
+      "name": "IRON CURTAIN",
+      "description": "Naval Patrol + Carrier Group: Intercept chance +15%, combined naval presence creates impenetrable screen.",
+      "flavor": "Nothing gets through the strait without your permission."
+    },
+    "hearts_and_minds": {
+      "name": "HEARTS AND MINDS",
+      "description": "Humanitarian Aid + Media Campaign: Standing +3/day, approval +2/day, significant budget drain.",
+      "flavor": "The world sees America at its best. Your accountants see the bill."
+    },
+    "shadow_war": {
+      "name": "SHADOW WAR",
+      "description": "Cyber Operations + Intelligence Surge: Intel generation doubled, fog reduction doubled. If discovered: massive credibility hit.",
+      "flavor": "The invisible war. Devastating when it works. Career-ending when it doesn't."
+    },
+    "fortress_america": {
+      "name": "FORTRESS AMERICA",
+      "description": "Missile Defense + Troop Surge: Deterrence +10, tension -5 (defensive posture reads as non-provocative).",
+      "flavor": "A wall of steel that says \"we're not here to attack — we're here to stay.\""
+    },
+    "diplomatic_blitz": {
+      "name": "DIPLOMATIC BLITZ",
+      "description": "UN Engagement + Allied Coordination: DipCapital generation +50%, UN events succeed more often.",
+      "flavor": "The diplomatic machine runs at full speed. But military flexibility suffers."
+    },
+    "maximum_pressure": {
+      "name": "MAXIMUM PRESSURE",
+      "description": "Sanctions + Carrier Group + Cyber Ops: Iran economy squeezed, faction balance shifts toward moderates. But tension rises.",
+      "flavor": "Every lever pulled at once. Iran feels the pressure from all sides. International fatigue sets in after 10 days."
+    }
+  }
+}

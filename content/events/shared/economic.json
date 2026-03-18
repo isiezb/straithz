@@ -1,0 +1,96 @@
+{
+  "events": [
+    {
+      "id": "oil_markets_panic",
+      "title": "OIL MARKETS PANIC",
+      "description": "Oil futures jumped $15/barrel overnight. The Energy Secretary is on the phone. Gas prices are on every cable news chyron. The Saudi Energy Minister might increase production — if you ask nicely.",
+      "choices": [
+        {
+          "label": "Release strategic petroleum reserves",
+          "flavor": "Markets calm immediately. But reserves are finite — you've bought 10 days, not a solution.",
+          "consequence": "You sign the order to release strategic petroleum reserves. The effect is immediate — futures drop eight dollars within the hour. Markets exhale. Gas station owners adjust their signs downward. But you watch the SPR counter tick down and feel the finite nature of the relief. You have bought yourself ten days, maybe twelve. The reserves are not a solution. They are borrowed time."
+        },
+        {
+          "label": "Call Saudi — beg for increased production",
+          "flavor": "MBS agrees — for a price you'll pay later. The humiliating leak comes on Day 20.",
+          "consequence": "You swallow your pride and call Riyadh. MBS takes the call on the third ring, which means he was waiting. The conversation is cordial, professional, and deeply humiliating. He agrees to increase production by 500,000 barrels per day. The price will come later — it always does. On Day 20, the details of this conversation will leak, and the editorial cartoons will not be kind."
+        },
+        {
+          "label": "Let markets find their own level",
+          "flavor": "Pain now, stability later. The opposition runs \"gas prices\" attack ads within hours.",
+          "consequence": "You do nothing. You tell your Energy Secretary to let the markets find their own level. The pain is immediate — gas stations raise prices, cable news runs 'CRISIS AT THE PUMP' graphics, and the opposition party's ad team begins cutting attack spots. But you know that artificial intervention only delays the reckoning. The markets will adjust. Your approval rating, however, is adjusting faster."
+        }
+      ],
+      "scene": "The Bloomberg terminal in the corner of the Situation Room flashes red numbers that climb like a fever. Oil futures jumped fifteen dollars a barrel overnight, and the trajectory shows no ceiling. Your Energy Secretary is on the phone, his voice strained: 'Gas prices are on every cable news chyron in America. Trucking companies are calling about fuel surcharges.' Through the window, you can see a CNN satellite truck setting up on the North Lawn. The Saudi Energy Minister has made it known, through back channels, that he might increase production — if you ask nicely. The word 'nicely' carries the weight of a thousand concessions."
+    },
+    {
+      "id": "oil_spike",
+      "title": "OIL MARKET PANIC",
+      "description": "Oil futures jumped $15/barrel. Energy Secretary is on the phone — should you release reserves?",
+      "choices": [
+        {
+          "label": "Release reserves",
+          "flavor": "SPR release calms markets. Prices stabilize.",
+          "consequence": "You authorize the SPR release. The announcement goes out at 9:00 AM Eastern, timed for maximum market impact. Futures drop immediately — six dollars in the first hour. The physical drawdown begins at Bryan Mound and Big Hill. Markets stabilize. Gas station signs tick downward. But the Strategic Petroleum Reserve counter on your desk shows a number that gets smaller every day."
+        },
+        {
+          "label": "Verbal intervention only",
+          "flavor": "Your press conference helps a little. Markets remain jittery.",
+          "consequence": "You step to the podium for a verbal intervention. 'Markets should have confidence in the stability of global oil supply,' you say, your voice calibrated for maximum steadiness. It helps — a little. Futures drop three dollars on the statement. But traders are professional skeptics, and words without barrels behind them have a short half-life. Markets remain jittery through the week."
+        },
+        {
+          "label": "Let markets correct",
+          "flavor": "Gas prices soar. Critics call you out of touch.",
+          "consequence": "You let the markets correct on their own. No intervention, no statement, no signal. Gas prices soar past six dollars in some markets. Cable news discovers that your Energy Secretary drives an electric vehicle. Critics call you out of touch. The economic pain is real and politically devastating, but you hold to the principle that government intervention distorts markets and delays adjustment."
+        }
+      ],
+      "scene": "The trading floor at NYMEX looks like a hospital during a code blue. Oil futures have spiked fifteen dollars a barrel in overnight trading, and the trajectory is vertical. Your Energy Secretary's voice on the phone carries the particular strain of a man who has been fielding calls from refinery executives since 4 AM. 'We need to signal stability,' he says. 'Or this becomes a panic.' The gas price ticker on your desk — a daily briefing item now — reads $5.47 and climbing. Trucking companies are calling the Transportation Department about emergency fuel allocations. The markets are not just nervous; they are beginning to price in the possibility that this crisis has no resolution."
+    },
+    {
+      "id": "china_oil_deal",
+      "title": "CHINA'S SHADOW FLEET",
+      "description": "Satellite imagery shows 15 Chinese-flagged tankers loading Iranian oil at Kharg Island. 11.7 million barrels shipped to China since the crisis began. Your sanctions are being openly defied.",
+      "choices": [
+        {
+          "label": "Secondary sanctions on Chinese banks",
+          "flavor": "SWIFT cuts off three Chinese banks. Beijing is furious. Iran's revenue collapses. Trade war escalates.",
+          "consequence": "You impose secondary sanctions on Chinese entities involved in the deal, threatening to cut them off from the American financial system. Beijing retaliates with tariffs. The economic escalation spirals, but Iran's oil revenue takes a hit."
+        },
+        {
+          "label": "Quiet diplomatic pressure",
+          "flavor": "Beijing makes promises. The shadow fleet shrinks slightly. It's not enough.",
+          "consequence": "You quietly negotiate with Beijing, offering trade concessions in exchange for reduced Iranian oil purchases. The haggling is ugly and transactional, but you chip away at Iran's economic lifeline without a public confrontation."
+        },
+        {
+          "label": "Look the other way",
+          "flavor": "Pragmatism over principle. Iran keeps selling. Hawks in Congress are furious.",
+          "consequence": "You let the deal stand, calculating that antagonizing China while managing Iran would stretch your leverage too thin. Tehran gets its money. Beijing gets its oil. Your sanctions regime develops a leak that will only grow."
+        }
+      ],
+      "scene": "Your trade representative bursts into the morning briefing with intercepts showing that China and Iran have signed a secret oil-for-infrastructure agreement. Beijing will purchase Iranian crude at a steep discount, paid in yuan, effectively creating a sanctions-proof lifeline for Tehran's economy. The deal undermines your entire economic pressure strategy. Beijing's ambassador requests an urgent meeting."
+    },
+    {
+      "id": "gas_price_crisis",
+      "title": "GAS HITS $6 PER GALLON",
+      "description": "Average US gas price breaks $6/gallon. Trucking companies halt routes. Airlines cancel flights. The economic pain is no longer abstract — it's at every pump in America.",
+      "choices": [
+        {
+          "label": "Emergency SPR release + price cap",
+          "flavor": "Gas drops to $5.20. Temporary relief. But the reserve is running low.",
+          "consequence": "You release petroleum reserves and suspend the federal gas tax, providing immediate relief at the pump. The fiscal cost is staggering, but the political bleeding stops. For now."
+        },
+        {
+          "label": "Blame Iran — rally patriotism",
+          "flavor": "\"Iran is attacking YOUR wallet.\" The message resonates but doesn't lower prices.",
+          "consequence": "You go on national television and level with the American people, explaining the strategic stakes and asking for patience. You frame the sacrifice as patriotic duty. Some rally to the flag. Others change the channel."
+        },
+        {
+          "label": "Fast-track domestic drilling",
+          "flavor": "Environmental groups protest. Production won't increase for months. But it's a signal.",
+          "consequence": "You pressure oil companies to reduce their margins and accelerate domestic drilling permits. The industry pushes back, but the optics of 'doing something' blunt the worst of the political damage."
+        }
+      ],
+      "scene": "The number on the gas station signs back home has become a political weapon. Six dollars, seven dollars, climbing toward eight. Congressional switchboards are melting. Truckers are blockading refineries. Your domestic policy advisor lays the polling data on your desk like a coroner presenting an autopsy. Your approval rating is in freefall, tied directly to the price at the pump."
+    }
+  ]
+}

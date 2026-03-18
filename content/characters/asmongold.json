@@ -1,0 +1,236 @@
+{
+  "id": "asmongold",
+  "name": "Asmongold",
+  "title": "Streamer & Analyst",
+  "portraitImage": "",
+  "selectImage": "",
+  "reactionImages": {},
+  "ability": "The Analyst",
+  "abilityDesc": "Prediction system. Make public predictions, gain audience if correct. WIN: Audience >= 90, credibility >= 65, 3+ correct predictions.",
+  "lore": [
+    "February 28, 2026. Chat, this is not a drill. The US just killed Iran's Supreme Leader. 2,000 drones are inbound. The strait is closing. Your 14-hour stream analyzing leaked Pentagon documents got you here — now the Joint Chiefs are asking YOUR assessment of Iran's response. The intel is flooding in faster than anyone can process. Except you."
+  ],
+  "uniqueResource": {
+    "name": "",
+    "start": 0,
+    "max": 100,
+    "inverted": false
+  },
+  "aipacStart": 50,
+  "morningBriefings": {
+    "advisor": "Senior Analyst",
+    "highApproval": [
+      "Audience is growing fast — stream numbers are up 25% and the engagement metrics look incredible.",
+      "Chat is loving the content right now. Viewer retention is at an all-time high and new subs are flooding in.",
+      "Sir, the numbers don't lie — your approval ratings are translating directly into viewership. The audience trusts your calls.",
+      "Community sentiment is overwhelmingly positive. The Reddit threads are supportive and even Twitter is on our side for once."
+    ],
+    "lowApproval": [
+      "Viewer count is dropping and chat is turning. We need content or we're going to lose the audience.",
+      "Sir, engagement is way down. The chat is full of 'ResidentSleeper' and people are tuning out.",
+      "The community is fracturing — losing approval means losing viewers, and losing viewers means losing influence.",
+      "We're hemorrhaging subs. Low approval is boring content, and boring content kills channels."
+    ],
+    "winAvailable": [
+      "A prediction is close to resolving — if it lands, credibility surges across the board.",
+      "Sir, one of your earlier calls is about to pay off. When chat sees the prediction hit, the hype will be massive.",
+      "The analytics show a verifiable win incoming. Time to clip it and let the content speak for itself."
+    ],
+    "noWin": [
+      "No predictions in play. Chat is getting bored. We need to make a call.",
+      "The content pipeline is empty and chat knows it. Without a bold prediction, engagement keeps sliding.",
+      "Sir, we're in a content drought. The audience wants to see you make a play, not sit on the sidelines."
+    ],
+    "highTension": [
+      "This is incredible content — engagement metrics are spiking across every platform. Chat is glued to the screen.",
+      "High tension is a content goldmine. The audience loves drama and the geopolitical stakes are delivering.",
+      "Sir, viewer numbers always spike with tension. The chat is active, clips are going viral, and the algorithm is feeding us traffic.",
+      "Peak content hours right now. The tension is generating the kind of engagement money can't buy."
+    ],
+    "budgetCrisis": [
+      "The budget crisis is actually a great resource management content angle. Chat loves watching you optimize under constraints.",
+      "Sir, budget pressure creates the kind of min-max gameplay the audience lives for. Lean into the resource management narrative.",
+      "Financial constraints make for better content than unlimited budgets. The audience respects efficient play.",
+      "The budget squeeze is content. Show chat how you handle resource scarcity — that's the gameplay they want to see."
+    ],
+    "predictionTracker": [
+      "Chat wants another prediction — they're hungry for content and the prediction meta is what keeps them engaged.",
+      "The prediction tracker is the single biggest engagement driver we have. Every resolved prediction generates clips and highlights.",
+      "Sir, the community lives for the prediction scorecard. A new call today would dominate the content cycle.",
+      "Prediction content outperforms everything else by 3x. The audience wants you making calls, not playing it safe."
+    ]
+  },
+  "overnightScenes": {
+    "default": [
+      "Stream ended twenty minutes ago but the adrenaline is still going. 670,000 peak concurrent. The OSINT breakdown went viral mid-stream — you literally watched the viewer count jump 200K in real time as the clip hit Twitter. Your Discord is exploding. A Pentagon spokesman called your analysis 'irresponsible speculation that happened to be correct,' which is the best review you've ever gotten. You open a Monster Energy, pull up the shipping AIS tracker, and start preparing tomorrow's research. You'll sleep at 4am. Maybe 5."
+    ],
+    "highTension": [
+      "The deepfake video has 6 million views. Six. Million. It shows you — pixel-perfect you, voice-matched you — saying things you never said. The platforms won't take it down. Someone doxxed your home address on a Telegram channel with 200,000 subscribers. The FBI field office called and left a voicemail. You're sitting in your streaming chair at 3am with all the lights on, curtains closed, checking the Ring doorbell camera every five minutes. This is what it costs to be right in public."
+    ],
+    "militaryAction": [
+      "Anderson Cooper's producer called. 60 Minutes wants a segment. The New York Times is running a profile headlined 'The Streamer in the Situation Room.' You are, by some metrics, the most-watched intelligence analyst in the world. You're also a guy in a gaming chair who hasn't done laundry in two weeks. These facts coexist."
+    ],
+    "diplomaticDay": [
+      "Late. Really late. The stream's been off for hours but you're still at the desk. The chat overlay is closed. The room is silent for the first time in sixteen hours. You're thinking about the tanker crew — the nineteen sailors whose faces appeared on your stream as data points. Their lives became content. YOUR content. At 3am with the monitors dark, you wonder if there's something broken about a world where a streamer in Texas has more intelligence reach than some NATO members. You lie on the floor and stare at the ceiling until the sun comes up."
+    ],
+    "approvalDrop": [
+      "You end the stream without the usual raid. No 'ggs.' Just 'I was wrong, and I'll do better' and click. The viewer count had been dropping — from 400K to 220K as the prediction collapse played out live. The clip is the top post on three subreddits. You close the laptop. The room is dark except for the LED strips pulsing their stupid colors. You should eat. You should sleep. You do neither. You read every single comment, all the way to the bottom."
+    ],
+    "budgetTight": [
+      "I need to eat something. I've been running on Monster Energy and existential dread for fourteen hours. The stream was mid though — solid analysis, good predictions, decent viewer retention. But the body is starting to rebel. You can feel it in the headaches, the eye strain, the way your hands shake slightly on the mouse. Fifty days of this. The internet never sleeps and neither do you."
+    ],
+    "lowTension": [
+      "Stream ended. Quiet night. You pull up the AIS tracker anyway because you can't help it. The ships are moving normally. The strait is calm. For once, no breaking news, no FLASH traffic, no deepfakes. Just data. Clean, boring data. You should be relieved but instead you feel empty. The adrenaline junkie in you wants something to happen. The analyst knows that boredom is the goal. You close the laptop and try to remember what you did for fun before all this."
+    ]
+  },
+  "idleAsides": [
+    "Chat just donated $500 with the message 'glass Iran.' I'm not reading that on stream but it's the top donation of the day.",
+    "My OSINT guys in the Discord found something interesting in the shipping AIS data. Might be nothing. Usually is.",
+    "Credibility is a weird currency. You spend years building it and one bad prediction destroys it overnight.",
+    "The New York Times called me an 'unconventional intelligence asset.' I screenshotted that and it's my new bio.",
+    "Someone in the Pentagon is watching my stream. I know because they corrected a ship identification in chat. Username: 'totally_not_an_admiral.'",
+    "Reddit is doing that thing where half the posts are genuine analysis and the other half are 'asmongold bald' memes. Par for the course.",
+    "My mod team is better than CNN's fact-checking department. That's not a joke, it's a verifiable claim.",
+    "Polymarket created a contract on whether my next prediction will be correct. I have never felt more simultaneously flattered and insulted.",
+    "Iran's state TV quoted my stream last night. They used a clip where I called the IRGC Navy 'surprisingly competent.' Thanks guys.",
+    "I need to eat something. I've been running on Monster Energy and existential dread for fourteen hours."
+  ],
+  "cardReactions": {
+    "military": {
+      "positive": "Medium deployment. Two carrier groups means roughly 150 aircraft, 15 surface combatants, and several submarines we can't talk about.",
+      "reluctant": "Full send. We are officially in the 'this could escalate to a shooting war at any moment' zone. Mods, enable slow mode."
+    },
+    "diplomatic": {
+      "positive": "Interesting move. The chat is split — hawks are mad, doves are relieved, and the centrists are doing the 'it depends' thing.",
+      "reluctant": "Full diplomatic commitment. This is either the Lincoln-level play or the Chamberlain-level play. History will decide."
+    },
+    "economic": {
+      "positive": "Sanctions analysis incoming. Chat, pull up the OFAC SDN list — I'm going to show you who's actually getting sanctioned.",
+      "reluctant": "Maximum sanctions. Iran's rial just hit an all-time low. I'll do a stream breaking down the economic data."
+    },
+    "intelligence": {
+      "positive": "OSINT plus SIGINT. This is my literal wheelhouse. I'll correlate the classified feeds with open-source data on stream.",
+      "reluctant": "Full intelligence package. If I can cross-reference this with my OSINT network, we'll see things nobody else sees."
+    },
+    "domestic": {
+      "positive": "Media blitz? I AM the media blitz. My stream reaches more people than a press conference.",
+      "reluctant": "Peak domestic engagement. The audience is the fourth branch of government and they're watching."
+    }
+  },
+  "advisorReactions": {
+    "weekStart": [
+      "Chat, the prediction tracker just updated. Let's see what resolved overnight.",
+      "Dude, the audience numbers are insane this week. Engagement is through the roof. Let's keep it going.",
+      "OK so the overnight analysis feed dropped and chat was right about two things. Let me break it down."
+    ],
+    "morningBrief": [
+      "Chat, the overnight mod-curated intel feed and prediction tracker are in.",
+      "Morning digest — crowd-sourced and verified. Also, check the prediction scorecard.",
+      "Analyst has the morning brief. Prediction tracker, audience metrics, and credibility assessment."
+    ],
+    "highTension": "Chat, tension is through the roof and viewer engagement is spiking. If my prediction lands now, credibility surges.",
+    "lowApproval": "Approval is tanking — we're losing the audience. Need a correct prediction or a big content moment to turn this around.",
+    "seizure": "They just took a tanker. This is the exact scenario I flagged — if chat clipped that prediction, credibility goes to the moon.",
+    "diplomatic": "Diplomacy arc. Chat thinks it's boring content, but the analytics say this is where the smart plays happen.",
+    "victory": "GG EZ. Chat, we called it. The predictions landed. The audience saw it happen in real time.",
+    "lowBudget": "Budget diff is actually content. Poverty run angle — chat loves watching us optimize with nothing.",
+    "highProxy": "Proxy escalation is trending. If I predicted this, credibility surges. If I didn't — we need to make a new call fast.",
+    "uniqueResourceLow": "Chat, credibility is dropping. Our analysis isn't landing. We need a correct prediction or we lose the audience.",
+    "uniqueResourceCritical": "Credibility is almost gone. One wrong call and nobody trusts us. We need a verified prediction NOW."
+  },
+  "restrictedCards": [],
+  "restrictionRefusals": {},
+  "epilogues": {
+    "diplomatic": "You streamed the final press conference. Twelve million concurrent viewers. The chat was, for once, almost entirely supportive, though someone did manage to post the crab emoji forty thousand times. The intelligence community will study your methods for decades: the fusion of open-source analysis with classified assets, the radical transparency that somehow made secrecy more effective, the way you turned public attention into a strategic weapon. You broke every rule they taught at Langley and got better results than anyone who followed them. The fog of war, for the first time in the history of modern conflict, was lower at the end than at the beginning.",
+    "military": "Chat wanted content and you gave them content. The problem is, the content was a war. Your credibility carried you further than anyone expected, but in the end, the missiles don't care about your viewer count. The military victory happened not because of your analysis but despite it — the generals did what generals do, and you provided cover. Your stream of the final operation hit 20 million viewers. The Pentagon banned streaming from classified briefings the next day.",
+    "decline": "The stream is still going but the viewer count is dropping. The crisis ended not with a bang but with a slow fade to normalcy, which is terrible for content. Your credibility is intact but irrelevant — nobody needs an analyst when there's nothing to analyze. Chat has moved on to the next thing. The fog of war settled back to its natural state. You go back to gaming, which is fine. But late at night, you pull up the shipping maps and check the strait. Old habits."
+  },
+  "uniqueEvents": {
+    "A01_osint_discovery": {
+      "title": "THE OSINT DISCOVERY",
+      "description": "Your crowdsourced OSINT network found something the intelligence community missed: satellite imagery showing Iranian mobile missile launchers dispersing from known bases.",
+      "choices": [
+        {
+          "label": "Share with intelligence community",
+          "flavor": "Teamwork. The IC is impressed but slightly threatened by your methods."
+        },
+        {
+          "label": "Publish it yourself — radical transparency",
+          "flavor": "The public trusts YOU, not the spooks. IC is furious. Your methods work."
+        },
+        {
+          "label": "Hold it — use as internal leverage",
+          "flavor": "You know something they don't. That's power. You're playing their game now."
+        }
+      ]
+    },
+    "A02_disinfo_attack": {
+      "title": "THE DISINFORMATION ATTACK",
+      "description": "Iranian state media has launched a coordinated disinformation campaign. Deepfakes of your \"classified briefings\" are going viral. 200M views and counting.",
+      "choices": [
+        {
+          "label": "Debunk live on stream",
+          "flavor": "Real-time forensic analysis. Chat goes wild. Iran's info-ops team regroups — they'll try harder."
+        },
+        {
+          "label": "Trace to source — expose the network",
+          "flavor": "Three days of work. The entire Iranian disinformation network exposed. Devastating."
+        },
+        {
+          "label": "Counter-narrative — fight fire with fire",
+          "flavor": "Don't just debunk, tell a better story. You're in the propaganda game now."
+        }
+      ]
+    },
+    "A02_disinfo_escalation": {
+      "title": "IRAN ESCALATES INFO-WAR",
+      "description": "After you exposed their network, Iran has hired Russian cyber units for a more sophisticated campaign. AI-generated footage of \"US war crimes\" flooding social media.",
+      "choices": [
+        {
+          "label": "Escalate — full information war",
+          "flavor": "You build a counter-disinformation unit. The information battlefield becomes its own front."
+        },
+        {
+          "label": "Appeal to platforms — content moderation",
+          "flavor": "Tech companies reluctantly act. Some content removed. Your base calls it censorship."
+        }
+      ]
+    },
+    "A03_credibility_test": {
+      "title": "THE CREDIBILITY TEST",
+      "description": "Your credibility is at an all-time high. The question is: what do you spend it on? A presidential address, a UN presentation, or bank it for later?",
+      "choices": [
+        {
+          "label": "Presidential address — data not rhetoric",
+          "flavor": "Information advantage is overwhelming. Your opponents can't compete with your data."
+        },
+        {
+          "label": "UN presentation — full transparency",
+          "flavor": "Unprecedented transparency at the UN. Methods exposed but the world trusts you."
+        },
+        {
+          "label": "Bank it — save for when you really need it",
+          "flavor": "Wise but boring. The credibility grows slowly. Your moment will come."
+        }
+      ]
+    },
+    "A04_chat_demands_action": {
+      "title": "CHAT DEMANDS ACTION",
+      "description": "Viewer count is dropping. Chat is spamming \"DO SOMETHING.\" Your base expects entertainment alongside governance. The analytics are brutal.",
+      "choices": [
+        {
+          "label": "Dramatic military action — full livestream",
+          "flavor": "Content meets crisis. Either brilliant or catastrophic. Chat explodes either way."
+        },
+        {
+          "label": "Push back — explain restraint is strategy",
+          "flavor": "Educational content. Some viewers leave. The loyal ones stay harder."
+        },
+        {
+          "label": "Pivot to humor — self-deprecating bit",
+          "flavor": "\"Being president is harder than raiding.\" Viral clip. Opponents don't know how to attack a joke."
+        }
+      ]
+    }
+  }
+}

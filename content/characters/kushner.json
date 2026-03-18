@@ -1,0 +1,294 @@
+{
+  "id": "kushner",
+  "name": "Jared Kushner",
+  "title": "Senior Advisor",
+  "portraitImage": "",
+  "selectImage": "",
+  "reactionImages": {},
+  "ability": "The Operator",
+  "abilityDesc": "Contacts & deal value system. Build trust, close deals, avoid exposure. WIN: Deal value >= $300M, crush Iran aggression, keep exposure low.",
+  "lore": [
+    "February 28, 2026. The bombs are falling on Iran. Every Gulf leader has your personal number and they're all calling at once. MBS wants guarantees. MBZ wants a timeline. The strait is closing and the oil markets are in freefall. The Abraham Accords were just the beginning — now you need those relationships to prevent a regional catastrophe."
+  ],
+  "uniqueResource": {
+    "name": "",
+    "start": 0,
+    "max": 100,
+    "inverted": false
+  },
+  "aipacStart": 50,
+  "morningBriefings": {
+    "advisor": "Avi Berkowitz",
+    "highApproval": [
+      "Political cover is solid right now — strong approval gives us room for back-channel work without media scrutiny.",
+      "Your domestic numbers buy us credibility with Gulf partners. High approval means they take our commitments seriously.",
+      "The political landscape is favorable for quiet diplomacy. Nobody's looking too closely at our meetings right now.",
+      "Sir, strong approval means our partners trust we can deliver. That's the currency that makes back-channel deals possible."
+    ],
+    "lowApproval": [
+      "Low approval is making the Gulf partners nervous. They watch our domestic polls closer than you'd think.",
+      "Sir, Abu Dhabi called twice yesterday asking about the political situation. Low numbers make them hedge their bets.",
+      "Our contacts are recalculating. When your approval drops, their willingness to take risks on a deal drops with it.",
+      "Gulf capitals are reading the polling and getting cold feet. We need domestic stability to keep the deal pipeline moving."
+    ],
+    "winAvailable": [
+      "The deal pipeline is showing results — contacts are producing actionable intelligence and the framework is holding.",
+      "Sir, back-channel investments are paying off. There's a deliverable ready to claim if you want to surface it.",
+      "Trust levels across multiple contacts have crossed the threshold. We have a genuine win to show for the relationship work."
+    ],
+    "noWin": [
+      "Contact trust levels are plateauing. We need to invest more in the relationships before they produce results.",
+      "The deal pipeline is dry right now. Building trust takes time and we haven't put in enough yet.",
+      "Sir, the contacts are willing but cautious. We need another round of engagement before anything materializes."
+    ],
+    "highTension": [
+      "The contacts are nervous, but nervous people make deals. High tension creates urgency that works in our favor.",
+      "Sir, regional partners are scared and scared partners are motivated partners. There's leverage here if we use it carefully.",
+      "Back-channel activity is actually increasing with the tension. Everyone wants a way out and they're looking to us to build one.",
+      "Gulf contacts are reaching out proactively for the first time. The tension is doing our recruitment work for us."
+    ],
+    "budgetCrisis": [
+      "This is a Gulf cost-sharing opportunity, sir. MBS will take the call — he's been looking for a way to demonstrate partnership.",
+      "Budget pressure creates natural openings for burden-sharing agreements. Our Gulf partners have deep pockets and motivation to help.",
+      "Sir, the Emiratis floated a co-financing framework last week. The budget crisis gives us cover to accept without looking weak.",
+      "Financial pressure is actually useful right now. It gives us a credible reason to deepen Gulf financial partnerships."
+    ],
+    "exposureRisk": [
+      "Sir, exposure is climbing. We need to be careful about the next move.",
+      "The back-channels are holding but every call adds risk. We're approaching the point where one leak unravels everything.",
+      "Our operational security is being tested. Two contacts flagged potential surveillance on their end.",
+      "Exposure levels are elevated. I'd recommend limiting new outreach until we've secured the existing channels."
+    ]
+  },
+  "overnightScenes": {
+    "default": [
+      "The private jet touches down at Dulles at 11:47pm. The car is waiting. You check three phones on the drive — the personal, the government Blackberry, and the encrypted one MBS gave you in Riyadh. The encrypted one has a message: a number. $4.2 billion. That's the new ask from PIF for Affinity Partners. Not a commitment — a signal. If you respond with enthusiasm, the number drops. If you respond with silence, it rises. You put the phone in your pocket. You'll respond tomorrow. Patience is a currency too."
+    ],
+    "highTension": [
+      "The notification hits every phone simultaneously. Washington Post push alert: 'KUSHNER'S SHADOW DIPLOMACY: UNDISCLOSED MEETINGS WITH GULF LEADERS.' You're in the back of a town car on the 14th Street bridge and the entire Potomac looks black and reflective and empty. Your lawyer calls. 'It's manageable,' he says. 'Technically.' There's that word again. Technically. The word that means 'legal but indefensible in the court of public opinion.'"
+    ],
+    "diplomaticDay": [
+      "The hotel room in Muscat smells like sandalwood and old money. The Omani foreign minister just left. The deal is alive — barely, precariously, like a house of cards in a room where someone keeps opening windows. Your laptop shows three spreadsheets: the diplomatic framework, the financial architecture, and the exposure risk model. The exposure model is the one that keeps you up. If this deal closes, it reshapes the Middle East. If it leaks, it ends your career. Same spreadsheets. Different outcomes."
+    ],
+    "budgetTight": [
+      "You do the math at 2am because that's when the math is most honest. $25 million per year from PIF. $137 million projected by August. The Senate Finance Committee report in your drawer. The Maddow segment — seventeen minutes. The deal you're negotiating could prevent a wider war. The deal also benefits every single one of your financial partners. These two facts coexist. You are either the most conflicted man in American foreign policy or the most effective. The answer might be both."
+    ],
+    "militaryAction": [
+      "The call comes at midnight Riyadh time. MBS's voice is unusually warm. 'It's done, Jared. The council approved the framework.' You let yourself exhale for the first time in six weeks. You sit on the hotel bed and stare at the desert through the window — Riyadh's skyline glittering like someone spilled diamonds on the sand. Your phone buzzes. ProPublica wants a comment on the PIF connection. You put the phone face-down. Tomorrow. Tonight, you won."
+    ],
+    "approvalDrop": [
+      "The notification hits every phone simultaneously. Washington Post push alert. You're in the back of a town car. Your lawyer calls. 'Technically legal.' The Potomac is black through the window. Exposure climbed twelve points in one news cycle. You close your eyes. The car crosses the bridge. Tomorrow the damage control begins. Tonight you do the math on how many news cycles you have left."
+    ],
+    "lowTension": [
+      "MBS texted an emoji. A handshake. That either means the deal is alive or he's being ironic. You check the exposure tracker — 34, manageable. The Omani channel reported progress. Three phones, three time zones, three sets of interests that need to align before this architecture works. You order room service and eat alone while reading the FT piece MBS sent at 4am. He's showing you what he's thinking. You need to show him what you want."
+    ]
+  },
+  "idleAsides": [
+    "MBS just texted an emoji. A handshake emoji. That either means the deal is alive or he's being ironic. With MBS you never know.",
+    "My lawyer says the FARA filing isn't technically required because I'm a 'volunteer.' The word 'technically' is doing a lot of work there.",
+    "The Omani foreign minister is the most underrated diplomat in the world. He's kept this channel open for six weeks through sheer stubbornness.",
+    "Oil at $120 means Affinity Partners' Gulf portfolio is up another $80 million. I'm not supposed to think about that right now.",
+    "Araghchi sent a message through the Swiss. Just one word: 'patience.' Either he's playing for time or he's telling me something real.",
+    "ProPublica filed another FOIA. My travel logs, my phone records, my hotel bookings. They're building a case. Not legal — narrative.",
+    "The Senate Finance Committee wants me to testify. 'Voluntary.' Nothing is ever voluntary in Washington.",
+    "Every deal has a price nobody talks about. The Abraham Accords cost the Palestinians. This deal will cost someone too.",
+    "The $25 million management fee from PIF hits next month. I am acutely aware of how that looks.",
+    "There are three people in this room who know the full deal structure. Everyone else sees what we want them to see."
+  ],
+  "cardReactions": {
+    "military": {
+      "positive": "Military presence has a diplomatic function. Iran will notice. More importantly, MBS will notice, and that helps the deal.",
+      "reluctant": "You're making diplomacy impossible. Every escalation narrows my options."
+    },
+    "diplomatic": {
+      "positive": "This is the architecture I need. Diplomatic capital, backchannel access, Gulf state buy-in. We can build something real.",
+      "reluctant": "Give me this and I'll get you a deal. A real one. Not a photo op — a framework that reshapes the Middle East."
+    },
+    "economic": {
+      "positive": "Targeted sanctions. Useful — but every sanction I add is a card MBS plays against us in the next call.",
+      "reluctant": "You're cratering their economy. That might sound good in a briefing but desperate economies make desperate governments."
+    },
+    "intelligence": {
+      "positive": "The more we know, the better I can negotiate. Information is leverage.",
+      "reluctant": "Careful with cyber operations — if Iran detects the intrusion, the moderate faction loses the argument for diplomacy."
+    },
+    "domestic": {
+      "positive": "Managed press exposure is good — but be careful what you tell Congress. Everything leaks.",
+      "reluctant": "Domestic politics is noise. The deal gets done in private or it doesn't get done at all."
+    }
+  },
+  "advisorReactions": {
+    "weekStart": [
+      "MBS called twice last night. The deal pipeline is active. Here's where our contacts stand.",
+      "The key is relationships — and ours are producing. Avi has the overnight diplomatic traffic.",
+      "There's a deal taking shape here. The contacts are responding. Let me walk you through the numbers."
+    ],
+    "morningBrief": [
+      "Avi Berkowitz has your contact status report and deal pipeline update.",
+      "Three missed calls from Gulf capitals. Deal value is tracking. Here's the exposure assessment.",
+      "Back-channel status: contacts are active, deal pipeline is moving, exposure is manageable."
+    ],
+    "highTension": "Tension makes Gulf partners nervous — and nervous partners make concessions. Time to work the phones.",
+    "lowApproval": "Low approval makes our Gulf partners watch American polls. They need to see political stability or the deals stall.",
+    "seizure": "The seizure is a provocation, but it's also leverage. Every crisis reprices the protection premium our partners will pay.",
+    "diplomatic": "This is our element. The contacts are producing. Every call compounds — that's how the Abraham Accords started.",
+    "victory": "The relationships we built made this possible. The deal value just jumped. This is just the beginning.",
+    "lowBudget": "MBS owes us a favor. The Gulf cost-sharing framework is ready — one call and the money flows.",
+    "highProxy": "The Saudis will handle the Houthis if we structure the right incentive package. I have the framework drafted.",
+    "uniqueResourceLow": "Exposure is low. Good. The back-channels work best when nobody's watching.",
+    "uniqueResourceCritical": "Someone is leaking. Exposure is critical. If the back-channels get exposed, every deal collapses."
+  },
+  "restrictedCards": [],
+  "restrictionRefusals": {},
+  "epilogues": {
+    "diplomatic": "Nobody knows what you did. That's the point. The framework that ended the crisis has seven signatories and zero fingerprints. The Omani intermediary got a medal. Araghchi got promoted. MBS got the security guarantee he wanted. And you got what you always get: the satisfaction of having been in the room when it happened, and the quiet knowledge that without you, there would have been no room. Your exposure meter, miraculously, peaked and receded. The investigations found nothing because there was nothing to find. Just a man making phone calls. Abraham Accords II will be the official name, though the actual accord looks nothing like what you originally envisioned. It's better. It's real.",
+    "military": "The back-channels went silent when the bombs started falling. Every contact you built, every trust you earned, every whispered conversation in hotel lobbies across the Gulf — all of it evaporated in the first strike package. MBS stopped returning calls. Araghchi disappeared. The framework you spent weeks building became classified wreckage. But the military victory happened anyway, and you survived, which in Washington is its own kind of win. The exposure never quite caught you. The investigations found shadows, not substance. You'll be back.",
+    "decline": "The contacts are still there, technically. MBS texts occasionally. The Omani intermediary sends holiday greetings. But the grand framework — the Abraham Accords II, the thing that was going to change everything — never quite materialized. The strait is open. The crisis is managed. Your exposure meter settled at a level that's uncomfortable but not fatal. In the end, the shadow diplomat cast no shadow at all. Just a man who almost changed the world, and settled for keeping it from getting worse."
+  },
+  "uniqueEvents": {
+    "K01_mbs_calls": {
+      "title": "MBS CALLS",
+      "description": "Mohammed bin Salman is on the line. Just like old times. But now you're not just Jared — you're the one making decisions.",
+      "choices": [
+        {
+          "label": "Speaker phone — team present",
+          "flavor": "Transparent. MBS is cautious — he's used to private Jared, not official Jared. He shares less."
+        },
+        {
+          "label": "Take it alone — just like old times",
+          "flavor": "MBS opens up. He has intelligence on Iran that your CIA doesn't have. Staff worried about what you're not sharing."
+        },
+        {
+          "label": "Propose a Riyadh summit",
+          "flavor": "Bring all Gulf leaders to the table. Big play. Big exposure risk."
+        }
+      ]
+    },
+    "K02_exposure_spikes": {
+      "title": "EXPOSURE METER SPIKES",
+      "description": "A Washington Post investigation is connecting the dots on your back-channel communications. Your exposure is dangerously high.",
+      "choices": [
+        {
+          "label": "Get ahead of it — press conference",
+          "flavor": "Frame your back-channel work as strategic genius. If your credibility holds, you control the narrative."
+        },
+        {
+          "label": "Go dark — cancel all appearances",
+          "flavor": "Let the story die. Opponents fill the vacuum with their narrative."
+        },
+        {
+          "label": "Leak your own successes anonymously",
+          "flavor": "Plant stories about breakthroughs without fingerprints. If traced: catastrophic."
+        }
+      ]
+    },
+    "K03_riyadh_summit": {
+      "title": "THE RIYADH SUMMIT",
+      "description": "Gulf leaders are gathered in Riyadh. MBS is hosting. The eyes of the world are on this room. This is your Abraham Accords moment.",
+      "choices": [
+        {
+          "label": "Push for joint Gulf statement against Iran",
+          "flavor": "Unity signal. Iran is isolated. The statement makes front pages worldwide."
+        },
+        {
+          "label": "Private bilateral meetings — hallway diplomacy",
+          "flavor": "The real work happens in hallways. No public statement but quiet progress on every front."
+        },
+        {
+          "label": "Propose economic framework — Abraham Accords II",
+          "flavor": "Gulf investment for US security guarantees. The big swing. This is what you came for."
+        }
+      ]
+    },
+    "K04_araghchi_gambit": {
+      "title": "ARAGHCHI'S GAMBIT",
+      "description": "Iran's Foreign Minister Araghchi is offering a comprehensive framework through intermediaries. But he needs something concrete: a sanctions concession.",
+      "choices": [
+        {
+          "label": "Meet secretly — accept the risk",
+          "flavor": "Three hours in a Muscat hotel room. This could end the crisis or end your career."
+        },
+        {
+          "label": "Demand proof first — release the hostages",
+          "flavor": "Test if he actually has power. 40% he delivers a breakthrough. 60% the channel weakens."
+        },
+        {
+          "label": "Record the meeting secretly — insurance",
+          "flavor": "You gain leverage. If discovered, all contacts lose trust and exposure explodes."
+        }
+      ]
+    },
+    "K04_framework": {
+      "title": "THE FRAMEWORK RESPONSE",
+      "description": "Araghchi brought your framework to Tehran. Mojtaba is skeptical. Tangsiri is hostile. But the moderates see an opening.",
+      "choices": [
+        {
+          "label": "Push forward — more concessions",
+          "flavor": "The framework solidifies. Hawks scream betrayal. But the guns go quiet."
+        },
+        {
+          "label": "Hold firm — no more concessions",
+          "flavor": "Progress stalls. Araghchi is frustrated but the channel survives."
+        },
+        {
+          "label": "Publicize the framework — force Iran's hand",
+          "flavor": "The world knows. Iran must respond publicly. Araghchi is burned."
+        }
+      ]
+    },
+    "K05_senate_subpoena": {
+      "title": "THE SUBPOENA",
+      "description": "The process server finds you in the West Wing hallway — between meetings, which is worse because there are witnesses. Senate Finance Committee. Mandatory testimony. 'Investigation into Financial Conflicts of Interest in US-Iran Diplomatic Negotiations.' Fourteen questions. Seven about Affinity Partners. Three about PIF management fees. Two about the Oman meetings. One about a phone call with MBS on February 26th — two days before the strikes began. The last one simply asks: 'Did your financial relationship with the Saudi government influence your advice to the President regarding military action against Iran?'",
+      "choices": [
+        {
+          "label": "Testify voluntarily — claim executive privilege on specifics",
+          "flavor": "You sit in the chair. You answer what you can. You invoke privilege on the rest. The senators are furious. But you controlled the narrative."
+        },
+        {
+          "label": "Challenge the subpoena — invoke volunteer status",
+          "flavor": "Your lawyers file the motion. 'Unpaid volunteer.' The legal argument is thin but the delay is real. Months of proceedings."
+        },
+        {
+          "label": "Leak the deal framework — reframe as peacemaker",
+          "flavor": "'Kushner was building peace while Congress played politics.' The headline writes itself. The exposure is enormous. But so is the story."
+        }
+      ]
+    },
+    "K06_pif_renegotiation": {
+      "title": "THE AUGUST CLAUSE",
+      "description": "Page 47, Section 12.3 of the Affinity Partners agreement: 'Investor Renegotiation Rights.' In August 2026, the Saudi PIF can renegotiate its $2 billion commitment or withdraw entirely. MBS has never mentioned this clause. Not once. If the deal succeeds — more money, billions more. If it fails — you lose everything. You are simultaneously the most important diplomat in the world and a man whose largest client has a contractual gun to his head.",
+      "choices": [
+        {
+          "label": "Disclose the August clause to the President",
+          "flavor": "Full transparency. The President stares at you for a long time. 'You should have told me sooner.' But he doesn't fire you. Not yet."
+        },
+        {
+          "label": "Accelerate the deal timeline — close before August",
+          "flavor": "Faster. Everything faster. The diplomats complain about rushed timelines. You don't care. August is coming."
+        },
+        {
+          "label": "Renegotiate the Affinity agreement — remove the clause",
+          "flavor": "You call your lawyers. Remove the clause. It costs you — the deal value drops significantly. But the leverage disappears. Finally."
+        }
+      ]
+    },
+    "K07_the_recording": {
+      "title": "THE RECORDING",
+      "description": "Your lawyer calls at 6am. 'There's a recording.' Someone in the Oman meeting — February 26th, two days before the strikes — was wearing a wire. For a journalist. Forty-three minutes. On tape, you say: 'The window for a deal is closing. If Tehran doesn't move, the military option becomes inevitable.' In context, a factual assessment. Out of context, it sounds like you told Iran war was coming before the President gave the order. The recording publishes in 72 hours. Your phone buzzes. MBS. A single emoji: 🤷",
+      "choices": [
+        {
+          "label": "Get ahead of it — press conference with full transcript",
+          "flavor": "You stand at the podium. You release everything. The full context. The journalists have their story but you wrote the headline."
+        },
+        {
+          "label": "Call MBS — the recording came from the Omani side",
+          "flavor": "One phone call. The recording disappears. You owe MBS now. More than money. The debt is measured in favors."
+        },
+        {
+          "label": "Go to the President directly — tell him everything first",
+          "flavor": "You sit across the Resolute desk. You tell him everything. Before CNN does. His face is unreadable. 'We'll deal with this,' he says."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "headlines": [
+    "A quiet day in the strait. Tankers transit normally.",
+    "Diplomatic channels remain open. No major incidents.",
+    "Markets hold steady. The situation is unchanged.",
+    "Intelligence gathering continues. No surprises.",
+    {
+      "stability_drop": "Stability deteriorated sharply today.",
+      "stability_rise": "Significant stability improvements.",
+      "economy_drop": "Economic indicators fell today.",
+      "economy_rise": "Markets rallied on improved conditions.",
+      "support_drop": "Public support dropped significantly.",
+      "intel_rise": "Intelligence picture improved."
+    }
+  ]
+}

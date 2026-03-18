@@ -1,0 +1,192 @@
+{
+  "events": {
+    "impounded_tanker": {
+      "default": "assets/event-e01-tanker.png"
+    },
+    "predecessors_ghost": {
+      "default": "assets/event-e02-predecessor.png"
+    },
+    "admirals_warning": {
+      "default": "assets/event-e03-admiral.png"
+    },
+    "journalists_call": {
+      "default": "assets/event-e04-journalist.png"
+    },
+    "british_pm_call": {
+      "default": "assets/event-e05-british-pm.png"
+    },
+    "first_seizure_attempt": {
+      "default": "assets/event-e06-seizure.png"
+    },
+    "iran_ultimatum": {
+      "default": "assets/event-e07-iran-doubles.png"
+    },
+    "oil_markets_panic": {
+      "default": "assets/event-e08-oil-panic.png"
+    },
+    "carrier_incident": {
+      "default": "assets/event-e09-carrier-incident.png"
+    },
+    "secret_talks": {
+      "default": "assets/event-e10-shirazi.png"
+    },
+    "un_showdown": {
+      "default": "assets/event-e11-un-showdown.png"
+    },
+    "hostage": {
+      "default": "assets/event-e12-hostage.png"
+    },
+    "china_mediation": {
+      "default": "assets/event-e13-china.png"
+    },
+    "proxy_ignition": {
+      "default": "assets/event-e14-houthi.png"
+    },
+    "the_leak": {
+      "default": "assets/event-e17-leak.png"
+    },
+    "congressional_hearing_big": {
+      "default": "assets/event-e18-congress.png"
+    },
+    "oman_talks": {
+      "default": "assets/event-e20-muscat.png"
+    },
+    "intel_breakthrough": {
+      "default": "assets/event-e21-intel-breakthrough.png"
+    },
+    "cyber_attack_decision": {
+      "default": "assets/event-e23-cyber.png"
+    },
+    "nuclear_threshold": {
+      "default": "assets/event-crisis-nuclear.png"
+    },
+    "three_seizures": {
+      "default": "assets/event-crisis-three-seizures.png"
+    },
+    "friendly_fire": {
+      "default": "assets/event-crisis-friendly-fire.png"
+    },
+    "cascade_crisis": {
+      "default": "assets/event-crisis-cascade.png"
+    },
+    "carrier_hit": {
+      "default": "assets/event-crisis-carrier-hit.png"
+    },
+    "aipac_delegation": {
+      "default": "assets/event-aipac-delegation.png"
+    },
+    "netanyahu_call": {
+      "default": "assets/event-netanyahu-call.png"
+    },
+    "aipac_attack_ad": {
+      "default": "assets/event-lobby-attack.png"
+    },
+    "donor_ultimatum": {
+      "default": "assets/event-donor-ultimatum.png"
+    },
+    "media_crisis": {
+      "default": "assets/event-e04-journalist.png"
+    },
+    "militia_attack": {
+      "default": "assets/event-proxy-attack.png"
+    },
+    "pipeline_sabotage": {
+      "default": "assets/event-oil-chaos.png"
+    },
+    "assassination_intel": {
+      "default": "assets/event-assassination.png"
+    },
+    "T01_fox_news_call": {
+      "default": "assets/event-trump-fox.png"
+    },
+    "T02_deal_on_table": {
+      "default": "assets/event-trump-deal.png"
+    },
+    "T03_political_capital_crisis": {
+      "default": "assets/event-trump-rally.png"
+    },
+    "T04_iran_backchannel": {
+      "default": "assets/event-trump-truth-social.png"
+    },
+    "H01_pentagon_power_play": {
+      "default": "assets/event-hegseth-pentagon.png"
+    },
+    "H03_shock_and_awe": {
+      "default": "assets/event-hegseth-shock-awe.png"
+    },
+    "H04_troop_morale": {
+      "default": "assets/event-hegseth-troops.png"
+    },
+    "K01_mbs_calls": {
+      "default": "assets/event-kushner-mbs.png"
+    },
+    "K02_exposure_spikes": {
+      "default": "assets/event-kushner-exposure.png"
+    },
+    "K03_riyadh_summit": {
+      "default": "assets/event-kushner-summit.png"
+    },
+    "K04_araghchi_gambit": {
+      "default": "assets/event-kushner-zarif.png"
+    },
+    "A01_osint_discovery": {
+      "default": "assets/event-asmongold-osint.png"
+    },
+    "A02_disinfo_attack": {
+      "default": "assets/event-asmongold-disinfo.png"
+    },
+    "A03_credibility_test": {
+      "default": "assets/event-asmongold-stream.png"
+    },
+    "F01_base_demands_blood": {
+      "default": "assets/event-fuentes-base.png"
+    },
+    "F02_international_pariah": {
+      "default": "assets/event-fuentes-isolation.png"
+    },
+    "F03_america_first_rally": {
+      "default": "assets/event-fuentes-congress.png"
+    },
+    "F04_assassination_whisper": {
+      "default": "assets/event-fuentes-assassination.png"
+    }
+  },
+  "ambientScenes": {
+    "crisis_high": "assets/situation-room-crisis.png",
+    "total_war": "assets/scene-total-war.png",
+    "trump_victory": "assets/scene-trump-victory.png",
+    "kushner_exposed": "assets/scene-kushner-exposure.png",
+    "asmongold_viral": "assets/scene-asmongold-viral.png",
+    "fuentes_withdraw": "assets/event-fuentes-withdraw.png",
+    "hegseth_carrier": "assets/scene-hegseth-carrier.png",
+    "strait_open": "assets/scene-strait-open.png",
+    "budget_crisis": "assets/scene-budget-crisis.png",
+    "tension_high": "assets/situation-room-crisis.png",
+    "tension_medium": "assets/situation-room-elevated.png",
+    "tension_low": "assets/situation-room-calm.png",
+    "day_one": "assets/situation-room.png"
+  },
+  "storyArcs": {
+    "the_spark": "assets/arc-escalation.png",
+    "the_squeeze": "assets/arc-escalation.png",
+    "diplomatic_window": "assets/event-diplomatic-win.png",
+    "false_dawn": "assets/arc-fog-of-war.png",
+    "proxy_season": "assets/arc-proxy-front.png",
+    "pressure_cooker": "assets/arc-nuclear-shadow.png",
+    "crossroads": "assets/arc-tipping-point.png",
+    "the_grind": "assets/arc-long-game.png",
+    "endgame_setup": "assets/arc-endgame.png",
+    "resolution": "assets/arc-aftermath.png"
+  },
+  "iranPortraits": {
+    "hardliner": "assets/iran-tangsiri.png",
+    "moderate": "assets/iran-araghchi.png",
+    "successor": "assets/iran-mojtaba.png"
+  },
+  "categoryFallbacks": {
+    "military": "assets/event-military.png",
+    "diplomatic": "assets/event-diplomatic.png",
+    "economic": "assets/event-economic.png",
+    "intelligence": "assets/event-intel.png"
+  }
+}

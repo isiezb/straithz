@@ -1,0 +1,110 @@
+{
+  "actions": {
+    "gather_intel": [
+      "CIA OPS NOTICE [TS//SI]: Intelligence collection operation conducted."
+    ],
+    "analyze_threats": [
+      "Threat analysis conducted."
+    ],
+    "phone_call": [
+      "Diplomatic phone call made."
+    ],
+    "draft_proposal": [
+      "Diplomatic proposal circulated to allies."
+    ],
+    "reposition_fleet": [
+      "Naval fleet repositioned in the strait."
+    ],
+    "change_roe": [
+      "Rules of engagement changed to {roe}."
+    ],
+    "press_conference": [
+      "White House holds press conference on strait crisis."
+    ],
+    "brief_congress": [
+      "Classified briefing delivered to Congress."
+    ],
+    "adjust_sanctions": [
+      "New sanctions imposed on Iranian entities."
+    ],
+    "market_intervention": [
+      "Strategic petroleum reserve release authorized."
+    ],
+    "escort_tankers": [
+      "USN begins tanker escort operations through Strait of Hormuz."
+    ],
+    "precision_strike": [
+      "BREAKING: US precision strike destroys IRGC fast boat pens at Bandar Abbas"
+    ],
+    "spec_ops_raid": [
+      "SOCOM: Special operations forces conduct raid on Iranian mining assets"
+    ],
+    "air_strikes": [
+      "FLASH: US launches sustained air strikes against Iranian military targets"
+    ],
+    "sead_mission": [
+      "US Wild Weasel missions knock out Iranian air defense network along coast"
+    ],
+    "ground_troops": [
+      "FLASH: US ground forces land on Iranian coast — Bandar Abbas secured"
+    ],
+    "seize_islands": [
+      "FLASH: USMC amphibious assault seizes Iranian-held islands in Strait of Hormuz"
+    ],
+    "full_mobilization": [
+      "FLASH: President orders full military mobilization. Draft authorization sent to Congress."
+    ],
+    "demand_un_session": [
+      "US demands emergency UN Security Council session on Strait of Hormuz."
+    ],
+    "escalate": [
+      "ESCALATION: US military posture elevated to {escalationName}"
+    ],
+    "deescalate": [
+      "DE-ESCALATION: US military posture lowered to {escalationName}"
+    ],
+    "issue_ultimatum": [
+      "US issues formal ultimatum to Iran on strait freedom of navigation."
+    ],
+    "emergency_coalition": [
+      "Emergency coalition meeting convened on strait crisis."
+    ],
+    "deploy_marines": [
+      "US Marines deployed to secure strait positions."
+    ],
+    "combat_air_patrol": [
+      "Combat air patrols established over the strait."
+    ],
+    "rally_base": [
+      "Populist rally energizes the base."
+    ],
+    "media_blitz": [
+      "Media blitz pushes America First messaging."
+    ],
+    "kushner_contact_call": [
+      "Back-channel call to {contactName}."
+    ],
+    "special_action": [
+      "Special action: {actionName}"
+    ],
+    "strategy_change": [
+      "Strategy changed: {removedCard} → {replacementCard}"
+    ],
+    "strategy_deployed_instant": [
+      "SITREP: {cardName} ({fundingLevel}) operational"
+    ],
+    "strategy_deployed_fallback": [
+      "Strategy deployed: {cardName} ({funding})"
+    ],
+    "interrupt_resolved": [
+      "Interrupt: {interruptTextTruncated}... — {choiceLabel}"
+    ],
+    "decision_resolved": [
+      "Decision: {eventTitle} — {choiceText}"
+    ],
+    "decision_flavor": "{flavorText}",
+    "contact_trust": [
+      "{contactName}: trust increased to {trustLevel}"
+    ]
+  }
+}

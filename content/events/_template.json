@@ -1,0 +1,40 @@
+{
+  "id": "",
+  "title": "",
+  "category": "",
+  "isCrisis": false,
+  "conditions": {
+    "dayRange": [
+      1,
+      91
+    ],
+    "characterOnly": null,
+    "minTension": 0,
+    "requiredFlags": []
+  },
+  "countdown": 0,
+  "image": "",
+  "description": "",
+  "scene": "",
+  "characterFlavor": {},
+  "choices": [
+    {
+      "label": "",
+      "flavor": "",
+      "effects": {},
+      "consequence": "",
+      "storyFlags": {},
+      "chainEvent": null,
+      "chainDelay": 0
+    },
+    {
+      "label": "",
+      "flavor": "",
+      "effects": {},
+      "consequence": "",
+      "storyFlags": {},
+      "chainEvent": null,
+      "chainDelay": 0
+    }
+  ]
+}

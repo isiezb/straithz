@@ -1,0 +1,44 @@
+{
+  "arcs": {
+    "the_spark": {
+      "name": "THE SPARK",
+      "brief": "You inherit a crisis in motion. Nobody expects you to last."
+    },
+    "the_squeeze": {
+      "name": "THE SQUEEZE",
+      "brief": "Iran tightens. A second vessel seized. Your opposition smells blood."
+    },
+    "diplomatic_window": {
+      "name": "THE DIPLOMATIC WINDOW",
+      "brief": "A brief thaw. Iran releases crew. The UN convenes. Choose wisely."
+    },
+    "false_dawn": {
+      "name": "THE FALSE DAWN",
+      "brief": "Whatever progress you made gets complicated. Every path leads to a setback."
+    },
+    "proxy_season": {
+      "name": "PROXY SEASON",
+      "brief": "Houthis. Hezbollah. Iraqi militias. The crisis is metastasizing."
+    },
+    "pressure_cooker": {
+      "name": "THE PRESSURE COOKER",
+      "brief": "Congressional hearings. Leaked documents. Iran issues an ultimatum."
+    },
+    "crossroads": {
+      "name": "CROSSROADS",
+      "brief": "The ultimatum expires. What happens depends on what you've built."
+    },
+    "the_grind": {
+      "name": "THE GRIND",
+      "brief": "The world adjusts. The crisis becomes chronic. Fatigue sets in."
+    },
+    "endgame_setup": {
+      "name": "ENDGAME",
+      "brief": "A breakthrough reveals Iran's true objective. The board reshapes."
+    },
+    "resolution": {
+      "name": "RESOLUTION",
+      "brief": "Diplomatic resolution, military victory, or managed decline. History is watching."
+    }
+  }
+}

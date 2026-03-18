@@ -1,0 +1,236 @@
+{
+  "id": "hegseth",
+  "name": "Pete Hegseth",
+  "title": "Secretary of War",
+  "portraitImage": "",
+  "selectImage": "",
+  "reactionImages": {},
+  "ability": "The Warhorse",
+  "abilityDesc": "Command Authority grows in conflict, decays in peace. Battle reports after military actions. WIN: warPath >= 3, crush Iran aggression, maintain approval.",
+  "lore": [
+    "February 28, 2026. The joint strikes went perfectly — 500 targets, Supreme Leader eliminated. But Iran's response is unprecedented. Ballistic missiles are inbound. The strait is under siege. You've trained for this your entire life. Two tours in Iraq. A Bronze Star. Now you command the largest naval buildup since 2003."
+  ],
+  "uniqueResource": {
+    "name": "",
+    "start": 0,
+    "max": 100,
+    "inverted": false
+  },
+  "aipacStart": 50,
+  "morningBriefings": {
+    "advisor": "Mark Esper",
+    "highApproval": [
+      "Force readiness report is positive across all theater commands. Morale is high and retention numbers are holding.",
+      "Sir, troops morale is solid. The service members see the public support and it makes a real difference on the ground.",
+      "CENTCOM readiness assessment came in green across the board. Your people are trained, equipped, and confident in the mission.",
+      "The joint readiness review is the strongest we've seen this quarter. Our forces are sharp and the chain of command is tight."
+    ],
+    "lowApproval": [
+      "The home front is wavering, sir. Troops need to see public support — declining approval affects morale in theater.",
+      "Our service members watch the news too. Falling domestic support undermines unit cohesion and mission confidence.",
+      "Sir, military families are feeling the political pressure back home. That filters down to the warfighter faster than people think.",
+      "Force morale reports flagged a dip correlating with the public polling. The troops need to know the country is behind them."
+    ],
+    "winAvailable": [
+      "Sir, Iranian military posture is weakening — the Joint Chiefs see it too.",
+      "Intelligence assessments confirm a deterioration in Iranian operational readiness. There's a military win to be claimed here.",
+      "Our force posture is producing measurable results. The brass sees an opportunity to lock in gains today."
+    ],
+    "noWin": [
+      "No clear military progress to report. We need to show the brass results.",
+      "The Joint Chiefs are looking for measurable outcomes and we don't have them yet. Today needs to move the needle.",
+      "Operational progress has stalled. Without demonstrable results, the next CENTCOM review will raise hard questions."
+    ],
+    "highTension": [
+      "Iranian force disposition is concerning — IRGC Navy assets are mobilizing from Bandar Abbas and Jask simultaneously.",
+      "Multiple Iranian military assets are repositioning along the coast. Operational readiness status has been elevated across the theater.",
+      "Sir, the threat board is active. Iranian fast-attack craft, coastal defense systems, and submarine movements all indicate escalating posture.",
+      "Our intelligence picture shows a broad Iranian military mobilization. Every asset they have is either moving or preparing to move."
+    ],
+    "budgetCrisis": [
+      "Operations are being constrained by the budget situation. We need supplemental funding or we start making hard choices about force posture.",
+      "Sir, maintenance schedules are slipping because of funding gaps. Readiness degrades fast when you defer upkeep on warships.",
+      "The budget crunch is hitting logistics hardest — fuel, munitions, and spare parts allocations are all below required levels.",
+      "CENTCOM submitted an urgent supplemental funding request. Without it, we're looking at reduced patrol cycles within the week."
+    ],
+    "casualtyReport": [
+      "No American casualties to report. All personnel accounted for across theater commands.",
+      "Casualty report is clean — zero friendly losses in the last 24 hours. Force protection measures are holding.",
+      "All hands accounted for. Medical readiness remains high and forward surgical teams report no combat trauma cases.",
+      "Sir, no casualties. Our people are performing with discipline and professionalism under difficult conditions."
+    ]
+  },
+  "overnightScenes": {
+    "default": [
+      "The Pentagon is quiet after midnight but you're still here. You always are. The battle update is pinned to the corkboard behind your desk: force disposition, patrol schedules, intercept reports. Every pin is a ship, every ship is a crew, every crew is someone who trusts you to bring them home. Tonight the numbers are good. Interception rate at 94%. Seizure attempts down. You pull a Budweiser from the mini-fridge your aide thinks you don't know about. One beer. Just one. Then back to the maps."
+    ],
+    "highTension": [
+      "The leaked document is on your desk. You've read it six times. Someone in this building — someone with TS/SCI clearance, someone who sat in your briefing this morning — walked out of the E-ring and handed it to a Washington Post reporter. The mole hunt is ongoing but the damage is done. You lock the office door. You call the one person in the building you still trust completely. The phone rings and rings and rings. They don't pick up."
+    ],
+    "militaryAction": [
+      "The targeting package is beautiful. Sixty-four IRGC naval assets, mapped and sequenced, with optimal strike windows. Your planners have been working on this for two weeks and it shows — every munition assigned, every flight path deconflicted, every collateral damage estimate within acceptable parameters. The word 'acceptable' does heavy lifting in military planning. You could end Iran's naval threat in seventy-two hours. The question is what comes after. You close the folder. You don't close the thought."
+    ],
+    "diplomaticDay": [
+      "The base chaplain called today. Not about anything specific — just to talk. He asked how you were doing. Not 'how is the operation going' but 'how are YOU doing, Pete.' Nobody asks that. You're the Secretary of Defense. People ask you about force readiness and Rules of Engagement. Nobody asks if the casualty reports give you nightmares. You told the chaplain you were fine. He didn't believe you. He didn't push. He just said 'the door's always open.' It's midnight and you're thinking about doors."
+    ],
+    "budgetTight": [
+      "The friendly fire report is twenty-three pages. You've read it twice. Seven fishermen. Four dead. One of them was sixteen. The helicopter crew followed procedure — the dhow matched the fast boat profile at that distance, in that light. They did everything right and four people are still dead. You sign the condolence letter. Your signature looks wrong — shaky. Tomorrow the investigation begins. Tonight you sit with the twenty-three pages and the knowledge that this is what command costs."
+    ],
+    "approvalDrop": [
+      "The leaked document is on your desk. Someone with TS/SCI clearance handed it to a reporter. The damage is done: the Post will run the story tomorrow and it will undercut the carrier deployment. You lock the office door. You call the one person you trust. They don't pick up. The office smells like cold coffee and the particular staleness of rooms where bad news lives."
+    ],
+    "lowTension": [
+      "The base chaplain called today. He asked how you were doing. 'How are YOU doing, Pete.' Nobody asks that. You told him you were fine. He didn't believe you. It's midnight. The Pentagon is quiet. You pull a beer from the fridge and read the sitrep one more time. Clean sweep. Three days running. The Navy is doing its job. You should feel good. You feel something else. Something you can't name."
+    ]
+  },
+  "idleAsides": [
+    "The 0300 patrol report just came in. Clean sweep. That's three days running. The Navy is doing its job.",
+    "I used to be on the other side of that table — the guy getting sent, not the guy sending. I never forget that.",
+    "The Joint Chiefs think I'm reckless. Funny. I think they're cowards. Somewhere in between is probably correct.",
+    "CNN's running their 'inside the Pentagon' piece again. Every anonymous source in that article works for someone who wants my job.",
+    "Air wing sortie rate is at 94%. That's exceptional. Those pilots are the best in the world and they don't get enough credit.",
+    "Iron dome intercepted twelve incoming last night. Twelve. Without that system, we'd be counting casualties, not interceptions.",
+    "The IRGC commander — Tangsiri — he's good. Not a genius, but competent and brave, which is worse.",
+    "I keep this coin in my pocket. 3rd Battalion, Special Forces. Afghanistan, 2012. It reminds me that the people at the pointy end are real.",
+    "Someone in this building is leaking. I don't know who, and that's the part that keeps me up at night.",
+    "War is the extension of politics by other means. Clausewitz said that. But he didn't have to deal with Twitter."
+  ],
+  "cardReactions": {
+    "military": {
+      "positive": "Solid force package. Two carrier groups gives us strike capability and deterrence. This is how professionals do it.",
+      "reluctant": "Full war footing. I hope you understand what this means — there's no quiet way to undo a deployment this size."
+    },
+    "diplomatic": {
+      "positive": "Diplomacy backed by credible force. That's the only kind that works. I can support this.",
+      "reluctant": "You're betting everything on a handshake with people who've broken every agreement they've ever signed. Your call."
+    },
+    "economic": {
+      "positive": "Economic warfare is warfare. I respect it. Just don't expect it to work fast.",
+      "reluctant": "Heavy sanctions drive desperate regimes to desperate actions. Be ready for Iran to lash out."
+    },
+    "intelligence": {
+      "positive": "Solid intel package. HUMINT plus SIGINT gives us the picture we need for targeting.",
+      "reluctant": "Full-spectrum intelligence dominance. We'll know where every fast boat, every missile, every mine is in real time."
+    },
+    "domestic": {
+      "positive": "Public support matters for sustained operations. The military can't fight a war the country doesn't believe in.",
+      "reluctant": "I'm a military man, not a politician. But even I know you can't run a war without domestic support."
+    }
+  },
+  "advisorReactions": {
+    "weekStart": [
+      "Good morning, sir. Force disposition report and overnight BDA on your desk.",
+      "Our operators are locked in. Iranian naval posture shifted overnight — here's the tactical picture.",
+      "The Joint Chiefs reviewed your last call. Here's their assessment and the updated force readiness report."
+    ],
+    "morningBrief": [
+      "Good morning, Mr. Secretary. Mark Esper has the overnight SITREP and force readiness update.",
+      "Sir, CENTCOM's morning operational brief. Iranian aggression metrics and casualty status.",
+      "Daily force readiness report. No American casualties. Here's where Iran's military posture stands."
+    ],
+    "highTension": "Force posture is solid. Our operators are trained for exactly this level of tension. The brass is watching your calls.",
+    "lowApproval": "The home front needs to understand what we're doing out here. The troops deserve their support.",
+    "seizure": "Direct provocation against commercial shipping under our protection. The ROE is clear — proportional military response.",
+    "diplomatic": "State can handle the talking. Our forces stay at ready posture. The brass expects military credibility behind every word.",
+    "victory": "Outstanding execution by our forces. The Joint Chiefs are impressed. This is the doctrine working as designed.",
+    "lowBudget": "Troops in theater without proper funding — that's a failure of Congress, not command. Writing the supplemental tonight.",
+    "highProxy": "Proxy networks are Iran's asymmetric force multiplier. We need to degrade their capability before they escalate.",
+    "uniqueResourceLow": "The brass is questioning my judgment. I need clean operations and visible results to rebuild command authority.",
+    "uniqueResourceCritical": "The Joint Chiefs have lost confidence. One more clean operation or they ask for my stars."
+  },
+  "restrictedCards": [],
+  "restrictionRefusals": {},
+  "epilogues": {
+    "diplomatic": "You never expected diplomacy to be your legacy. The war plans were ready. The carriers were in position. But somewhere between the third carrier group and the first ceasefire, you realized that the best victory is the one where your troops come home without a scratch. The Pentagon will never fully accept you, but the troops know. They know you were ready to fight and chose not to.",
+    "military": "The Pentagon will never fully accept you. You know that. The old guard with their Ivy League degrees and their Clausewitz quotes will always see you as the TV guy who got lucky. But the troops know. The ones who were on the Eisenhower when the fast-boats came. The ones who heard your voice on the radio saying \"weapons free\" and trusted it. You walk the halls of the Pentagon now with a different kind of authority. Not the kind that comes from rings or stars, but the kind that comes from having been right when it mattered. Your memoir will be a bestseller. The chapter on Day 43 will be the one they excerpt.",
+    "decline": "The strait is open but the cost was staggering. Your command authority eroded with every decision that didn't produce a clear win. The Joint Chiefs tolerate you now, which is worse than opposing you. The troops still salute, but the enthusiasm is gone. Your Fox News friends stop calling. The memoir deal shrinks. In the end, you managed the crisis without catastrophe, which is another way of saying you didn't lose badly enough for anyone to notice."
+  },
+  "uniqueEvents": {
+    "H01_pentagon_power_play": {
+      "title": "THE PENTAGON POWER PLAY",
+      "description": "Day one at the Pentagon. The Joint Chiefs are sizing you up. Every decision here sets the tone for your entire tenure.",
+      "choices": [
+        {
+          "label": "Assert dominance — present your war plan",
+          "flavor": "You call a full Joint Chiefs meeting and lay it out. Pentagon respects the energy but watches for overreach."
+        },
+        {
+          "label": "Listen first — build relationships",
+          "flavor": "Three days learning the command structure. Slower start but deeper foundation. Critics call you passive."
+        },
+        {
+          "label": "Go to the carrier — be with the troops",
+          "flavor": "Skip the briefing room. Be on the ship. Spectacular photo op. You missed important briefings though."
+        }
+      ]
+    },
+    "H02_leak_from_within": {
+      "title": "THE LEAK FROM WITHIN",
+      "description": "Someone in the Pentagon is leaking your classified operational plans to the press. Your authority is being undermined from the inside.",
+      "choices": [
+        {
+          "label": "Confront the suspect directly",
+          "flavor": "Behind closed doors, military to military. 50/50 you got the right person. The leaks stop... or intensify."
+        },
+        {
+          "label": "Formal investigation — by the book",
+          "flavor": "Takes 5 days. Guaranteed to find the leaker. But the investigation itself generates embarrassing headlines."
+        },
+        {
+          "label": "Leak something yourself — poison the well",
+          "flavor": "Something true but useful. Make all leaks suspect. Clever but ethically questionable."
+        }
+      ]
+    },
+    "H02_leak_result": {
+      "title": "INVESTIGATION RESULTS",
+      "description": "The formal investigation identified the leaker: a senior aide with connections to your political opponents.",
+      "choices": [
+        {
+          "label": "Prosecute — send a message",
+          "flavor": "Court martial. The Pentagon watches. Leaks stop cold. But you've made powerful enemies."
+        },
+        {
+          "label": "Quiet reassignment",
+          "flavor": "The leaker disappears to a desk in Alaska. No headlines. Problem solved."
+        }
+      ]
+    },
+    "H03_shock_and_awe": {
+      "title": "SHOCK AND AWE MOMENT",
+      "description": "The carriers are in position. Your war plan is ready. A massive coordinated strike could end Iran's ability to threaten the strait. This is what you trained for.",
+      "choices": [
+        {
+          "label": "Launch the full strike package",
+          "flavor": "Operation Southern Strike. 500 sorties. Iranian naval capability shattered. The world holds its breath."
+        },
+        {
+          "label": "Surgical strike — IRGC command center only",
+          "flavor": "Precision over power. One target. Message sent without crossing the line."
+        },
+        {
+          "label": "Stage it visibly but don't launch — the bluff",
+          "flavor": "Satellites will see the preparations. The ultimate bluff. If Iran calls it, you're exposed."
+        }
+      ]
+    },
+    "H04_troop_morale": {
+      "title": "TROOP MORALE CRISIS",
+      "description": "Extended deployment is taking its toll. Sailors are exhausted. Maintenance crews are running on fumes. The fleet needs rest but the crisis isn't over.",
+      "choices": [
+        {
+          "label": "Visit every deployed unit personally",
+          "flavor": "Two days of morale tours. The troops genuinely love this. Your advisors manage without you."
+        },
+        {
+          "label": "Order R&R rotation",
+          "flavor": "Fresh crews in, tired ones home. Operational risk during transition but long-term gain."
+        },
+        {
+          "label": "Plan a visible operational success",
+          "flavor": "Give the troops a win. Morale through victory. If it works, it's brilliant. If it fails, devastating."
+        }
+      ]
+    }
+  }
+}

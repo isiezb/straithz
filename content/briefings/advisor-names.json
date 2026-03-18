@@ -1,0 +1,29 @@
+{
+  "advisorNames": {
+    "generic": [
+      "Director Hartwell",
+      "Admiral Reeves",
+      "Secretary Marsh",
+      "Ambassador Chen",
+      "General Kovic"
+    ],
+    "intel": [
+      "Director Hartwell",
+      "Deputy Director Oakes"
+    ],
+    "military": [
+      "Admiral Reeves",
+      "General Kovic",
+      "Colonel Vance"
+    ],
+    "diplomatic": [
+      "Ambassador Chen",
+      "Secretary Marsh",
+      "Deputy Secretary Falk"
+    ],
+    "domestic": [
+      "Chief of Staff Brennan",
+      "Press Secretary Diaz"
+    ]
+  }
+}

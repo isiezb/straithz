@@ -1,0 +1,67 @@
+{
+  "cliffhangers": {
+    "scheduledEvent": [
+      "Your aide hesitates at the door. 'Sir, there's something developing for tomorrow. You'll want to see this.'",
+      "A classified cable is already on your desk for morning. The situation is about to change.",
+      "The overnight watch has flagged something. By morning, you'll have a decision to make.",
+      "Before you leave, an analyst stops you. 'We're tracking something. It should mature by tomorrow.'"
+    ],
+    "iranHardlinerShift": [
+      "Reports from Tehran suggest the hardliners are gaining ground. Tangsiri's people are moving into position.",
+      "SIGINT intercepts show increased IRGC-N chatter. The moderate voices in Tehran are being drowned out.",
+      "The overnight cable from the Swiss embassy hints at a power shift in Tehran. The hawks are circling.",
+      "Iranian state media just aired a segment praising 'decisive action.' That's Tangsiri's language."
+    ],
+    "iranModerateShift": [
+      "A back-channel message from Tehran suggests Araghchi's faction is pushing for talks. Something may be opening up.",
+      "Iranian diplomatic signals have shifted. Someone in Tehran wants to find a way out of this.",
+      "The Swiss intermediary calls late — there's movement on the Iranian side. The moderates are making a play."
+    ],
+    "tensionCrossedHigh": [
+      "The threat board just ticked over into the red zone. Whatever happens tomorrow, it won't be quiet.",
+      "Tension crossed a threshold tonight. The overnight watch has been doubled. Sleep won't come easy.",
+      "The warning indicators are all trending the wrong direction. Tomorrow starts with a crisis briefing."
+    ],
+    "tensionCrossedLow": [
+      "For the first time in days, the threat board is showing green. Don't get comfortable — green doesn't last.",
+      "The situation is stabilizing. Which means someone, somewhere, is about to do something stupid.",
+      "Tension is dropping. The diplomats are optimistic. The military is suspicious. Both are right."
+    ],
+    "oilCrisis": [
+      "Satellite imagery shows three tankers have altered course away from the strait. The morning oil report will be ugly.",
+      "Lloyd's of London just raised insurance premiums for strait transit. The economic squeeze is about to get worse.",
+      "OPEC is convening an emergency session overnight. The oil markets won't wait for your morning briefing."
+    ],
+    "warPathRising": [
+      "The escalation ladder just creaked upward. Each rung gets harder to step back from.",
+      "Your military advisor left a sealed envelope on your desk. 'Read this before the morning brief,' the note says.",
+      "The Pentagon has updated the target list. It's longer than yesterday's. The machinery of war is warming up."
+    ],
+    "approvalCrisis": [
+      "The evening news leads with your approval numbers. Congress is watching. Tomorrow, the calls start.",
+      "A senator's office leaked a letter demanding hearings. By morning, you'll need a response.",
+      "The political ground is shifting under your feet. Without a course correction, tomorrow gets harder."
+    ],
+    "proxyActivity": [
+      "Reports of militia movement in Iraq. Satellite confirms staging activity. Something's coming from the proxies.",
+      "Hezbollah's media arm just released a statement. They're positioning for something. You'll know by morning.",
+      "The proxy networks are unusually active tonight. Your intel team is tracking three separate indicators."
+    ],
+    "fogHigh": [
+      "The intelligence picture is murky. You're making decisions with half the information you need. That has to change.",
+      "Somewhere in the noise, there's a signal you're missing. The analysts are working through the night to find it.",
+      "The fog of war is thick. What you don't know could be more dangerous than what you do."
+    ],
+    "straitProgress": [
+      "The strait stayed open another day. The win condition is within reach — if nothing goes wrong tomorrow.",
+      "Oil is flowing. The days are counting up. But the finish line has a way of moving in this game.",
+      "Progress toward opening the strait is real. Don't celebrate yet. Iran hasn't played their last card."
+    ],
+    "default": [
+      "The secure phone sits silent on the nightstand. It won't stay that way.",
+      "Tomorrow's brief is already being compiled. The world didn't stop turning when you turned off the lights.",
+      "The watch changes. The satellites keep orbiting. Somewhere, someone is making a decision that will land on your desk by dawn.",
+      "You set the alarm for 0530. Whatever tomorrow brings, it won't wait."
+    ]
+  }
+}
