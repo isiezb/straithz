@@ -1911,14 +1911,14 @@ body {
 /* ======================== TOAST NOTIFICATIONS ======================== */
 
 #toast-container {
-    position: absolute;
-    top: 122px;  /* Below tickers */
-    right: 12px;
-    width: 300px;
+    position: fixed;
+    top: 60px;
+    right: 290px;  /* Clear the action panel */
+    width: 280px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    z-index: 50;
+    z-index: 150;
     pointer-events: none;
 }
 
@@ -2410,7 +2410,7 @@ body {
 /* ======================== INTERRUPT OVERLAY ======================== */
 
 .ap-interrupt {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -2421,7 +2421,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px 16px;
-    z-index: 60;
+    z-index: 120;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -2512,12 +2512,14 @@ body {
     #situation-panel { width: 240px; }
     #action-panel { width: 240px; }
     #center-panel { left: 240px; right: 240px; }
+    #toast-container { right: 250px; }
 }
 
 @media (max-width: 700px) {
     #situation-panel { width: 200px; font-size: 10px; padding: 6px 8px; }
     #action-panel { width: 200px; }
     #center-panel { left: 200px; right: 200px; }
+    #toast-container { right: 210px; width: 220px; }
     .gauge-item { padding: 2px 4px; }
     .gauge-value { font-size: 13px; }
     .gauge-label { font-size: 7px; letter-spacing: 1px; }
