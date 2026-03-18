@@ -484,6 +484,50 @@ function updateNarrativeHeader() {
     if (dayEl) dayEl.textContent = 'DAY ' + (SIM.day || 1);
 }
 
+// ======================== RESOURCE TIER LOOKUP ========================
+
+/**
+ * Determine the resource tier for a character based on their unique resource value.
+ * Kushner's Exposure is inverted (lower is better), all others are normal (higher is better).
+ * Returns one of: 'resourceExcellent', 'resourceGood', 'resourceStrained', 'resourceLow', 'resourceCritical'
+ */
+function getResourceTier(charId, resourceVal) {
+    const inverted = (charId === 'kushner'); // Exposure: lower is better
+    if (inverted) {
+        if (resourceVal < 20) return 'resourceExcellent';
+        if (resourceVal < 50) return 'resourceGood';
+        if (resourceVal < 75) return 'resourceStrained';
+        if (resourceVal < 85) return 'resourceLow';
+        return 'resourceCritical';
+    } else {
+        if (resourceVal > 80) return 'resourceExcellent';
+        if (resourceVal > 50) return 'resourceGood';
+        if (resourceVal > 25) return 'resourceStrained';
+        if (resourceVal > 15) return 'resourceLow';
+        return 'resourceCritical';
+    }
+}
+
+/**
+ * Pick a random resource tier dialogue line for the current character.
+ * Returns { text, tier } or null if no dialogue available.
+ */
+function pickResourceTierDialogue() {
+    if (!SIM.character) return null;
+    const charId = SIM.character.id;
+    const resourceVal = SIM.uniqueResource;
+    const tier = getResourceTier(charId, resourceVal);
+
+    const tiers = DATA.dialogue && DATA.dialogue.resourceTiers;
+    if (!tiers || !tiers[charId] || !tiers[charId][tier]) return null;
+
+    const pool = tiers[charId][tier];
+    if (!pool || pool.length === 0) return null;
+
+    const text = pool[Math.floor(Math.random() * pool.length)];
+    return { text: text, tier: tier };
+}
+
 // ======================== MORNING BRIEFING GENERATOR ========================
 
 const _usedOpenings = {};
@@ -520,7 +564,10 @@ function generateMorningBriefing() {
     // --- Character-specific briefing line ---
     const characterNote = _pickCharacterBriefingLine(b.characterBriefing);
 
-    return { advisor, opening, iranIntel, closer, characterNote, gauges: g, rating: r };
+    // --- Resource tier dialogue (emotional state based on unique resource) ---
+    const resourceDialogue = pickResourceTierDialogue();
+
+    return { advisor, opening, iranIntel, closer, characterNote, resourceDialogue, gauges: g, rating: r };
 }
 
 function _pickCharacterBriefingLine(charBriefings) {

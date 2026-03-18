@@ -1033,18 +1033,39 @@ function dailyUpdate() {
         SIM.character.updateResource(SIM);
     }
 
-    // --- Character unique resource warnings ---
+    // --- Character unique resource warnings (with tier-based narrative) ---
     if (SIM.character && SIM.character.uniqueResource) {
         const resVal = SIM.uniqueResource;
         const isInverted = SIM.character.uniqueResource.inverted;
+        const _resTierDialogue = typeof pickResourceTierDialogue === 'function' ? pickResourceTierDialogue() : null;
         if (isInverted) {
             // For exposure: high is bad
-            if (resVal > 60 && resVal <= 63) addHeadline(`${SIM.character.uniqueResource.name} rising — be careful`, 'warning');
-            if (resVal > 75 && resVal <= 78) addHeadline(`${SIM.character.uniqueResource.name} critical — one more leak and it's over`, 'critical');
+            if (resVal > 60 && resVal <= 63) {
+                addHeadline(`${SIM.character.uniqueResource.name} rising — be careful`, 'warning');
+                if (_resTierDialogue && typeof addNarrative === 'function') {
+                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
+                }
+            }
+            if (resVal > 75 && resVal <= 78) {
+                addHeadline(`${SIM.character.uniqueResource.name} critical — one more leak and it's over`, 'critical');
+                if (_resTierDialogue && typeof addNarrative === 'function') {
+                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
+                }
+            }
         } else {
             // For normal resources: low is bad
-            if (resVal < 30 && resVal >= 27) addHeadline(`${SIM.character.uniqueResource.name} dropping — ${getAdvisorReaction('uniqueResourceLow')}`, 'warning');
-            if (resVal < 15 && resVal >= 12) addHeadline(`${SIM.character.uniqueResource.name} critical — ${getAdvisorReaction('uniqueResourceCritical')}`, 'critical');
+            if (resVal < 30 && resVal >= 27) {
+                addHeadline(`${SIM.character.uniqueResource.name} dropping — ${getAdvisorReaction('uniqueResourceLow')}`, 'warning');
+                if (_resTierDialogue && typeof addNarrative === 'function') {
+                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
+                }
+            }
+            if (resVal < 15 && resVal >= 12) {
+                addHeadline(`${SIM.character.uniqueResource.name} critical — ${getAdvisorReaction('uniqueResourceCritical')}`, 'critical');
+                if (_resTierDialogue && typeof addNarrative === 'function') {
+                    addNarrative('dialogue', _resTierDialogue.text, { speaker: SIM.character.name || SIM.character.id, portrait: SIM.character.id });
+                }
+            }
         }
     }
 

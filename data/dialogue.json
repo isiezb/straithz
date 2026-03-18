@@ -106,6 +106,143 @@
       "uniqueResourceCritical": "We're losing the base. If they stop showing up to rallies, Congress smells blood. Address the nation NOW."
     }
   },
+  "resourceTiers": {
+    "trump": {
+      "resourceExcellent": [
+        "[Trump leans back, hands behind his head, grinning at the ceiling] 'You know what this is? This is winning. Real winning. The polls, the donors, Fox — everybody loves what we're doing. We keep this up, they'll put me on Rushmore.'",
+        "[Trump gestures broadly at the TV screens] 'Look at those numbers. Beautiful numbers. Nobody thought we could do this — nobody — but here we are. The base is fired up, Congress is in line. This is how you run a crisis.'",
+        "[Trump straightens his tie with a satisfied nod] 'The calls are coming in nonstop. World leaders, CEOs, everyone wants a piece of this. When you have political capital like this, you don't spend it — you invest it. Bigly.'"
+      ],
+      "resourceGood": [
+        "[Trump glances at his phone, scrolls briefly, sets it down] 'Numbers are solid. Not the best they've been — could always be better — but solid. Congress is cooperating, the donors are answering calls. We're in a good position to make moves.'",
+        "[Trump nods at the briefing folder] 'The political machine is running. Not perfect, but running. McConnell called twice yesterday. When Mitch calls twice, that means the votes are there. Let's use them.'",
+        "[Trump leans forward, elbows on the desk] 'We've got enough capital to work with. The base is steady, the Hill is manageable. Not the landslide numbers I want, but enough to push things through. Smart play is to keep building.'"
+      ],
+      "resourceStrained": [
+        "[Trump's jaw tightens, he flips his phone face-down] 'The polls are softening. I can feel it. The donors are still calling but the conversations are shorter. We need to generate some momentum before the narrative shifts against us.'",
+        "[Trump stands abruptly, pacing behind the desk] 'Congress is getting squirrelly. Two senators dodged my calls yesterday — TWO. That never happens when the numbers are strong. We need a win that plays on every channel.'",
+        "[Trump stares at the muted TV, arms crossed] 'They smell weakness. The media, the Democrats, even some of our own people. Political capital is a funny thing — once people think you're losing it, you lose it twice as fast. We need to move.'"
+      ],
+      "resourceLow": [
+        "[Trump sits very still, eyes narrowed, voice quieter than usual] 'The donor calls... they're not returning them as fast. Lindsey's been dodging me. The whip count on the supplemental is soft. We're not in crisis yet but we're one bad headline away.'",
+        "[Trump grips the armrest, knuckles white] 'I've been here before. Everyone counts you out, everyone says it's over. But I always come back. Always. We just need one big play — one thing the cameras can't ignore — and the capital flows back.'",
+        "[Trump's voice drops, almost conspiratorial] 'Between you and me — and this stays in this room — we're running thin. The Hill is wobbly, the base needs feeding. Don't tell Scavino I said that. Just find me a win.'"
+      ],
+      "resourceCritical": [
+        "[Trump stares at the desk, uncharacteristically quiet, then slams his palm down] 'They're circling. I can feel it. The 25th Amendment whispers, the impeachment talk — it's not just CNN anymore, it's Fox. When Fox turns, it's real. We need a miracle or we're done.'",
+        "[Trump's voice is hoarse, his tie loosened for the first time anyone can remember] 'Forty years in business, eight years in politics, and I've never been this close to the edge. The donors are gone. Congress is writing speeches. One more day like this and they invoke the 25th.'",
+        "[Trump pulls out his phone, puts it away, pulls it out again] 'Truth Social is the only platform that still works for me. Every other channel is running the obituary. The political capital is gone — not low, GONE. We need an act of God or an act of genius. Same thing, frankly.'"
+      ]
+    },
+    "hegseth": {
+      "resourceExcellent": [
+        "[Hegseth stands at the tactical board, pointer in hand, posture perfect] 'Command authority is absolute. The Joint Chiefs executed every directive without question yesterday. Force readiness is optimal, chain of command is tight. This is what military leadership looks like when it's working.'",
+        "[Hegseth sets down a stack of after-action reports with quiet satisfaction] 'Every branch commander reported full compliance this morning. No leaks, no second-guessing, no Pentagon back-channeling to Congress. When your authority is this solid, you can afford to be bold.'",
+        "[Hegseth adjusts his cufflinks, calm and measured] 'The brass respects results. We've delivered results. CENTCOM, SOCOM, the carrier group — they're all executing my directives to the letter. This level of institutional trust takes years to build. We built it in weeks.'"
+      ],
+      "resourceGood": [
+        "[Hegseth reviews the morning SITREP, marking items with a red pen] 'Command structure is functioning well. The Joint Chiefs are aligned on strategy, CENTCOM is responsive. A few grumbles from the old guard about pace of operations, but nothing that affects execution.'",
+        "[Hegseth nods at the force disposition map] 'Authority is solid. Not ironclad — there's always friction between the Pentagon and the field — but the important orders are getting through clean. The operators trust the chain of command. That's what matters.'",
+        "[Hegseth closes his laptop, folds his hands] 'The brass is cooperating. Not enthusiastically on every front, but cooperating. We have enough institutional trust to run complex operations. Let's not waste it on anything that doesn't move the needle.'"
+      ],
+      "resourceStrained": [
+        "[Hegseth pauses mid-briefing, jaw set, choosing his words carefully] 'I'm hearing pushback. Not open defiance — not yet — but the Joint Chiefs are asking more questions, requesting more justification. The kind of friction that slows operations when you need speed.'",
+        "[Hegseth's hand tightens on his coffee mug] 'Three memos from the Pentagon legal team yesterday. All questioning my operational authority on different grounds. That's not routine — that's coordinated. Someone on the Joint Chiefs is testing how far they can push.'",
+        "[Hegseth stares at the tactical board, arms crossed] 'The operators in the field still follow orders. But between me and the field, there are three layers of generals who are starting to add their own interpretations. Command authority means nothing if the chain of command adds footnotes.'"
+      ],
+      "resourceLow": [
+        "[Hegseth grips the edge of the briefing table, voice tight] 'CENTCOM delayed my last two directives for review. The Joint Chiefs chair requested a private meeting — never a good sign. I've got maybe one more bold operation before they start routing around me.'",
+        "[Hegseth is on his feet, pacing the length of the situation room] 'I can feel the brass pulling away. They're not refusing orders — that would be open mutiny — but they're slow-rolling everything. Every directive gets studied to death. If I don't restore confidence fast, I lose the ability to act.'",
+        "[Hegseth lowers his voice, leaning in] 'Admiral Richardson called the White House directly yesterday. Bypassed my office entirely. That's not a bureaucratic mistake — that's a signal. I need a clean, visible military success to remind them who's in command.'"
+      ],
+      "resourceCritical": [
+        "[Hegseth sits alone at the head of the briefing table, the chairs around him conspicuously empty] 'They're not coming to the morning brief. The Joint Chiefs sent a deputy. A DEPUTY. The carrier group commander is taking calls from Congress before returning mine. My authority exists on paper only.'",
+        "[Hegseth's hands are flat on the table, his voice barely controlled] 'I got a call from the White House chief of staff this morning asking if I'd consider a graceful exit. A GRACEFUL EXIT. The brass has lost confidence and they've told the Hill. One more fumble and they ask for my stars.'",
+        "[Hegseth stands at the window, back to the room, very still] 'Twenty years in uniform. Two combat deployments. I know what a command collapse looks like from the inside. The orders go out and nothing comes back. The phones ring but nobody's on the other end. That's where we are.'"
+      ]
+    },
+    "kushner": {
+      "resourceExcellent": [
+        "[Kushner adjusts his cuffs, a faint smile playing at the corners of his mouth] 'Nobody knows we're here. The back-channels are invisible, the deals are moving, and not a single reporter has connected the dots. This is how real power works — in the spaces between the headlines.'",
+        "[Kushner checks his phone — three encrypted messages — and pockets it casually] 'Exposure is minimal. MBS, the Emirati Crown Prince, the Oman back-channel — all of it is running below the radar. The press is chasing yesterday's story while we're building tomorrow's architecture.'",
+        "[Kushner leans back, fingers steepled, perfectly composed] 'The beauty of low exposure is optionality. Nobody knows what cards we're holding, so every call we make carries maximum leverage. The Gulf partners trust the discretion. The deals are compounding.'"
+      ],
+      "resourceGood": [
+        "[Kushner glances at a folded newspaper, pushes it aside] 'Exposure is manageable. A few DC reporters are asking questions about Gulf meetings, but Avi's handling it. The back-channels are intact. We just need to be a little more careful about the paper trail.'",
+        "[Kushner scrolls through his tablet, expression neutral] 'Some visibility on the deal pipeline — nothing dangerous, but it means we can't be sloppy. The contacts are still responsive, the Gulf partners are still talking. Just keep the sensitive calls off the official logs.'",
+        "[Kushner closes the door before speaking] 'A Politico piece mentioned unnamed senior advisors meeting with Gulf officials. Vague enough to ignore, specific enough to watch. Exposure is in the yellow zone — we operate fine here, but every additional data point is a risk.'"
+      ],
+      "resourceStrained": [
+        "[Kushner puts his phone in a signal-blocking pouch before speaking] 'We have a visibility problem. Two reporters from the Times are working a back-channel story. They don't have names yet, but they have dates and locations. If they connect the dots, the whole architecture is at risk.'",
+        "[Kushner's voice is clipped, all business] 'Exposure is climbing. Someone in the State Department is talking — not much, but enough to create a trail. MBS noticed. He asked Avi directly if the channel was secure. When principals start asking that question, trust erodes fast.'",
+        "[Kushner stands at the window, checking the street below — a habit he's developed recently] 'The Washington Post ran a piece on private diplomacy in the Gulf. No names, but the description fits our operation uncomfortably well. I've had to reroute two contact chains already. The infrastructure is getting strained.'"
+      ],
+      "resourceLow": [
+        "[Kushner enters through the side door, avoiding the main hallway] 'CNN has a source. Not a good source, but they're running with it anyway. My name is in the draft — Avi saw it. We have maybe 48 hours before this becomes a news cycle. Every deal in the pipeline is at risk.'",
+        "[Kushner is making calls, his voice barely above a whisper] 'The exposure is critical. MBS has gone dark — not returning calls through the usual channel. The Emirati contact says their principals are nervous about American press attention. Years of relationship-building, and it's unraveling because someone couldn't keep their mouth shut.'",
+        "[Kushner sits very still, hands folded, calculating] 'Three reporters have my travel dates. Two Congressional staffers are asking about Gulf meetings. The inspector general's office requested documents. This isn't curiosity anymore — this is a developing investigation. If I don't shut this down, everything collapses.'"
+      ],
+      "resourceCritical": [
+        "[Kushner stares at his phone — six missed calls from reporters — and sets it face down with deliberate calm] 'It's out. The story broke this morning. Not all of it — not yet — but enough. The back-channels are dead. MBS won't take my calls. The Gulf architecture we spent months building is gone in a news cycle.'",
+        "[Kushner's composure cracks for the first time — he loosens his tie, runs a hand through his hair] 'Congressional subpoena came in an hour ago. The press has photos from the Riyadh meeting. The contacts are scattering — every partner we built trust with is now calculating whether knowing me is a liability. This is complete exposure.'",
+        "[Kushner is burning papers in the fireplace, phone powered off] 'We're fully exposed. The entire deal pipeline is frozen. Congress is investigating, the press has the timeline, and every Gulf contact has lawyered up. Everything I built — the relationships, the trust, the architecture — it's all coming apart. I need to think.'"
+      ]
+    },
+    "asmongold": {
+      "resourceExcellent": [
+        "[Asmongold leans back in his chair, energy drink in hand, grinning at the chat overlay] 'Dude. DUDE. Credibility is through the roof. Every prediction we made? Landed. Chat is going insane. The audience numbers are the highest they've ever been. This is the golden age of content right here.'",
+        "[Asmongold pulls up the prediction tracker, every line green] 'Chat, look at this scorecard. We called the tanker routes, we called Iran's move, we called the oil price spike. The analysts on Twitter are quoting US. When the pundits are citing a streamer, you know we're winning.'",
+        "[Asmongold slaps the desk with satisfaction] 'OK so here's the thing about credibility — when you have this much of it, people listen to your calls BEFORE they happen. We're not reacting to events anymore, we're SHAPING them. The audience trusts our analysis. That's real power, chat.'"
+      ],
+      "resourceGood": [
+        "[Asmongold checks the prediction tracker, nods] 'Credibility is solid. Not every call landed, but the hit rate is good enough that the audience trusts the analysis. Chat engagement is healthy. We've got room to make some bold predictions without risking everything.'",
+        "[Asmongold takes a sip, scrolls through chat] 'The scorecard looks decent. A few misses, but the big calls were right. The audience isn't questioning the analysis yet — that's the key metric. As long as they're watching and trusting, we have credibility to spend.'",
+        "[Asmongold pulls up the analytics dashboard] 'Viewer retention is above average, prediction accuracy is tracking at about 70%. That's not legendary, but it's solid. Chat is engaged, the donations are flowing. We're in a good spot to make some calls.'"
+      ],
+      "resourceStrained": [
+        "[Asmongold frowns at the prediction tracker, several entries marked red] 'Chat, I'm not gonna sugarcoat it — the last three predictions whiffed. The oil call was wrong, the Iran escalation timing was off. The audience is still here, but you can feel the skepticism creeping into chat. We need a hit.'",
+        "[Asmongold rubs his eyes, the chat scrolling with question marks and doubt emojis] 'Credibility is getting shaky. The competing analysts are posting our misses. Twitter is doing the thing where they screenshot your wrong calls. We're not in danger yet, but the trend line is bad.'",
+        "[Asmongold leans forward, dead serious for once] 'OK, real talk chat. The prediction accuracy has been mid lately. I can see the viewer count dipping when I make calls now — people are hedging, waiting to see if I'm right before they engage. That's a credibility problem and we need to fix it.'"
+      ],
+      "resourceLow": [
+        "[Asmongold stares at the analytics, subscriber count trending down] 'Chat... we're in trouble. Credibility is tanking. The last five predictions — three wrong, one inconclusive, one technically right but nobody cared. The audience is leaving. Not a flood, but a steady drain. Every wrong call accelerates it.'",
+        "[Asmongold takes off his headset, holds it in his hands, puts it back on] 'I'm going to be honest with you, chat. The analysis has been off. I don't know if it's the data, the methodology, or just bad luck, but the audience doesn't care about excuses. They care about correct calls. And we haven't been making them.'",
+        "[Asmongold's voice is quieter, the manic energy gone] 'The competing channels are running highlight reels of my wrong predictions. The donation rate is half what it was a week ago. Chat is memeing on my analysis instead of sharing it. If I don't nail the next big call, this whole thing falls apart.'"
+      ],
+      "resourceCritical": [
+        "[Asmongold sits in a dark room, monitors casting blue light on his face, chat nearly silent] 'Chat... I don't even know if anyone's still watching. Credibility is gone. Not low — gone. Every prediction I make gets ratio'd instantly. The audience moved to the other analysts. The ones who were quoting me a week ago.'",
+        "[Asmongold's voice cracks slightly before he catches himself] 'OK here's where we are. Zero credibility. The prediction tracker is a graveyard. The audience left, the revenue crashed, and the only people still in chat are trolls posting clown emojis. I built this entire operation on being right, and I was wrong. About everything.'",
+        "[Asmongold stares at the single-digit viewer count] 'You know the worst part? The analysis might actually be good now. I've learned from the misses. But nobody's listening anymore. Credibility is a one-way door — once you lose it, being right isn't enough. You need to be right AND loud AND lucky. All at once.'"
+      ]
+    },
+    "fuentes": {
+      "resourceExcellent": [
+        "[Fuentes slams his fist on the desk, eyes blazing with energy] 'The base is ON FIRE. The rallies are overflowing, the donations are pouring in, Congress is getting flooded with calls. This is what a MOVEMENT looks like. America First isn't a slogan anymore — it's a force of nature.'",
+        "[Fuentes holds up his phone — notifications cascading] 'Every America First candidate just got a 10-point bump. The base is mobilized like I've never seen. They're showing up at town halls, they're calling their reps, they're organizing locally. This is the revolution the establishment was afraid of.'",
+        "[Fuentes paces with barely contained energy] 'The establishment media is terrified. They're running hit pieces every hour because they know — they KNOW — the base is too strong to stop. When your people believe in something this hard, there's no amount of propaganda that can undo it.'"
+      ],
+      "resourceGood": [
+        "[Fuentes reviews the rally attendance numbers, satisfied] 'The base is solid. Attendance is strong, online engagement is healthy, the donation pipeline is flowing. Not the peak energy from last month, but steady. The movement is in a good position to push the withdrawal agenda.'",
+        "[Fuentes nods at the latest polling] 'America First support is tracking well. The base understands what we're doing and why. Some grumbling about the pace of withdrawal, but they trust the direction. As long as we keep showing progress, they'll stay mobilized.'",
+        "[Fuentes closes his laptop, measured confidence] 'Congressional allies report their phones are still ringing with pro-withdrawal calls. The base is engaged and aligned. We have enough grassroots pressure to keep the establishment on their heels. Good position.'"
+      ],
+      "resourceStrained": [
+        "[Fuentes checks the rally RSVPs, frowns] 'The base is getting restless. Attendance dipped at the last three events. The online forums are starting to ask when we're going to SEE something — not talk about withdrawal, actually DO it. Words without action erode a movement.'",
+        "[Fuentes scrolls through comments, jaw tight] 'I'm seeing fractures. The hardcore base is holding, but the broader movement is questioning the timeline. They elected us to bring troops home, not manage a crisis in the Gulf. If we don't show progress soon, the energy bleeds out.'",
+        "[Fuentes stares at a map of troop deployments, arms crossed] 'Every day American troops are still deployed in the Gulf is a day the base asks why. The establishment loves a slow walk — it's how they've killed every withdrawal movement for fifty years. Our people see through it. They want action.'"
+      ],
+      "resourceLow": [
+        "[Fuentes sits in a half-empty rally venue, voice strained] 'The base is slipping. Last rally was half-capacity. The donations dropped 40% this week. The forums are full of people saying we sold out — that we became the establishment the moment we stopped fighting them. I need something to show them.'",
+        "[Fuentes grips the podium, alone in the room] 'I'm losing them. The America First base doesn't do patience — they do results. And right now, we have more troops deployed than when we started. Try explaining that at a town hall. Try telling people who believed in you that the timeline shifted.'",
+        "[Fuentes turns off his phone after reading the comments] 'The movement is fracturing. Three prominent America First voices broke with us publicly this week. The base follows energy, and right now the energy is turning against us. One big visible withdrawal — even symbolic — might stop the bleeding.'"
+      ],
+      "resourceCritical": [
+        "[Fuentes stands at an empty podium, the venue echoing, no audience left] 'The base is gone. Not angry — gone. They stopped showing up, stopped calling their reps, stopped donating. A movement without a base is just a guy with a microphone. And the establishment knows exactly what to do with guys who have no base.'",
+        "[Fuentes sits in the dark, rally posters peeling off the walls behind him] 'I built America First on a promise — bring the troops home. Simple. Clear. And I failed. The base gave us everything and we gave them nothing. Now they're home, and I'm the one who's lost. Congress is already moving to strip our authority.'",
+        "[Fuentes stares at the troop deployment numbers, voice hollow] 'You know what kills a movement? Not opposition — betrayal. Real or perceived, doesn't matter. The base thinks we became the thing we promised to destroy. The rallies are empty. The phones are silent. If we don't do something drastic — I mean TODAY — there's nothing left to save.'"
+      ]
+    }
+  },
   "titleScreen": {
     "imageAlt": "Strait Out of Hormuz",
     "imageSrc": "assets/title-screen.png",
