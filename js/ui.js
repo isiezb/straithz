@@ -3391,7 +3391,7 @@ function showDecisionEvent(event) {
 
         openTerminal(`
             ${crisisHeader}
-            ${eventImg ? `<img src="${eventImg}" class="event-category-art" alt="Event" onerror="if(typeof SPRITES!=='undefined'&&SPRITES.eventPlaceholder)this.src=SPRITES.eventPlaceholder;else this.style.display='none'">` : ''}
+            ${eventImg ? `<img src="${eventImg}" class="event-category-art" alt="Event" onerror="this.style.display='none'">` : ''}
             ${countdown > 0 ? `<div class="decision-timer">${countdown}s</div>` : ''}
             <div class="term-header" style="${headerStyle}">DAY ${SIM.day} \u2014 ${isCrisis ? 'CRISIS' : 'DECISION REQUIRED'}</div>
             <div class="term-title" style="${titleStyle}">${event.title}</div>

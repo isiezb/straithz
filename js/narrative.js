@@ -328,11 +328,7 @@ function showSceneImage(src, options) {
     };
 
     newImg.onerror = function () {
-        // Fallback to procedural placeholder
-        if (typeof SPRITES !== 'undefined' && SPRITES.eventPlaceholder) {
-            newImg.onerror = null;
-            newImg.src = SPRITES.eventPlaceholder;
-        }
+        newImg.style.display = 'none';
     };
 
     newImg.src = src;

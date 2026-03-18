@@ -947,14 +947,7 @@ function showLoreScreen(character) {
 
         document.getElementById('game-container').appendChild(overlay);
 
-        if (!character.portraitImage) {
-            const canvas = document.getElementById('lore-portrait');
-            if (canvas && SPRITES[character.spriteKey]) {
-                const ctx = canvas.getContext('2d');
-                ctx.imageSmoothingEnabled = false;
-                ctx.drawImage(SPRITES[character.spriteKey], 0, 0, 112, 112);
-            }
-        }
+        // Portrait handled by <img> tag via character.portraitImage
 
         const textEl = document.getElementById('lore-text');
         const proceedBtn = document.getElementById('lore-proceed');
@@ -1063,15 +1056,7 @@ function showCharacterSelect() {
                 </div>
             `;
 
-            CHARACTERS.forEach((ch, i) => {
-                if (ch.portraitImage) return; // Using <img> tag instead
-                const canvas = document.getElementById('char-portrait-' + i);
-                if (canvas && SPRITES[ch.spriteKey]) {
-                    const ctx = canvas.getContext('2d');
-                    ctx.imageSmoothingEnabled = false;
-                    ctx.drawImage(SPRITES[ch.spriteKey], 0, 0, 56, 56);
-                }
-            });
+            // Portraits handled by <img> tags via character.portraitImage
 
             overlay.querySelectorAll('.char-card').forEach(card => {
                 card.addEventListener('click', () => {

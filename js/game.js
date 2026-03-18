@@ -9,7 +9,7 @@
         hydrateSimulation();
         hydrateUI();
         hydrateCharacters();
-        initSprites();
+
 
         await showTitleScreen();
         const character = await showCharacterSelect();
@@ -44,13 +44,8 @@
                 lastFrame = timestamp;
                 updateGauges();
 
-                // During dayplay, tick entity movement + update center panel periodically
+                // Update side panels every ~500ms during dayplay
                 if (SIM.phase === 'dayplay' && !SIM.gameOver) {
-                    const ticksPerFrame = 2;
-                    for (let i = 0; i < ticksPerFrame; i++) {
-                        tickSimulation();
-                    }
-                    // Update side panels every ~500ms (not every frame)
                     _cpUpdateTimer += dt;
                     if (_cpUpdateTimer > 500) {
                         _cpUpdateTimer = 0;
@@ -64,10 +59,8 @@
                     renderMap();
                 }
 
-                SIM.effects = SIM.effects.filter(fx => {
-                    fx.life--;
-                    return fx.life > 0;
-                });
+                // Clean up expired effects
+                if (SIM.effects) SIM.effects = SIM.effects.filter(fx => { fx.life--; return fx.life > 0; });
             } catch (e) {
                 console.error('Game loop error:', e);
             }
