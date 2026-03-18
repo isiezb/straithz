@@ -601,6 +601,57 @@ html, body {
     background: #020302;
 }
 
+/* ======================== COMMAND PANEL (right sidebar actions) ======================== */
+
+#command-panel {
+    border-top: 1px solid var(--border);
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 50%;
+}
+
+#command-panel:empty {
+    display: none;
+}
+
+.cp-header {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #2a6a4a;
+    padding: 6px 10px 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cp-actions {
+    padding: 4px 0;
+}
+
+.cp-category {
+    padding: 0 10px;
+    margin-bottom: 6px;
+}
+
+.cp-cat-header {
+    font-size: 8px;
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+    font-weight: bold;
+}
+
+#command-panel .ap-btn {
+    font-size: 9px;
+    padding: 4px 8px;
+    margin-bottom: 2px;
+}
+
+#command-panel .ap-cost {
+    font-size: 8px;
+}
+
+#command-panel::-webkit-scrollbar { width: 3px; }
+#command-panel::-webkit-scrollbar-track { background: transparent; }
+#command-panel::-webkit-scrollbar-thumb { background: var(--border); }
+
 #map-force-summary {
     position: absolute;
     bottom: 0;

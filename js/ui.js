@@ -1854,7 +1854,9 @@ function _getROEColor() {
 function _getRecommendedActions(ap, esc) {
     const recs = [];
     const bOk = (cost) => !cost || SIM.budget >= cost;
+    const charId = SIM.character ? SIM.character.id : '';
 
+    // Character-weighted situational actions
     if (SIM.fogOfWar > 60 && bOk(15)) recs.push({ action: 'gather-intel', label: 'GATHER INTEL', cost: 15, reason: 'Low visibility' });
     if (SIM.tension > 65 && SIM.diplomaticCapital < 40) recs.push({ action: 'phone-call', label: 'MAKE PHONE CALL', reason: 'High tension' });
     if (SIM.tension > 75 && esc >= 1 && bOk(10)) recs.push({ action: 'escort-tankers', label: 'ESCORT TANKERS', cost: 10, reason: 'Tankers at risk' });
@@ -1862,25 +1864,49 @@ function _getRecommendedActions(ap, esc) {
     if (SIM.budget < 300) recs.push({ action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Budget pressure' });
     if (SIM.internationalStanding < 40 && bOk(10)) recs.push({ action: 'draft-proposal', label: 'DRAFT PROPOSAL', cost: 10, reason: 'Low standing' });
     if (SIM.iranAggression > 60 && esc >= 2 && bOk(30)) recs.push({ action: 'precision-strike', label: 'PRECISION STRIKE', cost: 30, reason: 'Iran escalating' });
-    if (SIM.fogOfWar > 50) recs.push({ action: 'analyze-threats', label: 'ANALYZE THREATS', reason: 'Intel gap' });
     if (SIM.conflictRisk > 60 && esc > 0) recs.push({ action: 'deescalate', label: 'DE-ESCALATE', reason: 'High conflict risk' });
     if (SIM.oilFlow < 40 && bOk(25)) recs.push({ action: 'market-intervention', label: 'MARKET INTERVENTION', cost: 25, reason: 'Oil crisis' });
-    if (SIM.polarization > 50 && bOk(5)) recs.push({ action: 'brief-congress', label: 'BRIEF CONGRESS', cost: 5, reason: 'Political unrest' });
     if (SIM.proxyThreat > 40 && bOk(20)) recs.push({ action: 'emergency-coalition', label: 'EMERGENCY COALITION', cost: 20, reason: 'Proxy threat' });
 
-    // Fill to at least 5 with defaults
-    const defaults = [
+    // Character-specific defaults (each character gravitates to different tools)
+    const charDefaults = {
+        trump:     [
+            { action: 'press-conference', label: 'PRESS CONFERENCE', reason: 'Rally support' },
+            { action: 'phone-call', label: 'MAKE PHONE CALL', reason: 'Deal-making' },
+            { action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Leverage' },
+        ],
+        hegseth:   [
+            { action: 'escort-tankers', label: 'ESCORT TANKERS', cost: 10, reason: 'Force projection' },
+            { action: 'gather-intel', label: 'GATHER INTEL', cost: 15, reason: 'Battlespace awareness' },
+            { action: 'reposition-fleet', label: 'REPOSITION FLEET', reason: 'Naval posture' },
+        ],
+        kushner:   [
+            { action: 'phone-call', label: 'MAKE PHONE CALL', reason: 'Back-channel' },
+            { action: 'draft-proposal', label: 'DRAFT PROPOSAL', cost: 10, reason: 'Deal framework' },
+            { action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Leverage' },
+        ],
+        asmongold: [
+            { action: 'gather-intel', label: 'GATHER INTEL', cost: 15, reason: 'OSINT content' },
+            { action: 'analyze-threats', label: 'ANALYZE THREATS', reason: 'Stream analysis' },
+            { action: 'press-conference', label: 'PRESS CONFERENCE', reason: 'Go live' },
+        ],
+        fuentes:   [
+            { action: 'press-conference', label: 'PRESS CONFERENCE', reason: 'Rally the base' },
+            { action: 'brief-congress', label: 'BRIEF CONGRESS', cost: 5, reason: 'America First' },
+            { action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Economic nationalism' },
+        ],
+    };
+
+    const defaults = charDefaults[charId] || [
         { action: 'phone-call', label: 'MAKE PHONE CALL', reason: 'Diplomacy' },
         { action: 'gather-intel', label: 'GATHER INTEL', cost: 15, reason: 'Intelligence' },
         { action: 'press-conference', label: 'PRESS CONFERENCE', reason: 'Public support' },
-        { action: 'analyze-threats', label: 'ANALYZE THREATS', reason: 'Assessment' },
-        { action: 'adjust-sanctions', label: 'ADJUST SANCTIONS', reason: 'Economic' },
     ];
     for (const d of defaults) {
-        if (recs.length >= 6) break;
-        if (!recs.find(r => r.action === d.action)) recs.push(d);
+        if (recs.length >= 3) break;
+        if (!recs.find(r => r.action === d.action) && bOk(d.cost || 0)) recs.push(d);
     }
-    return recs.slice(0, 6);
+    return recs.slice(0, 3);
 }
 
 function showActionPanel() {
@@ -1913,114 +1939,11 @@ function showActionPanel() {
         const escName = escInfo ? escInfo.name : 'UNKNOWN';
         const escColor = escInfo ? escInfo.color : '#888';
 
-        // Tooltip helper
-        function tip(action) {
-            const t = ACTION_TIPS[action];
-            if (!t) return '';
-            return `<span class="ap-tooltip">${t.desc}<div class="tt-effect">${t.effect}</div></span>`;
-        }
-
-        // Helper: locked button if escalation too low
-        function milBtn(label, action, reqLevel, cost) {
-            const costStr = cost ? ` <span class="ap-cost">$${cost}M</span>` : '';
-            if (esc < reqLevel) {
-                const reqName = ESCALATION_LADDER[reqLevel].name;
-                return `<button class="ap-btn locked" title="Requires ${reqName}"><span class="ap-lock">\u25A0 LVL${reqLevel}</span> ${label}${costStr}</button>`;
-            }
-            const budgetOk = !cost || SIM.budget >= cost;
-            return `<button class="ap-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${action}">${label}${costStr}${tip(action)}</button>`;
-        }
-
-        // Generate bible actions grouped by category
-        function _getBibleActionsHtml() {
-            const catColors = { intelligence: '#44dd88', diplomacy: '#4488dd', military: '#dd4444', domestic: '#aa88dd', economic: '#ddaa44' };
-            const catLabels = { intelligence: 'INTELLIGENCE+', diplomacy: 'DIPLOMACY+', military: 'MILITARY+', domestic: 'DOMESTIC+', economic: 'ECONOMIC+' };
-            const available = BIBLE_ACTIONS.filter(a => {
-                try { return a.condition(); } catch(e) { return false; }
-            });
-            if (available.length === 0) return '';
-            const grouped = {};
-            available.forEach(a => {
-                if (!grouped[a.category]) grouped[a.category] = [];
-                grouped[a.category].push(a);
-            });
-            let html = '<div class="ap-category"><div class="ap-cat-header" style="color:#88ddaa;cursor:pointer" id="bible-actions-toggle">\u25B6 MORE ACTIONS</div><div id="bible-actions-list" style="display:none">';
-            for (const cat of Object.keys(grouped)) {
-                html += `<div class="ap-cat-header" style="color:${catColors[cat] || '#888'};font-size:9px;margin-top:6px">${catLabels[cat] || cat.toUpperCase()}</div>`;
-                grouped[cat].forEach(a => {
-                    const costStr = a.cost ? ` <span class="ap-cost">$${a.cost}M</span>` : '';
-                    const apStr = a.ap > 1 ? ` <span class="ap-cost">${a.ap}AP</span>` : '';
-                    const budgetOk = !a.cost || SIM.budget >= a.cost;
-                    const apOk = ap >= a.ap;
-                    html += `<button class="ap-btn ${!apOk || !budgetOk ? 'disabled' : ''}" data-action="bible_${a.id}">${a.name}${costStr}${apStr}${tip(a.id)}</button>`;
-                });
-            }
-            html += '</div></div>';
-            return html;
-        }
-
-        // Can escalate if not already at max and AP available
-        const canEscalate = esc < 5 && ap > 0;
-        const nextEsc = ESCALATION_LADDER[Math.min(esc + 1, 5)];
-
-        // Build recommended actions based on game state
+        // Build recommended actions based on game state + character
         const recs = _getRecommendedActions(ap, esc);
-        const recsHtml = recs.map(r => {
-            const costStr = r.cost ? ` <span class="ap-cost">$${r.cost}M</span>` : '';
-            const budgetOk = !r.cost || SIM.budget >= r.cost;
-            return `<button class="ap-btn ap-recommended ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${r.action}">${r.label}${costStr}<span class="ap-reason">${r.reason}</span>${tip(r.action)}</button>`;
-        }).join('');
 
-        // Full action list (hidden by default)
-        const allActionsHtml = `
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#44dd88">INTELLIGENCE</div>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 15 ? 'disabled' : ''}" data-action="gather-intel">GATHER INTEL <span class="ap-cost">$15M</span>${tip('gather-intel')}</button>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="analyze-threats">ANALYZE THREATS${tip('analyze-threats')}</button>
-                </div>
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#4488dd">DIPLOMACY</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL${tip('phone-call')}</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 10 ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span>${tip('draft-proposal')}</button>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="demand-un-session">DEMAND UN SESSION${tip('demand-un-session')}</button>
-                </div>
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#dd4444">MILITARY <span style="color:${escColor};font-size:8px">[${escName}]</span></div>
-                    ${milBtn('REPOSITION FLEET', 'reposition-fleet', 1, 0)}
-                    ${milBtn('CHANGE ROE <span class="ap-roe" style="color:' + roeColor + '">[' + roeLabel + ']</span>', 'change-roe', 1, 0)}
-                    ${milBtn('ESCORT TANKERS', 'escort-tankers', 1, 10)}
-                    ${milBtn('PRECISION STRIKE', 'precision-strike', 2, 30)}
-                    ${milBtn('SPECIAL OPS RAID', 'spec-ops-raid', 2, 25)}
-                    ${milBtn('LAUNCH AIR STRIKES', 'air-strikes', 3, 50)}
-                    ${milBtn('SUPPRESS AIR DEFENSES', 'sead-mission', 3, 40)}
-                    ${milBtn('DEPLOY GROUND FORCES', 'ground-troops', 4, 80)}
-                    ${milBtn('SEIZE IRANIAN ISLANDS', 'seize-islands', 4, 60)}
-                    ${milBtn('FULL MOBILIZATION', 'full-mobilization', 5, 100)}
-                </div>
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#aa88dd">DOMESTIC</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="press-conference">PRESS CONFERENCE${tip('press-conference')}</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 5 ? 'disabled' : ''}" data-action="brief-congress">BRIEF CONGRESS <span class="ap-cost">$5M</span>${tip('brief-congress')}</button>
-                </div>
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#ddaa44">ECONOMIC</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="adjust-sanctions">ADJUST SANCTIONS${tip('adjust-sanctions')}</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 25 ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span>${tip('market-intervention')}</button>
-                </div>
-                <div class="ap-category">
-                    <div class="ap-cat-header" style="color:#dd4444">ESCALATION</div>
-                    <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="issue-ultimatum">ISSUE ULTIMATUM${tip('issue-ultimatum')}</button>
-                    <button class="ap-btn ${ap <= 0 || SIM.budget < 20 ? 'disabled' : ''}" data-action="emergency-coalition">EMERGENCY COALITION <span class="ap-cost">$20M</span>${tip('emergency-coalition')}</button>
-                    ${canEscalate ? `<button class="ap-btn escalate-btn" data-action="escalate" title="Move to: ${nextEsc.name}">ESCALATE \u25B2 <span style="color:${nextEsc.color}">${nextEsc.name}</span>${tip('escalate')}</button>` : ''}
-                    ${esc > 0 ? `<button class="ap-btn deescalate-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deescalate">DE-ESCALATE \u25BC${tip('deescalate')}</button>` : ''}
-                </div>
-                ${_getCharacterActions(ap)}
-                ${_getBibleActionsHtml()}
-        `;
-
-        // Compact 2x2 recommended grid (take first 4)
-        const gridRecs = recs.slice(0, 4);
-        const gridHtml = gridRecs.map(r => {
+        // 3 recommended actions (one per AP)
+        const gridHtml = recs.map(r => {
             const costStr = r.cost ? ` $${r.cost}M` : '';
             const budgetOk = !r.cost || SIM.budget >= r.cost;
             return `<button class="ap-btn ap-recommended ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${r.action}">${r.label}${costStr}<span class="ap-reason">${r.reason}</span></button>`;
@@ -2035,16 +1958,11 @@ function showActionPanel() {
 
             ${specialHtml}
 
-            <div style="padding:4px 10px;display:grid;grid-template-columns:1fr 1fr;gap:3px">
+            <div style="padding:4px 10px;display:flex;flex-direction:column;gap:3px">
                 ${gridHtml}
             </div>
 
-            <div style="padding:2px 10px">
-                <span style="font-size:10px;color:#88ddaa;cursor:pointer;letter-spacing:1px" id="all-actions-toggle">\u25B6 ALL ACTIONS</span>
-                <div id="all-actions-list" style="display:none">
-                    ${allActionsHtml}
-                </div>
-            </div>
+            ${_getCharacterActions(ap)}
 
             <div style="padding:4px 10px;display:flex;gap:4px;border-top:1px solid #1a3a2a">
                 ${(SIM.swapsToday || 0) < 2 ? `<button class="ap-swap-btn" id="btn-swap-card" style="flex:1">SWAP</button>` : '<div style="flex:1"></div>'}
@@ -2073,31 +1991,8 @@ function showActionPanel() {
             });
         }
 
-        // Wire up ALL ACTIONS toggle
-        const allActionsToggle = panel.querySelector('#all-actions-toggle');
-        if (allActionsToggle) {
-            allActionsToggle.addEventListener('click', () => {
-                const list = panel.querySelector('#all-actions-list');
-                if (list) {
-                    const hidden = list.style.display === 'none';
-                    list.style.display = hidden ? '' : 'none';
-                    allActionsToggle.textContent = (hidden ? '\u25BC' : '\u25B6') + ' ALL ACTIONS';
-                }
-            });
-        }
-
-        // Wire up MORE ACTIONS toggle (inside all actions)
-        const bibleToggle = panel.querySelector('#bible-actions-toggle');
-        if (bibleToggle) {
-            bibleToggle.addEventListener('click', () => {
-                const list = panel.querySelector('#bible-actions-list');
-                if (list) {
-                    const hidden = list.style.display === 'none';
-                    list.style.display = hidden ? '' : 'none';
-                    bibleToggle.textContent = (hidden ? '\u25BC' : '\u25B6') + ' MORE ACTIONS';
-                }
-            });
-        }
+        // Full actions moved to right sidebar — update it
+        _updateCommandPanel(ap, esc, escName, escColor);
     }
 
     // Append to action-bar container in narrative column
@@ -2124,6 +2019,119 @@ function showActionPanel() {
         SIM._guideSeen = true;
         setTimeout(() => _showAdvisorGuide(), 800);
     }
+}
+
+// ======================== COMMAND PANEL (right sidebar full action list) ========================
+
+function _updateCommandPanel(ap, esc, escName, escColor) {
+    const panel = document.getElementById('command-panel');
+    if (!panel) return;
+
+    const bOk = (cost) => !cost || SIM.budget >= cost;
+
+    function tip(action) {
+        const t = ACTION_TIPS[action];
+        if (!t) return '';
+        return `<span class="ap-tooltip">${t.desc}<div class="tt-effect">${t.effect}</div></span>`;
+    }
+
+    function milBtn(label, action, reqLevel, cost) {
+        const costStr = cost ? ` <span class="ap-cost">$${cost}M</span>` : '';
+        if (esc < reqLevel) {
+            const reqName = ESCALATION_LADDER[reqLevel].name;
+            return `<button class="ap-btn locked" title="Requires ${reqName}"><span class="ap-lock">\u25A0 LVL${reqLevel}</span> ${label}${costStr}</button>`;
+        }
+        const budgetOk = !cost || SIM.budget >= cost;
+        return `<button class="ap-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${action}">${label}${costStr}${tip(action)}</button>`;
+    }
+
+    // Character-filtered action list — only show relevant categories
+    const charId = SIM.character ? SIM.character.id : '';
+
+    // Each character gets a focused subset of actions
+    let actionsHtml = '';
+
+    // Intelligence — available to all but emphasized for asmongold
+    if (charId === 'asmongold' || charId === 'hegseth' || charId === 'kushner') {
+        actionsHtml += `<div class="cp-category">
+            <div class="cp-cat-header" style="color:#44dd88">INTELLIGENCE</div>
+            <button class="ap-btn ${ap <= 0 || !bOk(15) ? 'disabled' : ''}" data-action="gather-intel">GATHER INTEL <span class="ap-cost">$15M</span>${tip('gather-intel')}</button>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="analyze-threats">ANALYZE THREATS${tip('analyze-threats')}</button>
+        </div>`;
+    }
+
+    // Diplomacy — available to all but emphasized for kushner/trump
+    if (charId !== 'fuentes') {
+        actionsHtml += `<div class="cp-category">
+            <div class="cp-cat-header" style="color:#4488dd">DIPLOMACY</div>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL${tip('phone-call')}</button>
+            <button class="ap-btn ${ap <= 0 || !bOk(10) ? 'disabled' : ''}" data-action="draft-proposal">DRAFT PROPOSAL <span class="ap-cost">$10M</span>${tip('draft-proposal')}</button>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="demand-un-session">DEMAND UN SESSION${tip('demand-un-session')}</button>
+        </div>`;
+    } else {
+        // Fuentes gets limited diplomacy
+        actionsHtml += `<div class="cp-category">
+            <div class="cp-cat-header" style="color:#4488dd">DIPLOMACY</div>
+            <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="phone-call">MAKE PHONE CALL${tip('phone-call')}</button>
+        </div>`;
+    }
+
+    // Military — available to all but emphasized for hegseth
+    actionsHtml += `<div class="cp-category">
+        <div class="cp-cat-header" style="color:#dd4444">MILITARY <span style="color:${escColor};font-size:8px">[${escName}]</span></div>
+        ${milBtn('REPOSITION FLEET', 'reposition-fleet', 1, 0)}
+        ${milBtn('ESCORT TANKERS', 'escort-tankers', 1, 10)}
+        ${charId === 'hegseth' ? milBtn('PRECISION STRIKE', 'precision-strike', 2, 30) : ''}
+        ${charId === 'hegseth' ? milBtn('SPECIAL OPS RAID', 'spec-ops-raid', 2, 25) : ''}
+        ${esc >= 3 ? milBtn('LAUNCH AIR STRIKES', 'air-strikes', 3, 50) : ''}
+    </div>`;
+
+    // Domestic — available to all but emphasized for trump/fuentes
+    actionsHtml += `<div class="cp-category">
+        <div class="cp-cat-header" style="color:#aa88dd">DOMESTIC</div>
+        <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="press-conference">PRESS CONFERENCE${tip('press-conference')}</button>
+        <button class="ap-btn ${ap <= 0 || !bOk(5) ? 'disabled' : ''}" data-action="brief-congress">BRIEF CONGRESS <span class="ap-cost">$5M</span>${tip('brief-congress')}</button>
+    </div>`;
+
+    // Economic
+    actionsHtml += `<div class="cp-category">
+        <div class="cp-cat-header" style="color:#ddaa44">ECONOMIC</div>
+        <button class="ap-btn ${ap <= 0 ? 'disabled' : ''}" data-action="adjust-sanctions">ADJUST SANCTIONS${tip('adjust-sanctions')}</button>
+        ${charId === 'kushner' || SIM.oilFlow < 40 ? `<button class="ap-btn ${ap <= 0 || !bOk(25) ? 'disabled' : ''}" data-action="market-intervention">MARKET INTERVENTION <span class="ap-cost">$25M</span>${tip('market-intervention')}</button>` : ''}
+    </div>`;
+
+    // Escalation — only when relevant
+    if (esc > 0 || SIM.tension > 60) {
+        const canEscalate = esc < 5 && ap > 0;
+        const nextEsc = ESCALATION_LADDER[Math.min(esc + 1, 5)];
+        actionsHtml += `<div class="cp-category">
+            <div class="cp-cat-header" style="color:#dd4444">ESCALATION</div>
+            ${canEscalate ? `<button class="ap-btn escalate-btn" data-action="escalate">ESCALATE \u25B2 <span style="color:${nextEsc.color}">${nextEsc.name}</span></button>` : ''}
+            ${esc > 0 ? `<button class="ap-btn deescalate-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deescalate">DE-ESCALATE \u25BC</button>` : ''}
+        </div>`;
+    }
+
+    panel.innerHTML = `
+        <div class="cp-header">COMMAND OPTIONS</div>
+        <div class="cp-actions">${actionsHtml}</div>
+    `;
+
+    // Wire up buttons — delegate to the action panel's execute
+    panel.querySelectorAll('.ap-btn:not(.disabled):not(.locked)').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.dataset.action;
+            if (!action) return;
+            const actionPanel = document.getElementById('action-panel');
+            if (actionPanel && actionPanel._renderFn) {
+                _executeAction(action, actionPanel._renderFn);
+            }
+        });
+    });
+}
+
+function _hideCommandPanel() {
+    const panel = document.getElementById('command-panel');
+    if (panel) panel.innerHTML = '';
 }
 
 // ======================== ADVISOR GUIDE (Day 1 tutorial) ========================
@@ -3733,6 +3741,7 @@ function hideActionPanel() {
         actionBar.innerHTML = '';
         actionBar.classList.remove('active');
     }
+    _hideCommandPanel();
 }
 
 
