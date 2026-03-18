@@ -930,6 +930,14 @@ function dailyUpdate() {
             // Add as headline with appropriate level
             const hlLevel = moveType === 'hardliner' ? 'warning' : moveType === 'moderate' ? 'good' : 'normal';
             addHeadline(`TEHRAN: ${move}`, hlLevel);
+
+            // Show Iran portrait in scene panel
+            if (typeof showSceneImage === 'function') {
+                const iranPortrait = moveType === 'hardliner' ? 'assets/iran-tangsiri.png'
+                    : moveType === 'moderate' ? 'assets/iran-araghchi.png'
+                    : 'assets/iran-tangsiri.png';
+                showSceneImage(iranPortrait, { duration: 4000, caption: 'TEHRAN: ' + move.substring(0, 60) });
+            }
         }
     }
 
@@ -938,6 +946,10 @@ function dailyUpdate() {
     if (arc && SIM.storyArc !== arc.id) {
         SIM.storyArc = arc.id;
         addHeadline(`\u2501\u2501\u2501 ${arc.name} \u2501\u2501\u2501`, 'critical');
+        // Flash the arc image in the scene panel for 5 seconds
+        if (typeof showSceneImage === 'function' && arc.image) {
+            showSceneImage(arc.image, { duration: 5000, caption: arc.name });
+        }
     }
 
     // Metric snapshot

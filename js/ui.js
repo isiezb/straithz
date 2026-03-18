@@ -945,6 +945,11 @@ function showFirstMorning() {
 
     const advisorImg = SIM.character ? SIM.character.portraitImage : null;
 
+    // Show situation room in scene panel for first morning
+    if (typeof showSceneImage === 'function') {
+        showSceneImage('assets/situation-room.png', { caption: 'THE WHITE HOUSE SITUATION ROOM \u2014 DAY 1' });
+    }
+
     openTerminal(`
         <div class="fm-top-row">
             <img src="assets/us-flag.png" class="fm-flag" alt="US">
@@ -1184,6 +1189,11 @@ function showDailyReport() {
     if (SIM.day === 1) {
         showFirstMorning();
         return;
+    }
+
+    // Show situation room in scene panel for morning briefing
+    if (typeof showSceneImage === 'function') {
+        showSceneImage('assets/situation-room.png', { caption: 'MORNING BRIEFING \u2014 DAY ' + SIM.day });
     }
 
     // Generate narrative briefing
@@ -2829,6 +2839,12 @@ function showDecisionEvent(event) {
         addNarrative('scene', sceneText);
     }
 
+    // Show event image in scene panel
+    const eventImg = _getEventCategoryImage(event);
+    if (typeof showSceneImage === 'function' && eventImg) {
+        showSceneImage(eventImg, { caption: event.title });
+    }
+
     // --- Build choice panel (overlays the feed) ---
     function renderEvent() {
         const btnClass = isCrisis ? 'crisis-choice' : 'decision-choice';
@@ -3140,6 +3156,7 @@ function generatePostMortem() {
 
 function showGameOverScreen() {
     hideActionPanel();
+    // Show epilogue image in scene panel (computed below, called after epilogueImg is set)
     const rating = calculateRating();
     const postMortem = generatePostMortem();
     const gradeClass = rating.score >= 60 ? 'good' : rating.score >= 35 ? 'warning' : 'danger';
@@ -3188,6 +3205,12 @@ function showGameOverScreen() {
     }
     if (!SIM.gameWon && !epilogueText) {
         epilogueImg = 'assets/epilogue-defeat.png';
+    }
+
+    // Show epilogue/outcome image in scene panel
+    if (typeof showSceneImage === 'function') {
+        const sceneArt = epilogueImg || outcomeImg;
+        showSceneImage(sceneArt, { caption: SIM.gameWon ? 'MISSION COMPLETE' : 'MISSION FAILED' });
     }
 
     openTerminal(`

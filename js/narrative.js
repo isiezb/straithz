@@ -58,6 +58,7 @@ function clearNarrative() {
     _narrativeEntries.length = 0;
     _lastStatHadScene = false;
     if (_narrativeFeed) _narrativeFeed.innerHTML = '';
+    _clearSceneImage(0);
 }
 
 // ======================== INTERNALS ========================
@@ -177,6 +178,144 @@ function _generateStatContext(opts) {
     return contexts[metric] || 'The room hums with activity as new information arrives.';
 }
 
+// ======================== SCENE PANEL ========================
+
+let _scenePanel = null;
+let _sceneImg = null;
+let _sceneCaptionEl = null;
+let _sceneTimeout = null;
+let _sceneAmbientSrc = '';
+
+/**
+ * Show an image in the scene panel with crossfade.
+ * @param {string} src — image path (or null to clear)
+ * @param {object} [options]
+ * @param {number} [options.duration] — ms to show (0 or omitted = persistent until replaced)
+ * @param {number} [options.fadeIn] — ms crossfade (default 500)
+ * @param {string} [options.caption] — optional text overlay
+ * @param {number} [options.opacity] — image opacity (default 1)
+ * @param {boolean} [options.ambient] — if true, this is ambient art (lower priority, dimmer)
+ */
+function showSceneImage(src, options) {
+    if (!_scenePanel) return;
+    const opts = options || {};
+    const fadeMs = opts.fadeIn != null ? opts.fadeIn : 500;
+    const opacity = opts.opacity != null ? opts.opacity : 1;
+
+    // Clear any pending auto-hide
+    if (_sceneTimeout) { clearTimeout(_sceneTimeout); _sceneTimeout = null; }
+
+    // No source — show idle state
+    if (!src) {
+        _clearSceneImage(fadeMs);
+        return;
+    }
+
+    // Create new image element for crossfade
+    const newImg = document.createElement('img');
+    newImg.className = 'sp-image sp-image-entering';
+    newImg.alt = 'Scene';
+    newImg.style.opacity = '0';
+    newImg.style.transition = 'opacity ' + fadeMs + 'ms ease';
+    newImg.draggable = false;
+
+    newImg.onload = function () {
+        // Fade out old image
+        if (_sceneImg && _sceneImg.parentNode) {
+            const old = _sceneImg;
+            old.style.transition = 'opacity ' + fadeMs + 'ms ease';
+            old.style.opacity = '0';
+            setTimeout(function () { if (old.parentNode) old.remove(); }, fadeMs);
+        }
+        // Fade in new
+        _scenePanel.querySelector('.sp-viewport').appendChild(newImg);
+        // Force reflow then set opacity
+        newImg.offsetHeight;
+        newImg.style.opacity = String(opacity);
+        newImg.classList.remove('sp-image-entering');
+        _sceneImg = newImg;
+    };
+
+    newImg.onerror = function () {
+        // Fallback to procedural placeholder
+        if (typeof SPRITES !== 'undefined' && SPRITES.eventPlaceholder) {
+            newImg.onerror = null;
+            newImg.src = SPRITES.eventPlaceholder;
+        }
+    };
+
+    newImg.src = src;
+
+    // Caption
+    if (_sceneCaptionEl) {
+        _sceneCaptionEl.textContent = opts.caption || '';
+        _sceneCaptionEl.style.display = opts.caption ? 'block' : 'none';
+    }
+
+    // Mark panel as active
+    _scenePanel.classList.add('sp-active');
+
+    // Auto-hide after duration
+    if (opts.duration && opts.duration > 0) {
+        _sceneTimeout = setTimeout(function () {
+            _sceneTimeout = null;
+            showSceneAmbient();
+        }, opts.duration);
+    }
+}
+
+/**
+ * Show the current story arc image as ambient background at low opacity.
+ */
+function showSceneAmbient() {
+    if (typeof getCurrentStoryArc !== 'function') return;
+    const arc = getCurrentStoryArc();
+    if (arc && arc.image) {
+        _sceneAmbientSrc = arc.image;
+        showSceneImage(arc.image, { opacity: 0.4, fadeIn: 800 });
+    } else {
+        _clearSceneImage(500);
+    }
+}
+
+/**
+ * Clear the scene panel to idle state.
+ */
+function clearSceneImage() {
+    _clearSceneImage(300);
+}
+
+function _clearSceneImage(fadeMs) {
+    if (!_scenePanel) return;
+    if (_sceneImg && _sceneImg.parentNode) {
+        const old = _sceneImg;
+        old.style.transition = 'opacity ' + (fadeMs || 300) + 'ms ease';
+        old.style.opacity = '0';
+        setTimeout(function () { if (old.parentNode) old.remove(); }, fadeMs || 300);
+        _sceneImg = null;
+    }
+    if (_sceneCaptionEl) {
+        _sceneCaptionEl.textContent = '';
+        _sceneCaptionEl.style.display = 'none';
+    }
+    _scenePanel.classList.remove('sp-active');
+}
+
+function _initScenePanel(centerPanel) {
+    _scenePanel = document.createElement('div');
+    _scenePanel.id = 'scene-panel';
+    _scenePanel.innerHTML = `
+        <div class="sp-viewport">
+            <div class="sp-idle-bg"></div>
+            <div class="sp-scanlines"></div>
+        </div>
+        <div class="sp-caption"></div>
+    `;
+    // Insert before the narrative feed
+    centerPanel.insertBefore(_scenePanel, centerPanel.firstChild);
+    _sceneCaptionEl = _scenePanel.querySelector('.sp-caption');
+}
+
 // ======================== DOM SETUP ========================
 
 function initNarrativeFeed() {
@@ -194,6 +333,8 @@ function initNarrativeFeed() {
     // Insert into center panel, after cp-content area
     const centerPanel = document.getElementById('center-panel');
     if (centerPanel) {
+        // Create scene panel above narrative feed
+        _initScenePanel(centerPanel);
         centerPanel.appendChild(_narrativePanel);
     }
 

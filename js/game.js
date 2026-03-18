@@ -111,4 +111,6 @@ function startDayPlay() {
     SIM.prevGauges = calculateGauges();
     if (typeof showActionPanel === 'function') showActionPanel();
     if (typeof updateCenterPanel === 'function') updateCenterPanel();
+    // Show current story arc as ambient art during dayplay
+    if (typeof showSceneAmbient === 'function') showSceneAmbient();
 }
