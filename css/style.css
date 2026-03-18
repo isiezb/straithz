@@ -60,17 +60,232 @@ body {
     z-index: 999;
 }
 
-/* ======================== CANVAS ======================== */
+/* ======================== CANVAS (hidden — kept for sprite generation) ======================== */
 
 #game-canvas {
-    display: block;
+    display: none;
+}
+
+/* ======================== CENTER PANEL (situation room) ======================== */
+
+#center-panel {
     position: absolute;
     top: 52px;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 52px);
-    image-rendering: pixelated;
+    left: 320px;
+    right: 280px;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #050505;
+    background-image: url('../assets/situation-room.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 5;
 }
+
+#center-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#center-panel .cp-content {
+    position: relative;
+    z-index: 1;
+    padding: 16px 20px;
+    min-height: 100%;
+}
+
+/* Tactical display header */
+.cp-header {
+    text-align: center;
+    padding: 8px 0 12px;
+    border-bottom: 1px solid rgba(26, 58, 42, 0.4);
+    margin-bottom: 12px;
+}
+.cp-header-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: #2a6a4a;
+}
+.cp-day {
+    font-size: 22px;
+    font-weight: bold;
+    color: #44dd88;
+    text-shadow: 0 0 15px rgba(68, 221, 136, 0.3);
+    letter-spacing: 3px;
+}
+.cp-date {
+    font-size: 10px;
+    color: #2a6a4a;
+    margin-top: 2px;
+}
+
+/* Force overview grid */
+.cp-forces {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.cp-force-card {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid #1a3a2a;
+    padding: 10px 12px;
+    position: relative;
+}
+.cp-force-card.threat {
+    border-color: rgba(221, 68, 68, 0.3);
+}
+.cp-force-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #2a6a4a;
+    margin-bottom: 4px;
+}
+.cp-force-val {
+    font-size: 20px;
+    font-weight: bold;
+    color: #44dd88;
+    line-height: 1;
+}
+.cp-force-val.danger { color: #dd4444; }
+.cp-force-val.warning { color: #ddaa44; }
+.cp-force-sub {
+    font-size: 9px;
+    color: #88aa99;
+    margin-top: 3px;
+}
+
+/* Oil flow visualization */
+.cp-oil-flow {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid #1a3a2a;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    text-align: center;
+}
+.cp-oil-label {
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #2a6a4a;
+    margin-bottom: 6px;
+}
+.cp-oil-bar {
+    width: 100%;
+    height: 12px;
+    background: #0d1a10;
+    border: 1px solid #1a3a2a;
+    position: relative;
+    overflow: hidden;
+}
+.cp-oil-fill {
+    height: 100%;
+    transition: width 0.8s ease;
+    position: relative;
+}
+.cp-oil-fill.good { background: #44dd88; box-shadow: 0 0 8px rgba(68, 221, 136, 0.4); }
+.cp-oil-fill.warning { background: #ddaa44; box-shadow: 0 0 8px rgba(221, 170, 68, 0.4); }
+.cp-oil-fill.danger { background: #dd4444; box-shadow: 0 0 8px rgba(221, 68, 68, 0.4); }
+.cp-oil-fill.blocked { background: #551111; }
+.cp-oil-pct {
+    font-size: 16px;
+    font-weight: bold;
+    color: #44dd88;
+    margin-top: 4px;
+}
+.cp-oil-pct.warning { color: #ddaa44; }
+.cp-oil-pct.danger { color: #dd4444; }
+.cp-oil-detail {
+    font-size: 9px;
+    color: #88aa99;
+    margin-top: 2px;
+}
+
+/* Live event feed */
+.cp-feed {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid #1a3a2a;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+.cp-feed-label {
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #2a6a4a;
+    margin-bottom: 6px;
+}
+.cp-feed-item {
+    font-size: 10px;
+    line-height: 1.5;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(26, 58, 42, 0.2);
+    color: #88aa99;
+}
+.cp-feed-item:last-child { border-bottom: none; }
+.cp-feed-item.critical { color: #dd4444; }
+.cp-feed-item.warning { color: #ddaa44; }
+.cp-feed-item.good { color: #44dd88; }
+.cp-feed-item .feed-time {
+    color: #2a6a4a;
+    font-size: 8px;
+    margin-right: 6px;
+}
+
+/* Threat meter */
+.cp-threat {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid #1a3a2a;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+.cp-threat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 10px;
+    color: #88aa99;
+}
+.cp-threat-bar {
+    flex: 1;
+    height: 6px;
+    background: #0d1a10;
+    border: 1px solid #1a3a2a;
+    margin: 0 10px;
+}
+.cp-threat-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+}
+.cp-threat-label { width: 80px; font-size: 9px; color: #2a6a4a; letter-spacing: 1px; }
+.cp-threat-val { width: 30px; text-align: right; font-weight: bold; }
+
+/* AP dots in center panel */
+.cp-ap {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 11px;
+    color: #88aa99;
+}
+.cp-ap .ap-dot.filled { color: #44dd88; text-shadow: 0 0 8px rgba(68, 221, 136, 0.5); font-size: 16px; }
+.cp-ap .ap-dot.empty { color: #1a3a2a; font-size: 16px; }
+
+/* Win tracker in center */
+.cp-win-tracker {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(68, 221, 136, 0.2);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+
+/* Center panel adjustments when panels hidden */
+#center-panel.no-sitpanel { left: 0; }
+#center-panel.no-actpanel { right: 0; }
+#center-panel.no-sitpanel.no-actpanel { left: 0; right: 0; }
 
 /* Situation dashboard left panel */
 #situation-panel {
@@ -192,16 +407,9 @@ body {
     line-height: 1.6;
 }
 
-/* Canvas stays full-width behind panels as background */
-#game-canvas.with-sitpanel {
-    left: 0;
-    width: 100%;
-}
-
-#game-canvas.with-both {
-    left: 0;
-    width: 100%;
-}
+/* Legacy canvas classes — no longer used */
+#game-canvas.with-sitpanel { display: none; }
+#game-canvas.with-both { display: none; }
 
 /* ======================== GAUGE BAR ======================== */
 
@@ -1782,7 +1990,7 @@ body {
     width: 280px;
     height: calc(100vh - 52px);
     max-height: calc(100vh - 52px);
-    background: rgba(5, 5, 5, 0.92);
+    background: #0a0a0a;
     border-left: 2px solid #1a3a2a;
     z-index: 50;
     display: flex;
@@ -2295,38 +2503,31 @@ html, body {
 
 /* Responsive: smaller screens */
 @media (max-width: 900px) {
-    #situation-panel {
-        width: 240px;
-    }
-    #action-panel {
-        width: 240px;
-    }
+    #situation-panel { width: 240px; }
+    #action-panel { width: 240px; }
+    #center-panel { left: 240px; right: 240px; }
 }
 
 @media (max-width: 700px) {
-    #situation-panel {
-        width: 200px;
-        font-size: 10px;
-        padding: 6px 8px;
-    }
-    #action-panel {
-        width: 200px;
-    }
+    #situation-panel { width: 200px; font-size: 10px; padding: 6px 8px; }
+    #action-panel { width: 200px; }
+    #center-panel { left: 200px; right: 200px; }
     .gauge-item { padding: 2px 4px; }
     .gauge-value { font-size: 13px; }
     .gauge-label { font-size: 7px; letter-spacing: 1px; }
     #gauge-bar { height: 44px; padding: 0 4px; }
-    #game-canvas { top: 44px; height: calc(100vh - 44px); }
     #situation-panel { top: 44px; height: calc(100vh - 44px); }
     #action-panel { top: 44px; height: calc(100vh - 44px); }
+    #center-panel { top: 44px; }
+    .cp-forces { grid-template-columns: 1fr; }
 }
 
 @media (max-height: 600px) {
     #gauge-bar { height: 40px; }
     .gauge-value { font-size: 12px; }
     .gauge-track { height: 4px; }
-    #game-canvas { top: 40px; height: calc(100vh - 40px); }
     #situation-panel { top: 40px; height: calc(100vh - 40px); }
     #action-panel { top: 40px; height: calc(100vh - 40px); }
+    #center-panel { top: 40px; }
     .terminal-box { max-height: 85vh; padding: 16px 14px; }
 }

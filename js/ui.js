@@ -218,6 +218,7 @@ function initUI() {
     _injectActionPanelStyles();
     initMusic();
     initSituationPanel();
+    updateCenterPanel();
 }
 
 // ======================== SITUATION PANEL (left sidebar) ========================
@@ -226,8 +227,6 @@ function initSituationPanel() {
     const panel = document.getElementById('situation-panel');
     if (!panel) return;
     panel.style.display = '';
-    const canvas = document.getElementById('game-canvas');
-    if (canvas) canvas.classList.add('with-sitpanel');
     updateSituationPanel();
 }
 
@@ -338,19 +337,143 @@ function updateSituationPanel() {
 function hideSituationPanel() {
     const panel = document.getElementById('situation-panel');
     if (panel) panel.style.display = 'none';
-    const canvas = document.getElementById('game-canvas');
-    if (canvas) {
-        canvas.classList.remove('with-sitpanel');
-        canvas.classList.remove('with-both');
-    }
+    const centerPanel = document.getElementById('center-panel');
+    if (centerPanel) centerPanel.classList.add('no-sitpanel');
 }
 
 function showSituationPanel() {
     const panel = document.getElementById('situation-panel');
     if (panel) panel.style.display = '';
-    const canvas = document.getElementById('game-canvas');
-    if (canvas) canvas.classList.add('with-sitpanel');
     updateSituationPanel();
+}
+
+// ======================== CENTER PANEL (Situation Room) ========================
+
+function updateCenterPanel() {
+    const panel = document.getElementById('center-panel');
+    if (!panel) return;
+
+    const flow = Math.round(SIM.oilFlow);
+    const flowCls = flow >= 60 ? 'good' : flow >= 35 ? 'warning' : flow < 20 ? 'blocked' : 'danger';
+    const flowPctCls = flow >= 60 ? '' : flow >= 35 ? 'warning' : 'danger';
+
+    const navyCount = SIM.navyShips.length;
+    const boatCount = SIM.iranBoats.length;
+    const seizedCount = SIM.tankers.filter(t => t.seized).length;
+    const tankerCount = SIM.tankers.filter(t => !t.seized).length;
+    const mineCount = SIM.mines.length;
+    const droneCount = SIM.drones.length;
+    const esc = ESCALATION_LADDER[Math.min(SIM.warPath, 5)];
+
+    // AP dots
+    const ap = SIM.actionPoints || 0;
+    const apDots = Array.from({ length: 5 }, (_, i) => i < ap
+        ? '<span class="ap-dot filled">\u25CF</span>'
+        : '<span class="ap-dot empty">\u25CB</span>'
+    ).join('');
+
+    // Game date
+    const startDate = new Date(2026, 1, 28); // Feb 28, 2026
+    const gameDate = new Date(startDate);
+    gameDate.setDate(gameDate.getDate() + SIM.day - 1);
+    const dateStr = gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    // Recent headlines (last 8)
+    const recent = SIM.headlines.slice(-8);
+    const feedHtml = recent.map(h => {
+        const prefix = h.level === 'critical' ? '<span class="feed-time">FLASH</span>'
+                     : h.level === 'warning' ? '<span class="feed-time">ALERT</span>'
+                     : '<span class="feed-time">WIRE</span>';
+        return `<div class="cp-feed-item ${h.level}">${prefix} ${h.text}</div>`;
+    }).reverse().join('');
+
+    // Threat meters
+    const threats = [
+        { label: 'TENSION', val: Math.round(SIM.tension), max: 100 },
+        { label: 'IRAN AGGR', val: Math.round(SIM.iranAggression), max: 100 },
+        { label: 'CONFLICT', val: Math.round(SIM.conflictRisk), max: 100 },
+        { label: 'FOG OF WAR', val: Math.round(SIM.fogOfWar), max: 100 },
+    ];
+    const threatHtml = threats.map(t => {
+        const pct = Math.round((t.val / t.max) * 100);
+        const cls = t.val >= 70 ? 'danger' : t.val >= 40 ? 'warning' : 'good';
+        return `<div class="cp-threat-row">
+            <span class="cp-threat-label">${t.label}</span>
+            <div class="cp-threat-bar"><div class="cp-threat-fill gauge-fill ${cls}" style="width:${pct}%"></div></div>
+            <span class="cp-threat-val ${cls}">${t.val}</span>
+        </div>`;
+    }).join('');
+
+    // Iran strategy display
+    const iranColors = { restrained: '#44dd88', probing: '#ddaa44', escalatory: '#dd8844', confrontational: '#dd4444' };
+    const iranColor = iranColors[SIM.iranStrategy] || '#88aa99';
+
+    // Win progress
+    const winHtml = typeof _getWinProgress === 'function' ? _getWinProgress() : '';
+
+    panel.innerHTML = `<div class="cp-content">
+        <div class="cp-header">
+            <div class="cp-header-label">SITUATION ROOM</div>
+            <div class="cp-day">DAY ${SIM.day}</div>
+            <div class="cp-date">${dateStr}</div>
+            <div class="cp-ap">ACTION POINTS: ${apDots}</div>
+        </div>
+
+        <div class="cp-oil-flow">
+            <div class="cp-oil-label">STRAIT OIL FLOW</div>
+            <div class="cp-oil-bar"><div class="cp-oil-fill ${flowCls}" style="width:${flow}%"></div></div>
+            <div class="cp-oil-pct ${flowPctCls}">${flow}%</div>
+            <div class="cp-oil-detail">${tankerCount} tankers in transit${seizedCount > 0 ? ` \u2022 <span style="color:#dd4444">${seizedCount} SEIZED</span>` : ''} \u2022 $${Math.round(SIM.oilPrice)}/bbl</div>
+        </div>
+
+        <div class="cp-forces">
+            <div class="cp-force-card">
+                <div class="cp-force-label">US NAVAL FORCES</div>
+                <div class="cp-force-val">${navyCount} SHIPS</div>
+                <div class="cp-force-sub">${SIM.carrier ? 'CSG EISENHOWER deployed' : 'No carrier group'}${droneCount > 0 ? ` \u2022 ${droneCount} drones` : ''}</div>
+            </div>
+            <div class="cp-force-card threat">
+                <div class="cp-force-label">IRGC NAVAL FORCES</div>
+                <div class="cp-force-val ${boatCount > 4 ? 'danger' : boatCount > 2 ? 'warning' : ''}">${boatCount} BOATS</div>
+                <div class="cp-force-sub">Posture: <span style="color:${iranColor}">${(SIM.iranStrategy || 'unknown').toUpperCase()}</span>${mineCount > 0 ? ` \u2022 <span style="color:#dd4444">${mineCount} mines</span>` : ''}</div>
+            </div>
+            <div class="cp-force-card">
+                <div class="cp-force-label">ESCALATION LEVEL</div>
+                <div class="cp-force-val" style="color:${esc.color};font-size:14px">${esc.name}</div>
+                <div class="cp-force-sub">${esc.description}</div>
+            </div>
+            <div class="cp-force-card">
+                <div class="cp-force-label">INTERCEPTS / SEIZURES</div>
+                <div class="cp-force-val" style="font-size:14px"><span style="color:#44dd88">${SIM.interceptCount}</span> / <span style="color:#dd4444">${SIM.seizureCount}</span></div>
+                <div class="cp-force-sub">Crisis level: ${['NONE', 'ELEVATED', 'MAJOR', 'CRITICAL'][Math.min(SIM.crisisLevel, 3)]}</div>
+            </div>
+        </div>
+
+        <div class="cp-threat">
+            <div class="cp-feed-label">THREAT ASSESSMENT</div>
+            ${threatHtml}
+        </div>
+
+        <div class="cp-win-tracker">
+            ${winHtml}
+        </div>
+
+        <div class="cp-feed">
+            <div class="cp-feed-label">LIVE WIRE FEED</div>
+            ${feedHtml || '<div class="cp-feed-item" style="color:#2a6a4a">No current reports.</div>'}
+        </div>
+    </div>`;
+}
+
+function showCenterPanel() {
+    const panel = document.getElementById('center-panel');
+    if (panel) panel.style.display = '';
+    updateCenterPanel();
+}
+
+function hideCenterPanel() {
+    const panel = document.getElementById('center-panel');
+    if (panel) panel.style.display = 'none';
 }
 
 // ======================== TERMINAL HELPERS ========================
@@ -1107,14 +1230,10 @@ function _getROEColor() {
 function showActionPanel() {
     hideActionPanel();
 
-    // Shrink all layout elements to make room for action panel
-    const canvas = document.getElementById('game-canvas');
+    // Update layout for action panel
+    const centerPanel = document.getElementById('center-panel');
     const gaugeBar = document.getElementById('gauge-bar');
-    if (canvas) {
-        canvas.classList.remove('with-sitpanel');
-        canvas.classList.add('with-both');
-        canvas.style.width = '';
-    }
+    if (centerPanel) centerPanel.classList.remove('no-actpanel');
     if (gaugeBar) gaugeBar.style.right = '280px';
 
     const panel = document.createElement('div');
@@ -2052,16 +2171,9 @@ function hideActionPanel() {
     if (existing) existing.remove();
 
     // Restore layout widths
-    const canvas = document.getElementById('game-canvas');
+    const centerPanel = document.getElementById('center-panel');
     const gaugeBar = document.getElementById('gauge-bar');
-    if (canvas) {
-        canvas.classList.remove('with-both');
-        const sitPanel = document.getElementById('situation-panel');
-        if (sitPanel && sitPanel.style.display !== 'none') {
-            canvas.classList.add('with-sitpanel');
-        }
-        canvas.style.width = '';
-    }
+    if (centerPanel) centerPanel.classList.add('no-actpanel');
     if (gaugeBar) gaugeBar.style.right = '';
 }
 

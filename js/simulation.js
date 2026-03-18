@@ -333,11 +333,12 @@ function tickSimulation() {
 function checkConsequenceEvents() {
     if (!SIM.activeStances || SIM.activeStances.length === 0) return null;
 
-    // Three-act pacing: event frequency varies by day
+    // Three-act pacing: event frequency varies by day (reduced for less chaos)
     let eventChance;
-    if (SIM.day <= 20) eventChance = 0.65;       // Crisis: events most days
-    else if (SIM.day <= 55) eventChance = 0.40;   // Grind: every 2-3 days
-    else eventChance = 0.60;                       // Endgame: ramp back up
+    if (SIM.day <= 10) eventChance = 0.30;        // Ease-in: let player learn
+    else if (SIM.day <= 30) eventChance = 0.45;   // Rising action
+    else if (SIM.day <= 55) eventChance = 0.35;   // Sustained: every 2-3 days
+    else eventChance = 0.45;                       // Endgame
 
     if (Math.random() > eventChance) return null;
 
@@ -552,16 +553,17 @@ function dailyUpdate() {
     // Weekly cost divided by 7 for daily
     SIM.budget -= adjustedCost / 7;
 
-    // Budget income: coalition allies + oil revenue
-    const coalitionIncome = (SIM.internationalStanding / 100) * 2.5; // up to $2.5M/day from allies
-    const oilRevenue = (SIM.oilFlow / 100) * 1.5; // up to $1.5M/day from flowing oil
-    SIM.budget += coalitionIncome + oilRevenue;
+    // Budget income: coalition allies + oil revenue + base congressional funding
+    const coalitionIncome = (SIM.internationalStanding / 100) * 5; // up to $5M/day from allies
+    const oilRevenue = (SIM.oilFlow / 100) * 4; // up to $4M/day from flowing oil
+    const baseFunding = 3; // $3M/day congressional baseline
+    SIM.budget += coalitionIncome + oilRevenue + baseFunding;
 
-    // Tension — card stances set baseline drift, playerDeltas shift the target
-    const dipBonus = (SIM.diplomaticCapital - 50) * 0.05;
-    const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus + pd.tension));
+    // Tension — card stances set baseline drift, playerDeltas shift the target (0.3x like other metrics)
+    const dipBonus = (SIM.diplomaticCapital - 50) * 0.08;
+    const targetTension = Math.max(0, Math.min(100, 15 + tensionDelta - dipBonus + pd.tension * 0.3));
     SIM.tension += (targetTension - SIM.tension) * 0.12;
-    SIM.tension += SIM.crisisLevel * 2;
+    SIM.tension += SIM.crisisLevel * 1.5;
     // Oil flow — derives from tension but playerDelta shifts it
     const baseFlow = 100 - (SIM.tension * 0.5);
     SIM.oilFlow = Math.max(10, Math.min(100, baseFlow + protectionBonus * 0.3 + pd.oilFlow));
@@ -583,9 +585,9 @@ function dailyUpdate() {
     SIM.domesticApproval += (targetApproval - SIM.domesticApproval) * 0.10;
     if (seizedCount > 0) SIM.domesticApproval -= seizedCount * 0.5;
     if (SIM.interceptCount > 0) SIM.domesticApproval += Math.min(SIM.interceptCount * 0.3, 2);
-    if (SIM.oilFlow < 30) SIM.domesticApproval -= 3;
-    if (SIM.oilFlow < 15) SIM.domesticApproval -= 5;
-    if (SIM.budget < 0) SIM.domesticApproval -= 1;
+    if (SIM.oilFlow < 25) SIM.domesticApproval -= 1.5;
+    if (SIM.oilFlow < 15) SIM.domesticApproval -= 2;
+    if (SIM.budget < 0) SIM.domesticApproval -= 0.5;
     if (SIM.polarization > 50) SIM.domesticApproval -= (SIM.polarization - 50) * 0.04;
     SIM.domesticApproval = Math.max(0, Math.min(100, SIM.domesticApproval));
 
@@ -595,34 +597,34 @@ function dailyUpdate() {
     SIM.internationalStanding += (targetStanding - SIM.internationalStanding) * 0.10;
     SIM.internationalStanding = Math.max(0, Math.min(100, SIM.internationalStanding));
 
-    // Iran aggression — card effects now 0.3x (was 0.05x), plus playerDelta
+    // Iran aggression — card effects 0.6x, playerDelta 0.3x (boosted so cards matter)
     const aggrDelta = getStanceEffect('iranAggression');
-    SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + aggrDelta * 0.3 + pd.iranAggression * 0.15));
-    if (SIM.iranEconomy < 30) SIM.iranAggression += 0.25;
+    SIM.iranAggression = Math.max(0, Math.min(100, SIM.iranAggression + aggrDelta * 0.6 + pd.iranAggression * 0.3));
+    if (SIM.iranEconomy < 30) SIM.iranAggression += 0.15;
 
-    // Iran economy — card effects now 0.15x (was 0.02x), plus playerDelta
+    // Iran economy — card effects 0.4x, playerDelta 0.3x (boosted so sanctions bite)
     const econDelta = getStanceEffect('iranEconomy');
-    SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + econDelta * 0.15 + pd.iranEconomy * 0.15));
-    if (SIM.chinaRelations < 30) SIM.iranEconomy += 0.5;
+    SIM.iranEconomy = Math.max(0, Math.min(100, SIM.iranEconomy + econDelta * 0.4 + pd.iranEconomy * 0.3));
+    if (SIM.chinaRelations < 30) SIM.iranEconomy += 0.3;
 
-    // Fog of war — card effects now 0.3x (was 0.05x), plus playerDelta
+    // Fog of war — card effects 0.5x, playerDelta 0.3x, natural drift reduced
     let fogDelta = getStanceEffect('fogOfWar');
-    SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + 0.8 + fogDelta * 0.3 + pd.fogOfWar * 0.15));
+    SIM.fogOfWar = Math.max(0, Math.min(100, SIM.fogOfWar + 0.4 + fogDelta * 0.5 + pd.fogOfWar * 0.3));
 
     // Conflict risk — derived, playerDelta shifts it
     const crDelta = getStanceEffect('conflictRisk');
     SIM.conflictRisk = Math.max(0, Math.min(100,
-        SIM.tension * 0.4 + SIM.iranAggression * 0.3 + crDelta + SIM.crisisLevel * 10 + SIM.warPath * 8 + pd.conflictRisk
+        SIM.tension * 0.35 + SIM.iranAggression * 0.25 + crDelta + SIM.crisisLevel * 8 + SIM.warPath * 5 + pd.conflictRisk
     ));
 
-    // Diplomatic capital — card effects now 0.4x (was 0.1x), plus playerDelta
+    // Diplomatic capital — card effects 0.7x, playerDelta 0.3x (diplomacy matters)
     const dipDelta2 = getStanceEffect('diplomaticCapital');
     if (SIM.character && SIM.character.diplomacyMult && dipDelta2 > 0) {
-        SIM.diplomaticCapital += dipDelta2 * SIM.character.diplomacyMult * 0.55;
+        SIM.diplomaticCapital += dipDelta2 * SIM.character.diplomacyMult * 0.7;
     } else {
-        SIM.diplomaticCapital += dipDelta2 * 0.55;
+        SIM.diplomaticCapital += dipDelta2 * 0.7;
     }
-    SIM.diplomaticCapital += pd.diplomaticCapital * 0.15;
+    SIM.diplomaticCapital += pd.diplomaticCapital * 0.3;
     SIM.diplomaticCapital = Math.max(0, Math.min(100, SIM.diplomaticCapital));
 
     // Free weekly de-escalation: -1 warPath every 7 days if tension is below 60
@@ -651,9 +653,10 @@ function dailyUpdate() {
     while (SIM.iranBoats.length < targetBoats) spawnIranBoat(0.4 + Math.random() * 0.2, 0.30 + Math.random() * 0.15);
     while (SIM.iranBoats.length > targetBoats) SIM.iranBoats.pop();
 
-    // Tankers
-    while (SIM.tankers.length < Math.floor(SIM.oilFlow / 8)) spawnTanker();
-    while (SIM.tankers.length > Math.ceil(SIM.oilFlow / 6)) SIM.tankers.shift();
+    // Tankers — always maintain at least 3 (prevents dead-end spiral)
+    const minTankers = Math.max(3, Math.floor(SIM.oilFlow / 8));
+    while (SIM.tankers.length < minTankers) spawnTanker();
+    while (SIM.tankers.length > Math.ceil(SIM.oilFlow / 6) + 2) SIM.tankers.shift();
 
     // Release seized tankers
     for (const t of SIM.tankers) {
@@ -665,10 +668,10 @@ function dailyUpdate() {
 
     // --- Statistical Seizure/Intercept Model (P2) ---
     // Seizure chance based on Iran aggression + strategy, reduced by naval presence
-    const seizureBase = SIM.iranStrategy === 'confrontational' ? 0.20 :
-                        SIM.iranStrategy === 'escalatory' ? 0.12 :
-                        SIM.iranStrategy === 'probing' ? 0.05 : 0.01;
-    const navalDeterrence = Math.min(0.15, navalPresence * 0.05);
+    const seizureBase = SIM.iranStrategy === 'confrontational' ? 0.12 :
+                        SIM.iranStrategy === 'escalatory' ? 0.06 :
+                        SIM.iranStrategy === 'probing' ? 0.02 : 0.005;
+    const navalDeterrence = Math.min(0.10, navalPresence * 0.04);
     const seizureChance = Math.max(0, seizureBase - navalDeterrence);
 
     if (Math.random() < seizureChance && SIM.tankers.length > 0) {
@@ -976,10 +979,12 @@ function checkWinLose() {
             return true;
         }
     } else {
-        if (SIM.straitOpenDays > 2) {
-            addHeadline(`Strait stability disrupted — counter resets (was ${SIM.straitOpenDays}/7)`, 'warning');
+        // Grace: lose 2 days instead of full reset (less punishing)
+        if (SIM.straitOpenDays > 0) {
+            const lost = Math.min(2, SIM.straitOpenDays);
+            SIM.straitOpenDays = Math.max(0, SIM.straitOpenDays - lost);
+            addHeadline(`Strait stability disrupted — progress ${SIM.straitOpenDays > 0 ? 'reduced to ' + SIM.straitOpenDays + '/7' : 'lost'}`, 'warning');
         }
-        SIM.straitOpenDays = 0;
     }
 
     // --- Lose 1: Removed from office ---

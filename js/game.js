@@ -19,19 +19,26 @@
         showDailyReport();
 
         let lastFrame = 0;
+        let _cpUpdateTimer = 0;
 
         function gameLoop(timestamp) {
             try {
                 const dt = timestamp - lastFrame;
                 lastFrame = timestamp;
-                renderMap();
                 updateGauges();
 
-                // During dayplay, just tick entity movement (no auto-advance)
+                // During dayplay, tick entity movement + update center panel periodically
                 if (SIM.phase === 'dayplay' && !SIM.gameOver) {
                     const ticksPerFrame = 2;
                     for (let i = 0; i < ticksPerFrame; i++) {
                         tickSimulation();
+                    }
+                    // Update center panel every ~500ms (not every frame)
+                    _cpUpdateTimer += dt;
+                    if (_cpUpdateTimer > 500) {
+                        _cpUpdateTimer = 0;
+                        if (typeof updateCenterPanel === 'function') updateCenterPanel();
+                        if (typeof updateSituationPanel === 'function') updateSituationPanel();
                     }
                 }
 
@@ -79,4 +86,5 @@ function startDayPlay() {
     SIM.actionPoints = 5;
     SIM.prevGauges = calculateGauges();
     if (typeof showActionPanel === 'function') showActionPanel();
+    if (typeof updateCenterPanel === 'function') updateCenterPanel();
 }
