@@ -478,12 +478,20 @@ const CONTACT_CARDS = {
 /**
  * Get aggregate effect from active stances (replaces getAggregateEffect)
  */
+let _allCardsCache = null;
+function _getAllCards() {
+    if (!_allCardsCache) {
+        _allCardsCache = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
+    }
+    return _allCardsCache;
+}
+
 function getStanceEffect(effectName) {
     let total = 0;
     if (!SIM.activeStances) return 0;
     const mult = (SIM.character && SIM.character.cardPool && SIM.character.cardPool.effectMultiplier) || 1;
+    const allCards = _getAllCards();
     for (const stance of SIM.activeStances) {
-        const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
         const card = allCards.find(c => c.id === stance.cardId);
         if (card && card.effects[stance.funding]) {
             total += (card.effects[stance.funding][effectName] || 0) * mult;
@@ -495,8 +503,8 @@ function getStanceEffect(effectName) {
 function getStanceMax(effectName) {
     let max = 0;
     if (!SIM.activeStances) return 0;
+    const allCards = _getAllCards();
     for (const stance of SIM.activeStances) {
-        const allCards = [...STRATEGY_CARDS, ...Object.values(CHARACTER_BONUS_CARDS), ...Object.values(CONTACT_CARDS)];
         const card = allCards.find(c => c.id === stance.cardId);
         if (card && card.effects[stance.funding]) {
             const val = card.effects[stance.funding][effectName] || 0;

@@ -57,12 +57,9 @@ function renderMap() {
         drawProceduralMap(ctx, w, h);
     }
 
-    // --- Overlays ---
+    // --- Overlays (no entity sprites — just lane flow and markers) ---
     drawShippingLaneFlow(ctx, w, h);
-    drawPlatforms(ctx, w, h);
-    drawEntities(ctx, w, h);
     drawIncidentMarkers(ctx, w, h);
-    drawHazardMarkers(ctx, w, h);
 
     // Day counter
     drawDayCounter(ctx, w, h);
@@ -927,10 +924,10 @@ function drawDayCounter(ctx, w, h) {
     const ap = SIM.actionPoints || 0;
     const dotSize = 6;
     const dotGap = 10;
-    const totalDotsW = 3 * dotSize + 2 * dotGap;
+    const totalDotsW = 5 * dotSize + 4 * dotGap;
     const dotsX = w * 0.5 - totalDotsW / 2;
     const dotsY = 50;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
         ctx.fillStyle = i < ap ? 'rgba(68, 221, 136, 0.6)' : 'rgba(26, 58, 42, 0.3)';
         ctx.beginPath();
         ctx.arc(dotsX + i * (dotSize + dotGap) + dotSize / 2, dotsY, dotSize / 2, 0, Math.PI * 2);

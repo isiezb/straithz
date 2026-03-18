@@ -310,7 +310,7 @@ function updateSituationPanel() {
             <div class="sit-label">SITUATION REPORT \u2014 DAY ${SIM.day}</div>
             <div class="sit-row"><span style="color:${esc.color}">${esc.name}</span><span class="sit-val" style="color:${esc.color}">${SIM.warPath}/5</span></div>
             <div class="sit-row"><span>ROE</span><span class="sit-val" style="color:${roeColor}">${roeLabel}</span></div>
-            <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/14 OPEN' : 'CONTESTED'}</span></div>
+            <div class="sit-row"><span>Strait</span><span class="sit-val ${SIM.straitOpenDays > 0 ? 'good' : 'danger'}">${SIM.straitOpenDays > 0 ? SIM.straitOpenDays + '/10 OPEN' : 'CONTESTED'}</span></div>
             <div class="sit-row"><span>Budget</span><span class="sit-val ${SIM.budget > 500 ? 'good' : SIM.budget > 200 ? 'warning' : 'danger'}">$${Math.round(SIM.budget)}M</span></div>
             <div class="sit-row"><span>Rating</span><span class="sit-val ${r.score >= 60 ? 'good' : r.score >= 35 ? 'warning' : 'danger'}">${r.grade}</span></div>
             ${typeof _getWinProgress === 'function' ? _getWinProgress() : ''}
@@ -420,7 +420,13 @@ function updateGauges() {
     const dayEl = document.getElementById('hud-day');
     if (dayEl) dayEl.textContent = _getDateString();
 
-    if (typeof updateSituationPanel === 'function') updateSituationPanel();
+    if (typeof updateSituationPanel === 'function') {
+        const now = performance.now();
+        if (!updateGauges._lastSitUpdate || now - updateGauges._lastSitUpdate > 1000) {
+            updateGauges._lastSitUpdate = now;
+            updateSituationPanel();
+        }
+    }
 
     // Rating
     const ratingEl = document.getElementById('hud-rating');
@@ -547,7 +553,7 @@ function _getKeyDrivers() {
     if (SIM.chinaRelations < 30) drivers.push({ text: 'China buying Iranian oil — sanctions less effective', cls: 'down-bad' });
     // Positive
     if (SIM.interceptCount > 0) drivers.push({ text: `${SIM.interceptCount} intercepts boosting approval`, cls: 'up-good' });
-    if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/14 days toward victory`, cls: 'up-good' });
+    if (SIM.straitOpenDays > 0) drivers.push({ text: `Strait open ${SIM.straitOpenDays}/10 days toward victory`, cls: 'up-good' });
     // Player deltas
     const pd = SIM.playerDeltas;
     if (pd.tension < -3) drivers.push({ text: 'Your actions are reducing tension', cls: 'up-good' });
@@ -1901,6 +1907,7 @@ function _executeAction(actionId, rerenderFn) {
     }
 
     if (toastMsg) showToast(toastMsg, toastLevel);
+    _flushFloatingNumbers();
     updateGauges();
 
     // If AP exhausted, re-render panel (all buttons disabled, END DAY remains)
@@ -1924,76 +1931,6 @@ function _endDay() {
     hideActionPanel();
     if (typeof SFX !== 'undefined') SFX.transition();
     advanceDay();
-}
-
-function _showEndOfDaySummary(gaugesBefore, gaugesAfter, headlines, decisions, actionsUsed, onContinue) {
-    const overlay = document.createElement('div');
-    overlay.className = 'ap-interrupt'; // reuse interrupt overlay styling for positioning
-    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100;display:flex;align-items:center;justify-content:center;';
-
-    const gaugeNames = [
-        { key: 'stability', label: 'STABILITY', color: '#44dd88' },
-        { key: 'economy', label: 'ECONOMY', color: '#ddaa44' },
-        { key: 'support', label: 'SUPPORT', color: '#4488dd' },
-        { key: 'intel', label: 'INTEL', color: '#aa88dd' },
-    ];
-
-    const gaugeRows = gaugeNames.map(g => {
-        const val = Math.round(gaugesAfter[g.key]);
-        const d = Math.round(gaugesAfter[g.key] - gaugesBefore[g.key]);
-        const deltaStr = d > 0 ? `+${d}` : d < 0 ? `${d}` : '--';
-        const deltaCls = d > 0 ? 'up' : d < 0 ? 'down' : 'stable';
-        const fillColor = val >= 60 ? '#44dd88' : val >= 35 ? '#ddaa44' : '#dd4444';
-        return `<div class="eod-gauge-row">
-            <span class="eod-gauge-name">${g.label}</span>
-            <div class="eod-gauge-bar"><div class="eod-gauge-fill" style="width:${val}%;background:${fillColor}"></div></div>
-            <span class="eod-gauge-val" style="color:${fillColor}">${val}</span>
-            <span class="eod-gauge-delta ${deltaCls}">${deltaStr}</span>
-        </div>`;
-    }).join('');
-
-    const headlineHtml = headlines.length > 0
-        ? headlines.map(h => `<div class="eod-headline ${h.level}">${h.text}</div>`).join('')
-        : '<div class="eod-headline" style="color:#2a6a4a">A quiet day.</div>';
-
-    const decisionHtml = decisions.length > 0
-        ? `<div class="eod-actions-taken">DECISIONS: ${decisions.map(d => d.choice).join(' / ')}</div>`
-        : '';
-
-    // Win progress
-    const winProg = _getWinProgress();
-
-    overlay.innerHTML = `
-        <div class="eod-summary" style="max-width:420px;background:#0a0a0a;border:2px solid #1a3a2a;border-radius:0;">
-            <div class="eod-title">END OF DAY ${SIM.day}</div>
-            ${gaugeRows}
-            ${winProg}
-            <div style="margin-top:10px;padding-top:8px;border-top:1px solid #1a3a2a">
-                <div style="font-size:8px;letter-spacing:2px;color:#2a6a4a;margin-bottom:4px">TODAY'S EVENTS</div>
-                ${headlineHtml}
-            </div>
-            ${decisionHtml}
-            <div style="font-size:9px;color:#5a6e80;margin-top:8px">${actionsUsed}/3 actions used | Budget: $${Math.round(SIM.budget)}M</div>
-            <button class="eod-continue-btn" id="eod-continue">[ NEXT DAY ]</button>
-        </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    // Animate in
-    overlay.style.opacity = '0';
-    requestAnimationFrame(() => {
-        overlay.style.transition = 'opacity 0.3s ease';
-        overlay.style.opacity = '1';
-    });
-
-    document.getElementById('eod-continue').addEventListener('click', () => {
-        overlay.style.opacity = '0';
-        setTimeout(() => {
-            overlay.remove();
-            onContinue();
-        }, 300);
-    });
 }
 
 function _getWinProgress() {
@@ -2131,8 +2068,15 @@ function hideActionPanel() {
 
 // ======================== FLOATING NUMBERS ========================
 
+let _pendingFloats = {};
 function showFloatingNumber(metricKey, value) {
-    // No-op — replaced by showEffectSummary()
+    _pendingFloats[metricKey] = (_pendingFloats[metricKey] || 0) + value;
+}
+function _flushFloatingNumbers() {
+    if (Object.keys(_pendingFloats).length > 0) {
+        showEffectSummary(_pendingFloats);
+        _pendingFloats = {};
+    }
 }
 
 function showEffectSummary(effects, targetEl) {
@@ -2508,7 +2452,7 @@ function showGameOverScreen() {
             <div class="stat-row"><span>Character</span><span>${SIM.character ? SIM.character.name : 'None'}</span></div>
             <div class="stat-row"><span>Days Survived</span><span>${SIM.day}</span></div>
             <div class="stat-row"><span>Escalation</span><span style="color:${_getEscalationColor()}">${_getEscalationName()} (${SIM.warPath}/5)</span></div>
-            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/14 days</span></div>
+            <div class="stat-row"><span>Strait Open</span><span>${SIM.straitOpenDays}/10 days</span></div>
             <div class="stat-row"><span>Tankers Seized</span><span>${SIM.seizureCount}</span></div>
             <div class="stat-row"><span>Intercepts</span><span>${SIM.interceptCount}</span></div>
             <div class="stat-row"><span>Budget Remaining</span><span>$${Math.round(SIM.budget)}M / $900M</span></div>

@@ -145,6 +145,9 @@ const SIM_DEFAULTS = {
     decisionLog: [], weeklyReportActive: false, selectedEntity: null, selectedType: null,
     playerDeltas: { tension: 0, oilFlow: 0, domesticApproval: 0, internationalStanding: 0, iranAggression: 0, iranEconomy: 0, fogOfWar: 0, diplomaticCapital: 0, conflictRisk: 0 },
     _assassinationEventFired: false,
+    roe: 'defensive',
+    _guideSeen: false,
+    highPolarizationDays: 0,
 };
 
 const ESCALATION_LADDER = [
@@ -1015,6 +1018,16 @@ function checkWinLose() {
             return true;
         }
     } else { SIM.lowStandingDays = 0; }
+
+    // --- Lose 4: Civil War / Domestic Crisis ---
+    if (SIM.polarization >= 85) {
+        SIM.highPolarizationDays = (SIM.highPolarizationDays || 0) + 1;
+        if (SIM.highPolarizationDays >= 3) {
+            endGame(false, 'Domestic unrest has reached a breaking point. The military is split. ' +
+                'The crisis abroad has ignited a crisis at home. Civil order collapses.');
+            return true;
+        }
+    } else { SIM.highPolarizationDays = 0; }
 
     // --- Lose 5: War ---
     if (SIM.warPath >= 5) {
