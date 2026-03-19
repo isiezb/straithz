@@ -294,6 +294,14 @@ html, body {
     height: auto;
     object-fit: contain;
     filter: drop-shadow(4px 4px 20px rgba(0,0,0,0.8));
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+#vn-portrait img.vn-portrait-entering {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
 #vn-portrait.right-side {

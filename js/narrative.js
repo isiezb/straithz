@@ -102,6 +102,8 @@ let _lastStatHadScene = false;
 let _vnQueue = [];
 let _vnCurrentEntry = null;
 let _vnClickBound = false;
+let _vnTypewriting = false;   // true while typewriter is animating
+let _vnSkipResolve = null;    // call to instantly complete typewriter
 
 // ======================== PUBLIC API ========================
 
@@ -139,6 +141,8 @@ function clearNarrative() {
     _lastStatHadScene = false;
     _vnQueue = [];
     _vnCurrentEntry = null;
+    _vnTypewriting = false;
+    _vnSkipResolve = null;
     if (_narrativeFeed) _narrativeFeed.innerHTML = '';
     _clearSceneImage(0);
 }
@@ -279,6 +283,12 @@ function _autoScroll() {
 // ======================== VN QUEUE SYSTEM ========================
 
 function _vnDrainNext() {
+    // If typewriter is active, skip it first
+    if (_vnTypewriting && _vnSkipResolve) {
+        _vnSkipResolve();
+        return;
+    }
+
     if (_vnQueue.length === 0) {
         _vnCurrentEntry = null;
         return;
@@ -305,7 +315,71 @@ function _vnDrainNext() {
     // Update VN portrait
     _vnUpdatePortrait(_vnCurrentEntry);
 
-    // Show continue indicator if more entries queued
+    // Typewrite the primary entry's text element (scene/dialogue/cable/advisor/consequence)
+    const typeTarget = _findTypewriteTarget(feedScroll, _vnCurrentEntry.type);
+    if (typeTarget && typeTarget.textContent.length > 0) {
+        _vnTypewriteElement(typeTarget).then(() => {
+            _vnShowContinue(feedScroll);
+        });
+    } else {
+        _vnShowContinue(feedScroll);
+    }
+}
+
+/** Find the text span that should be typewritten for an entry type */
+function _findTypewriteTarget(feedScroll, type) {
+    if (!feedScroll) return null;
+    switch (type) {
+        case 'scene':       return feedScroll.querySelector('.nf-scene-text');
+        case 'dialogue':    return feedScroll.querySelector('.nf-dialogue-text');
+        case 'cable':       return feedScroll.querySelector('.nf-cable-text');
+        case 'advisor':     return feedScroll.querySelector('.nf-advisor-text');
+        case 'consequence': return feedScroll.querySelector('.nf-consequence-text');
+        case 'alert':       return feedScroll.querySelector('.nf-alert-critical, .nf-alert-warning, .nf-alert-good');
+        default:            return null;
+    }
+}
+
+/** Typewrite a single element's text at ~30ms/char, skippable */
+function _vnTypewriteElement(el) {
+    const fullText = el.textContent;
+    el.textContent = '';
+    el.classList.add('typewriter-cursor');
+    _vnTypewriting = true;
+
+    return new Promise(resolve => {
+        let i = 0;
+        let skipped = false;
+
+        _vnSkipResolve = function () {
+            if (skipped) return;
+            skipped = true;
+            _vnTypewriting = false;
+            _vnSkipResolve = null;
+            el.textContent = fullText;
+            el.classList.remove('typewriter-cursor');
+            resolve();
+        };
+
+        function tick() {
+            if (skipped) return;
+            if (i < fullText.length) {
+                el.textContent += fullText[i];
+                i++;
+                setTimeout(tick, 30);
+            } else {
+                _vnTypewriting = false;
+                _vnSkipResolve = null;
+                el.classList.remove('typewriter-cursor');
+                resolve();
+            }
+        }
+        tick();
+    });
+}
+
+/** Show ▼ continue indicator if more entries queued */
+function _vnShowContinue(feedScroll) {
     if (_vnQueue.length > 0 && feedScroll) {
         const indicator = document.createElement('div');
         indicator.className = 'vn-continue';
@@ -336,7 +410,32 @@ function _vnUpdatePortrait(entry) {
         img.draggable = false;
         el.appendChild(img);
     }
-    if (img.src !== src) img.src = src;
+
+    // Crossfade if portrait is changing
+    if (img.src && img.src !== src && !img.src.endsWith(src)) {
+        const oldImg = img;
+        const newImg = document.createElement('img');
+        newImg.alt = 'Character';
+        newImg.draggable = false;
+        newImg.className = 'vn-portrait-entering';
+        newImg.style.opacity = '0';
+        newImg.onload = function () {
+            el.appendChild(newImg);
+            // Force reflow then crossfade
+            newImg.offsetHeight;
+            newImg.style.transition = 'opacity 0.4s ease';
+            newImg.style.opacity = '1';
+            oldImg.style.transition = 'opacity 0.4s ease';
+            oldImg.style.opacity = '0';
+            setTimeout(() => {
+                if (oldImg.parentNode) oldImg.remove();
+                newImg.classList.remove('vn-portrait-entering');
+            }, 400);
+        };
+        newImg.src = src;
+    } else if (!img.src || img.src === '') {
+        img.src = src;
+    }
 }
 
 function _vnSetupClick() {
@@ -351,6 +450,13 @@ function _vnSetupClick() {
         // Don't advance if action bar is active
         if (document.getElementById('action-bar')?.classList.contains('active')) return;
 
+        // If typewriter is active, skip to full text
+        if (_vnTypewriting && _vnSkipResolve) {
+            _vnSkipResolve();
+            return;
+        }
+
+        // Otherwise advance to next entry
         if (_vnQueue.length > 0) {
             _vnDrainNext();
         }
