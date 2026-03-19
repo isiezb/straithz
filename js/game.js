@@ -67,9 +67,10 @@
                     }
                 }
 
-                // Render tactical map in sidebar
-                if (typeof renderMap === 'function' && MAP.canvas && MAP.canvas.offsetParent !== null) {
-                    if (SIM.phase !== 'dayplay' && SIM.phase !== 'morning' && SIM.phase !== 'event' && SIM.phase !== 'overnight') {
+                // Render tactical map only when strategy drawer is open
+                if (typeof renderMap === 'function' && MAP.canvas) {
+                    const drawer = document.getElementById('strategy-drawer');
+                    if (drawer && drawer.classList.contains('open')) {
                         renderMap();
                     }
                 }
@@ -119,18 +120,9 @@ function advanceToMorning() {
         showArcTransition(newArc.id, newArc.image);
     }
 
-    // Add day separator to narrative feed
+    // Add day separator via narrative queue
     if (typeof addNarrative === 'function') {
-        _narrativeEntries.push({
-            type: 'daybreak', text: '', hour: 0, day: SIM.day, time: Date.now(),
-            speaker: null, metric: null, delta: null, level: 'normal'
-        });
-        if (_narrativeFeed) {
-            const sep = document.createElement('div');
-            sep.className = 'nf-entry nf-day-break';
-            sep.innerHTML = `<span class="nf-day-break-line">\u2501\u2501\u2501 DAY ${SIM.day} \u2501\u2501\u2501</span>`;
-            _narrativeFeed.appendChild(sep);
-        }
+        addNarrative('headline', `\u2501\u2501\u2501 DAY ${SIM.day} \u2501\u2501\u2501`, { level: 'normal' });
     }
     if (typeof updateNarrativeHeader === 'function') updateNarrativeHeader();
 

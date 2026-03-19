@@ -98,6 +98,11 @@ let _narrativeFeed = null;
 let _userScrolled = false;
 let _lastStatHadScene = false;
 
+// VN queue system — entries display one at a time, click to advance
+let _vnQueue = [];
+let _vnCurrentEntry = null;
+let _vnClickBound = false;
+
 // ======================== PUBLIC API ========================
 
 function addNarrative(type, text, options) {
@@ -132,6 +137,8 @@ function getNarrativeEntries() {
 function clearNarrative() {
     _narrativeEntries.length = 0;
     _lastStatHadScene = false;
+    _vnQueue = [];
+    _vnCurrentEntry = null;
     if (_narrativeFeed) _narrativeFeed.innerHTML = '';
     _clearSceneImage(0);
 }
@@ -158,11 +165,10 @@ function _pushEntry(type, text, opts) {
 
     _narrativeEntries.push(entry);
 
-    // Render to DOM if feed exists
-    if (_narrativeFeed) {
-        const el = _renderEntry(entry);
-        _narrativeFeed.appendChild(el);
-        _autoScroll();
+    // VN mode: queue entry, display immediately if nothing showing
+    _vnQueue.push(entry);
+    if (!_vnCurrentEntry) {
+        _vnDrainNext();
     }
 
     // Also push to legacy headline system so existing displays still work
@@ -266,6 +272,87 @@ function _autoScroll() {
     requestAnimationFrame(() => {
         if (_narrativeFeed) {
             _narrativeFeed.scrollTop = _narrativeFeed.scrollHeight;
+        }
+    });
+}
+
+// ======================== VN QUEUE SYSTEM ========================
+
+function _vnDrainNext() {
+    if (_vnQueue.length === 0) {
+        _vnCurrentEntry = null;
+        return;
+    }
+
+    // Batch: pull next entry + any stat entries that follow it
+    _vnCurrentEntry = _vnQueue.shift();
+    const batchEntries = [_vnCurrentEntry];
+    while (_vnQueue.length > 0 && _vnQueue[0].type === 'stat') {
+        batchEntries.push(_vnQueue.shift());
+    }
+
+    if (!_narrativeFeed) return;
+
+    // Clear previous text
+    const feedScroll = document.getElementById('nf-feed-scroll');
+    if (feedScroll) {
+        feedScroll.innerHTML = '';
+        for (const entry of batchEntries) {
+            feedScroll.appendChild(_renderEntry(entry));
+        }
+    }
+
+    // Update VN portrait
+    _vnUpdatePortrait(_vnCurrentEntry);
+
+    // Show continue indicator if more entries queued
+    if (_vnQueue.length > 0 && feedScroll) {
+        const indicator = document.createElement('div');
+        indicator.className = 'vn-continue';
+        indicator.textContent = '\u25BC';
+        feedScroll.appendChild(indicator);
+    }
+}
+
+function _vnUpdatePortrait(entry) {
+    const el = document.getElementById('vn-portrait');
+    if (!el) return;
+
+    const src = entry.portrait;
+    if (!src) {
+        el.classList.add('hidden');
+        return;
+    }
+
+    // Iranian speakers on right, others on left
+    const isRight = src.indexOf('iran') !== -1;
+    el.classList.toggle('right-side', isRight);
+    el.classList.remove('hidden');
+
+    let img = el.querySelector('img');
+    if (!img) {
+        img = document.createElement('img');
+        img.alt = 'Character';
+        img.draggable = false;
+        el.appendChild(img);
+    }
+    if (img.src !== src) img.src = src;
+}
+
+function _vnSetupClick() {
+    if (_vnClickBound) return;
+    const textbox = document.getElementById('vn-textbox');
+    if (!textbox) return;
+    _vnClickBound = true;
+
+    textbox.addEventListener('click', function (e) {
+        // Don't advance if clicking action buttons
+        if (e.target.closest('button, .ap-btn, .ap-interrupt-btn, #action-bar')) return;
+        // Don't advance if action bar is active
+        if (document.getElementById('action-bar')?.classList.contains('active')) return;
+
+        if (_vnQueue.length > 0) {
+            _vnDrainNext();
         }
     });
 }
@@ -539,10 +626,6 @@ function initNarrativeFeed() {
     const feedContainer = document.getElementById('narrative-feed');
     if (feedContainer) {
         feedContainer.innerHTML = `
-            <div class="nf-header">
-                <span class="nf-header-label">\u2588 OPERATIONAL LOG</span>
-                <span class="nf-header-day">DAY ${SIM.day || 1}</span>
-            </div>
             <div class="nf-feed" id="nf-feed-scroll"></div>
         `;
         _narrativePanel = feedContainer;
@@ -550,21 +633,16 @@ function initNarrativeFeed() {
 
     _narrativeFeed = document.getElementById('nf-feed-scroll');
 
-    // Track user scroll (allow scrollback without fighting auto-scroll)
-    if (_narrativeFeed) {
-        _narrativeFeed.addEventListener('scroll', () => {
-            const atBottom = _narrativeFeed.scrollHeight - _narrativeFeed.scrollTop - _narrativeFeed.clientHeight < 40;
-            _userScrolled = !atBottom;
-        });
-    }
+    // VN mode: set up click-to-advance
+    _vnSetupClick();
 
-    // Render any entries that were added before DOM was ready
-    _narrativeEntries.forEach(entry => {
-        if (_narrativeFeed) {
-            _narrativeFeed.appendChild(_renderEntry(entry));
-        }
-    });
-    _autoScroll();
+    // Render any entries that were added before DOM was ready via VN queue
+    if (_narrativeEntries.length > 0 && _narrativeFeed) {
+        // Re-queue all existing entries for VN display
+        _vnQueue = _narrativeEntries.slice();
+        _vnCurrentEntry = null;
+        _vnDrainNext();
+    }
 }
 
 function updateNarrativeHeader() {

@@ -467,6 +467,34 @@ function initUI() {
     updateHudChar();
     updateForceSummary();
     updateIntelBrief();
+    _setupStrategyDrawer();
+    _setupGaugeBarReveal();
+}
+
+function _setupStrategyDrawer() {
+    const toggle = document.getElementById('strategy-toggle');
+    const drawer = document.getElementById('strategy-drawer');
+    const close = document.getElementById('drawer-close');
+    if (!toggle || !drawer) return;
+
+    toggle.addEventListener('click', () => {
+        drawer.classList.toggle('open');
+    });
+    if (close) {
+        close.addEventListener('click', () => {
+            drawer.classList.remove('open');
+        });
+    }
+}
+
+function _setupGaugeBarReveal() {
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const bar = document.getElementById('gauge-bar');
+            if (bar) bar.classList.toggle('visible');
+        }
+    });
 }
 
 // ======================== SITUATION PANEL (left sidebar) ========================
@@ -2015,7 +2043,7 @@ function showActionPanel() {
         _updateCommandPanel(ap, esc, escName, escColor);
     }
 
-    // Append to action-bar container in narrative column
+    // Append to action-bar container in VN textbox
     const actionBar = document.getElementById('action-bar');
     if (actionBar) {
         actionBar.innerHTML = '';
@@ -2024,6 +2052,9 @@ function showActionPanel() {
     } else {
         document.body.appendChild(panel);
     }
+    // VN mode: mark textbox as showing actions
+    const vnBox = document.getElementById('vn-textbox');
+    if (vnBox) vnBox.classList.add('actions-visible');
     panel._renderFn = renderPanel;
     renderPanel();
     if (typeof updateCharPanel === 'function') updateCharPanel();
@@ -3855,6 +3886,8 @@ function hideActionPanel() {
         actionBar.classList.remove('active');
     }
     _hideCommandPanel();
+    const vnBox = document.getElementById('vn-textbox');
+    if (vnBox) vnBox.classList.remove('actions-visible');
 }
 
 

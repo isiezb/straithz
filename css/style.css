@@ -65,34 +65,82 @@ html, body {
     z-index: 999;
 }
 
-/* ======================== MAIN LAYOUT ======================== */
+/* ======================== MAIN LAYOUT (VN MODE) ======================== */
 
 #main-layout {
     flex: 1;
     min-height: 0;
-    display: flex;
+    position: relative;
     overflow: hidden;
 }
 
-/* LEFT COLUMN: narrative experience */
-#narrative-col {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    min-height: 0;
-    border-right: 1px solid var(--border);
-}
+/* ======================== STRATEGY DRAWER ======================== */
 
-/* RIGHT COLUMN: strategic overview */
-#strategy-col {
-    flex: 0 0 320px;
+#strategy-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    z-index: 8;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    min-height: 0;
-    background: #030503;
+    background: rgba(3, 5, 3, 0.96);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+#strategy-drawer.open {
+    transform: translateX(0);
+}
+
+.drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--green);
+}
+
+.drawer-close-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 8px;
+    font-family: var(--font);
+}
+
+.drawer-close-btn:hover {
+    border-color: var(--green);
+    color: #fff;
+}
+
+#strategy-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 9;
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid var(--border);
+    color: var(--green-dim);
+    font-family: var(--font);
+    font-size: 16px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+#strategy-toggle:hover {
+    color: var(--green);
+    border-color: var(--green);
 }
 
 /* ======================== CANVAS (tactical map sidebar) ======================== */
@@ -106,14 +154,10 @@ html, body {
 /* ======================== SCENE PANEL ======================== */
 
 #scene-panel {
-    position: relative;
-    width: 100%;
-    height: 240px;
-    min-height: 140px;
-    max-height: 280px;
-    flex-shrink: 2;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     background: #020402;
-    border-bottom: 1px solid var(--border);
     overflow: hidden;
 }
 
@@ -179,15 +223,16 @@ html, body {
 .sp-caption {
     display: none;
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 10px 20px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    top: 10px; left: 0; right: 0;
+    padding: 6px 20px;
     font-size: 11px;
     letter-spacing: 2px;
     color: var(--green);
     z-index: 3;
     text-transform: uppercase;
     text-shadow: 0 0 6px rgba(68, 221, 136, 0.4);
+    text-align: center;
+    background: transparent;
 }
 
 .sp-caption.active {
@@ -209,19 +254,73 @@ html, body {
     100% { border-color: var(--border); }
 }
 
-/* ======================== NARRATIVE FEED ======================== */
+/* ======================== VN TEXT BOX ======================== */
+
+#vn-textbox {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 35vh;
+    min-height: 140px;
+    z-index: 5;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.75) 10%, rgba(0, 0, 0, 0.92));
+    display: flex;
+    flex-direction: column;
+    padding: 24px 32px 16px;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+#vn-textbox.actions-visible {
+    cursor: default;
+}
+
+/* ======================== VN PORTRAIT ======================== */
+
+#vn-portrait {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    max-height: 75vh;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.3s ease;
+}
+
+#vn-portrait img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(4px 4px 20px rgba(0,0,0,0.8));
+}
+
+#vn-portrait.right-side {
+    left: auto;
+    right: 0;
+}
+
+#vn-portrait.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+/* ======================== NARRATIVE FEED (VN mode) ======================== */
 
 #narrative-feed {
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     overflow: hidden;
     min-height: 0;
-    background: #040604;
+    background: transparent;
 }
 
 .nf-header {
-    display: none; /* removed — date is in top bar */
+    display: none;
 }
 
 .nf-header-label, .nf-header-day { display: none; }
@@ -229,10 +328,8 @@ html, body {
 .nf-feed {
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 16px 24px;
-    scroll-behavior: smooth;
+    overflow: hidden;
+    padding: 0;
 }
 
 .nf-feed::-webkit-scrollbar { width: 4px; }
@@ -462,12 +559,11 @@ html, body {
 
 #action-bar {
     flex: 0 0 auto;
-    max-height: 35%;
-    border-top: 1px solid var(--border);
-    background: #080a08;
+    background: transparent;
     overflow-y: auto;
     overflow-x: hidden;
     display: none;
+    max-height: 50vh;
 }
 
 #action-bar.active {
@@ -815,19 +911,36 @@ html, body {
 /* ======================== GAUGE BAR ======================== */
 
 #gauge-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 36px;
-    min-height: 36px;
-    max-height: 36px;
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 0;
-    background: #0a0a0a;
+    background: rgba(10, 10, 10, 0.95);
     border-bottom: 1px solid #1a3a2a;
     z-index: 10;
     padding: 0 12px;
     overflow: hidden;
-    width: 100%;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+#gauge-bar:hover,
+#gauge-bar.visible {
+    transform: translateY(0);
+}
+
+/* Invisible hover trigger zone below gauge bar */
+#gauge-bar::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 24px;
 }
 
 .hud-day {
@@ -3145,29 +3258,38 @@ html, body {
 /* ======================== RESPONSIVE ======================== */
 
 /* Responsive: smaller screens */
+/* ======================== VN CONTINUE INDICATOR ======================== */
+
+.vn-continue {
+    text-align: right;
+    color: var(--green);
+    font-size: 14px;
+    animation: vnBlink 1s infinite;
+    margin-top: 4px;
+    pointer-events: none;
+}
+
+@keyframes vnBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
 @media (max-width: 900px) {
-    #strategy-col { flex: 0 0 220px; }
+    #strategy-drawer { width: 260px; }
     #toast-container { width: 260px; }
 }
 
 @media (max-width: 700px) {
-    #main-layout { flex-direction: column; }
-    #narrative-col { flex: 1; }
-    #strategy-col { flex: 0 0 200px; }
-    #map-sidebar { height: 150px; max-height: 150px; }
-    #char-panel { display: none; }
-    #cards-panel { display: none; }
-    #intel-brief { display: none; }
+    #vn-textbox { max-height: 40vh; padding: 16px; }
+    #vn-portrait { width: 180px; }
+    #strategy-drawer { width: 100%; }
     .nf-entry { font-size: 13px; }
 }
 
 @media (max-height: 800px) {
     .terminal-box { padding: 12px 14px; }
-    #scene-panel { height: 140px; max-height: 140px; }
-    #char-panel { max-height: 100px; }
 }
 
 @media (max-height: 600px) {
-    #scene-panel { height: 100px; max-height: 100px; }
-    #char-panel { display: none; }
+    #vn-textbox { max-height: 45vh; }
 }

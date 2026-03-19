@@ -56,16 +56,26 @@
             <div id="gauge-hill"><span class="gauge-value">50</span></div>
         </div>
 
-        <!-- MAIN: two-column narrative RPG layout -->
+        <!-- MAIN: VN layout — full-screen scene + text box overlay -->
         <div id="main-layout">
-            <!-- LEFT: Narrative experience (65%) -->
-            <div id="narrative-col">
-                <div id="scene-panel"></div>
+            <!-- LAYER 0: Full-screen scene background -->
+            <div id="scene-panel"></div>
+
+            <!-- LAYER 1: Character portrait overlay -->
+            <div id="vn-portrait" class="hidden"></div>
+
+            <!-- LAYER 2: VN text box at bottom -->
+            <div id="vn-textbox">
                 <div id="narrative-feed"></div>
                 <div id="action-bar"></div>
             </div>
-            <!-- RIGHT: Strategic overview -->
-            <div id="strategy-col">
+
+            <!-- LAYER 3: Strategy drawer (hidden by default) -->
+            <div id="strategy-drawer" class="drawer-hidden">
+                <div class="drawer-header">
+                    <span>STRATEGY</span>
+                    <button id="drawer-close" class="drawer-close-btn">&times;</button>
+                </div>
                 <div id="char-panel"></div>
                 <div id="map-sidebar">
                     <canvas id="game-canvas"></canvas>
@@ -78,6 +88,9 @@
                     <div id="intel-brief-content"></div>
                 </div>
             </div>
+
+            <!-- Floating UI buttons -->
+            <button id="strategy-toggle" class="vn-ui-btn" title="Strategy Panel">&#9776;</button>
         </div>
 
         <div id="situation-panel" style="display:none"></div>
