@@ -3003,6 +3003,201 @@ html, body {
     color: #44dd88;
 }
 
+/* ======================== VN CHOICE BUTTONS ======================== */
+
+#action-panel.vn-choices {
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.vn-choices-prompt {
+    padding: 8px 12px 4px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.vn-prompt-speaker {
+    color: #44dd88;
+    font-weight: bold;
+    margin-right: 6px;
+}
+.vn-prompt-text {
+    color: #88ccaa;
+    font-style: italic;
+}
+
+.vn-choices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px 12px;
+}
+
+.vn-choice-btn {
+    display: block;
+    width: 100%;
+    background: rgba(10, 30, 18, 0.85);
+    border: 1px solid #1a3a2a;
+    color: #44dd88;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    border-radius: 0;
+}
+.vn-choice-btn:hover {
+    border-color: #44dd88;
+    background: rgba(13, 42, 21, 0.95);
+    box-shadow: 0 0 12px rgba(68, 221, 136, 0.15);
+    transform: translateX(4px);
+}
+.vn-choice-btn:active {
+    background: rgba(26, 74, 42, 0.9);
+}
+.vn-choice-btn.disabled {
+    color: #1a3a2a;
+    border-color: #111;
+    background: rgba(8, 8, 8, 0.7);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.vn-choice-btn.special {
+    border-color: #ddaa44;
+    color: #ddaa44;
+}
+.vn-choice-btn.special:hover {
+    border-color: #ffcc44;
+    box-shadow: 0 0 12px rgba(221, 170, 68, 0.2);
+}
+
+.vn-choice-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+.vn-choice-cost {
+    color: #ddaa44;
+    font-weight: normal;
+    font-size: 10px;
+}
+.vn-choice-framing {
+    display: block;
+    font-size: 10px;
+    color: #6a9a7a;
+    font-style: italic;
+    margin-top: 2px;
+    line-height: 1.4;
+}
+.vn-choice-btn:hover .vn-choice-framing {
+    color: #88ccaa;
+}
+
+.vn-choices-footer {
+    padding: 6px 12px 8px;
+    border-top: 1px solid #1a3a2a;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.vn-status {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.vn-resource-tier {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+}
+.vn-footer-btns {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+}
+.vn-footer-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #1a3a2a;
+    color: #88aa99;
+    padding: 5px 8px;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.15s ease;
+}
+.vn-footer-btn:hover {
+    border-color: #44dd88;
+    color: #44dd88;
+}
+.vn-end-day {
+    border-color: #ddaa44;
+    color: #ddaa44;
+}
+.vn-end-day:hover {
+    background: #1a1500;
+    box-shadow: 0 0 10px rgba(221, 170, 68, 0.15);
+}
+
+/* ======================== ROADS NOT TAKEN (epilogue) ======================== */
+
+.rnt-arc-track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 8px;
+}
+.rnt-arc {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border: 1px solid #222;
+}
+.rnt-arc.current {
+    border-color: currentColor;
+    font-weight: bold;
+    text-shadow: 0 0 8px currentColor;
+}
+.rnt-arc.reached {
+    border-color: #333;
+}
+.rnt-arc.locked {
+    color: #333;
+    border-color: #1a1a1a;
+}
+.rnt-arc-arrow {
+    font-size: 7px;
+    color: #333;
+}
+
+.rnt-ending {
+    font-size: 10px;
+    padding: 3px 8px;
+    border: 1px solid;
+    display: inline-block;
+}
+.rnt-ending.unlocked {
+    color: #44dd88;
+    border-color: #44dd88;
+}
+.rnt-ending.locked {
+    color: #333;
+    border-color: #222;
+}
+.rnt-miss {
+    padding-left: 8px;
+    border-left: 2px solid #ddaa44;
+}
+.rnt-locked {
+    padding-left: 8px;
+    border-left: 2px solid #333;
+}
+
 /* ======================== ACTION TOOLTIPS ======================== */
 
 .ap-btn .ap-tooltip {

@@ -1962,64 +1962,77 @@ function showActionPanel() {
 
     const panel = document.createElement('div');
     panel.id = 'action-panel';
+    panel.className = 'vn-choices';
 
     function renderPanel() {
         const ap = SIM.actionPoints || 0;
-        const apDots = Array.from({ length: 3 }, (_, i) => i < ap
-            ? '<span class="ap-dot filled">\u25CF</span>'
-            : '<span class="ap-dot empty">\u25CB</span>'
-        ).join('');
-
+        const charId = SIM.character ? SIM.character.id : '';
+        const charName = SIM.character ? SIM.character.name : 'Advisor';
         const budgetStr = '$' + Math.round(SIM.budget) + 'M';
-        const roeLabel = _getROELabel();
-        const roeColor = _getROEColor();
-
-        // Determine if special action is available
-        let specialHtml = '';
-        if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown === 0) {
-            specialHtml = `<div style="padding:4px 10px"><button class="ap-btn special" data-action="special" style="font-size:12px;padding:6px 10px">\u2605 ${SIM.character.specialAction.name.toUpperCase()}</button></div>`;
-        } else if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown > 0) {
-            specialHtml = `<div style="padding:4px 10px"><button class="ap-btn disabled" style="font-size:11px">\u2605 ${SIM.character.specialAction.name.toUpperCase()} (${SIM.character.specialAction.cooldown}d)</button></div>`;
-        }
-
         const esc = SIM.warPath || 0;
         const escInfo = ESCALATION_LADDER[Math.min(esc, 5)];
         const escName = escInfo ? escInfo.name : 'UNKNOWN';
         const escColor = escInfo ? escInfo.color : '#888';
 
-        // Build recommended actions based on game state + character
+        // Build recommended actions with character-voiced framings
         const recs = _getRecommendedActions(ap, esc);
-
-        // 3 recommended actions (one per AP)
-        const gridHtml = recs.map(r => {
-            const costStr = r.cost ? ` $${r.cost}M` : '';
+        const choicesHtml = recs.map(r => {
+            const costStr = r.cost ? ` <span class="vn-choice-cost">$${r.cost}M</span>` : '';
             const budgetOk = !r.cost || SIM.budget >= r.cost;
-            return `<button class="ap-btn ap-recommended ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${r.action}">${r.label}${costStr}<span class="ap-reason">${r.reason}</span></button>`;
+            const framing = _getActionVoicedFraming(r.action, charId);
+            return `<button class="vn-choice-btn ${ap <= 0 || !budgetOk ? 'disabled' : ''}" data-action="${r.action}">
+                <span class="vn-choice-label">${r.label}${costStr}</span>
+                <span class="vn-choice-framing">${framing}</span>
+            </button>`;
         }).join('');
 
+        // Special action as VN choice
+        let specialHtml = '';
+        if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown === 0) {
+            specialHtml = `<button class="vn-choice-btn special" data-action="special">
+                <span class="vn-choice-label">\u2605 ${SIM.character.specialAction.name.toUpperCase()}</span>
+                <span class="vn-choice-framing">${_getSpecialActionFraming(charId)}</span>
+            </button>`;
+        } else if (SIM.character && SIM.character.specialAction && SIM.character.specialAction.cooldown > 0) {
+            specialHtml = `<button class="vn-choice-btn disabled">
+                <span class="vn-choice-label">\u2605 ${SIM.character.specialAction.name.toUpperCase()} (${SIM.character.specialAction.cooldown}d)</span>
+            </button>`;
+        }
+
+        // Character-specific choices
+        const charChoicesHtml = _getCharacterChoices(ap, charId);
+
+        // AP / budget / escalation status line
+        const apDots = Array.from({ length: 3 }, (_, i) => i < ap
+            ? '<span class="ap-dot filled">\u25CF</span>'
+            : '<span class="ap-dot empty">\u25CB</span>'
+        ).join('');
+
+        // Resource tier indicator
+        const tierLine = _getResourceTierLine(charId);
+
         panel.innerHTML = `
-            <div style="padding:4px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #1a3a2a">
-                <span style="font-size:11px">AP: ${apDots}</span>
-                <span style="font-size:11px;color:#ddaa44">${budgetStr}</span>
-                <span style="font-size:9px;color:${escColor};margin-left:auto">${escName}</span>
+            <div class="vn-choices-prompt">
+                <span class="vn-prompt-speaker">${charName}:</span>
+                <span class="vn-prompt-text">${_getActionPrompt(charId)}</span>
             </div>
-
-            ${specialHtml}
-
-            <div style="padding:4px 10px;display:flex;flex-direction:column;gap:3px">
-                ${gridHtml}
+            <div class="vn-choices-list">
+                ${specialHtml}
+                ${choicesHtml}
+                ${charChoicesHtml}
             </div>
-
-            ${_getCharacterActions(ap)}
-
-            <div style="padding:4px 10px;display:flex;gap:4px;border-top:1px solid #1a3a2a">
-                ${(SIM.swapsToday || 0) < 2 ? `<button class="ap-swap-btn" id="btn-swap-card" style="flex:1">SWAP</button>` : '<div style="flex:1"></div>'}
-                <button class="ap-end-btn" data-action="end-day" style="flex:1">END DAY</button>
+            <div class="vn-choices-footer">
+                <span class="vn-status">${apDots} <span style="color:#ddaa44">${budgetStr}</span> <span style="color:${escColor};font-size:9px">${escName}</span></span>
+                ${tierLine}
+                <div class="vn-footer-btns">
+                    ${(SIM.swapsToday || 0) < 2 ? `<button class="vn-footer-btn" id="btn-swap-card">SWAP CARD</button>` : ''}
+                    <button class="vn-footer-btn vn-end-day" data-action="end-day">END DAY \u25B6</button>
+                </div>
             </div>
         `;
 
-        // Wire up buttons
-        panel.querySelectorAll('.ap-btn:not(.disabled)').forEach(btn => {
+        // Wire up VN choice buttons
+        panel.querySelectorAll('.vn-choice-btn:not(.disabled)').forEach(btn => {
             btn.addEventListener('click', () => {
                 const action = btn.dataset.action;
                 if (!action) return;
@@ -2027,7 +2040,7 @@ function showActionPanel() {
             });
         });
 
-        panel.querySelector('.ap-end-btn').addEventListener('click', () => {
+        panel.querySelector('.vn-end-day').addEventListener('click', () => {
             _endDay();
         });
 
@@ -2039,7 +2052,7 @@ function showActionPanel() {
             });
         }
 
-        // Full actions moved to right sidebar — update it
+        // Full actions still available in strategy drawer
         _updateCommandPanel(ap, esc, escName, escColor);
     }
 
@@ -2070,6 +2083,249 @@ function showActionPanel() {
         SIM._guideSeen = true;
         setTimeout(() => _showAdvisorGuide(), 800);
     }
+}
+
+// ======================== VN ACTION FRAMINGS ========================
+
+/** Character-voiced one-liner for each action, used in VN choice buttons */
+function _getActionVoicedFraming(actionId, charId) {
+    const FRAMINGS = {
+        trump: {
+            'gather-intel': '"Get me the real numbers, not the fake ones CNN uses."',
+            'analyze-threats': '"Show me who\'s winning. The ratings — I mean the threat board."',
+            'phone-call': '"Get someone important on the line. Tell them Trump called."',
+            'draft-proposal': '"Write something beautiful. Something they\'ll talk about for years."',
+            'demand-un-session': '"Time to make the UN actually do something for once."',
+            'reposition-fleet': '"Move the boats. Big, beautiful boats. Where Iran can see them."',
+            'change-roe': '"Change the rules. My rules, not Obama\'s rules."',
+            'escort-tankers': '"Our ships protecting our oil. That\'s America First."',
+            'precision-strike': '"Hit them hard. Make it look great on camera."',
+            'spec-ops-raid': '"Send in the best. Nobody does special ops like us."',
+            'air-strikes': '"Total domination from the sky. Iran has never seen anything like it."',
+            'press-conference': '"Address the nation. They need to hear from their favorite president."',
+            'brief-congress': '"Tell Congress what I want them to know. Nothing more."',
+            'adjust-sanctions': '"Squeeze them. The art of the deal starts with pressure."',
+            'market-intervention': '"Stabilize the markets. The economy is my best poll number."',
+            'deescalate': '"Pull back — strategically. Save it for when the cameras are rolling."',
+            'escalate': '"Turn up the heat. Iran needs to know we mean business."',
+            'emergency-coalition': '"Get the allies in line. They need us more than we need them."',
+            'issue-ultimatum': '"Final warning. The biggest, most beautiful ultimatum ever delivered."',
+        },
+        hegseth: {
+            'gather-intel': '"Task every asset we have. I want full battlespace awareness."',
+            'analyze-threats': '"Run the threat matrix. I need actionable intelligence, not speculation."',
+            'phone-call': '"Secure line to the regional commander. Keep it operational."',
+            'draft-proposal': '"State can draft it, but military credibility backs every word."',
+            'demand-un-session': '"Put it on the record. The international community needs to act."',
+            'reposition-fleet': '"Advance the strike group. Show them our force posture is real."',
+            'change-roe': '"Adjust the rules of engagement. The operators need clarity."',
+            'escort-tankers': '"Navy escorts on every convoy. That\'s force protection 101."',
+            'precision-strike': '"Surgical strike on military targets. Clean, proportional, decisive."',
+            'spec-ops-raid': '"Green light the operators. In and out, no footprint."',
+            'air-strikes': '"Launch the air campaign. Degrade their capability systematically."',
+            'press-conference': '"Brief the press. The American people deserve transparency."',
+            'brief-congress': '"Classified briefing. The Hill needs to understand the operational picture."',
+            'adjust-sanctions': '"Economic pressure supports the military mission."',
+            'market-intervention': '"Stabilize oil flow — it\'s a national security imperative."',
+            'deescalate': '"Reduce posture. Sometimes restraint is the strongest move."',
+            'escalate': '"Increase readiness. The threat level demands it."',
+            'deploy-marines': '"Put Marines ashore. Establish presence."',
+            'combat-air-patrol': '"CAP over the strait. Own the airspace."',
+        },
+        kushner: {
+            'gather-intel': '"I have sources State doesn\'t know about. Let me make a call."',
+            'analyze-threats': '"Cross-reference the official intel with what our Gulf contacts say."',
+            'phone-call': '"Back-channel. Quiet. No official record."',
+            'draft-proposal': '"Framework deal — leave room for the details we\'ll fill in privately."',
+            'demand-un-session': '"Public stage, but the real negotiation happens in the hallway."',
+            'reposition-fleet': '"Naval posture changes the price of every deal in the Gulf."',
+            'change-roe': '"Adjust the rules — it signals intent to people who know how to read signals."',
+            'escort-tankers': '"Protect the shipping lanes. Our partners are watching."',
+            'precision-strike': '"Military action reprices everything. Make sure it\'s worth it."',
+            'press-conference': '"Control the narrative before someone else does."',
+            'brief-congress': '"Manage the Hill before they start managing us."',
+            'adjust-sanctions': '"Sanctions are leverage. Every turn of the screw is a negotiating chip."',
+            'market-intervention': '"Stabilize markets — panicked partners don\'t make good deals."',
+            'deescalate': '"Create space for the back-channel. Tension kills trust."',
+            'escalate': '"Increase pressure — but keep the off-ramp open."',
+        },
+        asmongold: {
+            'gather-intel': '"OSINT time, chat. Let\'s see what the satellites are showing."',
+            'analyze-threats': '"Let me break down the threat board for you guys."',
+            'phone-call': '"Making the call. Chat, predict how this goes."',
+            'draft-proposal': '"Writing a proposal. The diplomacy arc, chat. Trust the process."',
+            'demand-un-session': '"Taking it to the UN. International law content, let\'s go."',
+            'reposition-fleet': '"Moving the fleet. Watch the map — this is the content."',
+            'change-roe': '"Changing the rules of engagement. This shifts everything, chat."',
+            'escort-tankers': '"Escort mission. Classic. Chat knows how these go."',
+            'precision-strike': '"Authorizing the strike. The consequences will be immediate."',
+            'press-conference': '"Going live. Every word matters — clip it, chat."',
+            'brief-congress': '"Briefing Congress. The political minigame."',
+            'adjust-sanctions': '"Economic warfare. The spreadsheet guys in chat love this one."',
+            'market-intervention': '"Emergency econ move. The oil market watchers called it."',
+            'deescalate': '"Pulling back. Sometimes the best play is patience."',
+            'escalate': '"Escalating. Chat predicted this. God help us all."',
+        },
+        fuentes: {
+            'gather-intel': '"Find out what they\'re not telling us. The deep state hides everything."',
+            'analyze-threats': '"Who\'s the real threat here — Iran or the military industrial complex?"',
+            'phone-call': '"Talk to someone who actually represents American interests."',
+            'draft-proposal': '"A proposal that puts America first. Not the UN, not Europe — America."',
+            'reposition-fleet': '"Move the fleet — but only to bring them closer to home."',
+            'change-roe': '"Change the rules. Our troops shouldn\'t be in harm\'s way for foreign oil."',
+            'escort-tankers': '"Protect American shipping. Let the Gulf states handle their own."',
+            'press-conference': '"Take it to the people. The media won\'t cover this honestly."',
+            'brief-congress': '"Tell Congress the truth. America First members need to hear this."',
+            'adjust-sanctions': '"Hit their economy. No American blood for what sanctions can do."',
+            'market-intervention': '"American energy independence. That\'s the real solution."',
+            'deescalate': '"Bring the troops home. That\'s what they elected us for."',
+            'escalate': '"If we must fight, fight to WIN. No half measures."',
+            'rally-base': '"Rally the base. The people are with us."',
+            'media-blitz': '"Bypass the mainstream media. Go direct to the people."',
+            'announce-withdrawal': '"Announce the withdrawal. Keep the promise."',
+        }
+    };
+
+    const charFramings = FRAMINGS[charId];
+    if (charFramings && charFramings[actionId]) return charFramings[actionId];
+    // Generic fallback
+    const genericFramings = {
+        'gather-intel': '"We need better intelligence before making our next move."',
+        'analyze-threats': '"Let\'s review what we know about the current threat picture."',
+        'phone-call': '"Time to work the phones."',
+        'draft-proposal': '"Put a framework on paper."',
+        'demand-un-session': '"Take this to the Security Council."',
+        'reposition-fleet': '"Adjust our naval posture."',
+        'change-roe': '"Modify the rules of engagement."',
+        'escort-tankers': '"Deploy escorts for commercial shipping."',
+        'precision-strike': '"Authorize a targeted strike."',
+        'press-conference': '"Address the American people."',
+        'brief-congress': '"Brief the Hill."',
+        'adjust-sanctions': '"Adjust the economic pressure."',
+        'market-intervention': '"Stabilize the energy markets."',
+        'deescalate': '"Reduce tensions."',
+        'escalate': '"Increase military readiness."',
+    };
+    return genericFramings[actionId] || '';
+}
+
+function _getSpecialActionFraming(charId) {
+    const framings = {
+        trump: '"Time for a power move. Something only I can do."',
+        hegseth: '"Execute the special directive. My call, my authority."',
+        kushner: '"Activate the private channel. This stays off the books."',
+        asmongold: '"The special play, chat. This is the one we\'ve been saving."',
+        fuentes: '"The America First ace. This is what the movement is about."',
+    };
+    return framings[charId] || '"Special action available."';
+}
+
+function _getActionPrompt(charId) {
+    const prompts = {
+        trump: [
+            'What\'s the play? Make it big.',
+            'Three moves. Make them count. Make them camera-ready.',
+            'Show me the options. The best options.',
+            'What do we do next? And don\'t give me the boring answer.',
+        ],
+        hegseth: [
+            'What\'s our next operational move?',
+            'Three action points. Allocate them wisely.',
+            'Situation demands action. What are your orders?',
+            'The clock is ticking. Decision time.',
+        ],
+        kushner: [
+            'What\'s the smart play here?',
+            'Three moves. Let\'s think about leverage.',
+            'Where do we apply pressure — or release it?',
+            'The deal landscape is shifting. What do we do?',
+        ],
+        asmongold: [
+            'Chat, what\'s the call?',
+            'Three action points, chat. What do we spend them on?',
+            'OK, decision time. Here are our options.',
+            'What\'s the play? Chat is watching.',
+        ],
+        fuentes: [
+            'What serves America First?',
+            'Three moves. Make them count for the movement.',
+            'The base is watching. What do we do?',
+            'America needs action. What\'s the call?',
+        ],
+    };
+    const pool = prompts[charId] || ['What are your orders?'];
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/** Character-specific VN choice buttons (replaces _getCharacterActions grid) */
+function _getCharacterChoices(ap, charId) {
+    if (!charId) return '';
+    const bOk = (cost) => !cost || SIM.budget >= cost;
+
+    if (charId === 'hegseth') {
+        return `
+            <button class="vn-choice-btn ${ap <= 0 ? 'disabled' : ''}" data-action="deploy-marines">
+                <span class="vn-choice-label">DEPLOY MARINES</span>
+                <span class="vn-choice-framing">"Put Marines ashore. Establish a visible American presence."</span>
+            </button>
+            <button class="vn-choice-btn ${ap <= 0 || !bOk(20) ? 'disabled' : ''}" data-action="combat-air-patrol">
+                <span class="vn-choice-label">COMBAT AIR PATROL <span class="vn-choice-cost">$20M</span></span>
+                <span class="vn-choice-framing">"Establish air superiority over the strait. Own the sky."</span>
+            </button>`;
+    }
+    if (charId === 'fuentes') {
+        let btns = `
+            <button class="vn-choice-btn ${ap <= 0 ? 'disabled' : ''}" data-action="rally-base">
+                <span class="vn-choice-label">RALLY THE BASE</span>
+                <span class="vn-choice-framing">"The movement needs energy. Time to mobilize."</span>
+            </button>
+            <button class="vn-choice-btn ${ap <= 0 ? 'disabled' : ''}" data-action="media-blitz">
+                <span class="vn-choice-label">MEDIA BLITZ</span>
+                <span class="vn-choice-framing">"Bypass the mainstream. Take the message directly to the people."</span>
+            </button>`;
+        if (SIM.withdrawalProgress >= 5 && !SIM.withdrawalLocked) {
+            btns += `<button class="vn-choice-btn special ${ap < 2 ? 'disabled' : ''}" data-action="announce-withdrawal">
+                <span class="vn-choice-label">ANNOUNCE WITHDRAWAL <span class="vn-choice-cost">2 AP</span></span>
+                <span class="vn-choice-framing">"Keep the promise. Bring them home."</span>
+            </button>`;
+        }
+        return btns;
+    }
+    if (charId === 'kushner' && SIM.character.contacts) {
+        const contactBtns = SIM.character.contacts
+            .filter(c => c.trust >= 10)
+            .map(c => `<button class="vn-choice-btn ${ap <= 0 || !bOk(10) ? 'disabled' : ''}" data-action="call-contact-${c.id}">
+                <span class="vn-choice-label">CALL ${c.name.split('(')[0].trim()} <span class="vn-choice-cost">$10M</span></span>
+                <span class="vn-choice-framing">"Back-channel. Quiet. The kind of call that changes everything."</span>
+            </button>`)
+            .join('');
+        return contactBtns;
+    }
+    return '';
+}
+
+/** Resource tier status line for action panel footer */
+function _getResourceTierLine(charId) {
+    if (!SIM.character || !SIM.character.uniqueResource) return '';
+    const val = Math.round(SIM.uniqueResource);
+    const tier = typeof getResourceTier === 'function' ? getResourceTier(charId, val) : 'resourceGood';
+    const tierColors = {
+        resourceExcellent: '#44dd88',
+        resourceGood: '#44dd88',
+        resourceStrained: '#ddaa44',
+        resourceLow: '#dd8844',
+        resourceCritical: '#dd4444',
+    };
+    const tierLabels = {
+        resourceExcellent: 'EXCELLENT',
+        resourceGood: 'GOOD',
+        resourceStrained: 'STRAINED',
+        resourceLow: 'LOW',
+        resourceCritical: 'CRITICAL',
+    };
+    const color = tierColors[tier] || '#888';
+    const label = tierLabels[tier] || 'UNKNOWN';
+    return `<span class="vn-resource-tier" style="color:${color}">${SIM.character.uniqueResource.name}: ${val} — ${label}</span>`;
 }
 
 // ======================== COMMAND PANEL (right sidebar full action list) ========================
@@ -2599,7 +2855,7 @@ function _narrateAction(actionId, snap, scaledKeys) {
 }
 
 function _maybeAdvisorReaction() {
-    if (Math.random() >= 0.35) return; // 35% chance
+    if (Math.random() >= 0.50) return; // 50% chance (up from 35%)
     const dialogue = DATA.dialogue;
     if (!dialogue || !dialogue.advisorReactions) return;
     const charId = SIM.character ? SIM.character.id : null;
@@ -2607,27 +2863,43 @@ function _maybeAdvisorReaction() {
     const charReactions = dialogue.advisorReactions[charId];
     if (!charReactions) return;
 
-    // Pick reaction based on current state
+    // Resource tier dialogue fires FIRST — it's the core affinity mechanic
     let reactionText = null;
     let reactKey = null;
-    if (SIM.tension > 70 && charReactions.highTension) {
-        reactionText = charReactions.highTension;
-        reactKey = 'highTension';
-    } else if (SIM.domesticApproval < 35 && charReactions.lowApproval) {
-        reactionText = charReactions.lowApproval;
-        reactKey = 'lowApproval';
-    } else if (SIM.budget < 200 && charReactions.lowBudget) {
-        reactionText = charReactions.lowBudget;
-        reactKey = 'lowBudget';
-    } else if (SIM.proxyThreat > 50 && charReactions.highProxy) {
-        reactionText = charReactions.highProxy;
-        reactKey = 'highProxy';
-    } else if (SIM.diplomaticCapital > 50 && SIM.tension < 40 && charReactions.diplomatic) {
-        reactionText = charReactions.diplomatic;
-        reactKey = 'diplomatic';
+
+    if (typeof pickResourceTierDialogue === 'function') {
+        const tierDialogue = pickResourceTierDialogue();
+        // Resource tier dialogue fires at 60% when strained or worse, 30% otherwise
+        const tier = tierDialogue ? tierDialogue.tier : null;
+        const isStressed = tier === 'resourceStrained' || tier === 'resourceLow' || tier === 'resourceCritical';
+        const tierChance = isStressed ? 0.60 : 0.30;
+        if (tierDialogue && Math.random() < tierChance) {
+            reactionText = tierDialogue.text;
+            reactKey = 'resourceTier_' + tierDialogue.tier;
+        }
     }
 
-    // Fallback: use resource tier dialogue if no specific condition matched
+    // State-specific reactions as fallback
+    if (!reactionText) {
+        if (SIM.tension > 70 && charReactions.highTension) {
+            reactionText = charReactions.highTension;
+            reactKey = 'highTension';
+        } else if (SIM.domesticApproval < 35 && charReactions.lowApproval) {
+            reactionText = charReactions.lowApproval;
+            reactKey = 'lowApproval';
+        } else if (SIM.budget < 200 && charReactions.lowBudget) {
+            reactionText = charReactions.lowBudget;
+            reactKey = 'lowBudget';
+        } else if (SIM.proxyThreat > 50 && charReactions.highProxy) {
+            reactionText = charReactions.highProxy;
+            reactKey = 'highProxy';
+        } else if (SIM.diplomaticCapital > 50 && SIM.tension < 40 && charReactions.diplomatic) {
+            reactionText = charReactions.diplomatic;
+            reactKey = 'diplomatic';
+        }
+    }
+
+    // Last fallback: resource tier dialogue regardless
     if (!reactionText && typeof pickResourceTierDialogue === 'function') {
         const tierDialogue = pickResourceTierDialogue();
         if (tierDialogue) {
@@ -4467,34 +4739,170 @@ function generatePostMortem() {
 // ======================== ROADS NOT TAKEN ========================
 
 function _buildRoadsNotTaken() {
-    if (!SIM.decisionHistory || SIM.decisionHistory.length === 0) return '';
+    let html = '';
     const allEvents = typeof CRISIS_EVENTS !== 'undefined'
         ? DECISION_EVENTS.concat(CRISIS_EVENTS) : DECISION_EVENTS;
+    const usedIds = (SIM.decisionHistory || []).map(d => d.id);
 
-    const entries = [];
-    for (const d of SIM.decisionHistory) {
-        const ev = allEvents.find(e => e.id === d.id);
-        if (!ev || !ev.choices || ev.choices.length < 2) continue;
-        const rejected = ev.choices
-            .filter(c => c.text !== d.choiceText && c.text)
-            .map(c => c.text);
-        if (rejected.length === 0) continue;
-        entries.push({ title: d.title, day: d.day, chosen: d.choiceText, rejected });
+    // ── 1. STORY ARC JOURNEY ──
+    if (typeof STORY_ARCS !== 'undefined' && typeof getCurrentStoryArc === 'function') {
+        const currentArc = getCurrentStoryArc();
+        html += '<div class="term-section"><div class="term-section-label">YOUR STORY ARC</div>';
+        html += '<div class="rnt-arc-track">';
+        for (const arc of STORY_ARCS) {
+            const reached = SIM.day >= arc.startDay;
+            const isCurrent = currentArc && arc.id === currentArc.id;
+            const name = (typeof ARC_TITLES !== 'undefined' && ARC_TITLES[arc.id])
+                ? ARC_TITLES[arc.id] : arc.id.replace(/_/g, ' ').toUpperCase();
+            const cls = isCurrent ? 'rnt-arc current' : reached ? 'rnt-arc reached' : 'rnt-arc locked';
+            const color = reached ? arc.color : '#333';
+            html += `<span class="${cls}" style="color:${color}">${reached ? name : '\u2588\u2588\u2588\u2588'}</span>`;
+            if (arc.id !== 'resolution') html += '<span class="rnt-arc-arrow" style="color:${reached ? "#555" : "#222"}">\u25B6</span>';
+        }
+        html += '</div></div>';
     }
 
-    if (entries.length === 0) return '';
+    // ── 2. DECISIONS MADE (rejected choices) ──
+    if (SIM.decisionHistory && SIM.decisionHistory.length > 0) {
+        const entries = [];
+        for (const d of SIM.decisionHistory) {
+            const ev = allEvents.find(e => e.id === d.id);
+            if (!ev || !ev.choices || ev.choices.length < 2) continue;
+            const rejected = ev.choices
+                .filter(c => c.text !== d.choiceText && c.text)
+                .map(c => c.text);
+            if (rejected.length === 0) continue;
+            entries.push({ title: d.title, day: d.day, chosen: d.choiceText, rejected });
+        }
 
-    // Show up to 5 most impactful (latest = most dramatic in the arc)
-    const shown = entries.slice(-5).reverse();
-    let html = '<div class="term-section"><div class="term-section-label">ROADS NOT TAKEN</div>';
-    for (const e of shown) {
-        html += `<div class="term-line" style="margin-bottom:8px">`;
-        html += `<span class="dim">Day ${e.day}:</span> <span style="color:#44dd88">${e.title}</span><br>`;
-        html += `<span class="dim">You chose:</span> ${e.chosen}<br>`;
-        html += `<span class="dim">Instead of:</span> <span style="color:#ddaa44">${e.rejected.join(' / ')}</span>`;
-        html += `</div>`;
+        if (entries.length > 0) {
+            const shown = entries.slice(-5).reverse();
+            html += '<div class="term-section"><div class="term-section-label">ROADS NOT TAKEN</div>';
+            for (const e of shown) {
+                html += `<div class="term-line" style="margin-bottom:8px">`;
+                html += `<span class="dim">Day ${e.day}:</span> <span style="color:#44dd88">${e.title}</span><br>`;
+                html += `<span class="dim">You chose:</span> ${e.chosen}<br>`;
+                html += `<span class="dim">Instead of:</span> <span style="color:#ddaa44">${e.rejected.join(' / ')}</span>`;
+                html += `</div>`;
+            }
+            html += '</div>';
+        }
     }
-    html += '</div>';
+
+    // ── 3. EVENTS NEVER SEEN (conditions never met / day window passed) ──
+    const unseenEvents = allEvents.filter(e =>
+        !usedIds.includes(e.id) &&
+        e.id && e.maxDay && SIM.day > e.maxDay
+    );
+    // Find "near-misses" — events whose day window we entered but conditions blocked
+    const nearMisses = [];
+    const deepMisses = [];
+    for (const e of unseenEvents) {
+        if (SIM.day >= (e.minDay || 1)) {
+            // We were in the day window — condition must have blocked it
+            const title = _getEventTitle(e);
+            if (title) {
+                // Try to determine WHY it was missed
+                const reason = _guessEventMissReason(e);
+                nearMisses.push({ id: e.id, title, reason, minDay: e.minDay, maxDay: e.maxDay });
+            }
+        } else {
+            // Day window never reached — game ended early
+            const title = _getEventTitle(e);
+            if (title) {
+                deepMisses.push({ id: e.id, title, minDay: e.minDay, maxDay: e.maxDay });
+            }
+        }
+    }
+
+    if (nearMisses.length > 0) {
+        html += '<div class="term-section"><div class="term-section-label">NEAR-MISSES</div>';
+        html += '<div class="dim" style="margin-bottom:6px;font-size:10px">Events you could have triggered with different choices:</div>';
+        for (const m of nearMisses.slice(0, 5)) {
+            html += `<div class="term-line rnt-miss" style="margin-bottom:6px">`;
+            html += `<span style="color:#ddaa44">\u2716 ${m.title}</span>`;
+            html += `<span class="dim" style="font-size:9px"> (Days ${m.minDay}\u2013${m.maxDay})</span>`;
+            if (m.reason) html += `<br><span class="dim" style="font-size:9px">\u2192 ${m.reason}</span>`;
+            html += `</div>`;
+        }
+        html += '</div>';
+    }
+
+    if (deepMisses.length > 0) {
+        html += '<div class="term-section"><div class="term-section-label">UNSEEN CHAPTERS</div>';
+        html += '<div class="dim" style="margin-bottom:6px;font-size:10px">Events that awaited you in later arcs:</div>';
+        for (const m of deepMisses.slice(0, 4)) {
+            html += `<div class="term-line rnt-locked" style="margin-bottom:4px">`;
+            html += `<span style="color:#555">\u25A0 ${m.title}</span>`;
+            html += `<span class="dim" style="font-size:9px"> (Day ${m.minDay}+)</span>`;
+            html += `</div>`;
+        }
+        html += '</div>';
+    }
+
+    // ── 4. ENDING SLOTS ──
+    html += _buildEndingSlots();
+
+    return html;
+}
+
+/** Try to get a readable event title from the events data or the event object */
+function _getEventTitle(event) {
+    // Try loaded event data first
+    const evData = DATA.events;
+    if (evData && evData.decisionEvents && evData.decisionEvents[event.id]) {
+        const ed = evData.decisionEvents[event.id];
+        if (ed.title) return ed.title;
+    }
+    // Try the event object itself
+    if (event.title) return event.title;
+    // Fallback: humanize the event ID
+    if (!event.id) return null;
+    return event.id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/** Guess why a near-miss event didn't fire based on its condition */
+function _guessEventMissReason(event) {
+    if (!event.condition) return 'Random chance — this event was eligible but didn\'t fire';
+    // Try to infer from the condition source
+    const src = event.condition.toString();
+    if (src.includes('fogOfWar') && src.includes('>')) return 'Your intelligence was too good (low fog of war)';
+    if (src.includes('fogOfWar') && src.includes('<')) return 'Your intelligence was too poor';
+    if (src.includes('tension') && src.includes('>')) return 'Tension wasn\'t high enough to trigger this';
+    if (src.includes('tension') && src.includes('<')) return 'Tension was too high for this diplomatic path';
+    if (src.includes('warPath') && src.includes('>=')) return 'Your escalation level was too low';
+    if (src.includes('warPath') && src.includes('<')) return 'Escalation had already passed this threshold';
+    if (src.includes('diplomaticCapital') && src.includes('>')) return 'Insufficient diplomatic progress';
+    if (src.includes('internationalStanding') && src.includes('>')) return 'International standing was too low';
+    if (src.includes('storyFlags')) return 'Required a specific earlier choice you didn\'t make';
+    if (src.includes('budget') && src.includes('<')) return 'Budget constraints blocked this option';
+    if (src.includes('iranAggression')) return 'Iran\'s behavior didn\'t match the trigger conditions';
+    return null;
+}
+
+/** Build ending slots — which endings are locked/unlocked */
+function _buildEndingSlots() {
+    const endings = [
+        { id: 'diplomatic_victory', label: 'Diplomatic Victory', condition: 'Win with warPath \u2264 1', met: SIM.gameWon && SIM.warPath <= 1 },
+        { id: 'military_victory', label: 'Military Victory', condition: 'Win with warPath \u2265 2', met: SIM.gameWon && SIM.warPath >= 2 },
+        { id: 'pyrrhic_victory', label: 'Pyrrhic Victory', condition: 'Win with approval < 30', met: SIM.gameWon && SIM.domesticApproval < 30 },
+        { id: 'total_war', label: 'Total War', condition: 'Reach warPath 5', met: SIM.warPath >= 5 },
+        { id: 'budget_collapse', label: 'Budget Collapse', condition: 'Budget hits $0', met: SIM.budget <= 0 },
+        { id: 'public_revolt', label: 'Public Revolt', condition: 'Approval below 15 for 5 days', met: SIM.domesticApproval < 15 },
+        { id: 'international_pariah', label: 'International Pariah', condition: 'Standing below 10 for 7 days', met: SIM.internationalStanding < 10 },
+        { id: 'peaceful_resolution', label: 'Peaceful Resolution', condition: 'Win with warPath 0, dipCap > 60', met: SIM.gameWon && SIM.warPath === 0 && SIM.diplomaticCapital > 60 },
+    ];
+
+    let html = '<div class="term-section"><div class="term-section-label">ENDINGS</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    for (const e of endings) {
+        if (e.met) {
+            html += `<span class="rnt-ending unlocked">\u2713 ${e.label}</span>`;
+        } else {
+            html += `<span class="rnt-ending locked" title="${e.condition}">\u25A0 ${e.label}</span>`;
+        }
+    }
+    html += '</div></div>';
     return html;
 }
 
