@@ -361,13 +361,15 @@ function buildIntelJSON() {
   const snippets = readJSON('intel/snippets.json');
   const falseIntel = readJSON('intel/false-intel.json');
   const keyDrivers = readJSON('intel/key-drivers.json');
-  
+  const firstMorning = readJSON('intel/first-morning.json');
+
   return {
     intelSnippets: snippets?.snippets || [],
     falseIntelSnippets: falseIntel?.snippets || [],
     keyDrivers: keyDrivers?.drivers || [],
     effectNames: snippets?.effectNames || {},
-    briefingTitles: snippets?.briefingTitles || []
+    briefingTitles: snippets?.briefingTitles || [],
+    firstMorning: firstMorning || {}
   };
 }
 
