@@ -90,5 +90,29 @@
     "wireText": "US-Israel joint strikes hit 500 targets across Iran. Supreme Leader Khamenei confirmed killed. Iran retaliating with 500+ ballistic missiles and 2,000 drones — 60% targeting US forces in region. IRGC Navy deploying across Strait of Hormuz. Tanker MV Advantage Sweet seized. Oil surges past $110. Lloyd's suspends all war risk coverage. Three carrier strike groups en route.",
     "sitrepText": "IRIS Dena frigate sunk — first major naval engagement since 1988. KC-135 tanker down, 3 KIA. Al Udeid and Al Dhafra bases under ballistic missile attack. Mojtaba Khamenei emerging as Supreme Leader successor with full IRGC backing. Houthis resuming Red Sea attacks. Hezbollah mobilizing on Lebanese border. China and Russia calling emergency UNSC session.",
     "ordersText": "You are {charName}. The strait is closed. Oil is spiking. Three carrier groups are in theater. Iran's leadership is in chaos but its military is retaliating hard. The world is watching what you do in the next 24 hours. There are no good options — only less bad ones."
+  },
+  "advisorRecommendations": {
+    "highTensionHighAggression": "Diplomatic approach recommended — military escalation risks war.",
+    "lowOilFlow": "Priority: restore oil flow. Naval patrol and coalition recommended.",
+    "highFogOfWar": "Intelligence is critical. Deploy surveillance assets.",
+    "lowApproval": "Domestic support collapsing. Consider media campaign.",
+    "lowBudget": "Budget critical. Cut costs or negotiate burden-sharing.",
+    "default": "Stay the course. Monitor the situation."
+  },
+  "winProgressLabels": {
+    "generic": {
+      "objective": "OBJECTIVE: STRAIT OPEN 7 DAYS",
+      "checks": {
+        "oilFlow": "Oil Flow > 55%",
+        "tension": "Tension < 45",
+        "noSeizures": "No seizures (3d)",
+        "noCrisis": "No active crisis"
+      }
+    },
+    "trump": "WIN BIG: High approval + oil flowing + low tension",
+    "hegseth": "TOTAL VICTORY: Escalation 4+ + approval 55+ + Iran crushed",
+    "kushner": "THE DEAL: Exposure 55+ + diplomacy 50+ + budget 400+",
+    "asmongold": "CALLED IT: Credibility 70+ + approval 60+ + fog low",
+    "fuentes": "AMERICA FIRST: Escalation 1- + standing 40+ + base 60+"
   }
 }

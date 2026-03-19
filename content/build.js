@@ -362,6 +362,8 @@ function buildIntelJSON() {
   const falseIntel = readJSON('intel/false-intel.json');
   const keyDrivers = readJSON('intel/key-drivers.json');
   const firstMorning = readJSON('intel/first-morning.json');
+  const advisorRec = readJSON('intel/advisor-recommendations.json');
+  const winLabels = readJSON('intel/win-progress-labels.json');
 
   return {
     intelSnippets: snippets?.snippets || [],
@@ -369,7 +371,9 @@ function buildIntelJSON() {
     keyDrivers: keyDrivers?.drivers || [],
     effectNames: snippets?.effectNames || {},
     briefingTitles: snippets?.briefingTitles || [],
-    firstMorning: firstMorning || {}
+    firstMorning: firstMorning || {},
+    advisorRecommendations: advisorRec || {},
+    winProgressLabels: winLabels || {}
   };
 }
 
