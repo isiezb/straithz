@@ -2011,22 +2011,28 @@ function showActionPanel() {
         // Resource tier indicator
         const tierLine = _getResourceTierLine(charId);
 
+        // When AP is exhausted, show a clear prompt to end the day
+        const apExhausted = ap <= 0;
+        const promptText = apExhausted
+            ? 'No action points remaining. End the day?'
+            : _getActionPrompt(charId);
+
         panel.innerHTML = `
             <div class="vn-choices-prompt">
                 <span class="vn-prompt-speaker">${charName}:</span>
-                <span class="vn-prompt-text">${_getActionPrompt(charId)}</span>
+                <span class="vn-prompt-text">${promptText}</span>
             </div>
-            <div class="vn-choices-list">
+            ${apExhausted ? '' : `<div class="vn-choices-list">
                 ${specialHtml}
                 ${choicesHtml}
                 ${charChoicesHtml}
-            </div>
+            </div>`}
             <div class="vn-choices-footer">
                 <span class="vn-status">${apDots} <span style="color:#ddaa44">${budgetStr}</span> <span style="color:${escColor};font-size:9px">${escName}</span></span>
                 ${tierLine}
                 <div class="vn-footer-btns">
-                    ${(SIM.swapsToday || 0) < 2 ? `<button class="vn-footer-btn" id="btn-swap-card">SWAP CARD</button>` : ''}
-                    <button class="vn-footer-btn vn-end-day" data-action="end-day">END DAY \u25B6</button>
+                    ${(SIM.swapsToday || 0) < 2 && !apExhausted ? `<button class="vn-footer-btn" id="btn-swap-card">SWAP CARD</button>` : ''}
+                    <button class="vn-footer-btn vn-end-day ${apExhausted ? 'vn-end-prominent' : ''}" data-action="end-day">END DAY \u25B6</button>
                 </div>
             </div>
         `;
@@ -2040,9 +2046,12 @@ function showActionPanel() {
             });
         });
 
-        panel.querySelector('.vn-end-day').addEventListener('click', () => {
-            _endDay();
-        });
+        const endBtn = panel.querySelector('.vn-end-day');
+        if (endBtn) {
+            endBtn.addEventListener('click', () => {
+                _endDay();
+            });
+        }
 
         const swapBtn = panel.querySelector('#btn-swap-card');
         if (swapBtn) {
@@ -3757,10 +3766,16 @@ function showPredictionPicker() {
 }
 
 function _endDay() {
-    hideActionPanel();
-    if (typeof SFX !== 'undefined') SFX.transition();
-    _writeDayEndScene();
-    advanceDay();
+    try {
+        hideActionPanel();
+        if (typeof SFX !== 'undefined') SFX.transition();
+        _writeDayEndScene();
+        advanceDay();
+    } catch (e) {
+        console.error('_endDay error:', e);
+        // Attempt recovery: force advance
+        try { advanceDay(); } catch (e2) { console.error('advanceDay error:', e2); }
+    }
 }
 
 const _dayEndHistory = {};

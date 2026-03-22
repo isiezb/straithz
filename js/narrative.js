@@ -445,8 +445,8 @@ function _vnSetupClick() {
     _vnClickBound = true;
 
     textbox.addEventListener('click', function (e) {
-        // Don't advance if clicking action buttons
-        if (e.target.closest('button, .ap-btn, .ap-interrupt-btn, #action-bar')) return;
+        // Don't advance if clicking action buttons or VN choices
+        if (e.target.closest('button, .ap-btn, .ap-interrupt-btn, .vn-choice-btn, .vn-footer-btn, #action-bar')) return;
         // Don't advance if action bar is active
         if (document.getElementById('action-bar')?.classList.contains('active')) return;
 

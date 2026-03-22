@@ -3142,6 +3142,12 @@ html, body {
     background: #1a1500;
     box-shadow: 0 0 10px rgba(221, 170, 68, 0.15);
 }
+.vn-end-prominent {
+    font-size: 13px;
+    padding: 10px 16px;
+    border-width: 2px;
+    animation: vnBlink 1.5s infinite;
+}
 
 /* ======================== ROADS NOT TAKEN (epilogue) ======================== */
 
