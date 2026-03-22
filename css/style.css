@@ -568,8 +568,7 @@ html, body {
 #action-bar {
     flex: 0 0 auto;
     background: transparent;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     display: none;
     max-height: 50vh;
 }
@@ -3013,12 +3012,14 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 0;
+    max-height: 50vh;
 }
 
 .vn-choices-prompt {
     padding: 8px 12px 4px;
     font-size: 12px;
     line-height: 1.5;
+    flex-shrink: 0;
 }
 .vn-prompt-speaker {
     color: #44dd88;
@@ -3035,6 +3036,9 @@ html, body {
     flex-direction: column;
     gap: 4px;
     padding: 4px 12px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
 }
 
 .vn-choice-btn {
@@ -3105,6 +3109,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex-shrink: 0;
 }
 .vn-status {
     font-size: 11px;
