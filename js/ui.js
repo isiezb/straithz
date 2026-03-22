@@ -2011,10 +2011,9 @@ function showActionPanel() {
         // Resource tier indicator
         const tierLine = _getResourceTierLine(charId);
 
-        // When AP is exhausted, show a clear prompt to end the day
         const apExhausted = ap <= 0;
         const promptText = apExhausted
-            ? 'No action points remaining. End the day?'
+            ? 'No action points remaining.'
             : _getActionPrompt(charId);
 
         panel.innerHTML = `
@@ -2022,17 +2021,17 @@ function showActionPanel() {
                 <span class="vn-prompt-speaker">${charName}:</span>
                 <span class="vn-prompt-text">${promptText}</span>
             </div>
-            ${apExhausted ? '' : `<div class="vn-choices-list">
-                ${specialHtml}
-                ${choicesHtml}
-                ${charChoicesHtml}
-            </div>`}
+            <div class="vn-choices-list">
+                ${apExhausted ? '' : specialHtml}
+                ${apExhausted ? '' : choicesHtml}
+                ${apExhausted ? '' : charChoicesHtml}
+            </div>
             <div class="vn-choices-footer">
                 <span class="vn-status">${apDots} <span style="color:#ddaa44">${budgetStr}</span> <span style="color:${escColor};font-size:9px">${escName}</span></span>
                 ${tierLine}
                 <div class="vn-footer-btns">
-                    ${(SIM.swapsToday || 0) < 2 && !apExhausted ? `<button class="vn-footer-btn" id="btn-swap-card">SWAP CARD</button>` : ''}
-                    <button class="vn-footer-btn vn-end-day ${apExhausted ? 'vn-end-prominent' : ''}" data-action="end-day">END DAY \u25B6</button>
+                    ${(SIM.swapsToday || 0) < 2 ? `<button class="vn-footer-btn" id="btn-swap-card">SWAP CARD</button>` : ''}
+                    <button class="vn-footer-btn vn-end-day" data-action="end-day">END DAY \u25B6</button>
                 </div>
             </div>
         `;
